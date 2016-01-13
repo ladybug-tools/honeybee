@@ -24,6 +24,7 @@ class Surface:
 
     @abstractproperty
     def geometry(self):
+        "It needs to be implemented in geometry libraries"
         pass
 
     @abstractmethod

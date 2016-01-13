@@ -1,11 +1,11 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 from sky import *
-from radianceParameters import *
+from radianceparameters import *
 
 class HBDaylightAnalysisRecipe(object):
     pass
 
-class HBGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
+class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     """Grid base analysis base class
 
         Attributes:
@@ -13,8 +13,8 @@ class HBGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
             radianceParameters: Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)
     """
     def __init__(self, sky, radParameters = None):
-        self.sky(sky)
-        self.radianceParameters(radParameters)
+        self.sky = sky
+        self.radianceParameters = radParameters
 
     @property
     def sky(self):
@@ -23,15 +23,15 @@ class HBGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     @sky.setter
     def sky(self, newSky):
         assert isinstance(newSky, HBSky), "Sky is not a valid Honeybee sky."
-        self.__sky = sky
+        self.__sky = newSky
 
     @property
-    def radianceParameters(radianceParameters):
+    def radianceParameters(self, radianceParameters):
         return self.__radParameters
 
     @radianceParameters.setter
-    def radianceParameters(radParameters):
-        if not radParameters: radParameters = LowQuality
+    def radianceParameters(self, radParameters):
+        if not radParameters: radParameters = LowQuality()
         assert isinstance(radParameters, RadianceParameters), \
             "Invalid radiance parameters object"
         self.__radParameters = radParameters
@@ -51,15 +51,21 @@ class HBGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
         """
         pass
 
-class HBDaylightFactorRecipe(GridBasedAnalysisRecipe):
+class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
     def __init__(self):
         raise NotImplementedError()
 
-class HBAnnualAnalysisRecipe(GridBasedAnalysisRecipe):
+class HBAnnualAnalysisRecipe(HBGridBasedAnalysisRecipe):
     def __init__(self):
         raise NotImplementedError()
 
 
-class HBImageBasedAnalysisRecipe(DaylightAnalysisRecipe):
+class HBImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     def __init__(self):
         raise NotImplementedError()
+
+
+"""
+sky = HBCertainIlluminanceLevelSky(2000)
+rp = HBGridBasedAnalysisRecipe(sky)
+"""
