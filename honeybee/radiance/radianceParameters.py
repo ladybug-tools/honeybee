@@ -174,12 +174,12 @@ class RadianceParameters(object):
         for key in self.__parameters.keys():
             if key in remParameters: continue
             radianceString.append("-%s"%key)
-            radianceString.append(self.getParameterValue(key))
+            radianceString.append(str(self.getParameterValue(key)))
 
         return " ".join(radianceString)
 
     def __repr__(self):
-        return  "Honeybee.RadianceParameters"
+        return self.radianceDefinition()
 
 class LowQuality(RadianceParameters):
     """Radiance parmaters for a quick analysis"""

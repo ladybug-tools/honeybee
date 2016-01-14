@@ -1,7 +1,7 @@
 from honeybee.radiance import *
 
 """
-import honeybee
+from honeybee import *
 
 HBSurface(geometry)
 HBSurface.RadMaterial()

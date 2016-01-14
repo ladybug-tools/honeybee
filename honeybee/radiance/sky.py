@@ -72,4 +72,4 @@ class HBCertainIlluminanceLevelSky(HBSky):
             "!gensky 12 6 12:00 -u -B %.3f \n"%(self.illuminanceValue/179)
 
     def __repr__(self):
-        return "Uniform CIE sky (Illuminace = %.3f lux)"%self.illuminanceValue
+        return "Uniform CIE sky [%.2f lux]"%self.illuminanceValue
