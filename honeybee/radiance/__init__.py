@@ -1,3 +1,3 @@
-__all__ = ["analysisrecipe", "commands", "radiancematerial", "radianceparameters", "radianceproperties" "sky"]
+__all__ = ["radianceproperties", "analysisrecipe", "commands", "radiancematerial", "radianceparameters","sky"]
 
-import analysisrecipe, commands, radiancematerial, radianceproperties, radianceparameters, sky
+import radianceproperties, analysisrecipe, commands, radiancematerial, radianceparameters, sky
