@@ -11,7 +11,8 @@ class RadianceMaterialLibrary:
     def materials(self):
         """Return list of all the available materials"""
 
-class RadianceMaterial:
+
+class RadianceMaterial(object):
     """
     Radiance Material
 
@@ -57,6 +58,7 @@ class RadianceMaterial:
     def __repr__(self):
         return self.toRadString()
 
+
 class RadianceGlassMaterial(RadianceMaterial):
     def __init__():
         RadianceMaterial.__init__()
@@ -84,11 +86,3 @@ class RadianceGlassMaterial(RadianceMaterial):
 
 class RadiancePlasticMaterial(RadianceMaterial):
     pass
-
-
-class HBSurfaceRADProperties:
-    def __init__(self):
-        pass
-
-    def radianceMaterial(self):
-        return

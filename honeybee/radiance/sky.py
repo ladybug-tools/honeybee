@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 import os
 
+
 class HBSky:
     """Base class for Honeybee Skies"""
     def __init__(self):
