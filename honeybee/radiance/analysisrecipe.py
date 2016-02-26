@@ -1,18 +1,25 @@
+"""Radiance Analysis Recipes."""
+
 from abc import ABCMeta, abstractmethod, abstractproperty
 from sky import *
 from radianceparameters import *
 
+
 class HBDaylightAnalysisRecipe(object):
+    """Analysis Recipe Base class."""
+
     pass
 
-class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
-    """Grid base analysis base class
 
-        Attributes:
-            sky: A honeybee sky for the analysis
-            radianceParameters: Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)
+class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
+    """Grid base analysis base class.
+
+    Attributes:
+        sky: A honeybee sky for the analysis
+        radianceParameters: Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)
     """
-    def __init__(self, sky, radParameters = None):
+
+    def __init__(self, sky, radParameters=None):
         self.sky = sky
         self.radianceParameters = radParameters
 
