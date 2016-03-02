@@ -1,13 +1,6 @@
 import os
 import subprocess
-
-
-class RadianceCommand(object):
-    """Base class for commands."""
-
-    def execute(self):
-        """Execute radiance command."""
-        raise NotImplementedError
+from baseCommand import RadianceCommand
 
 
 class Oconv(RadianceCommand):
@@ -15,7 +8,7 @@ class Oconv(RadianceCommand):
 
     Read more at: http://radsite.lbl.gov/radiance/man_html/oconv.1.html
 
-    Args:
+    Attributes:
         fileName: oct filename which is usually the same as the project name (Default: unnamed)
         workingDir: Path to the directory that the res
         inputFiles: Sorted list of full path to input rad files (Default: [])
@@ -101,5 +94,5 @@ if __name__ == "__main__":
         r"C:\ladybug\unnamed\gridBasedSimulation\cumulativeSky_1_1_1_12_31_24_radAnalysis.sky",
         r"C:\ladybug\unnamed\gridBasedSimulation\material_unnamed.rad",
         r"C:\ladybug\unnamed\gridBasedSimulation\unnamed.rad"])
-    # print oc.commandline(r"c:\radiance\bin")
-    oc.execute(r"c:\radiance\bin")
+    print oc.commandline(r"c:\radiance\bin")
+    # oc.execute(r"c:\radiance\bin")

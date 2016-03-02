@@ -1,20 +1,9 @@
-class RadianceMaterialLibrary:
-    # majority of methods can be modified from
-
-    def __init__(self):
-        self.loadDefaultMaterials()
-
-    def loadDefaultMaterials(self):
-        pass
-
-    @property
-    def materials(self):
-        """Return list of all the available materials"""
+"""Radiance Materials (e.g plastic, glass, etc.)."""
 
 
 class RadianceMaterial(object):
     """
-    Radiance Material
+    Base class for Radiance materials.
 
     Attributes:
         name: Material name as a string
@@ -24,16 +13,17 @@ class RadianceMaterial(object):
               {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
     """
 
-    def __init__(self, name, type, values = None, modifier = "void"):
+    def __init__(self, name, type, values=None, modifier="void"):
         self.name = name.rstrip()
         self.type = type.rstrip()
         self.modifier = modifier.rstrip()
 
-        if not values: values = dict()
+        if not values:
+            values = dict()
         self.values = values
 
     def toRadString(self):
-        firstLine = "%s %s %s"%(self.modifier, self.type, self.name)
+        firstLine = "%s %s %s" % (self.modifier, self.type, self.name)
 
         material = [firstLine]
         # order is important and that's why I'm using range
@@ -46,12 +36,13 @@ class RadianceMaterial(object):
         material.append("\n")
         return "\n".join(material)
 
-    def addValues(self, lineCount, values):
-        """Add values to current material
 
-           Args:
-               lineCount: An integer that represnt the line number
-               values: Values as a list of string
+    def addValues(self, lineCount, values):
+        """Add values to current material.
+
+        Args:
+           lineCount: An integer that represnt the line number
+           values: Values as a list of string
         """
         self.values[lineCount] = values
 

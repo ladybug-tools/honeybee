@@ -1,22 +1,42 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
+import types
 
 
-# TODO: Add points property.
-# Analysis surface should work without geometry and based on points Input
-# In this approach we can implement all the methods in honeybee-core and test
-# them with no need to geometries. Also down the road I can see people use this
-# library just for creating idf files and so on
-class AnalysisSurface(object):
+class HBAnalysisSurface(object):
     """Base class for Honeybee surface.
 
-    WARNING: Do NOT use this class directly.
+    Args:
+        name: A unique string for surface name
+        sortedPoints: A list of 3 points or more as tuple or list with three items
+            (x, y, z). Points should be sorted. This class won't sort the points.
+            If surfaces has multiple subsurfaces you can pass lists of point lists
+            to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
+        isNameSetByUser: If you want the name to be changed by honeybee any case
+            set isNameSetByUser to True. Default is set to False which let Honeybee
+            to rename the surface in cases like creating a newHBZone.
+        EPProperties: EnergyPlus properties for this surface. If empty default
+            EPProperties will be assigned to surface by Honeybee.
+        RADProperties: Radiance properties for this surface. If empty default
+            RADProperties will be assigned to surface by Honeybee.
     """
 
-    __metaclass__ = ABCMeta
-
-    def __init__(self, name, isNameSetByUser=False, EPProperties=None, RADProperties=None):
+    def __init__(self, name, sortedPoints=[], isNameSetByUser=False,
+                 EPProperties=None, RADProperties=None):
         """Initialize Honeybee Surface."""
         self.name = (name, isNameSetByUser)
+        """Surface name"""
+        self.__pts = []
+        self.points = sortedPoints
+        """A list of points as tuples or lists of (x, y, z).
+        Points should be sorted. This class won't sort the points.
+        (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+        """
+        self.EPProperties = EPProperties
+        """EnergyPlus properties for this surface. If empty default
+            EPProperties will be assigned to surface by Honeybee."""
+        self.RADProperties = RADProperties
+        """Radiance properties for this surface. If empty default
+            RADProperties will be assigned to surface by Honeybee.
+        """
 
     @property
     def name(self):
@@ -59,49 +79,83 @@ class AnalysisSurface(object):
         """
         return self.__isNameSetByUser
 
-    @abstractproperty
-    def geometry(self):
-        """Set and return geometry.
+    @property
+    def points(self):
+        """Get/set points."""
+        return self.__pts
 
-        It needs to be implemented in geometry libraries
+    @points.setter
+    def points(self, pts):
+        """set points.
+
+        Args:
+            pts: A list of points as tuples or lists of (x, y, z).
+            Points should be sorted. This class won't sort the points.
+            (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
         """
+        # The structure of points is list of lists so it can handle non-planar
+        # surfaces which will have several subsurfaces. We don't check the structure
+        # here so user can add points as needed. It will be checked once user wants
+        # to write the surface to Radiance or EnergyPlus
+        self.addPointList(pts, True)
+
+    def addPointList(self, pts, removeCurrentPoints=False):
+        """Add new list of points to surface points.
+
+        Args:
+            pts: A list of points as tuples or lists of (x, y, z).
+                Points should be sorted. This class won't sort the points.
+                (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+            removeCurrentPoints: Set to True to remove current points.
+                (Default: False)
+        """
+        assert isinstance(pts, (list, tuple, types.GeneratorType)), \
+            "Points should be a list or a tuple or a generator"
+        if len(pts) == 0:
+            return
+        if removeCurrentPoints:
+            self.__pts = []
+        # append the new point list
+        self.__pts.append(pts)
+
+    def addPoint(self, pt, subsurfaceNumber=-1):
+        """Add a single point to current surface points.
+
+        Args:
+            pt: A point as (x, y, z) e.g. (20, 20, 10)
+            subsurfaceNumber: An optional input to indicate the subsurface that
+            point should be added to (Default is -1)
+        """
+        try:
+            self.__pts[subsurfaceNumber].append(pt)
+        except IndexError:
+            # pts is a flattened list
+            self.__pts.append([pt])
+        except AttributeError:
+            # input is a tuple or a generator
+            self.__pts[subsurfaceNumber] = list(self.__pts[subsurfaceNumber])
+            self.__pts[subsurfaceNumber].append(pt)
+
+    def getEnergyPlusMaterials(self, layerNumber=None):
+        """Return list of EnergyPlus materials for this surface."""
         pass
 
-    @abstractmethod
     def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=False):
         """Return EnergyPlus definition for this surface."""
-        pass
-
-    @abstractmethod
-    def getRadianceDefinition(self, includeMaterial=False):
-        """Return Radiance definition for this surface."""
         pass
 
     def getEnergyPlusConstruction(self):
         """Return surface EnergyPlus construction."""
         pass
 
-    def getEnergyPlusMaterials(self, layerNumber=None):
-        """Return list of EnergyPlus materials for this surface."""
-        pass
+if __name__ == "__main__":
+    # create a surface
+    pts = ((0, 0, 0), (10, 0, 0), (10, 10, 0))
+    hbsrf = HBAnalysisSurface("001", pts)
+    hbsrf.addPoint((0, 10, 0))
 
+    # add new points as a subsurface
+    pts2 = ((10, 0, 0), (20, 0, 0), (20, 10, 0), (10, 10, 0))
+    hbsrf.addPointList(pts2)
 
-class HBSurface(AnalysisSurface):
-    """Minimum implementation of Honeybee surface."""
-
-    def __init__(self):
-        """Initialize Honeybee Surface."""
-        pass
-
-    @property
-    def geometry(self):
-        """return geometry."""
-        return self.__geometry
-
-    @geometry.setter
-    def geometry(self, geo):
-        """Set geometry."""
-        self.__geometry = geo
-        # calculate center point and normal
-
-        # calculate surface baseplane
+    print hbsrf.points
