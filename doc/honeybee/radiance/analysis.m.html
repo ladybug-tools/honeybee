@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance.material API documentation</title>
-    <meta name="description" content="" />
+    <title>honeybee.radiance.analysis API documentation</title>
+    <meta name="description" content="Radiance Analysis workflows." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -985,14 +985,22 @@ table {
     <ul id="index">
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="custom.m.html">honeybee.radiance.material.custom</a></li>
-        <li class="mono"><a href="glass.m.html">honeybee.radiance.material.glass</a></li>
-        <li class="mono"><a href="plastic.m.html">honeybee.radiance.material.plastic</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.analysis.Analysis">Analysis</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.analysis.Analysis.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysis.Analysis.run">run</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysis.Analysis.write">write</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1004,14 +1012,32 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance.material</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.analysis</span> module</h1>
+  <p>Radiance Analysis workflows.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material" class="source">
-    <pre><code>__all__ = ["custom", "glass", "plastic"]
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysis', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysis" class="source">
+    <pre><code>"""Radiance Analysis workflows."""
 
-import custom, glass, plastic
+
+class Analysis(object):
+    """Base analysis class for Radiance analysis."""
+
+    def __init__(self):
+        """Initialize the class."""
+        pass
+
+    def write(self):
+        """Write analysis files."""
+        pass
+
+    def run(self):
+        """Run analysis."""
+        pass
+
+    def __repr__(self):
+        """Represent Analysis class."""
+        return "honeybee.radiance.analysis.Analysis"
 </code></pre>
   </div>
 
@@ -1020,33 +1046,115 @@ import custom, glass, plastic
   <section id="section-items">
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="custom.m.html">honeybee.radiance.material.custom</a></p>
+      <p id="honeybee.radiance.analysis.Analysis" class="name">class <span class="ident">Analysis</span></p>
       
   
-    <div class="desc"><p>Radiance Custom Material (e.g plastic, glass, etc.).</p>
-<p>Use this class to create any type of radiance materials.
-http://radsite.lbl.gov/radiance/refer/ray.html#Materials</p></div>
+    <div class="desc"><p>Base analysis class for Radiance analysis.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysis.Analysis', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysis.Analysis" class="source">
+    <pre><code>class Analysis(object):
+    """Base analysis class for Radiance analysis."""
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="glass.m.html">honeybee.radiance.material.glass</a></p>
-      
+    def __init__(self):
+        """Initialize the class."""
+        pass
+
+    def write(self):
+        """Write analysis files."""
+        pass
+
+    def run(self):
+        """Run analysis."""
+        pass
+
+    def __repr__(self):
+        """Represent Analysis class."""
+        return "honeybee.radiance.analysis.Analysis"
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.analysis.Analysis">Analysis</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysis.Analysis.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
+    </div>
+    
+
+    
   
-    <div class="desc"><p>Radiance Glass Material.</p>
-<p>http://radsite.lbl.gov/radiance/refer/ray.html#Glass</p></div>
+    <div class="desc"><p>Initialize the class.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysis.Analysis.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysis.Analysis.__init__" class="source">
+    <pre><code>def __init__(self):
+    """Initialize the class."""
+    pass
+</code></pre>
+  </div>
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="plastic.m.html">honeybee.radiance.material.plastic</a></p>
-      
+  </div>
   
-    <div class="desc"><p>Radiance Plastic Material.</p>
-<p>http://radsite.lbl.gov/radiance/refer/ray.html#Plastic</p></div>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysis.Analysis.run">
+    <p>def <span class="ident">run</span>(</p><p>self)</p>
+    </div>
+    
 
+    
+  
+    <div class="desc"><p>Run analysis.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysis.Analysis.run', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysis.Analysis.run" class="source">
+    <pre><code>def run(self):
+    """Run analysis."""
+    pass
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysis.Analysis.write">
+    <p>def <span class="ident">write</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Write analysis files.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysis.Analysis.write', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysis.Analysis.write" class="source">
+    <pre><code>def write(self):
+    """Write analysis files."""
+    pass
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       </div>
+      </div>
+
   </section>
 
     </article>

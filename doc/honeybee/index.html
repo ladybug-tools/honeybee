@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance API documentation</title>
+    <title>honeybee API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -988,13 +988,11 @@ table {
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
-        <li class="mono"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></li>
-        <li class="mono"><a href="command/index.html">honeybee.radiance.command</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.radiance.helper</a></li>
-        <li class="mono"><a href="material/index.html">honeybee.radiance.material</a></li>
-        <li class="mono"><a href="parameters.m.html">honeybee.radiance.parameters</a></li>
-        <li class="mono"><a href="properties.m.html">honeybee.radiance.properties</a></li>
-        <li class="mono"><a href="sky/index.html">honeybee.radiance.sky</a></li>
+        <li class="mono"><a href="hbsurface.m.html">honeybee.hbsurface</a></li>
+        <li class="mono"><a href="hbzone.m.html">honeybee.hbzone</a></li>
+        <li class="mono"><a href="radiance/index.html">honeybee.radiance</a></li>
+        <li class="mono"><a href="surfacetype.m.html">honeybee.surfacetype</a></li>
+        <li class="mono"><a href="wrapper.m.html">honeybee.wrapper</a></li>
       </ul>
     </li>
     </ul>
@@ -1008,15 +1006,14 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance</span> module</h1>
+  <h1 class="title"><span class="name">honeybee</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance" class="source">
-    <pre><code>__all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
-    "sky", "helper"]
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee" class="source">
+    <pre><code>__all__ = ["hbzone", "hbsurface", "radiance", "surfacetype", "wrapper"]
 
-import properties, analysisrecipe, command, material, parameters, sky, helper
+import hbzone, hbsurface, radiance, surfacetype, wrapper
 </code></pre>
   </div>
 
@@ -1028,47 +1025,32 @@ import properties, analysisrecipe, command, material, parameters, sky, helper
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p class="name"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></p>
-      
-  
-    <div class="desc"><p>Radiance Analysis Recipes.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="command/index.html">honeybee.radiance.command</a></p>
+      <p class="name"><a href="hbsurface.m.html">honeybee.hbsurface</a></p>
       
   
 
       </div>
       <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.radiance.helper</a></p>
-      
-  
-    <div class="desc"><p>A collection of auxiliary funtions for working with radiance files and objects.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="material/index.html">honeybee.radiance.material</a></p>
+      <p class="name"><a href="hbzone.m.html">honeybee.hbzone</a></p>
       
   
 
       </div>
       <div class="item">
-      <p class="name"><a href="parameters.m.html">honeybee.radiance.parameters</a></p>
+      <p class="name"><a href="radiance/index.html">honeybee.radiance</a></p>
       
   
-    <div class="desc"><p>Radiance raytracing Parameters.</p></div>
 
       </div>
       <div class="item">
-      <p class="name"><a href="properties.m.html">honeybee.radiance.properties</a></p>
+      <p class="name"><a href="surfacetype.m.html">honeybee.surfacetype</a></p>
       
   
-    <div class="desc"><p>Radiance Properties for HBSurfaces.</p></div>
+    <div class="desc"><p>Honeybee surface types (e.g. wall, roof, etc.).</p></div>
 
       </div>
       <div class="item">
-      <p class="name"><a href="sky/index.html">honeybee.radiance.sky</a></p>
+      <p class="name"><a href="wrapper.m.html">honeybee.wrapper</a></p>
       
   
 
