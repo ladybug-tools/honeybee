@@ -1,3 +1,3 @@
-__all__ = ["hbzone", "hbsurface", "wrapper", "radiance"]
+__all__ = ["hbzone", "hbsurface", "radiance", "surfacetype", "wrapper"]
 
-import hbzone, hbsurface, wrapper, radiance
+import hbzone, hbsurface, radiance, surfacetype, wrapper
