@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance.geometry API documentation</title>
-    <meta name="description" content="A collection of methods for writing Radiance file." />
+    <title>honeybee.geometryoperation API documentation</title>
+    <meta name="description" content="Collection of methods for geometrical operations." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -987,7 +987,9 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#honeybee.radiance.geometry.polygon">polygon</a></li>
+    <li class="mono"><a href="#honeybee.geometryoperation.calculateCenterPointFromPoints">calculateCenterPointFromPoints</a></li>
+    <li class="mono"><a href="#honeybee.geometryoperation.calculateNormalFromPoints">calculateNormalFromPoints</a></li>
+    <li class="mono"><a href="#honeybee.geometryoperation.calculateVectorAngleToZAxis">calculateVectorAngleToZAxis</a></li>
   </ul>
 
     </li>
@@ -1004,52 +1006,66 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance.geometry</span> module</h1>
-  <p>A collection of methods for writing Radiance file.</p>
+  <h1 class="title"><span class="name">honeybee.geometryoperation</span> module</h1>
+  <p>Collection of methods for geometrical operations.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.geometry', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.geometry" class="source">
-    <pre><code>"""A collection of methods for writing Radiance file."""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.geometryoperation" class="source">
+    <pre><code>"""Collection of methods for geometrical operations."""
+from vectormath.euclid import math, Vector3
 
 
-def __normName(name):
-    """Replace white spaces in names."""
-    return name.replace(" ", "_")
+def calculateNormalFromPoints(pts):
+    """Calculate normal vector for a list of points.
 
-
-# TODO: Change polygon to a class
-def polygon(name, materialName, pts, minimal=False):
-    """return a string for radiance polygon.
-
-    Args:
-        name:Surface name. Surface name can't have white space.
-        materialName: Name of the radiance material. Material name can't have white space.
-        pts: List of points as (x, y, z). Number of points can't be less than 3.
-        minimal: Set to True to get the definition in as single line.
+    This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
+    assuming the points are representing a planar surface
     """
-    __baseString = "%s polygon %s\n0\n0\n%d\n%s"
+    # vector between first point and the second point on the list
+    v1 = Vector3(pts[1][0] - pts[0][0],
+                 pts[1][1] - pts[0][1],
+                 pts[1][2] - pts[0][2])
 
-    assert len(pts) >= 3, \
-        "Insufficient number of points for %s: %d" % (name, len(pts))
+    # vector between first point and the last point in the list
+    v2 = Vector3(pts[-1][0] - pts[0][0],
+                 pts[-1][1] - pts[0][1],
+                 pts[-1][2] - pts[0][2])
 
-    ptCoordinates = "\n".join([" ".join(map(str, pt)) for pt in pts])
+    return tuple(v1.cross(v2).normalize())
 
-    definition = __baseString % (
-        __normName(materialName),
-        __normName(name),
-        3 * len(pts),
-        ptCoordinates
-    )
 
-    return definition.replace("\t", "").replace("\n", " ") if minimal else definition
+def calculateCenterPointFromPoints(pts):
+    """Calculate center point.
 
+    This method finds the center point by averging x, y and z values.
+    """
+    x, y, z = 0, 0, 0
+
+    try:
+        ptCount = float(len(pts))
+        for pt in pts:
+            x += pt[0]
+            y += pt[1]
+            z += pt[2]
+    except IndexError:
+        raise IndexError("Each point should be a list or a tuple with 3 values.")
+    except TypeError:
+        raise TypeError("Pts should be a list or a tuple of points.")
+
+    return x / ptCount, y / ptCount, z / ptCount
+
+
+def calculateVectorAngleToZAxis(vector):
+    """Calculate angle between vectoe and (0, 0, 1) in degrees."""
+    zAxis = Vector3(0, 0, 1)
+    return math.degrees(zAxis.angle(Vector3(*vector)))
 
 if __name__ == "__main__":
-    # test code
-    pts = ((10, 0, 0), (20, 0, 0), (20, 10, 0), (10, 10, 0))
-    # notice white spaces are replaced by _
-    print polygon("surface 001", "white material", pts, True)
-    print polygon("surface 002", "white material", pts)
+    pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))
+    srfVector = calculateNormalFromPoints(pts)
+
+    print calculateVectorAngleToZAxis(srfVector)
+    print calculateCenterPointFromPoints(pts)
 </code></pre>
   </div>
 
@@ -1060,46 +1076,98 @@ if __name__ == "__main__":
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="honeybee.radiance.geometry.polygon">
-    <p>def <span class="ident">polygon</span>(</p><p>name, materialName, pts, minimal=False)</p>
+    <div class="name def" id="honeybee.geometryoperation.calculateCenterPointFromPoints">
+    <p>def <span class="ident">calculateCenterPointFromPoints</span>(</p><p>pts)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>return a string for radiance polygon.</p>
-<p>Args:
-    name:Surface name. Surface name can't have white space.
-    materialName: Name of the radiance material. Material name can't have white space.
-    pts: List of points as (x, y, z). Number of points can't be less than 3.
-    minimal: Set to True to get the definition in as single line.</p></div>
+    <div class="desc"><p>Calculate center point.</p>
+<p>This method finds the center point by averging x, y and z values.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.geometry.polygon', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.geometry.polygon" class="source">
-    <pre><code>def polygon(name, materialName, pts, minimal=False):
-    """return a string for radiance polygon.
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation.calculateCenterPointFromPoints', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.geometryoperation.calculateCenterPointFromPoints" class="source">
+    <pre><code>def calculateCenterPointFromPoints(pts):
+    """Calculate center point.
 
-    Args:
-        name:Surface name. Surface name can't have white space.
-        materialName: Name of the radiance material. Material name can't have white space.
-        pts: List of points as (x, y, z). Number of points can't be less than 3.
-        minimal: Set to True to get the definition in as single line.
+    This method finds the center point by averging x, y and z values.
     """
-    __baseString = "%s polygon %s\n0\n0\n%d\n%s"
+    x, y, z = 0, 0, 0
 
-    assert len(pts) >= 3, \
-        "Insufficient number of points for %s: %d" % (name, len(pts))
+    try:
+        ptCount = float(len(pts))
+        for pt in pts:
+            x += pt[0]
+            y += pt[1]
+            z += pt[2]
+    except IndexError:
+        raise IndexError("Each point should be a list or a tuple with 3 values.")
+    except TypeError:
+        raise TypeError("Pts should be a list or a tuple of points.")
 
-    ptCoordinates = "\n".join([" ".join(map(str, pt)) for pt in pts])
+    return x / ptCount, y / ptCount, z / ptCount
+</code></pre>
+  </div>
+</div>
 
-    definition = __baseString % (
-        __normName(materialName),
-        __normName(name),
-        3 * len(pts),
-        ptCoordinates
-    )
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="honeybee.geometryoperation.calculateNormalFromPoints">
+    <p>def <span class="ident">calculateNormalFromPoints</span>(</p><p>pts)</p>
+    </div>
+    
 
-    return definition.replace("\t", "").replace("\n", " ") if minimal else definition
+    
+  
+    <div class="desc"><p>Calculate normal vector for a list of points.</p>
+<p>This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
+assuming the points are representing a planar surface</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation.calculateNormalFromPoints', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.geometryoperation.calculateNormalFromPoints" class="source">
+    <pre><code>def calculateNormalFromPoints(pts):
+    """Calculate normal vector for a list of points.
+
+    This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
+    assuming the points are representing a planar surface
+    """
+    # vector between first point and the second point on the list
+    v1 = Vector3(pts[1][0] - pts[0][0],
+                 pts[1][1] - pts[0][1],
+                 pts[1][2] - pts[0][2])
+
+    # vector between first point and the last point in the list
+    v2 = Vector3(pts[-1][0] - pts[0][0],
+                 pts[-1][1] - pts[0][1],
+                 pts[-1][2] - pts[0][2])
+
+    return tuple(v1.cross(v2).normalize())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="honeybee.geometryoperation.calculateVectorAngleToZAxis">
+    <p>def <span class="ident">calculateVectorAngleToZAxis</span>(</p><p>vector)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Calculate angle between vectoe and (0, 0, 1) in degrees.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation.calculateVectorAngleToZAxis', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.geometryoperation.calculateVectorAngleToZAxis" class="source">
+    <pre><code>def calculateVectorAngleToZAxis(vector):
+    """Calculate angle between vectoe and (0, 0, 1) in degrees."""
+    zAxis = Vector3(0, 0, 1)
+    return math.degrees(zAxis.angle(Vector3(*vector)))
 </code></pre>
   </div>
 </div>

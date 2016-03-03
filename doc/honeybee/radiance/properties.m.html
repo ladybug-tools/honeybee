@@ -988,8 +988,13 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.radiance.properties.radianceproperties">radianceproperties</a></span>
+        <span class="class_name"><a href="#honeybee.radiance.properties.RadianceProperties">RadianceProperties</a></span>
         
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.properties.RadianceProperties.__init__">__init__</a></li>
+  </ul>
+
         </li>
       </ul>
     </li>
@@ -1014,22 +1019,78 @@ table {
 from material.materialBase import RadianceMaterial
 
 
-class radianceproperties(object):
-    """Radiance properties."""
+# TODO: Currently Radiance properties for HBSurface is limited to material
+# This might need to change in the near future
+class RadianceProperties(object):
+    """Radiance properties for HBSurface.
+
+    Args:
+        radianceMaterial: Radiance material for this surfcae.Use honeybee.radiace.material
+            to create a radiance material (Default: None).
+        isMaterialSetByUser: Set to True if you don't want material automatically
+            overwritten by honeybee in cases like solve adjacencies.
+    """
+
+    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
+        """Create radiance properties for surface."""
+        self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
 
     @property
     def radianceMaterial(self):
         """Return Radiance Material."""
         return self.__radianceMaterial
 
+    # TODO: Add support for parsing materials from string
+    # check helper.py for useful methods - if NotImplemented implement it based
+    # on current honeybee for grasshopper.
     @radianceMaterial.setter
-    def radianceMaterial(self, material):
-        """Set Radiance Material."""
+    def radianceMaterial(self, values):
+        """Set Radiance material and if it is set by user.
+
+        Args:
+            values: A name or a tuple as (radianceMaterial, isSetByUser)
+
+        Usage:
+            radianceMaterial = PlasticMaterial.bySingleReflectValue("wall_material", 0.55)
+            HBSrf.radianceMaterial = (radianceMaterial, True)
+        """
+        try:
+            # check if user passed a tuple
+            if isinstance(values, RadianceMaterial):
+                raise TypeError  # The user passed only Radiance Material
+            __newMaterial, __isMaterialSetByUser = values
+        except ValueError:
+            # user is passing a list or tuple with one ValueError
+            __newMaterial = values[0]
+            __isMaterialSetByUser = False  # if not indicated assume it is not set by user.
+        except TypeError:
+            # user just passed a single value which is the material
+            __newMaterial = values
+            __isMaterialSetByUser = False  # if not indicated assume it is not set by user.
+        finally:
+            # set new material
+            self.__name = __newMaterial
+            self.__isMaterialSetByUser = __isMaterialSetByUser
+
         # chek if radiance material is radiance material
-        if isinstance(material, RadianceMaterial):
-            self.__radianceMaterial = material
-        # if type is string then try to create a material from string
-        pass
+        if __newMaterial is None:
+            self.__radianceMaterial = None
+        else:
+            assert isinstance(__newMaterial, RadianceMaterial), \
+                "%s is not a valid Radiance material" % __newMaterial
+
+            self.__radianceMaterial = __newMaterial
+
+    @property
+    def isMaterialSetByUser(self):
+        """Check if material is set by user."""
+        return self.__isMaterialSetByUser
+
+
+if __name__ == "__main__":
+    rp = RadianceProperties()
+    print rp.radianceMaterial
+    print rp.isMaterialSetByUser
 </code></pre>
   </div>
 
@@ -1041,29 +1102,82 @@ class radianceproperties(object):
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.radiance.properties.radianceproperties" class="name">class <span class="ident">radianceproperties</span></p>
+      <p id="honeybee.radiance.properties.RadianceProperties" class="name">class <span class="ident">RadianceProperties</span></p>
       
   
-    <div class="desc"><p>Radiance properties.</p></div>
+    <div class="desc"><p>Radiance properties for HBSurface.</p>
+<p>Args:
+    radianceMaterial: Radiance material for this surfcae.Use honeybee.radiace.material
+        to create a radiance material (Default: None).
+    isMaterialSetByUser: Set to True if you don't want material automatically
+        overwritten by honeybee in cases like solve adjacencies.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.properties.radianceproperties', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.properties.radianceproperties" class="source">
-    <pre><code>class radianceproperties(object):
-    """Radiance properties."""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.properties.RadianceProperties', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.properties.RadianceProperties" class="source">
+    <pre><code>class RadianceProperties(object):
+    """Radiance properties for HBSurface.
+
+    Args:
+        radianceMaterial: Radiance material for this surfcae.Use honeybee.radiace.material
+            to create a radiance material (Default: None).
+        isMaterialSetByUser: Set to True if you don't want material automatically
+            overwritten by honeybee in cases like solve adjacencies.
+    """
+
+    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
+        """Create radiance properties for surface."""
+        self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
 
     @property
     def radianceMaterial(self):
         """Return Radiance Material."""
         return self.__radianceMaterial
 
+    # TODO: Add support for parsing materials from string
+    # check helper.py for useful methods - if NotImplemented implement it based
+    # on current honeybee for grasshopper.
     @radianceMaterial.setter
-    def radianceMaterial(self, material):
-        """Set Radiance Material."""
+    def radianceMaterial(self, values):
+        """Set Radiance material and if it is set by user.
+
+        Args:
+            values: A name or a tuple as (radianceMaterial, isSetByUser)
+
+        Usage:
+            radianceMaterial = PlasticMaterial.bySingleReflectValue("wall_material", 0.55)
+            HBSrf.radianceMaterial = (radianceMaterial, True)
+        """
+        try:
+            # check if user passed a tuple
+            if isinstance(values, RadianceMaterial):
+                raise TypeError  # The user passed only Radiance Material
+            __newMaterial, __isMaterialSetByUser = values
+        except ValueError:
+            # user is passing a list or tuple with one ValueError
+            __newMaterial = values[0]
+            __isMaterialSetByUser = False  # if not indicated assume it is not set by user.
+        except TypeError:
+            # user just passed a single value which is the material
+            __newMaterial = values
+            __isMaterialSetByUser = False  # if not indicated assume it is not set by user.
+        finally:
+            # set new material
+            self.__name = __newMaterial
+            self.__isMaterialSetByUser = __isMaterialSetByUser
+
         # chek if radiance material is radiance material
-        if isinstance(material, RadianceMaterial):
-            self.__radianceMaterial = material
-        # if type is string then try to create a material from string
-        pass
+        if __newMaterial is None:
+            self.__radianceMaterial = None
+        else:
+            assert isinstance(__newMaterial, RadianceMaterial), \
+                "%s is not a valid Radiance material" % __newMaterial
+
+            self.__radianceMaterial = __newMaterial
+
+    @property
+    def isMaterialSetByUser(self):
+        """Check if material is set by user."""
+        return self.__isMaterialSetByUser
 </code></pre>
   </div>
 </div>
@@ -1072,21 +1186,54 @@ class radianceproperties(object):
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.radiance.properties.radianceproperties">radianceproperties</a></li>
+          <li><a href="#honeybee.radiance.properties.RadianceProperties">RadianceProperties</a></li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.properties.radianceproperties.radianceMaterial" class="name">var <span class="ident">radianceMaterial</span></p>
+            <p id="honeybee.radiance.properties.RadianceProperties.isMaterialSetByUser" class="name">var <span class="ident">isMaterialSetByUser</span></p>
             
 
             
   
-    <div class="desc"><p>Return Radiance Material.</p></div>
+    <div class="desc"><p>Check if material is set by user.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
+            <div class="item">
+            <p id="honeybee.radiance.properties.RadianceProperties.radianceMaterial" class="name">var <span class="ident">radianceMaterial</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.properties.RadianceProperties.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, radianceMaterial=None, isMaterialSetByUser=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Create radiance properties for surface.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.properties.RadianceProperties.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.properties.RadianceProperties.__init__" class="source">
+    <pre><code>def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
+    """Create radiance properties for surface."""
+    self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       </div>
       </div>
 

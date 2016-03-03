@@ -1016,6 +1016,20 @@ table {
         
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#honeybee.surfacetype.SurfaceTypes">SurfaceTypes</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.surfacetype.SurfaceTypes.getBaseTypeByNormalAngle">getBaseTypeByNormalAngle</a></li>
+    <li class="mono"><a href="#honeybee.surfacetype.SurfaceTypes.isSurfaceOnGround">isSurfaceOnGround</a></li>
+    <li class="mono"><a href="#honeybee.surfacetype.SurfaceTypes.isSurfaceUnderground">isSurfaceUnderground</a></li>
+    <li class="mono"><a href="#honeybee.surfacetype.SurfaceTypes.byNormalAngleAndPoints">byNormalAngleAndPoints</a></li>
+    <li class="mono"><a href="#honeybee.surfacetype.SurfaceTypes.getTypeByKey">getTypeByKey</a></li>
+    <li class="mono"><a href="#honeybee.surfacetype.SurfaceTypes.reEvaluateSurfaceType">reEvaluateSurfaceType</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#honeybee.surfacetype.UndergroundCeiling">UndergroundCeiling</a></span>
         
         </li>
@@ -1198,6 +1212,145 @@ class Context(surfaceTypeBase):
     """Surface type id."""
     radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_shading", 0.35)
     """Default Radiance material."""
+
+
+class SurfaceTypes(object):
+    """Collection of surface types.
+
+    0.0: Wall,
+    0.5: UndergroundWall,
+    1.0: Roof,
+    1.5: UndergroundCeiling,
+    2.0: Floor,
+    2.25: UndergroundSlab,
+    2.5: SlabOnGrade,
+    2.75: ExposedFloor,
+    3.0: Ceiling,
+    4.0: AirWall,
+    5.0: Window,
+    6.0: Context
+    """
+
+    __types = {
+        0.0: Wall,
+        0.5: UndergroundWall,
+        1.0: Roof,
+        1.5: UndergroundCeiling,
+        2.0: Floor,
+        2.25: UndergroundSlab,
+        2.5: SlabOnGrade,
+        2.75: ExposedFloor,
+        3.0: Ceiling,
+        4.0: AirWall,
+        5.0: Window,
+        6.0: Context
+    }
+
+    @classmethod
+    def getTypeByKey(cls, key):
+        """Return type based on key value.
+
+        Args:
+            key: 0.0: Wall, 0.5: UndergroundWall,
+                1.0: Roof, 1.5: UndergroundCeiling,
+                2.0: Floor, 2.25: UndergroundSlab,
+                2.5: SlabOnGrade, 2.75: ExposedFloor,
+                3.0: Ceiling,
+                4.0: AirWall,
+                5.0: Window,
+                6.0: Context
+
+        Usage:
+            srfType = SurfaceTypes.getTypeByKey(6)
+        """
+        try:
+            return cls.__types[key]
+        except KeyError as e:
+            _msg = "%s is  invalid." % str(e) + \
+                " Use one of the valid values: %s" % str(cls.__types.keys())
+
+            raise KeyError(_msg)
+
+    # TODO: Add changed on boundary condition of the surface
+    @classmethod
+    def byNormalAngleAndPoints(cls, normalAngle, points=[]):
+        """Get surface type based on surface normal angle to Z axis.
+
+        Args:
+            normalAngle: Angle between surface normal and z axis in degrees.
+            points: List of surface points. If not provided the base type will
+                be returned.
+        Returns:
+            Surface type as surfaceTypeBase object.
+        """
+        __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
+
+        if len(points) > 3:
+            __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+
+        return cls.__types[__srfType]
+
+    @staticmethod
+    def getBaseTypeByNormalAngle(angleToZAxis, maximumRoofAngle=30):
+        """Get based type of the surface.
+
+        This method does calculte base methods as wall,roof and floor
+
+        Args:
+            angleToZAxis: Angle between surface normal and zAxis in degrees.
+
+        Returns:
+            An integer between 0-2 0: Wall, 1: Roof, 2: Floor
+        """
+        if angleToZAxis < maximumRoofAngle or angleToZAxis > 360 - maximumRoofAngle:
+            return 1  # roof
+        elif 160 < angleToZAxis < 200:
+            return 2  # floor
+        else:
+            return 0  # wall
+
+    def reEvaluateSurfaceType(self, baseSurfaceType, pts):
+        """Re-evaluate base type for special types."""
+        if pts == []:
+            return baseSurfaceType
+
+        if baseSurfaceType == 0:
+            if self.isSurfaceUnderground():
+                baseSurfaceType += 0.5  # UndergroundWall
+
+        elif baseSurfaceType == 1:
+            # A roof underground will be assigned as UndergroundCeiling
+            if self.isSurfaceUnderground():
+                baseSurfaceType += 0.5  # UndergroundCeiling
+
+        elif baseSurfaceType == 2:
+            # floor
+            if self.isSurfaceOnGround():
+                baseSurfaceType += 0.5  # SlabOnGrade
+            elif self.isSurfaceUnderground():
+                baseSurfaceType += 0.25  # UndergroundSlab
+
+        return baseSurfaceType
+
+    @staticmethod
+    def isSurfaceUnderground(pts):
+        """Check if this surface is underground."""
+        for pt in pts:
+            if pt[2] > 0:
+                return False
+        return True
+
+    @staticmethod
+    def isSurfaceOnGround(pts):
+        """Check if this surface is on the ground."""
+        for pt in pts:
+            if pt[2] != 0:
+                return False
+        return True
+
+    def __repr__(self):
+        """Return types dictionary."""
+        return self.__types
 </code></pre>
   </div>
 
@@ -1749,6 +1902,397 @@ class Context(surfaceTypeBase):
 </div>
 
             </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="honeybee.surfacetype.SurfaceTypes" class="name">class <span class="ident">SurfaceTypes</span></p>
+      
+  
+    <div class="desc"><p>Collection of surface types.</p>
+<p>0.0: Wall,
+0.5: UndergroundWall,
+1.0: Roof,
+1.5: UndergroundCeiling,
+2.0: Floor,
+2.25: UndergroundSlab,
+2.5: SlabOnGrade,
+2.75: ExposedFloor,
+3.0: Ceiling,
+4.0: AirWall,
+5.0: Window,
+6.0: Context</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfacetype.SurfaceTypes', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfacetype.SurfaceTypes" class="source">
+    <pre><code>class SurfaceTypes(object):
+    """Collection of surface types.
+
+    0.0: Wall,
+    0.5: UndergroundWall,
+    1.0: Roof,
+    1.5: UndergroundCeiling,
+    2.0: Floor,
+    2.25: UndergroundSlab,
+    2.5: SlabOnGrade,
+    2.75: ExposedFloor,
+    3.0: Ceiling,
+    4.0: AirWall,
+    5.0: Window,
+    6.0: Context
+    """
+
+    __types = {
+        0.0: Wall,
+        0.5: UndergroundWall,
+        1.0: Roof,
+        1.5: UndergroundCeiling,
+        2.0: Floor,
+        2.25: UndergroundSlab,
+        2.5: SlabOnGrade,
+        2.75: ExposedFloor,
+        3.0: Ceiling,
+        4.0: AirWall,
+        5.0: Window,
+        6.0: Context
+    }
+
+    @classmethod
+    def getTypeByKey(cls, key):
+        """Return type based on key value.
+
+        Args:
+            key: 0.0: Wall, 0.5: UndergroundWall,
+                1.0: Roof, 1.5: UndergroundCeiling,
+                2.0: Floor, 2.25: UndergroundSlab,
+                2.5: SlabOnGrade, 2.75: ExposedFloor,
+                3.0: Ceiling,
+                4.0: AirWall,
+                5.0: Window,
+                6.0: Context
+
+        Usage:
+            srfType = SurfaceTypes.getTypeByKey(6)
+        """
+        try:
+            return cls.__types[key]
+        except KeyError as e:
+            _msg = "%s is  invalid." % str(e) + \
+                " Use one of the valid values: %s" % str(cls.__types.keys())
+
+            raise KeyError(_msg)
+
+    # TODO: Add changed on boundary condition of the surface
+    @classmethod
+    def byNormalAngleAndPoints(cls, normalAngle, points=[]):
+        """Get surface type based on surface normal angle to Z axis.
+
+        Args:
+            normalAngle: Angle between surface normal and z axis in degrees.
+            points: List of surface points. If not provided the base type will
+                be returned.
+        Returns:
+            Surface type as surfaceTypeBase object.
+        """
+        __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
+
+        if len(points) > 3:
+            __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+
+        return cls.__types[__srfType]
+
+    @staticmethod
+    def getBaseTypeByNormalAngle(angleToZAxis, maximumRoofAngle=30):
+        """Get based type of the surface.
+
+        This method does calculte base methods as wall,roof and floor
+
+        Args:
+            angleToZAxis: Angle between surface normal and zAxis in degrees.
+
+        Returns:
+            An integer between 0-2 0: Wall, 1: Roof, 2: Floor
+        """
+        if angleToZAxis < maximumRoofAngle or angleToZAxis > 360 - maximumRoofAngle:
+            return 1  # roof
+        elif 160 < angleToZAxis < 200:
+            return 2  # floor
+        else:
+            return 0  # wall
+
+    def reEvaluateSurfaceType(self, baseSurfaceType, pts):
+        """Re-evaluate base type for special types."""
+        if pts == []:
+            return baseSurfaceType
+
+        if baseSurfaceType == 0:
+            if self.isSurfaceUnderground():
+                baseSurfaceType += 0.5  # UndergroundWall
+
+        elif baseSurfaceType == 1:
+            # A roof underground will be assigned as UndergroundCeiling
+            if self.isSurfaceUnderground():
+                baseSurfaceType += 0.5  # UndergroundCeiling
+
+        elif baseSurfaceType == 2:
+            # floor
+            if self.isSurfaceOnGround():
+                baseSurfaceType += 0.5  # SlabOnGrade
+            elif self.isSurfaceUnderground():
+                baseSurfaceType += 0.25  # UndergroundSlab
+
+        return baseSurfaceType
+
+    @staticmethod
+    def isSurfaceUnderground(pts):
+        """Check if this surface is underground."""
+        for pt in pts:
+            if pt[2] > 0:
+                return False
+        return True
+
+    @staticmethod
+    def isSurfaceOnGround(pts):
+        """Check if this surface is on the ground."""
+        for pt in pts:
+            if pt[2] != 0:
+                return False
+        return True
+
+    def __repr__(self):
+        """Return types dictionary."""
+        return self.__types
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.surfacetype.SurfaceTypes">SurfaceTypes</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.surfacetype.SurfaceTypes.getBaseTypeByNormalAngle">
+    <p>def <span class="ident">getBaseTypeByNormalAngle</span>(</p><p>angleToZAxis, maximumRoofAngle=30)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get based type of the surface.</p>
+<p>This method does calculte base methods as wall,roof and floor</p>
+<p>Args:
+    angleToZAxis: Angle between surface normal and zAxis in degrees.</p>
+<p>Returns:
+    An integer between 0-2 0: Wall, 1: Roof, 2: Floor</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfacetype.SurfaceTypes.getBaseTypeByNormalAngle', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfacetype.SurfaceTypes.getBaseTypeByNormalAngle" class="source">
+    <pre><code>@staticmethod
+def getBaseTypeByNormalAngle(angleToZAxis, maximumRoofAngle=30):
+    """Get based type of the surface.
+    This method does calculte base methods as wall,roof and floor
+    Args:
+        angleToZAxis: Angle between surface normal and zAxis in degrees.
+    Returns:
+        An integer between 0-2 0: Wall, 1: Roof, 2: Floor
+    """
+    if angleToZAxis < maximumRoofAngle or angleToZAxis > 360 - maximumRoofAngle:
+        return 1  # roof
+    elif 160 < angleToZAxis < 200:
+        return 2  # floor
+    else:
+        return 0  # wall
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.surfacetype.SurfaceTypes.isSurfaceOnGround">
+    <p>def <span class="ident">isSurfaceOnGround</span>(</p><p>pts)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Check if this surface is on the ground.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfacetype.SurfaceTypes.isSurfaceOnGround', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfacetype.SurfaceTypes.isSurfaceOnGround" class="source">
+    <pre><code>@staticmethod
+def isSurfaceOnGround(pts):
+    """Check if this surface is on the ground."""
+    for pt in pts:
+        if pt[2] != 0:
+            return False
+    return True
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.surfacetype.SurfaceTypes.isSurfaceUnderground">
+    <p>def <span class="ident">isSurfaceUnderground</span>(</p><p>pts)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Check if this surface is underground.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfacetype.SurfaceTypes.isSurfaceUnderground', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfacetype.SurfaceTypes.isSurfaceUnderground" class="source">
+    <pre><code>@staticmethod
+def isSurfaceUnderground(pts):
+    """Check if this surface is underground."""
+    for pt in pts:
+        if pt[2] > 0:
+            return False
+    return True
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.surfacetype.SurfaceTypes.byNormalAngleAndPoints">
+    <p>def <span class="ident">byNormalAngleAndPoints</span>(</p><p>cls, normalAngle, points=[])</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get surface type based on surface normal angle to Z axis.</p>
+<p>Args:
+    normalAngle: Angle between surface normal and z axis in degrees.
+    points: List of surface points. If not provided the base type will
+        be returned.
+Returns:
+    Surface type as surfaceTypeBase object.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfacetype.SurfaceTypes.byNormalAngleAndPoints', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfacetype.SurfaceTypes.byNormalAngleAndPoints" class="source">
+    <pre><code>@classmethod
+def byNormalAngleAndPoints(cls, normalAngle, points=[]):
+    """Get surface type based on surface normal angle to Z axis.
+    Args:
+        normalAngle: Angle between surface normal and z axis in degrees.
+        points: List of surface points. If not provided the base type will
+            be returned.
+    Returns:
+        Surface type as surfaceTypeBase object.
+    """
+    __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
+    if len(points) > 3:
+        __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+    return cls.__types[__srfType]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.surfacetype.SurfaceTypes.getTypeByKey">
+    <p>def <span class="ident">getTypeByKey</span>(</p><p>cls, key)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return type based on key value.</p>
+<p>Args:
+    key: 0.0: Wall, 0.5: UndergroundWall,
+        1.0: Roof, 1.5: UndergroundCeiling,
+        2.0: Floor, 2.25: UndergroundSlab,
+        2.5: SlabOnGrade, 2.75: ExposedFloor,
+        3.0: Ceiling,
+        4.0: AirWall,
+        5.0: Window,
+        6.0: Context</p>
+<p>Usage:
+    srfType = SurfaceTypes.getTypeByKey(6)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfacetype.SurfaceTypes.getTypeByKey', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfacetype.SurfaceTypes.getTypeByKey" class="source">
+    <pre><code>@classmethod
+def getTypeByKey(cls, key):
+    """Return type based on key value.
+    Args:
+        key: 0.0: Wall, 0.5: UndergroundWall,
+            1.0: Roof, 1.5: UndergroundCeiling,
+            2.0: Floor, 2.25: UndergroundSlab,
+            2.5: SlabOnGrade, 2.75: ExposedFloor,
+            3.0: Ceiling,
+            4.0: AirWall,
+            5.0: Window,
+            6.0: Context
+    Usage:
+        srfType = SurfaceTypes.getTypeByKey(6)
+    """
+    try:
+        return cls.__types[key]
+    except KeyError as e:
+        _msg = "%s is  invalid." % str(e) + \
+            " Use one of the valid values: %s" % str(cls.__types.keys())
+        raise KeyError(_msg)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.surfacetype.SurfaceTypes.reEvaluateSurfaceType">
+    <p>def <span class="ident">reEvaluateSurfaceType</span>(</p><p>self, baseSurfaceType, pts)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Re-evaluate base type for special types.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfacetype.SurfaceTypes.reEvaluateSurfaceType', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfacetype.SurfaceTypes.reEvaluateSurfaceType" class="source">
+    <pre><code>def reEvaluateSurfaceType(self, baseSurfaceType, pts):
+    """Re-evaluate base type for special types."""
+    if pts == []:
+        return baseSurfaceType
+    if baseSurfaceType == 0:
+        if self.isSurfaceUnderground():
+            baseSurfaceType += 0.5  # UndergroundWall
+    elif baseSurfaceType == 1:
+        # A roof underground will be assigned as UndergroundCeiling
+        if self.isSurfaceUnderground():
+            baseSurfaceType += 0.5  # UndergroundCeiling
+    elif baseSurfaceType == 2:
+        # floor
+        if self.isSurfaceOnGround():
+            baseSurfaceType += 0.5  # SlabOnGrade
+        elif self.isSurfaceUnderground():
+            baseSurfaceType += 0.25  # UndergroundSlab
+    return baseSurfaceType
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       </div>
       </div>
       

@@ -6,6 +6,7 @@ def __normName(name):
     return name.replace(" ", "_")
 
 
+# TODO: Change polygon to a class
 def polygon(name, materialName, pts, minimal=False):
     """return a string for radiance polygon.
 
