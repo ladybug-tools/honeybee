@@ -1,6 +1,6 @@
 import os
 import subprocess
-from baseCommand import RadianceCommand
+from commandBase import RadianceCommand
 
 
 class Oconv(RadianceCommand):

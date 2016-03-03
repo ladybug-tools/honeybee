@@ -988,30 +988,17 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></span>
+        <span class="class_name"><a href="#honeybee.hbsurface.HBAnalysisSurface">HBAnalysisSurface</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#honeybee.hbsurface.AnalysisSurface.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.AnalysisSurface.getEnergyPlusConstruction">getEnergyPlusConstruction</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.AnalysisSurface.getEnergyPlusDefinition">getEnergyPlusDefinition</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.AnalysisSurface.getEnergyPlusMaterials">getEnergyPlusMaterials</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.AnalysisSurface.getRadianceDefinition">getRadianceDefinition</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.AnalysisSurface.isNameSetByUser">isNameSetByUser</a></li>
-  </ul>
-
-        </li>
-        <li class="mono">
-        <span class="class_name"><a href="#honeybee.hbsurface.HBSurface">HBSurface</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.getEnergyPlusConstruction">getEnergyPlusConstruction</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.getEnergyPlusDefinition">getEnergyPlusDefinition</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.getEnergyPlusMaterials">getEnergyPlusMaterials</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.getRadianceDefinition">getRadianceDefinition</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.isNameSetByUser">isNameSetByUser</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBAnalysisSurface.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBAnalysisSurface.addPoint">addPoint</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBAnalysisSurface.addPointList">addPointList</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusConstruction">getEnergyPlusConstruction</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusDefinition">getEnergyPlusDefinition</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusMaterials">getEnergyPlusMaterials</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBAnalysisSurface.isNameSetByUser">isNameSetByUser</a></li>
   </ul>
 
         </li>
@@ -1034,77 +1021,167 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.hbsurface" class="source">
-    <pre><code>from abc import ABCMeta, abstractmethod, abstractproperty
+    <pre><code>import types
 
 
-# TODO: Finish the implementation!
-class AnalysisSurface(object):
-    """Minimum implementation of base Honeybee surface."""
+class HBAnalysisSurface(object):
+    """Base class for Honeybee surface.
 
-    __metaclass__ = ABCMeta
+    Args:
+        name: A unique string for surface name
+        sortedPoints: A list of 3 points or more as tuple or list with three items
+            (x, y, z). Points should be sorted. This class won't sort the points.
+            If surfaces has multiple subsurfaces you can pass lists of point lists
+            to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
+        isNameSetByUser: If you want the name to be changed by honeybee any case
+            set isNameSetByUser to True. Default is set to False which let Honeybee
+            to rename the surface in cases like creating a newHBZone.
+        EPProperties: EnergyPlus properties for this surface. If empty default
+            EPProperties will be assigned to surface by Honeybee.
+        RADProperties: Radiance properties for this surface. If empty default
+            RADProperties will be assigned to surface by Honeybee.
+    """
 
-    def __init__(self, name, isNameSetByUser=False, EPProperties=None, RADProperties=None):
+    def __init__(self, name, sortedPoints=[], isNameSetByUser=False,
+                 EPProperties=None, RADProperties=None):
         """Initialize Honeybee Surface."""
-        self.name = name
+        self.name = (name, isNameSetByUser)
+        """Surface name"""
+        self.__pts = []
+        self.points = sortedPoints
+        """A list of points as tuples or lists of (x, y, z).
+        Points should be sorted. This class won't sort the points.
+        (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+        """
+        self.EPProperties = EPProperties
+        """EnergyPlus properties for this surface. If empty default
+            EPProperties will be assigned to surface by Honeybee."""
+        self.RADProperties = RADProperties
+        """Radiance properties for this surface. If empty default
+            RADProperties will be assigned to surface by Honeybee.
+        """
 
     @property
     def name(self):
         """Retuen surface name."""
         return self.__name
 
+    # TODO: name should be checked not to have illegal charecters for ep and radiance
     @name.setter
-    def name(self, newName, isSetByUser=False):
-        # name should be checked not to have illegal charecters for ep and radiance
-        self.__name = newName
-        self.__isNameSetByUser = isSetByUser
+    def name(self, values):
+        """Set name and isSetByUser property.
+
+        Args:
+            values: A name or a tuple as (name, isSetByUser)
+
+        Usage:
+            HBSrf.name = "surface_001"
+            # or
+            HBSrf.name = ("mySurfaceName", True)
+        """
+        try:
+            # check if user passed a tuple
+            __newName, __isNameSetByUser = values
+        except ValueError:
+            # user is passing a list or tuple with one ValueError
+            __newName = values[0]
+            __isNameSetByUser = False  # if not indicated assume it is not set by user.
+        except TypeError:
+            # user just passed a single value which is the name
+            __newName = values
+            __isNameSetByUser = False  # if not indicated assume it is not set by user.
+        finally:
+            # set new name
+            self.__name = str(__newName)
+            self.__isNameSetByUser = __isNameSetByUser
 
     def isNameSetByUser(self):
-        """Check if name is set by user."""
+        """Return if name is set by user.
+
+        If name is set by user the surface will never be named automatically.
+        """
         return self.__isNameSetByUser
 
-    @abstractproperty
-    def geometry(self):
-        """Set and return geometry.
+    @property
+    def points(self):
+        """Get/set points."""
+        return self.__pts
 
-        It needs to be implemented in geometry libraries
+    @points.setter
+    def points(self, pts):
+        """set points.
+
+        Args:
+            pts: A list of points as tuples or lists of (x, y, z).
+            Points should be sorted. This class won't sort the points.
+            (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
         """
+        # The structure of points is list of lists so it can handle non-planar
+        # surfaces which will have several subsurfaces. We don't check the structure
+        # here so user can add points as needed. It will be checked once user wants
+        # to write the surface to Radiance or EnergyPlus
+        self.addPointList(pts, True)
+
+    def addPointList(self, pts, removeCurrentPoints=False):
+        """Add new list of points to surface points.
+
+        Args:
+            pts: A list of points as tuples or lists of (x, y, z).
+                Points should be sorted. This class won't sort the points.
+                (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+            removeCurrentPoints: Set to True to remove current points.
+                (Default: False)
+        """
+        assert isinstance(pts, (list, tuple, types.GeneratorType)), \
+            "Points should be a list or a tuple or a generator"
+        if len(pts) == 0:
+            return
+        if removeCurrentPoints:
+            self.__pts = []
+        # append the new point list
+        self.__pts.append(pts)
+
+    def addPoint(self, pt, subsurfaceNumber=-1):
+        """Add a single point to current surface points.
+
+        Args:
+            pt: A point as (x, y, z) e.g. (20, 20, 10)
+            subsurfaceNumber: An optional input to indicate the subsurface that
+            point should be added to (Default is -1)
+        """
+        try:
+            self.__pts[subsurfaceNumber].append(pt)
+        except IndexError:
+            # pts is a flattened list
+            self.__pts.append([pt])
+        except AttributeError:
+            # input is a tuple or a generator
+            self.__pts[subsurfaceNumber] = list(self.__pts[subsurfaceNumber])
+            self.__pts[subsurfaceNumber].append(pt)
+
+    def getEnergyPlusMaterials(self, layerNumber=None):
+        """Return list of EnergyPlus materials for this surface."""
         pass
 
-    @abstractmethod
     def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=False):
         """Return EnergyPlus definition for this surface."""
-        pass
-
-    @abstractmethod
-    def getRadianceDefinition(self, includeMaterial=False):
-        """Return Radiance definition for this surface."""
         pass
 
     def getEnergyPlusConstruction(self):
         """Return surface EnergyPlus construction."""
         pass
 
-    def getEnergyPlusMaterials(self, layerNumber=None):
-        """Return list of EnergyPlus materials for this surface."""
-        pass
+if __name__ == "__main__":
+    # create a surface
+    pts = ((0, 0, 0), (10, 0, 0), (10, 10, 0))
+    hbsrf = HBAnalysisSurface("001", pts)
+    hbsrf.addPoint((0, 10, 0))
 
+    # add new points as a subsurface
+    pts2 = ((10, 0, 0), (20, 0, 0), (20, 10, 0), (10, 10, 0))
+    hbsrf.addPointList(pts2)
 
-class HBSurface(AnalysisSurface):
-    """Minimum implementation of Honeybee surface."""
-
-    def __init__(self):
-        """Initialize Honeybee Surface."""
-        pass
-
-    @property
-    def geometry(self):
-        """return geometry."""
-        return self.__geometry
-
-    @geometry.setter
-    def geometry(self, geo):
-        """Set geometry."""
-        self.__geometry = geo
+    print hbsrf.points
 </code></pre>
   </div>
 
@@ -1116,61 +1193,171 @@ class HBSurface(AnalysisSurface):
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.hbsurface.AnalysisSurface" class="name">class <span class="ident">AnalysisSurface</span></p>
+      <p id="honeybee.hbsurface.HBAnalysisSurface" class="name">class <span class="ident">HBAnalysisSurface</span></p>
       
   
-    <div class="desc"><p>Minimum implementation of base Honeybee surface.</p></div>
+    <div class="desc"><p>Base class for Honeybee surface.</p>
+<p>Args:
+    name: A unique string for surface name
+    sortedPoints: A list of 3 points or more as tuple or list with three items
+        (x, y, z). Points should be sorted. This class won't sort the points.
+        If surfaces has multiple subsurfaces you can pass lists of point lists
+        to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
+    isNameSetByUser: If you want the name to be changed by honeybee any case
+        set isNameSetByUser to True. Default is set to False which let Honeybee
+        to rename the surface in cases like creating a newHBZone.
+    EPProperties: EnergyPlus properties for this surface. If empty default
+        EPProperties will be assigned to surface by Honeybee.
+    RADProperties: Radiance properties for this surface. If empty default
+        RADProperties will be assigned to surface by Honeybee.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.AnalysisSurface', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.AnalysisSurface" class="source">
-    <pre><code>class AnalysisSurface(object):
-    """Minimum implementation of base Honeybee surface."""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface" class="source">
+    <pre><code>class HBAnalysisSurface(object):
+    """Base class for Honeybee surface.
 
-    __metaclass__ = ABCMeta
+    Args:
+        name: A unique string for surface name
+        sortedPoints: A list of 3 points or more as tuple or list with three items
+            (x, y, z). Points should be sorted. This class won't sort the points.
+            If surfaces has multiple subsurfaces you can pass lists of point lists
+            to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
+        isNameSetByUser: If you want the name to be changed by honeybee any case
+            set isNameSetByUser to True. Default is set to False which let Honeybee
+            to rename the surface in cases like creating a newHBZone.
+        EPProperties: EnergyPlus properties for this surface. If empty default
+            EPProperties will be assigned to surface by Honeybee.
+        RADProperties: Radiance properties for this surface. If empty default
+            RADProperties will be assigned to surface by Honeybee.
+    """
 
-    def __init__(self, name, isNameSetByUser=False, EPProperties=None, RADProperties=None):
+    def __init__(self, name, sortedPoints=[], isNameSetByUser=False,
+                 EPProperties=None, RADProperties=None):
         """Initialize Honeybee Surface."""
-        self.name = name
+        self.name = (name, isNameSetByUser)
+        """Surface name"""
+        self.__pts = []
+        self.points = sortedPoints
+        """A list of points as tuples or lists of (x, y, z).
+        Points should be sorted. This class won't sort the points.
+        (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+        """
+        self.EPProperties = EPProperties
+        """EnergyPlus properties for this surface. If empty default
+            EPProperties will be assigned to surface by Honeybee."""
+        self.RADProperties = RADProperties
+        """Radiance properties for this surface. If empty default
+            RADProperties will be assigned to surface by Honeybee.
+        """
 
     @property
     def name(self):
         """Retuen surface name."""
         return self.__name
 
+    # TODO: name should be checked not to have illegal charecters for ep and radiance
     @name.setter
-    def name(self, newName, isSetByUser=False):
-        # name should be checked not to have illegal charecters for ep and radiance
-        self.__name = newName
-        self.__isNameSetByUser = isSetByUser
+    def name(self, values):
+        """Set name and isSetByUser property.
+
+        Args:
+            values: A name or a tuple as (name, isSetByUser)
+
+        Usage:
+            HBSrf.name = "surface_001"
+            # or
+            HBSrf.name = ("mySurfaceName", True)
+        """
+        try:
+            # check if user passed a tuple
+            __newName, __isNameSetByUser = values
+        except ValueError:
+            # user is passing a list or tuple with one ValueError
+            __newName = values[0]
+            __isNameSetByUser = False  # if not indicated assume it is not set by user.
+        except TypeError:
+            # user just passed a single value which is the name
+            __newName = values
+            __isNameSetByUser = False  # if not indicated assume it is not set by user.
+        finally:
+            # set new name
+            self.__name = str(__newName)
+            self.__isNameSetByUser = __isNameSetByUser
 
     def isNameSetByUser(self):
-        """Check if name is set by user."""
+        """Return if name is set by user.
+
+        If name is set by user the surface will never be named automatically.
+        """
         return self.__isNameSetByUser
 
-    @abstractproperty
-    def geometry(self):
-        """Set and return geometry.
+    @property
+    def points(self):
+        """Get/set points."""
+        return self.__pts
 
-        It needs to be implemented in geometry libraries
+    @points.setter
+    def points(self, pts):
+        """set points.
+
+        Args:
+            pts: A list of points as tuples or lists of (x, y, z).
+            Points should be sorted. This class won't sort the points.
+            (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
         """
+        # The structure of points is list of lists so it can handle non-planar
+        # surfaces which will have several subsurfaces. We don't check the structure
+        # here so user can add points as needed. It will be checked once user wants
+        # to write the surface to Radiance or EnergyPlus
+        self.addPointList(pts, True)
+
+    def addPointList(self, pts, removeCurrentPoints=False):
+        """Add new list of points to surface points.
+
+        Args:
+            pts: A list of points as tuples or lists of (x, y, z).
+                Points should be sorted. This class won't sort the points.
+                (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+            removeCurrentPoints: Set to True to remove current points.
+                (Default: False)
+        """
+        assert isinstance(pts, (list, tuple, types.GeneratorType)), \
+            "Points should be a list or a tuple or a generator"
+        if len(pts) == 0:
+            return
+        if removeCurrentPoints:
+            self.__pts = []
+        # append the new point list
+        self.__pts.append(pts)
+
+    def addPoint(self, pt, subsurfaceNumber=-1):
+        """Add a single point to current surface points.
+
+        Args:
+            pt: A point as (x, y, z) e.g. (20, 20, 10)
+            subsurfaceNumber: An optional input to indicate the subsurface that
+            point should be added to (Default is -1)
+        """
+        try:
+            self.__pts[subsurfaceNumber].append(pt)
+        except IndexError:
+            # pts is a flattened list
+            self.__pts.append([pt])
+        except AttributeError:
+            # input is a tuple or a generator
+            self.__pts[subsurfaceNumber] = list(self.__pts[subsurfaceNumber])
+            self.__pts[subsurfaceNumber].append(pt)
+
+    def getEnergyPlusMaterials(self, layerNumber=None):
+        """Return list of EnergyPlus materials for this surface."""
         pass
 
-    @abstractmethod
     def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=False):
         """Return EnergyPlus definition for this surface."""
         pass
 
-    @abstractmethod
-    def getRadianceDefinition(self, includeMaterial=False):
-        """Return Radiance definition for this surface."""
-        pass
-
     def getEnergyPlusConstruction(self):
         """Return surface EnergyPlus construction."""
-        pass
-
-    def getEnergyPlusMaterials(self, layerNumber=None):
-        """Return list of EnergyPlus materials for this surface."""
         pass
 </code></pre>
   </div>
@@ -1180,28 +1367,54 @@ class HBSurface(AnalysisSurface):
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></li>
+          <li><a href="#honeybee.hbsurface.HBAnalysisSurface">HBAnalysisSurface</a></li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.hbsurface.AnalysisSurface.geometry" class="name">var <span class="ident">geometry</span></p>
+            <p id="honeybee.hbsurface.HBAnalysisSurface.EPProperties" class="name">var <span class="ident">EPProperties</span></p>
             
 
             
   
-    <div class="desc"><p>Set and return geometry.</p>
-<p>It needs to be implemented in geometry libraries</p></div>
+    <div class="desc"><p>EnergyPlus properties for this surface. If empty default
+EPProperties will be assigned to surface by Honeybee.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.AnalysisSurface.name" class="name">var <span class="ident">name</span></p>
+            <p id="honeybee.hbsurface.HBAnalysisSurface.RADProperties" class="name">var <span class="ident">RADProperties</span></p>
             
 
             
   
+    <div class="desc"><p>Radiance properties for this surface. If empty default
+RADProperties will be assigned to surface by Honeybee.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.hbsurface.HBAnalysisSurface.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Surface name</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.hbsurface.HBAnalysisSurface.points" class="name">var <span class="ident">points</span></p>
+            
+
+            
+  
+    <div class="desc"><p>A list of points as tuples or lists of (x, y, z).
+Points should be sorted. This class won't sort the points.
+(e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))</p></div>
   <div class="source_cont">
 </div>
 
@@ -1209,8 +1422,8 @@ class HBSurface(AnalysisSurface):
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.AnalysisSurface.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, isNameSetByUser=False, EPProperties=None, RADProperties=None)</p>
+    <div class="name def" id="honeybee.hbsurface.HBAnalysisSurface.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, sortedPoints=[], isNameSetByUser=False, EPProperties=None, RADProperties=None)</p>
     </div>
     
 
@@ -1218,11 +1431,26 @@ class HBSurface(AnalysisSurface):
   
     <div class="desc"><p>Initialize Honeybee Surface.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.AnalysisSurface.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.AnalysisSurface.__init__" class="source">
-    <pre><code>def __init__(self, name, isNameSetByUser=False, EPProperties=None, RADProperties=None):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface.__init__" class="source">
+    <pre><code>def __init__(self, name, sortedPoints=[], isNameSetByUser=False,
+             EPProperties=None, RADProperties=None):
     """Initialize Honeybee Surface."""
-    self.name = name
+    self.name = (name, isNameSetByUser)
+    """Surface name"""
+    self.__pts = []
+    self.points = sortedPoints
+    """A list of points as tuples or lists of (x, y, z).
+    Points should be sorted. This class won't sort the points.
+    (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+    """
+    self.EPProperties = EPProperties
+    """EnergyPlus properties for this surface. If empty default
+        EPProperties will be assigned to surface by Honeybee."""
+    self.RADProperties = RADProperties
+    """Radiance properties for this surface. If empty default
+        RADProperties will be assigned to surface by Honeybee.
+    """
 </code></pre>
   </div>
 </div>
@@ -1231,7 +1459,88 @@ class HBSurface(AnalysisSurface):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.AnalysisSurface.getEnergyPlusConstruction">
+    <div class="name def" id="honeybee.hbsurface.HBAnalysisSurface.addPoint">
+    <p>def <span class="ident">addPoint</span>(</p><p>self, pt, subsurfaceNumber=-1)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Add a single point to current surface points.</p>
+<p>Args:
+    pt: A point as (x, y, z) e.g. (20, 20, 10)
+    subsurfaceNumber: An optional input to indicate the subsurface that
+    point should be added to (Default is -1)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface.addPoint', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface.addPoint" class="source">
+    <pre><code>def addPoint(self, pt, subsurfaceNumber=-1):
+    """Add a single point to current surface points.
+    Args:
+        pt: A point as (x, y, z) e.g. (20, 20, 10)
+        subsurfaceNumber: An optional input to indicate the subsurface that
+        point should be added to (Default is -1)
+    """
+    try:
+        self.__pts[subsurfaceNumber].append(pt)
+    except IndexError:
+        # pts is a flattened list
+        self.__pts.append([pt])
+    except AttributeError:
+        # input is a tuple or a generator
+        self.__pts[subsurfaceNumber] = list(self.__pts[subsurfaceNumber])
+        self.__pts[subsurfaceNumber].append(pt)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.hbsurface.HBAnalysisSurface.addPointList">
+    <p>def <span class="ident">addPointList</span>(</p><p>self, pts, removeCurrentPoints=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Add new list of points to surface points.</p>
+<p>Args:
+    pts: A list of points as tuples or lists of (x, y, z).
+        Points should be sorted. This class won't sort the points.
+        (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+    removeCurrentPoints: Set to True to remove current points.
+        (Default: False)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface.addPointList', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface.addPointList" class="source">
+    <pre><code>def addPointList(self, pts, removeCurrentPoints=False):
+    """Add new list of points to surface points.
+    Args:
+        pts: A list of points as tuples or lists of (x, y, z).
+            Points should be sorted. This class won't sort the points.
+            (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0)))
+        removeCurrentPoints: Set to True to remove current points.
+            (Default: False)
+    """
+    assert isinstance(pts, (list, tuple, types.GeneratorType)), \
+        "Points should be a list or a tuple or a generator"
+    if len(pts) == 0:
+        return
+    if removeCurrentPoints:
+        self.__pts = []
+    # append the new point list
+    self.__pts.append(pts)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusConstruction">
     <p>def <span class="ident">getEnergyPlusConstruction</span>(</p><p>self)</p>
     </div>
     
@@ -1240,8 +1549,8 @@ class HBSurface(AnalysisSurface):
   
     <div class="desc"><p>Return surface EnergyPlus construction.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.AnalysisSurface.getEnergyPlusConstruction', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.AnalysisSurface.getEnergyPlusConstruction" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusConstruction', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusConstruction" class="source">
     <pre><code>def getEnergyPlusConstruction(self):
     """Return surface EnergyPlus construction."""
     pass
@@ -1253,7 +1562,7 @@ class HBSurface(AnalysisSurface):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.AnalysisSurface.getEnergyPlusDefinition">
+    <div class="name def" id="honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusDefinition">
     <p>def <span class="ident">getEnergyPlusDefinition</span>(</p><p>self, includeConstruction=False, includeMaterials=False)</p>
     </div>
     
@@ -1262,10 +1571,9 @@ class HBSurface(AnalysisSurface):
   
     <div class="desc"><p>Return EnergyPlus definition for this surface.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.AnalysisSurface.getEnergyPlusDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.AnalysisSurface.getEnergyPlusDefinition" class="source">
-    <pre><code>@abstractmethod
-def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=False):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusDefinition', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusDefinition" class="source">
+    <pre><code>def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=False):
     """Return EnergyPlus definition for this surface."""
     pass
 </code></pre>
@@ -1276,7 +1584,7 @@ def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=Fa
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.AnalysisSurface.getEnergyPlusMaterials">
+    <div class="name def" id="honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusMaterials">
     <p>def <span class="ident">getEnergyPlusMaterials</span>(</p><p>self, layerNumber=None)</p>
     </div>
     
@@ -1285,8 +1593,8 @@ def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=Fa
   
     <div class="desc"><p>Return list of EnergyPlus materials for this surface.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.AnalysisSurface.getEnergyPlusMaterials', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.AnalysisSurface.getEnergyPlusMaterials" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusMaterials', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface.getEnergyPlusMaterials" class="source">
     <pre><code>def getEnergyPlusMaterials(self, layerNumber=None):
     """Return list of EnergyPlus materials for this surface."""
     pass
@@ -1298,271 +1606,22 @@ def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=Fa
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.AnalysisSurface.getRadianceDefinition">
-    <p>def <span class="ident">getRadianceDefinition</span>(</p><p>self, includeMaterial=False)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Return Radiance definition for this surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.AnalysisSurface.getRadianceDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.AnalysisSurface.getRadianceDefinition" class="source">
-    <pre><code>@abstractmethod
-def getRadianceDefinition(self, includeMaterial=False):
-    """Return Radiance definition for this surface."""
-    pass
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.AnalysisSurface.isNameSetByUser">
+    <div class="name def" id="honeybee.hbsurface.HBAnalysisSurface.isNameSetByUser">
     <p>def <span class="ident">isNameSetByUser</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Check if name is set by user.</p></div>
+    <div class="desc"><p>Return if name is set by user.</p>
+<p>If name is set by user the surface will never be named automatically.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.AnalysisSurface.isNameSetByUser', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.AnalysisSurface.isNameSetByUser" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBAnalysisSurface.isNameSetByUser', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBAnalysisSurface.isNameSetByUser" class="source">
     <pre><code>def isNameSetByUser(self):
-    """Check if name is set by user."""
-    return self.__isNameSetByUser
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="honeybee.hbsurface.HBSurface" class="name">class <span class="ident">HBSurface</span></p>
-      
-  
-    <div class="desc"><p>Minimum implementation of Honeybee surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface" class="source">
-    <pre><code>class HBSurface(AnalysisSurface):
-    """Minimum implementation of Honeybee surface."""
-
-    def __init__(self):
-        """Initialize Honeybee Surface."""
-        pass
-
-    @property
-    def geometry(self):
-        """return geometry."""
-        return self.__geometry
-
-    @geometry.setter
-    def geometry(self, geo):
-        """Set geometry."""
-        self.__geometry = geo
-</code></pre>
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#honeybee.hbsurface.HBSurface">HBSurface</a></li>
-          <li><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.geometry" class="name">var <span class="ident">geometry</span></p>
-            
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.geometry">geometry</a></code>
-    </p>
-
-            
-  
-    <div class="desc"><p>return geometry.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.name" class="name">var <span class="ident">name</span></p>
-            
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.name">name</a></code>
-    </p>
-
-            
-  
-    <div class="desc"><p>Retuen surface name.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.__init__">__init__</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Initialize Honeybee Surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.__init__" class="source">
-    <pre><code>def __init__(self):
-    """Initialize Honeybee Surface."""
-    pass
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.getEnergyPlusConstruction">
-    <p>def <span class="ident">getEnergyPlusConstruction</span>(</p><p>self)</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.getEnergyPlusConstruction">getEnergyPlusConstruction</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Return surface EnergyPlus construction.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.getEnergyPlusConstruction', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.getEnergyPlusConstruction" class="source">
-    <pre><code>def getEnergyPlusConstruction(self):
-    """Return surface EnergyPlus construction."""
-    pass
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.getEnergyPlusDefinition">
-    <p>def <span class="ident">getEnergyPlusDefinition</span>(</p><p>self, includeConstruction=False, includeMaterials=False)</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.getEnergyPlusDefinition">getEnergyPlusDefinition</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Return EnergyPlus definition for this surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.getEnergyPlusDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.getEnergyPlusDefinition" class="source">
-    <pre><code>@abstractmethod
-def getEnergyPlusDefinition(self, includeConstruction=False, includeMaterials=False):
-    """Return EnergyPlus definition for this surface."""
-    pass
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.getEnergyPlusMaterials">
-    <p>def <span class="ident">getEnergyPlusMaterials</span>(</p><p>self, layerNumber=None)</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.getEnergyPlusMaterials">getEnergyPlusMaterials</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Return list of EnergyPlus materials for this surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.getEnergyPlusMaterials', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.getEnergyPlusMaterials" class="source">
-    <pre><code>def getEnergyPlusMaterials(self, layerNumber=None):
-    """Return list of EnergyPlus materials for this surface."""
-    pass
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.getRadianceDefinition">
-    <p>def <span class="ident">getRadianceDefinition</span>(</p><p>self, includeMaterial=False)</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.getRadianceDefinition">getRadianceDefinition</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Return Radiance definition for this surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.getRadianceDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.getRadianceDefinition" class="source">
-    <pre><code>@abstractmethod
-def getRadianceDefinition(self, includeMaterial=False):
-    """Return Radiance definition for this surface."""
-    pass
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.isNameSetByUser">
-    <p>def <span class="ident">isNameSetByUser</span>(</p><p>self)</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.hbsurface.AnalysisSurface">AnalysisSurface</a></code>.<code><a href="#honeybee.hbsurface.AnalysisSurface.isNameSetByUser">isNameSetByUser</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Check if name is set by user.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.isNameSetByUser', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.isNameSetByUser" class="source">
-    <pre><code>def isNameSetByUser(self):
-    """Check if name is set by user."""
+    """Return if name is set by user.
+    If name is set by user the surface will never be named automatically.
+    """
     return self.__isNameSetByUser
 </code></pre>
   </div>

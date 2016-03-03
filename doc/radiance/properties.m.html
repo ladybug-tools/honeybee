@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance API documentation</title>
-    <meta name="description" content="" />
+    <title>honeybee.radiance.properties API documentation</title>
+    <meta name="description" content="Radiance Properties for HBSurfaces." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -985,18 +985,15 @@ table {
     <ul id="index">
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></li>
-        <li class="mono"><a href="command/index.html">honeybee.radiance.command</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.radiance.helper</a></li>
-        <li class="mono"><a href="material/index.html">honeybee.radiance.material</a></li>
-        <li class="mono"><a href="parameters.m.html">honeybee.radiance.parameters</a></li>
-        <li class="mono"><a href="properties.m.html">honeybee.radiance.properties</a></li>
-        <li class="mono"><a href="sky/index.html">honeybee.radiance.sky</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.properties.radianceproperties">radianceproperties</a></span>
+        
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1008,15 +1005,31 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.properties</span> module</h1>
+  <p>Radiance Properties for HBSurfaces.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance" class="source">
-    <pre><code>__all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
-    "sky", "helper"]
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.properties', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.properties" class="source">
+    <pre><code>"""Radiance Properties for HBSurfaces."""
+from material.materialBase import RadianceMaterial
 
-import properties, analysisrecipe, command, material, parameters, sky, helper
+
+class radianceproperties(object):
+    """Radiance properties."""
+
+    @property
+    def radianceMaterial(self):
+        """Return Radiance Material."""
+        return self.__radianceMaterial
+
+    @radianceMaterial.setter
+    def radianceMaterial(self, material):
+        """Set Radiance Material."""
+        # chek if radiance material is radiance material
+        if isinstance(material, RadianceMaterial):
+            self.__radianceMaterial = material
+        # if type is string then try to create a material from string
+        pass
 </code></pre>
   </div>
 
@@ -1025,54 +1038,58 @@ import properties, analysisrecipe, command, material, parameters, sky, helper
   <section id="section-items">
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></p>
+      <p id="honeybee.radiance.properties.radianceproperties" class="name">class <span class="ident">radianceproperties</span></p>
       
   
-    <div class="desc"><p>Radiance Analysis Recipes.</p></div>
+    <div class="desc"><p>Radiance properties.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.properties.radianceproperties', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.properties.radianceproperties" class="source">
+    <pre><code>class radianceproperties(object):
+    """Radiance properties."""
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="command/index.html">honeybee.radiance.command</a></p>
-      
+    @property
+    def radianceMaterial(self):
+        """Return Radiance Material."""
+        return self.__radianceMaterial
+
+    @radianceMaterial.setter
+    def radianceMaterial(self, material):
+        """Set Radiance Material."""
+        # chek if radiance material is radiance material
+        if isinstance(material, RadianceMaterial):
+            self.__radianceMaterial = material
+        # if type is string then try to create a material from string
+        pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.properties.radianceproperties">radianceproperties</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.properties.radianceproperties.radianceMaterial" class="name">var <span class="ident">radianceMaterial</span></p>
+            
+
+            
   
+    <div class="desc"><p>Return Radiance Material.</p></div>
+  <div class="source_cont">
+</div>
 
+            </div>
       </div>
-      <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.radiance.helper</a></p>
-      
-  
-    <div class="desc"><p>A collection of auxiliary funtions for working with radiance files and objects.</p></div>
+      </div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="material/index.html">honeybee.radiance.material</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="parameters.m.html">honeybee.radiance.parameters</a></p>
-      
-  
-    <div class="desc"><p>Radiance raytracing Parameters.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="properties.m.html">honeybee.radiance.properties</a></p>
-      
-  
-    <div class="desc"><p>Radiance Properties for HBSurfaces.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="sky/index.html">honeybee.radiance.sky</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>

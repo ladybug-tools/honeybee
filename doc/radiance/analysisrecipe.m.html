@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>honeybee.radiance.analysisrecipe API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Radiance Analysis Recipes." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1042,81 +1042,139 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">honeybee.radiance.analysisrecipe</span> module</h1>
-  
+  <p>Radiance Analysis Recipes.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe" class="source">
-    <pre><code>from abc import ABCMeta, abstractmethod, abstractproperty
-from sky import *
-from radianceparameters import *
+    <pre><code>"""Radiance Analysis Recipes."""
+
+from sky.skyBase import RadianceSky
+from sky.certainIlluminance import SkyWithCertainIlluminanceLevel
+from parameters import RadianceParameters, LowQuality
+
 
 class HBDaylightAnalysisRecipe(object):
+    """Analysis Recipe Base class."""
+
     pass
 
-class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
-    """Grid base analysis base class
 
-        Attributes:
-            sky: A honeybee sky for the analysis
-            radianceParameters: Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)
+class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
+    """Grid base analysis base class.
+
+    Attributes:
+        sky: A honeybee sky for the analysis
+        testPts: A list of test points as (x, y, z)
+        ptsVectors: An optional list of point vectors as (x, y, z).
+        radParameters: Radiance parameters for this analysis (Default:
+            RadianceParameters.LowQuality)
     """
-    def __init__(self, sky, radParameters = None):
+
+    def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
+        """Create grid-based recipe."""
         self.sky = sky
+        """A honeybee sky for the analysis"""
+        self.testPts = testPts
+        """A list of test points as (x, y, z)"""
+        self.ptsVectors = ptsVectors
+        """An optional list of point vectors as Rhino.Geometry.Vector3d
+            +Z Vector will be assigned if vectors are not provided."""
         self.radianceParameters = radParameters
+        """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)"""
 
     @property
     def sky(self):
+        """Get and set sky definition."""
         return self.__sky
 
     @sky.setter
     def sky(self, newSky):
-        assert isinstance(newSky, HBSky), "Sky is not a valid Honeybee sky."
+        assert isinstance(newSky, RadianceSky), "Sky is not a valid Honeybee sky."
         self.__sky = newSky
 
     @property
     def radianceParameters(self, radianceParameters):
+        """Get and set Radiance parameters."""
         return self.__radParameters
 
     @radianceParameters.setter
     def radianceParameters(self, radParameters):
-        if not radParameters: radParameters = LowQuality()
+        if not radParameters:
+            radParameters = LowQuality()
         assert isinstance(radParameters, RadianceParameters), \
             "Invalid radiance parameters object"
         self.__radParameters = radParameters
 
-    @abstractproperty
+    # TODO: @sariths do we need test point groups for 3Phase method?
+    # in that case we should accept lists of lists for test points
+    @property
     def testPts(self):
-        """List of test points
-            Should be implemented in geometry libraries
-        """
-        pass
+        """List of test points."""
+        return self.__testPts
 
-    @abstractproperty
+    @testPts.setter
+    def testPts(self, pts):
+        """Set list of test points."""
+        self.__testPts = pts
+
+    @property
     def ptsVectors(self):
         """List of vectors for each test point.
-            Should be implemented in geometry libraries
-            +Z Vector will be assigned if vectors are not provided
+
+        +Z Vector will be assigned if vectors are not provided
         """
-        pass
+        return self.__ptsVectors
+
+    # TODO: Add check for vectors. Remove null values. assign 0, 0, 1 in case of None
+    @ptsVectors.setter
+    def ptsVectors(self, vectors):
+        """List of vectors for each test point.
+
+        +Z Vector will be assigned if vectors are not provided
+        """
+        if vectors == []:
+            self.__ptsVectors = [(0, 0, 1) for pt in self.testPts]
+        else:
+            assert len(self.testPts) == len(vectors), \
+                "Length of test points should be equal to length of vectors."
+            self.__ptsVectors = vectors
+
+    def __repr__(self):
+        """Represent grid based recipe."""
+        return "%s #testPts:%d" % (self.__class__.__name__, len(self.testPts))
+
 
 class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
+    """Daylight Factor Recipe."""
+
     def __init__(self):
+        """Create daylight factor recipe."""
         raise NotImplementedError()
 
+
 class HBAnnualAnalysisRecipe(HBGridBasedAnalysisRecipe):
+    """Annual Daylight Recipe."""
+
     def __init__(self):
+        """Create annual daylight recipe."""
         raise NotImplementedError()
 
 
 class HBImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
+    """Image-based recipe."""
+
     def __init__(self):
+        """Create an Image-based recipe."""
         raise NotImplementedError()
 
 
-"""
-sky = HBCertainIlluminanceLevelSky(2000)
-rp = HBGridBasedAnalysisRecipe(sky)
-"""
+if __name__ == "__main__":
+    # test code
+    sky = SkyWithCertainIlluminanceLevel(2000)
+    rp = HBGridBasedAnalysisRecipe(sky, [(0, 0, 0), (10, 0, 0)])
+
+    print rp
+    print "vectors:", rp.ptsVectors
 </code></pre>
   </div>
 
@@ -1131,11 +1189,15 @@ rp = HBGridBasedAnalysisRecipe(sky)
       <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe" class="name">class <span class="ident">HBAnnualAnalysisRecipe</span></p>
       
   
+    <div class="desc"><p>Annual Daylight Recipe.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe" class="source">
     <pre><code>class HBAnnualAnalysisRecipe(HBGridBasedAnalysisRecipe):
+    """Annual Daylight Recipe."""
+
     def __init__(self):
+        """Create annual daylight recipe."""
         raise NotImplementedError()
 </code></pre>
   </div>
@@ -1161,9 +1223,8 @@ rp = HBGridBasedAnalysisRecipe(sky)
 
             
   
-    <div class="desc inherited"><p>List of vectors for each test point.
-Should be implemented in geometry libraries
-+Z Vector will be assigned if vectors are not provided</p></div>
+    <div class="desc"><p>List of vectors for each test point.</p>
+<p>+Z Vector will be assigned if vectors are not provided</p></div>
   <div class="source_cont">
 </div>
 
@@ -1178,6 +1239,7 @@ Should be implemented in geometry libraries
 
             
   
+    <div class="desc"><p>Get and set Radiance parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1192,6 +1254,7 @@ Should be implemented in geometry libraries
 
             
   
+    <div class="desc"><p>Get and set sky definition.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1206,8 +1269,7 @@ Should be implemented in geometry libraries
 
             
   
-    <div class="desc inherited"><p>List of test points
-Should be implemented in geometry libraries</p></div>
+    <div class="desc"><p>List of test points.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1226,10 +1288,12 @@ Should be implemented in geometry libraries</p></div>
 
     
   
+    <div class="desc"><p>Create annual daylight recipe.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.__init__" class="source">
     <pre><code>def __init__(self):
+    """Create annual daylight recipe."""
     raise NotImplementedError()
 </code></pre>
   </div>
@@ -1244,10 +1308,13 @@ Should be implemented in geometry libraries</p></div>
       <p id="honeybee.radiance.analysisrecipe.HBDaylightAnalysisRecipe" class="name">class <span class="ident">HBDaylightAnalysisRecipe</span></p>
       
   
+    <div class="desc"><p>Analysis Recipe Base class.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBDaylightAnalysisRecipe', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBDaylightAnalysisRecipe" class="source">
     <pre><code>class HBDaylightAnalysisRecipe(object):
+    """Analysis Recipe Base class."""
+
     pass
 </code></pre>
   </div>
@@ -1267,11 +1334,15 @@ Should be implemented in geometry libraries</p></div>
       <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe" class="name">class <span class="ident">HBDaylightFactorRecipe</span></p>
       
   
+    <div class="desc"><p>Daylight Factor Recipe.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe" class="source">
     <pre><code>class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
+    """Daylight Factor Recipe."""
+
     def __init__(self):
+        """Create daylight factor recipe."""
         raise NotImplementedError()
 </code></pre>
   </div>
@@ -1297,9 +1368,8 @@ Should be implemented in geometry libraries</p></div>
 
             
   
-    <div class="desc inherited"><p>List of vectors for each test point.
-Should be implemented in geometry libraries
-+Z Vector will be assigned if vectors are not provided</p></div>
+    <div class="desc"><p>List of vectors for each test point.</p>
+<p>+Z Vector will be assigned if vectors are not provided</p></div>
   <div class="source_cont">
 </div>
 
@@ -1314,6 +1384,7 @@ Should be implemented in geometry libraries
 
             
   
+    <div class="desc"><p>Get and set Radiance parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1328,6 +1399,7 @@ Should be implemented in geometry libraries
 
             
   
+    <div class="desc"><p>Get and set sky definition.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1342,8 +1414,7 @@ Should be implemented in geometry libraries
 
             
   
-    <div class="desc inherited"><p>List of test points
-Should be implemented in geometry libraries</p></div>
+    <div class="desc"><p>List of test points.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1362,10 +1433,12 @@ Should be implemented in geometry libraries</p></div>
 
     
   
+    <div class="desc"><p>Create daylight factor recipe.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.__init__" class="source">
     <pre><code>def __init__(self):
+    """Create daylight factor recipe."""
     raise NotImplementedError()
 </code></pre>
   </div>
@@ -1380,58 +1453,99 @@ Should be implemented in geometry libraries</p></div>
       <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe" class="name">class <span class="ident">HBGridBasedAnalysisRecipe</span></p>
       
   
-    <div class="desc"><p>Grid base analysis base class</p>
+    <div class="desc"><p>Grid base analysis base class.</p>
 <p>Attributes:
     sky: A honeybee sky for the analysis
-    radianceParameters: Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)</p></div>
+    testPts: A list of test points as (x, y, z)
+    ptsVectors: An optional list of point vectors as (x, y, z).
+    radParameters: Radiance parameters for this analysis (Default:
+        RadianceParameters.LowQuality)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe" class="source">
     <pre><code>class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
-    """Grid base analysis base class
+    """Grid base analysis base class.
 
-        Attributes:
-            sky: A honeybee sky for the analysis
-            radianceParameters: Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)
+    Attributes:
+        sky: A honeybee sky for the analysis
+        testPts: A list of test points as (x, y, z)
+        ptsVectors: An optional list of point vectors as (x, y, z).
+        radParameters: Radiance parameters for this analysis (Default:
+            RadianceParameters.LowQuality)
     """
-    def __init__(self, sky, radParameters = None):
+
+    def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
+        """Create grid-based recipe."""
         self.sky = sky
+        """A honeybee sky for the analysis"""
+        self.testPts = testPts
+        """A list of test points as (x, y, z)"""
+        self.ptsVectors = ptsVectors
+        """An optional list of point vectors as Rhino.Geometry.Vector3d
+            +Z Vector will be assigned if vectors are not provided."""
         self.radianceParameters = radParameters
+        """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)"""
 
     @property
     def sky(self):
+        """Get and set sky definition."""
         return self.__sky
 
     @sky.setter
     def sky(self, newSky):
-        assert isinstance(newSky, HBSky), "Sky is not a valid Honeybee sky."
+        assert isinstance(newSky, RadianceSky), "Sky is not a valid Honeybee sky."
         self.__sky = newSky
 
     @property
     def radianceParameters(self, radianceParameters):
+        """Get and set Radiance parameters."""
         return self.__radParameters
 
     @radianceParameters.setter
     def radianceParameters(self, radParameters):
-        if not radParameters: radParameters = LowQuality()
+        if not radParameters:
+            radParameters = LowQuality()
         assert isinstance(radParameters, RadianceParameters), \
             "Invalid radiance parameters object"
         self.__radParameters = radParameters
 
-    @abstractproperty
+    # TODO: @sariths do we need test point groups for 3Phase method?
+    # in that case we should accept lists of lists for test points
+    @property
     def testPts(self):
-        """List of test points
-            Should be implemented in geometry libraries
-        """
-        pass
+        """List of test points."""
+        return self.__testPts
 
-    @abstractproperty
+    @testPts.setter
+    def testPts(self, pts):
+        """Set list of test points."""
+        self.__testPts = pts
+
+    @property
     def ptsVectors(self):
         """List of vectors for each test point.
-            Should be implemented in geometry libraries
-            +Z Vector will be assigned if vectors are not provided
+
+        +Z Vector will be assigned if vectors are not provided
         """
-        pass
+        return self.__ptsVectors
+
+    # TODO: Add check for vectors. Remove null values. assign 0, 0, 1 in case of None
+    @ptsVectors.setter
+    def ptsVectors(self, vectors):
+        """List of vectors for each test point.
+
+        +Z Vector will be assigned if vectors are not provided
+        """
+        if vectors == []:
+            self.__ptsVectors = [(0, 0, 1) for pt in self.testPts]
+        else:
+            assert len(self.testPts) == len(vectors), \
+                "Length of test points should be equal to length of vectors."
+            self.__ptsVectors = vectors
+
+    def __repr__(self):
+        """Represent grid based recipe."""
+        return "%s #testPts:%d" % (self.__class__.__name__, len(self.testPts))
 </code></pre>
   </div>
 </div>
@@ -1451,9 +1565,8 @@ Should be implemented in geometry libraries</p></div>
 
             
   
-    <div class="desc"><p>List of vectors for each test point.
-Should be implemented in geometry libraries
-+Z Vector will be assigned if vectors are not provided</p></div>
+    <div class="desc"><p>An optional list of point vectors as Rhino.Geometry.Vector3d
++Z Vector will be assigned if vectors are not provided.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1464,6 +1577,7 @@ Should be implemented in geometry libraries
 
             
   
+    <div class="desc"><p>Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)</p></div>
   <div class="source_cont">
 </div>
 
@@ -1474,6 +1588,7 @@ Should be implemented in geometry libraries
 
             
   
+    <div class="desc"><p>A honeybee sky for the analysis</p></div>
   <div class="source_cont">
 </div>
 
@@ -1484,8 +1599,7 @@ Should be implemented in geometry libraries
 
             
   
-    <div class="desc"><p>List of test points
-Should be implemented in geometry libraries</p></div>
+    <div class="desc"><p>A list of test points as (x, y, z)</p></div>
   <div class="source_cont">
 </div>
 
@@ -1494,18 +1608,27 @@ Should be implemented in geometry libraries</p></div>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, sky, radParameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, sky, testPts, ptsVectors=[], radParameters=None)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Create grid-based recipe.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.__init__" class="source">
-    <pre><code>def __init__(self, sky, radParameters = None):
+    <pre><code>def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
+    """Create grid-based recipe."""
     self.sky = sky
+    """A honeybee sky for the analysis"""
+    self.testPts = testPts
+    """A list of test points as (x, y, z)"""
+    self.ptsVectors = ptsVectors
+    """An optional list of point vectors as Rhino.Geometry.Vector3d
+        +Z Vector will be assigned if vectors are not provided."""
     self.radianceParameters = radParameters
+    """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)"""
 </code></pre>
   </div>
 </div>
@@ -1519,11 +1642,15 @@ Should be implemented in geometry libraries</p></div>
       <p id="honeybee.radiance.analysisrecipe.HBImageBasedAnalysisRecipe" class="name">class <span class="ident">HBImageBasedAnalysisRecipe</span></p>
       
   
+    <div class="desc"><p>Image-based recipe.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBImageBasedAnalysisRecipe', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBImageBasedAnalysisRecipe" class="source">
     <pre><code>class HBImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
+    """Image-based recipe."""
+
     def __init__(self):
+        """Create an Image-based recipe."""
         raise NotImplementedError()
 </code></pre>
   </div>
@@ -1547,10 +1674,12 @@ Should be implemented in geometry libraries</p></div>
 
     
   
+    <div class="desc"><p>Create an Image-based recipe.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBImageBasedAnalysisRecipe.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBImageBasedAnalysisRecipe.__init__" class="source">
     <pre><code>def __init__(self):
+    """Create an Image-based recipe."""
     raise NotImplementedError()
 </code></pre>
   </div>

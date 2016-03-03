@@ -1,5 +1,5 @@
 """Radiance Properties for HBSurfaces."""
-from radiancematerial import RadianceMaterial
+from material.materialBase import RadianceMaterial
 
 
 class radianceproperties(object):

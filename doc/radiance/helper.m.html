@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance API documentation</title>
-    <meta name="description" content="" />
+    <title>honeybee.radiance.helper API documentation</title>
+    <meta name="description" content="A collection of auxiliary funtions for working with radiance files and objects." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -984,19 +984,17 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.helper.getRadianceObjectsFromFile">getRadianceObjectsFromFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.helper.getRadianceObjectsFromString">getRadianceObjectsFromString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.helper.importRadianceMaterialsFromFile">importRadianceMaterialsFromFile</a></li>
+  </ul>
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></li>
-        <li class="mono"><a href="command/index.html">honeybee.radiance.command</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.radiance.helper</a></li>
-        <li class="mono"><a href="material/index.html">honeybee.radiance.material</a></li>
-        <li class="mono"><a href="parameters.m.html">honeybee.radiance.parameters</a></li>
-        <li class="mono"><a href="properties.m.html">honeybee.radiance.properties</a></li>
-        <li class="mono"><a href="sky/index.html">honeybee.radiance.sky</a></li>
-      </ul>
     </li>
+
+
     </ul>
   </div>
 
@@ -1008,15 +1006,64 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.helper</span> module</h1>
+  <p>A collection of auxiliary funtions for working with radiance files and objects.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance" class="source">
-    <pre><code>__all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
-    "sky", "helper"]
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.helper', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.helper" class="source">
+    <pre><code>"""A collection of auxiliary funtions for working with radiance files and objects."""
+from material.custom import CustomMaterial
+import re
+import os
 
-import properties, analysisrecipe, command, material, parameters, sky, helper
+
+def getRadianceObjectsFromString(fullString):
+    """
+    separate a Radinace file string into multiple strings for each object.
+
+    Args:
+        radFileString: Radiance data as a single string. The string can be multiline.
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
+    """
+    rawRadObjects = re.findall(r'(\n|^)(\w*(\h*\w.*\n){1,})', fullString + "\n", re.MULTILINE)
+
+    return [("").join(radObject[:-1]) for radObject in rawRadObjects]
+
+
+def getRadianceObjectsFromFile(filePath):
+    """
+    Parse Radinace file and return a list of radiance objects as separate strings.
+
+    Args:
+        filePath: Path to Radiance file
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
+
+    Usage:
+        getRadianceObjectsFromFile("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")
+    """
+    assert os.path.isfile(filePath), "Can't find %s." % filePath
+
+    with open(filePath, "r") as radFile:
+        return getRadianceObjectsFromString("".join(radFile.readlines()))
+
+
+def importRadianceMaterialsFromFile(filePath):
+    """
+    Parse Radinace file and add return available radiance materials in file.
+
+    Args:
+        filePath: Path to a radiance file
+    """
+    # get all the radiance objects including materials
+    radianceObjects = getRadianceObjectsFromFile(filePath)
+
+    # find materials and create honeybee materials from the string
+    for radObj in radianceObjects:
+        raise NotImplementedError
 </code></pre>
   </div>
 
@@ -1024,55 +1071,121 @@ import properties, analysisrecipe, command, material, parameters, sky, helper
 
   <section id="section-items">
 
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
-      <div class="item">
-      <p class="name"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></p>
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
-  
-    <div class="desc"><p>Radiance Analysis Recipes.</p></div>
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.helper.getRadianceObjectsFromFile">
+    <p>def <span class="ident">getRadianceObjectsFromFile</span>(</p><p>filePath)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="command/index.html">honeybee.radiance.command</a></p>
+    
+  
+    <div class="desc"><p>Parse Radinace file and return a list of radiance objects as separate strings.</p>
+<p>Args:
+    filePath: Path to Radiance file</p>
+<p>Returns:
+    A list of strings. Each string represents a differnt Rdiance Object</p>
+<p>Usage:
+    getRadianceObjectsFromFile("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.helper.getRadianceObjectsFromFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.helper.getRadianceObjectsFromFile" class="source">
+    <pre><code>def getRadianceObjectsFromFile(filePath):
+    """
+    Parse Radinace file and return a list of radiance objects as separate strings.
+
+    Args:
+        filePath: Path to Radiance file
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
+
+    Usage:
+        getRadianceObjectsFromFile("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")
+    """
+    assert os.path.isfile(filePath), "Can't find %s." % filePath
+
+    with open(filePath, "r") as radFile:
+        return getRadianceObjectsFromString("".join(radFile.readlines()))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       
-  
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.helper.getRadianceObjectsFromString">
+    <p>def <span class="ident">getRadianceObjectsFromString</span>(</p><p>fullString)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.radiance.helper</a></p>
+    
+  
+    <div class="desc"><p>separate a Radinace file string into multiple strings for each object.</p>
+<p>Args:
+    radFileString: Radiance data as a single string. The string can be multiline.</p>
+<p>Returns:
+    A list of strings. Each string represents a differnt Rdiance Object</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.helper.getRadianceObjectsFromString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.helper.getRadianceObjectsFromString" class="source">
+    <pre><code>def getRadianceObjectsFromString(fullString):
+    """
+    separate a Radinace file string into multiple strings for each object.
+
+    Args:
+        radFileString: Radiance data as a single string. The string can be multiline.
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
+    """
+    rawRadObjects = re.findall(r'(\n|^)(\w*(\h*\w.*\n){1,})', fullString + "\n", re.MULTILINE)
+
+    return [("").join(radObject[:-1]) for radObject in rawRadObjects]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       
-  
-    <div class="desc"><p>A collection of auxiliary funtions for working with radiance files and objects.</p></div>
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.helper.importRadianceMaterialsFromFile">
+    <p>def <span class="ident">importRadianceMaterialsFromFile</span>(</p><p>filePath)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="material/index.html">honeybee.radiance.material</a></p>
-      
+    
+  
+    <div class="desc"><p>Parse Radinace file and add return available radiance materials in file.</p>
+<p>Args:
+    filePath: Path to a radiance file</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.helper.importRadianceMaterialsFromFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.helper.importRadianceMaterialsFromFile" class="source">
+    <pre><code>def importRadianceMaterialsFromFile(filePath):
+    """
+    Parse Radinace file and add return available radiance materials in file.
+
+    Args:
+        filePath: Path to a radiance file
+    """
+    # get all the radiance objects including materials
+    radianceObjects = getRadianceObjectsFromFile(filePath)
+
+    # find materials and create honeybee materials from the string
+    for radObj in radianceObjects:
+        raise NotImplementedError
+</code></pre>
+  </div>
+</div>
+
+  </div>
   
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="parameters.m.html">honeybee.radiance.parameters</a></p>
-      
-  
-    <div class="desc"><p>Radiance raytracing Parameters.</p></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="properties.m.html">honeybee.radiance.properties</a></p>
-      
-  
-    <div class="desc"><p>Radiance Properties for HBSurfaces.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="sky/index.html">honeybee.radiance.sky</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>

@@ -1,8 +1,8 @@
 """Radiance Analysis Recipes."""
 
-from abc import ABCMeta, abstractmethod, abstractproperty
-from sky import HBSky, HBCertainIlluminanceLevelSky
-from radianceparameters import RadianceParameters, LowQuality
+from sky.skyBase import RadianceSky
+from sky.certainIlluminance import SkyWithCertainIlluminanceLevel
+from parameters import RadianceParameters, LowQuality
 
 
 class HBDaylightAnalysisRecipe(object):
@@ -21,8 +21,6 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         radParameters: Radiance parameters for this analysis (Default:
             RadianceParameters.LowQuality)
     """
-
-    __metaclass__ = ABCMeta
 
     def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
         """Create grid-based recipe."""
@@ -43,7 +41,7 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
     @sky.setter
     def sky(self, newSky):
-        assert isinstance(newSky, HBSky), "Sky is not a valid Honeybee sky."
+        assert isinstance(newSky, RadianceSky), "Sky is not a valid Honeybee sky."
         self.__sky = newSky
 
     @property
@@ -124,7 +122,7 @@ class HBImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
 if __name__ == "__main__":
     # test code
-    sky = HBCertainIlluminanceLevelSky(2000)
+    sky = SkyWithCertainIlluminanceLevel(2000)
     rp = HBGridBasedAnalysisRecipe(sky, [(0, 0, 0), (10, 0, 0)])
 
     print rp

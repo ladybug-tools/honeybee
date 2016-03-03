@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance API documentation</title>
+    <title>honeybee.radiance.command.oconv API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -985,18 +985,24 @@ table {
     <ul id="index">
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></li>
-        <li class="mono"><a href="command/index.html">honeybee.radiance.command</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.radiance.helper</a></li>
-        <li class="mono"><a href="material/index.html">honeybee.radiance.material</a></li>
-        <li class="mono"><a href="parameters.m.html">honeybee.radiance.parameters</a></li>
-        <li class="mono"><a href="properties.m.html">honeybee.radiance.properties</a></li>
-        <li class="mono"><a href="sky/index.html">honeybee.radiance.sky</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.command.oconv.Oconv">Oconv</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.command.oconv.Oconv.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.oconv.Oconv.addFile">addFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.oconv.Oconv.addFiles">addFiles</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.oconv.Oconv.commandline">commandline</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.oconv.Oconv.execute">execute</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1008,15 +1014,109 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.command.oconv</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance" class="source">
-    <pre><code>__all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
-    "sky", "helper"]
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.oconv', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.oconv" class="source">
+    <pre><code>import os
+import subprocess
+from commandBase import RadianceCommand
 
-import properties, analysisrecipe, command, material, parameters, sky, helper
+
+class Oconv(RadianceCommand):
+    u"""Create a Radiance octree.
+
+    Read more at: http://radsite.lbl.gov/radiance/man_html/oconv.1.html
+
+    Attributes:
+        fileName: oct filename which is usually the same as the project name (Default: unnamed)
+        workingDir: Path to the directory that the res
+        inputFiles: Sorted list of full path to input rad files (Default: [])
+        resolution: An integer that "specifies the maximum octree resolution.
+            This should be greater than or equal to the ratio of the largest and
+            smallest dimensions in the scene (ie. surface size or distance between
+            surfaces)" (default:16384)
+        n: An integer that "specifies the maximum surface set size for each voxel.
+            Larger numbers result in quicker octree generation, but potentially
+            slower rendering. Smaller values may or may not produce faster renderings,
+            since the default number (6) is close to optimal for most scenes.
+        freeze: A Boolean to produce "a frozen octree containing all the scene information.
+            Normally, only a reference to the scene files is stored in the octree, and changes
+            to those files may invalidate the result. The freeze option is useful when the octree
+            file's integrity and loading speed is more important than its size, or when the octree
+            is to be relocated to another directory, and is especially useful for creating library
+            objects for the "instance" primitive type. If the input octree is frozen, the output
+            will be also. (default: True)
+    """
+
+    def __init__(self, fileName="unnamed", workingDir="", inputFiles=[],
+                 resolution=16384, n=6, freeze=True):
+        """Initialize the class."""
+        self.fileName = fileName
+        """oct filename which is usually the same as the project name (Default: unnamed)"""
+        self.inputFiles = inputFiles
+        """Sorted list of full path to input rad files (Default: [])"""
+        self.r = int(resolution)
+        self.n = int(n)
+        self.freeze = freeze
+
+    def addFile(self, radFile):
+        """Add files to oconv.
+
+        Args:
+            radFile: Full path to a local rad file
+        """
+        self.addFiles([radFile])
+
+    def addFiles(self, radFiles):
+        """Add files to oconv.
+
+        The order of files does matter. Make sure you're passing the files in The
+        right order.
+
+        Args:
+            radFile: A list of full path to a local rad files
+        """
+        self.inputFiles.extend(radFiles)
+
+    def commandline(self, pathToRadiance="", relativePath=False):
+        """Return full command as a string."""
+        return "%s -r %d %s %s > %s\n" % (
+            os.path.join(pathToRadiance, "oconv"),
+            self.r,
+            "-f" if self.freeze else "",
+            " ".join(self.inputFiles),
+            self.fileName if self.fileName.lower().endswith(".oct") else self.fileName + ".oct")
+
+    def __checkFiles(self):
+        """Check if the input files exist on the computer."""
+        assert len(self.inputFiles) != 0, \
+            "You need at least one file to create an octree."
+
+        for f in self.inputFiles:
+            assert os.path.exists(f), \
+                "%s doesn't exist" % f
+
+    def execute(self, pathToRadiance="", shell=True):
+        """Execute the command."""
+        # check if the files exist on the computer
+        self.__checkFiles()
+        subprocess.Popen(['cmd', self.commandline(pathToRadiance=pathToRadiance)], shell=shell)
+
+    def __repr__(self):
+        """Oconv class representation."""
+        return self.commandline()
+
+
+if __name__ == "__main__":
+    oc = Oconv()
+    oc.addFiles([
+        r"C:\ladybug\unnamed\gridBasedSimulation\cumulativeSky_1_1_1_12_31_24_radAnalysis.sky",
+        r"C:\ladybug\unnamed\gridBasedSimulation\material_unnamed.rad",
+        r"C:\ladybug\unnamed\gridBasedSimulation\unnamed.rad"])
+    print oc.commandline(r"c:\radiance\bin")
+    # oc.execute(r"c:\radiance\bin")
 </code></pre>
   </div>
 
@@ -1025,54 +1125,326 @@ import properties, analysisrecipe, command, material, parameters, sky, helper
   <section id="section-items">
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></p>
+      <p id="honeybee.radiance.command.oconv.Oconv" class="name">class <span class="ident">Oconv</span></p>
       
   
-    <div class="desc"><p>Radiance Analysis Recipes.</p></div>
+    <div class="desc"><p>Create a Radiance octree.</p>
+<p>Read more at: http://radsite.lbl.gov/radiance/man_html/oconv.1.html</p>
+<p>Attributes:
+    fileName: oct filename which is usually the same as the project name (Default: unnamed)
+    workingDir: Path to the directory that the res
+    inputFiles: Sorted list of full path to input rad files (Default: [])
+    resolution: An integer that "specifies the maximum octree resolution.
+        This should be greater than or equal to the ratio of the largest and
+        smallest dimensions in the scene (ie. surface size or distance between
+        surfaces)" (default:16384)
+    n: An integer that "specifies the maximum surface set size for each voxel.
+        Larger numbers result in quicker octree generation, but potentially
+        slower rendering. Smaller values may or may not produce faster renderings,
+        since the default number (6) is close to optimal for most scenes.
+    freeze: A Boolean to produce "a frozen octree containing all the scene information.
+        Normally, only a reference to the scene files is stored in the octree, and changes
+        to those files may invalidate the result. The freeze option is useful when the octree
+        file's integrity and loading speed is more important than its size, or when the octree
+        is to be relocated to another directory, and is especially useful for creating library
+        objects for the "instance" primitive type. If the input octree is frozen, the output
+        will be also. (default: True)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.oconv.Oconv', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.oconv.Oconv" class="source">
+    <pre><code>class Oconv(RadianceCommand):
+    u"""Create a Radiance octree.
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="command/index.html">honeybee.radiance.command</a></p>
-      
+    Read more at: http://radsite.lbl.gov/radiance/man_html/oconv.1.html
+
+    Attributes:
+        fileName: oct filename which is usually the same as the project name (Default: unnamed)
+        workingDir: Path to the directory that the res
+        inputFiles: Sorted list of full path to input rad files (Default: [])
+        resolution: An integer that "specifies the maximum octree resolution.
+            This should be greater than or equal to the ratio of the largest and
+            smallest dimensions in the scene (ie. surface size or distance between
+            surfaces)" (default:16384)
+        n: An integer that "specifies the maximum surface set size for each voxel.
+            Larger numbers result in quicker octree generation, but potentially
+            slower rendering. Smaller values may or may not produce faster renderings,
+            since the default number (6) is close to optimal for most scenes.
+        freeze: A Boolean to produce "a frozen octree containing all the scene information.
+            Normally, only a reference to the scene files is stored in the octree, and changes
+            to those files may invalidate the result. The freeze option is useful when the octree
+            file's integrity and loading speed is more important than its size, or when the octree
+            is to be relocated to another directory, and is especially useful for creating library
+            objects for the "instance" primitive type. If the input octree is frozen, the output
+            will be also. (default: True)
+    """
+
+    def __init__(self, fileName="unnamed", workingDir="", inputFiles=[],
+                 resolution=16384, n=6, freeze=True):
+        """Initialize the class."""
+        self.fileName = fileName
+        """oct filename which is usually the same as the project name (Default: unnamed)"""
+        self.inputFiles = inputFiles
+        """Sorted list of full path to input rad files (Default: [])"""
+        self.r = int(resolution)
+        self.n = int(n)
+        self.freeze = freeze
+
+    def addFile(self, radFile):
+        """Add files to oconv.
+
+        Args:
+            radFile: Full path to a local rad file
+        """
+        self.addFiles([radFile])
+
+    def addFiles(self, radFiles):
+        """Add files to oconv.
+
+        The order of files does matter. Make sure you're passing the files in The
+        right order.
+
+        Args:
+            radFile: A list of full path to a local rad files
+        """
+        self.inputFiles.extend(radFiles)
+
+    def commandline(self, pathToRadiance="", relativePath=False):
+        """Return full command as a string."""
+        return "%s -r %d %s %s > %s\n" % (
+            os.path.join(pathToRadiance, "oconv"),
+            self.r,
+            "-f" if self.freeze else "",
+            " ".join(self.inputFiles),
+            self.fileName if self.fileName.lower().endswith(".oct") else self.fileName + ".oct")
+
+    def __checkFiles(self):
+        """Check if the input files exist on the computer."""
+        assert len(self.inputFiles) != 0, \
+            "You need at least one file to create an octree."
+
+        for f in self.inputFiles:
+            assert os.path.exists(f), \
+                "%s doesn't exist" % f
+
+    def execute(self, pathToRadiance="", shell=True):
+        """Execute the command."""
+        # check if the files exist on the computer
+        self.__checkFiles()
+        subprocess.Popen(['cmd', self.commandline(pathToRadiance=pathToRadiance)], shell=shell)
+
+    def __repr__(self):
+        """Oconv class representation."""
+        return self.commandline()
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.command.oconv.Oconv">Oconv</a></li>
+          <li>honeybee.radiance.command.commandBase.RadianceCommand</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.command.oconv.Oconv.fileName" class="name">var <span class="ident">fileName</span></p>
+            
+
+            
   
+    <div class="desc"><p>oct filename which is usually the same as the project name (Default: unnamed)</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.radiance.helper</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.oconv.Oconv.freeze" class="name">var <span class="ident">freeze</span></p>
+            
+
+            
   
-    <div class="desc"><p>A collection of auxiliary funtions for working with radiance files and objects.</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="material/index.html">honeybee.radiance.material</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.oconv.Oconv.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
+            
+
+            
   
+    <div class="desc"><p>Sorted list of full path to input rad files (Default: [])</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="parameters.m.html">honeybee.radiance.parameters</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.oconv.Oconv.n" class="name">var <span class="ident">n</span></p>
+            
+
+            
   
-    <div class="desc"><p>Radiance raytracing Parameters.</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="properties.m.html">honeybee.radiance.properties</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.oconv.Oconv.r" class="name">var <span class="ident">r</span></p>
+            
+
+            
   
-    <div class="desc"><p>Radiance Properties for HBSurfaces.</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="sky/index.html">honeybee.radiance.sky</a></p>
-      
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.oconv.Oconv.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, fileName=&#39;unnamed&#39;, workingDir=&#39;&#39;, inputFiles=[], resolution=16384, n=6, freeze=True)</p>
+    </div>
+    
+
+    
   
+    <div class="desc"><p>Initialize the class.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.oconv.Oconv.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.oconv.Oconv.__init__" class="source">
+    <pre><code>def __init__(self, fileName="unnamed", workingDir="", inputFiles=[],
+             resolution=16384, n=6, freeze=True):
+    """Initialize the class."""
+    self.fileName = fileName
+    """oct filename which is usually the same as the project name (Default: unnamed)"""
+    self.inputFiles = inputFiles
+    """Sorted list of full path to input rad files (Default: [])"""
+    self.r = int(resolution)
+    self.n = int(n)
+    self.freeze = freeze
+</code></pre>
+  </div>
+</div>
 
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.oconv.Oconv.addFile">
+    <p>def <span class="ident">addFile</span>(</p><p>self, radFile)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Add files to oconv.</p>
+<p>Args:
+    radFile: Full path to a local rad file</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.oconv.Oconv.addFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.oconv.Oconv.addFile" class="source">
+    <pre><code>def addFile(self, radFile):
+    """Add files to oconv.
+    Args:
+        radFile: Full path to a local rad file
+    """
+    self.addFiles([radFile])
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.oconv.Oconv.addFiles">
+    <p>def <span class="ident">addFiles</span>(</p><p>self, radFiles)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Add files to oconv.</p>
+<p>The order of files does matter. Make sure you're passing the files in The
+right order.</p>
+<p>Args:
+    radFile: A list of full path to a local rad files</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.oconv.Oconv.addFiles', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.oconv.Oconv.addFiles" class="source">
+    <pre><code>def addFiles(self, radFiles):
+    """Add files to oconv.
+    The order of files does matter. Make sure you're passing the files in The
+    right order.
+    Args:
+        radFile: A list of full path to a local rad files
+    """
+    self.inputFiles.extend(radFiles)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.oconv.Oconv.commandline">
+    <p>def <span class="ident">commandline</span>(</p><p>self, pathToRadiance=&#39;&#39;, relativePath=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return full command as a string.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.oconv.Oconv.commandline', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.oconv.Oconv.commandline" class="source">
+    <pre><code>def commandline(self, pathToRadiance="", relativePath=False):
+    """Return full command as a string."""
+    return "%s -r %d %s %s > %s\n" % (
+        os.path.join(pathToRadiance, "oconv"),
+        self.r,
+        "-f" if self.freeze else "",
+        " ".join(self.inputFiles),
+        self.fileName if self.fileName.lower().endswith(".oct") else self.fileName + ".oct")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.oconv.Oconv.execute">
+    <p>def <span class="ident">execute</span>(</p><p>self, pathToRadiance=&#39;&#39;, shell=True)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Execute the command.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.oconv.Oconv.execute', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.oconv.Oconv.execute" class="source">
+    <pre><code>def execute(self, pathToRadiance="", shell=True):
+    """Execute the command."""
+    # check if the files exist on the computer
+    self.__checkFiles()
+    subprocess.Popen(['cmd', self.commandline(pathToRadiance=pathToRadiance)], shell=shell)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       </div>
+      </div>
+
   </section>
 
     </article>

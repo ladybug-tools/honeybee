@@ -3,8 +3,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance API documentation</title>
-    <meta name="description" content="" />
+    <title>honeybee.radiance.material.custom API documentation</title>
+    <meta name="description" content="Radiance Custom Material (e.g plastic, glass, etc.).
+
+Use this class to create any type of radiance ..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -985,18 +987,22 @@ table {
     <ul id="index">
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></li>
-        <li class="mono"><a href="command/index.html">honeybee.radiance.command</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.radiance.helper</a></li>
-        <li class="mono"><a href="material/index.html">honeybee.radiance.material</a></li>
-        <li class="mono"><a href="parameters.m.html">honeybee.radiance.parameters</a></li>
-        <li class="mono"><a href="properties.m.html">honeybee.radiance.properties</a></li>
-        <li class="mono"><a href="sky/index.html">honeybee.radiance.sky</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.material.custom.CustomMaterial">CustomMaterial</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.material.custom.CustomMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.custom.CustomMaterial.modifyValues">modifyValues</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.custom.CustomMaterial.toRadString">toRadString</a></li>
+  </ul>
+
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1008,15 +1014,71 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.material.custom</span> module</h1>
+  <p>Radiance Custom Material (e.g plastic, glass, etc.).</p>
+<p>Use this class to create any type of radiance materials.
+http://radsite.lbl.gov/radiance/refer/ray.html#Materials</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance" class="source">
-    <pre><code>__all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
-    "sky", "helper"]
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.custom', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.custom" class="source">
+    <pre><code>"""Radiance Custom Material (e.g plastic, glass, etc.).
 
-import properties, analysisrecipe, command, material, parameters, sky, helper
+Use this class to create any type of radiance materials.
+http://radsite.lbl.gov/radiance/refer/ray.html#Materials
+"""
+from materialBase import RadianceMaterial
+
+
+class CustomMaterial(RadianceMaterial):
+    """Custom Radiance material.
+
+    Attributes:
+        name: Material name as a string. Do not use white space and special character.
+        materialType: One of Radiance standard Material types (e.g. glass, plastic, etc)
+        values: A dictionary of material data. key is line number and item is the list of values
+              {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
+        modifier: Material modifier. Default is void
+
+    """
+
+    def __init__(self, name, materialType, values={}, modifier="void"):
+        """Create custom radiance material."""
+        RadianceMaterial.__init__(self, name, materialType, modifier="void")
+        self.values = values
+        """ A dictionary of material data. key is line number and item is the list of values
+              {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
+        """
+
+    def modifyValues(self, lineCount, values):
+        """Modify values for the current material.
+
+        Args:
+           lineCount: An integer between 0-2 that represnt the line number.
+           values: Values as a list of string
+         Usage:
+            # This line will assign 9 values to line 0 of the material
+            material.modifyValues(0, ["0.5", "0.5", "0.5",
+                "/usr/local/lib/ray/oakfloor.pic", ".", "frac(U)",
+                "frac(V)", "-s", "1.1667"])
+        """
+        assert 0 <= lineCount <= 2, "lineCount should be between 0-2."
+        self.values[lineCount] = values
+
+    def toRadString(self, minimal=False):
+        """Return full radiance definition."""
+        material = [self.headLine]
+
+        for lineCount in xrange(3):
+            try:
+                values = self.values[lineCount]
+            except:
+                values = []  # line will be printed as 0
+            else:
+                count = [str(len(values))]
+                line = " ".join(count + values).rstrip()
+                material.append(line)
+
+        return " ".join(material) if minimal else "\n".join(material)
 </code></pre>
   </div>
 
@@ -1025,54 +1087,243 @@ import properties, analysisrecipe, command, material, parameters, sky, helper
   <section id="section-items">
 
 
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p class="name"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></p>
+      <p id="honeybee.radiance.material.custom.CustomMaterial" class="name">class <span class="ident">CustomMaterial</span></p>
       
   
-    <div class="desc"><p>Radiance Analysis Recipes.</p></div>
+    <div class="desc"><p>Custom Radiance material.</p>
+<p>Attributes:
+    name: Material name as a string. Do not use white space and special character.
+    materialType: One of Radiance standard Material types (e.g. glass, plastic, etc)
+    values: A dictionary of material data. key is line number and item is the list of values
+          {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
+    modifier: Material modifier. Default is void</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.custom.CustomMaterial', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.custom.CustomMaterial" class="source">
+    <pre><code>class CustomMaterial(RadianceMaterial):
+    """Custom Radiance material.
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="command/index.html">honeybee.radiance.command</a></p>
-      
+    Attributes:
+        name: Material name as a string. Do not use white space and special character.
+        materialType: One of Radiance standard Material types (e.g. glass, plastic, etc)
+        values: A dictionary of material data. key is line number and item is the list of values
+              {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
+        modifier: Material modifier. Default is void
+
+    """
+
+    def __init__(self, name, materialType, values={}, modifier="void"):
+        """Create custom radiance material."""
+        RadianceMaterial.__init__(self, name, materialType, modifier="void")
+        self.values = values
+        """ A dictionary of material data. key is line number and item is the list of values
+              {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
+        """
+
+    def modifyValues(self, lineCount, values):
+        """Modify values for the current material.
+
+        Args:
+           lineCount: An integer between 0-2 that represnt the line number.
+           values: Values as a list of string
+         Usage:
+            # This line will assign 9 values to line 0 of the material
+            material.modifyValues(0, ["0.5", "0.5", "0.5",
+                "/usr/local/lib/ray/oakfloor.pic", ".", "frac(U)",
+                "frac(V)", "-s", "1.1667"])
+        """
+        assert 0 <= lineCount <= 2, "lineCount should be between 0-2."
+        self.values[lineCount] = values
+
+    def toRadString(self, minimal=False):
+        """Return full radiance definition."""
+        material = [self.headLine]
+
+        for lineCount in xrange(3):
+            try:
+                values = self.values[lineCount]
+            except:
+                values = []  # line will be printed as 0
+            else:
+                count = [str(len(values))]
+                line = " ".join(count + values).rstrip()
+                material.append(line)
+
+        return " ".join(material) if minimal else "\n".join(material)
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.material.custom.CustomMaterial">CustomMaterial</a></li>
+          <li>honeybee.radiance.material.materialBase.RadianceMaterial</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.material.custom.CustomMaterial.headLine" class="name">var <span class="ident">headLine</span></p>
+            
+
+            
   
+    <div class="desc"><p>Return first line of Material definition.</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.radiance.helper</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.custom.CustomMaterial.modifier" class="name">var <span class="ident">modifier</span></p>
+            
+
+            
   
-    <div class="desc"><p>A collection of auxiliary funtions for working with radiance files and objects.</p></div>
+    <div class="desc"><p>Get/set material modifier.</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="material/index.html">honeybee.radiance.material</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.custom.CustomMaterial.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
   
+    <div class="desc"><p>Get/set material name.</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="parameters.m.html">honeybee.radiance.parameters</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.custom.CustomMaterial.type" class="name">var <span class="ident">type</span></p>
+            
+
+            
   
-    <div class="desc"><p>Radiance raytracing Parameters.</p></div>
+    <div class="desc"><p>Get/set material type.</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="properties.m.html">honeybee.radiance.properties</a></p>
-      
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.custom.CustomMaterial.values" class="name">var <span class="ident">values</span></p>
+            
+
+            
   
-    <div class="desc"><p>Radiance Properties for HBSurfaces.</p></div>
+    <div class="desc"><p>A dictionary of material data. key is line number and item is the list of values
+{0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}</p></div>
+  <div class="source_cont">
+</div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="sky/index.html">honeybee.radiance.sky</a></p>
-      
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.custom.CustomMaterial.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, materialType, values={}, modifier=&#39;void&#39;)</p>
+    </div>
+    
+
+    
   
+    <div class="desc"><p>Create custom radiance material.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.custom.CustomMaterial.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.custom.CustomMaterial.__init__" class="source">
+    <pre><code>def __init__(self, name, materialType, values={}, modifier="void"):
+    """Create custom radiance material."""
+    RadianceMaterial.__init__(self, name, materialType, modifier="void")
+    self.values = values
+    """ A dictionary of material data. key is line number and item is the list of values
+          {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
+    """
+</code></pre>
+  </div>
+</div>
 
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.custom.CustomMaterial.modifyValues">
+    <p>def <span class="ident">modifyValues</span>(</p><p>self, lineCount, values)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Modify values for the current material.</p>
+<p>Args:
+   lineCount: An integer between 0-2 that represnt the line number.
+   values: Values as a list of string
+ Usage:
+    # This line will assign 9 values to line 0 of the material
+    material.modifyValues(0, ["0.5", "0.5", "0.5",
+        "/usr/local/lib/ray/oakfloor.pic", ".", "frac(U)",
+        "frac(V)", "-s", "1.1667"])</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.custom.CustomMaterial.modifyValues', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.custom.CustomMaterial.modifyValues" class="source">
+    <pre><code>def modifyValues(self, lineCount, values):
+    """Modify values for the current material.
+    Args:
+       lineCount: An integer between 0-2 that represnt the line number.
+       values: Values as a list of string
+     Usage:
+        # This line will assign 9 values to line 0 of the material
+        material.modifyValues(0, ["0.5", "0.5", "0.5",
+            "/usr/local/lib/ray/oakfloor.pic", ".", "frac(U)",
+            "frac(V)", "-s", "1.1667"])
+    """
+    assert 0 <= lineCount <= 2, "lineCount should be between 0-2."
+    self.values[lineCount] = values
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.custom.CustomMaterial.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self, minimal=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return full radiance definition.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.custom.CustomMaterial.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.custom.CustomMaterial.toRadString" class="source">
+    <pre><code>def toRadString(self, minimal=False):
+    """Return full radiance definition."""
+    material = [self.headLine]
+    for lineCount in xrange(3):
+        try:
+            values = self.values[lineCount]
+        except:
+            values = []  # line will be printed as 0
+        else:
+            count = [str(len(values))]
+            line = " ".join(count + values).rstrip()
+            material.append(line)
+    return " ".join(material) if minimal else "\n".join(material)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       </div>
+      </div>
+
   </section>
 
     </article>
