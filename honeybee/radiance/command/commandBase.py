@@ -1,14 +1,15 @@
 """Radiance base command."""
-import honeybee.settings
+from ... import settings
 
 
+# TODO: Implement piping as on option
 class RadianceCommand(object):
     """Base class for commands."""
 
     def __init__(self):
         """Initialize Radiance command."""
         # set up DefaultSettings
-        defSettings = honeybee.settings.DefaultSettings(mute=True)
+        defSettings = settings.DefaultSettings(mute=True)
 
         self.radbinFolder = defSettings.radbinFolder
         self.radlibFolder = defSettings.radlibFolder

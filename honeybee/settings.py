@@ -112,3 +112,8 @@ class DefaultSettings(object):
         """Path to EnergyPlus folder."""
         raise NotImplementedError
         # return self.__eplus
+
+
+if __name__ == "__main__":
+    setting = DefaultSettings(mute=False)
+    print setting.radbinFolder

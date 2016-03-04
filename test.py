@@ -1,3 +1,12 @@
+import honeybee
+from honeybee.radiance.command.oconv import Oconv
+
+oc = Oconv()
+oc.addFiles([
+    r"C:\ladybug\unnamed\gridBasedSimulation\cumulativeSky_1_1_1_12_31_24_radAnalysis.sky",
+    r"C:\ladybug\unnamed\gridBasedSimulation\material_unnamed.rad",
+    r"C:\ladybug\unnamed\gridBasedSimulation\unnamed.rad"])
+print oc.commandline()
 """Test file."""
 
 """

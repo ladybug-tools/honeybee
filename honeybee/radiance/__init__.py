@@ -1,5 +1,4 @@
 """Honeybee Radiance libraries."""
-__all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
-    "sky", "helper"]
+__all__ = ["properties", "analysisrecipe", "material", "parameters", "sky", "helper", "analysis", "geometry"]
 
-import properties, analysisrecipe, command, material, parameters, sky, helper
+import properties, analysisrecipe, material, parameters, sky, helper, analysis, geometry
