@@ -1,3 +1,4 @@
+"""Honeybee Radiance libraries."""
 __all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
     "sky", "helper"]
 

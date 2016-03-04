@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>honeybee API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Honeybee core library." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -992,7 +992,9 @@ table {
         <li class="mono"><a href="hbsurface.m.html">honeybee.hbsurface</a></li>
         <li class="mono"><a href="hbzone.m.html">honeybee.hbzone</a></li>
         <li class="mono"><a href="radiance/index.html">honeybee.radiance</a></li>
+        <li class="mono"><a href="settings.m.html">honeybee.settings</a></li>
         <li class="mono"><a href="surfacetype.m.html">honeybee.surfacetype</a></li>
+        <li class="mono"><a href="vectormath/index.html">honeybee.vectormath</a></li>
         <li class="mono"><a href="wrapper.m.html">honeybee.wrapper</a></li>
       </ul>
     </li>
@@ -1008,13 +1010,14 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">honeybee</span> module</h1>
-  
+  <p>Honeybee core library.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee', this);">Show source &equiv;</a></p>
   <div id="source-honeybee" class="source">
-    <pre><code>__all__ = ["hbzone", "hbsurface", "radiance", "surfacetype", "wrapper"]
+    <pre><code>"""Honeybee core library."""
+__all__ = ["hbzone", "hbsurface", "radiance", "surfacetype", "wrapper", "settings"]
 
-import hbzone, hbsurface, radiance, surfacetype, wrapper
+import hbzone, hbsurface, radiance, surfacetype, wrapper, settings
 </code></pre>
   </div>
 
@@ -1048,6 +1051,14 @@ import hbzone, hbsurface, radiance, surfacetype, wrapper
       <p class="name"><a href="radiance/index.html">honeybee.radiance</a></p>
       
   
+    <div class="desc"><p>Honeybee Radiance libraries.</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="settings.m.html">honeybee.settings</a></p>
+      
+  
+    <div class="desc"><p>Honeybee system setting.</p></div>
 
       </div>
       <div class="item">
@@ -1057,7 +1068,12 @@ import hbzone, hbsurface, radiance, surfacetype, wrapper
     <div class="desc"><p>Honeybee surface types (e.g. wall, roof, etc.).</p></div>
 
       </div>
+      <div class="item">
+      <p class="name"><a href="vectormath/index.html">honeybee.vectormath</a></p>
+      
+  
 
+      </div>
       <div class="item">
       <p class="name"><a href="wrapper.m.html">honeybee.wrapper</a></p>
       

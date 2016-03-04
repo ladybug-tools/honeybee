@@ -992,6 +992,7 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#honeybee.radiance.command.commandBase.RadianceCommand.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.commandBase.RadianceCommand.execute">execute</a></li>
   </ul>
 
@@ -1016,10 +1017,24 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.commandBase', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.commandBase" class="source">
     <pre><code>"""Radiance base command."""
+import honeybee.settings
 
 
 class RadianceCommand(object):
     """Base class for commands."""
+
+    def __init__(self):
+        """Initialize Radiance command."""
+        # set up DefaultSettings
+        defSettings = honeybee.settings.DefaultSettings(mute=True)
+
+        self.radbinFolder = defSettings.radbinFolder
+        self.radlibFolder = defSettings.radlibFolder
+
+        # if path is not found then raise an exception
+        assert self.radbinFolder is not None, \
+            "Can't find %s.exe.\n" % self.__class__.__name__ + \
+            "Modify honeybee.settings to set path to Radiance binaries."
 
     def execute(self):
         """Execute radiance command."""
@@ -1045,6 +1060,19 @@ class RadianceCommand(object):
     <pre><code>class RadianceCommand(object):
     """Base class for commands."""
 
+    def __init__(self):
+        """Initialize Radiance command."""
+        # set up DefaultSettings
+        defSettings = honeybee.settings.DefaultSettings(mute=True)
+
+        self.radbinFolder = defSettings.radbinFolder
+        self.radlibFolder = defSettings.radlibFolder
+
+        # if path is not found then raise an exception
+        assert self.radbinFolder is not None, \
+            "Can't find %s.exe.\n" % self.__class__.__name__ + \
+            "Modify honeybee.settings to set path to Radiance binaries."
+
     def execute(self):
         """Execute radiance command."""
         raise NotImplementedError
@@ -1059,7 +1087,57 @@ class RadianceCommand(object):
           <li><a href="#honeybee.radiance.command.commandBase.RadianceCommand">RadianceCommand</a></li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.command.commandBase.RadianceCommand.radbinFolder" class="name">var <span class="ident">radbinFolder</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.commandBase.RadianceCommand.radlibFolder" class="name">var <span class="ident">radlibFolder</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.commandBase.RadianceCommand.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize Radiance command.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.commandBase.RadianceCommand.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.commandBase.RadianceCommand.__init__" class="source">
+    <pre><code>def __init__(self):
+    """Initialize Radiance command."""
+    # set up DefaultSettings
+    defSettings = honeybee.settings.DefaultSettings(mute=True)
+    self.radbinFolder = defSettings.radbinFolder
+    self.radlibFolder = defSettings.radlibFolder
+    # if path is not found then raise an exception
+    assert self.radbinFolder is not None, \
+        "Can't find %s.exe.\n" % self.__class__.__name__ + \
+        "Modify honeybee.settings to set path to Radiance binaries."
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.command.commandBase.RadianceCommand.execute">

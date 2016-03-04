@@ -32,6 +32,9 @@ class Oconv(RadianceCommand):
     def __init__(self, fileName="unnamed", workingDir="", inputFiles=[],
                  resolution=16384, n=6, freeze=True):
         """Initialize the class."""
+        # Initialize base class to make sure path to radiance is set correctly
+        RadianceCommand.__init__(self)
+
         self.fileName = fileName
         """oct filename which is usually the same as the project name (Default: unnamed)"""
         self.inputFiles = inputFiles
@@ -59,10 +62,10 @@ class Oconv(RadianceCommand):
         """
         self.inputFiles.extend(radFiles)
 
-    def commandline(self, pathToRadiance="", relativePath=False):
+    def commandline(self, relativePath=False):
         """Return full command as a string."""
         return "%s -r %d %s %s > %s\n" % (
-            os.path.join(pathToRadiance, "oconv"),
+            os.path.join(self.radbinFolder, "oconv"),
             self.r,
             "-f" if self.freeze else "",
             " ".join(self.inputFiles),
@@ -77,11 +80,11 @@ class Oconv(RadianceCommand):
             assert os.path.exists(f), \
                 "%s doesn't exist" % f
 
-    def execute(self, pathToRadiance="", shell=True):
+    def execute(self, shell=True):
         """Execute the command."""
         # check if the files exist on the computer
         self.__checkFiles()
-        subprocess.Popen(['cmd', self.commandline(pathToRadiance=pathToRadiance)], shell=shell)
+        subprocess.Popen(['cmd', self.commandline()], shell=shell)
 
     def __repr__(self):
         """Oconv class representation."""
@@ -94,5 +97,5 @@ if __name__ == "__main__":
         r"C:\ladybug\unnamed\gridBasedSimulation\cumulativeSky_1_1_1_12_31_24_radAnalysis.sky",
         r"C:\ladybug\unnamed\gridBasedSimulation\material_unnamed.rad",
         r"C:\ladybug\unnamed\gridBasedSimulation\unnamed.rad"])
-    print oc.commandline(r"c:\radiance\bin")
+    print oc.commandline()
     # oc.execute(r"c:\radiance\bin")
