@@ -145,9 +145,10 @@ class AnalysisPointGroup(PointGroup):
         except IndexError:
             raise IndexError("%s is not a valid input for vectors.\n" % str(vectors) +
                              "Do you need to wrap the vectors in a list?")
+        except TypeError:
+            raise TypeError("Can't create a vector from %s.\n" % str(vectors))
 
         self.__vectors = []
-
         # map vectors to points
         for ptCount in xrange(len(self.points)):
             try:

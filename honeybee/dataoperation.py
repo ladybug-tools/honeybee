@@ -14,7 +14,7 @@ def flattenTupleList(inputList):
     for el in inputList:
         if isinstance(el, collections.Iterable) \
             and not isinstance(el, basestring) \
-                and isinstance(el[0], collections.Iterable):
+                and (isinstance(el[0], collections.Iterable) or hasattr(el[0], 'X')):
             for sub in flattenTupleList(el):
                 yield sub
         else:

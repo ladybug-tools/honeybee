@@ -44,7 +44,8 @@ class PlasticMaterial(RadianceMaterial):
            surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
 
     @classmethod
-    def bySingleReflectValue(cls, name, rgbReflectance=0, refraction=1.52, modifier="void"):
+    def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
+                             roughness=0, modifier="void"):
         """Create plastic material with single reflectance value.
 
         Attributes:
@@ -63,8 +64,8 @@ class PlasticMaterial(RadianceMaterial):
             print wallMaterial
         """
         return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-                   bReflectance=rgbReflectance, specularity=0, roughness=0,
-                   modifier="void")
+                   bReflectance=rgbReflectance, specularity=specularity,
+                   roughness=roughness, modifier="void")
 
     @property
     def rReflectance(self):

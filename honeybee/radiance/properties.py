@@ -69,8 +69,11 @@ class RadianceProperties(object):
         """Check if material is set by user."""
         return self.__isMaterialSetByUser
 
+    def __repr__(self):
+        """Represnt Radiance properties."""
+        return "Radiance Properties > %s" % self.radianceMaterial
 
 if __name__ == "__main__":
     rp = RadianceProperties()
-    print rp.radianceMaterial
+    print rp
     print rp.isMaterialSetByUser

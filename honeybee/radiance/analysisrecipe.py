@@ -1,8 +1,8 @@
 """Radiance Analysis Recipes."""
 
 from ..hbpointgroup import AnalysisPointGroup
-from sky.skyBase import RadianceSky
-from parameters import RadianceParameters, LowQuality
+from .sky.skyBase import RadianceSky
+from .parameters import RadianceParameters, LowQuality
 from collections import Iterable
 import os
 
@@ -92,12 +92,14 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         You can acces AnalysisPointGroups using self.analysisPointsGroups property.
         """
         self.__analysisPointGroups = []
+        if len(pointGroups) == 0:
+            return
         # input is single point! Create a single group but seriously!
-        if not isinstance(pointGroups[0], Iterable):
+        elif not isinstance(pointGroups[0], Iterable):
             pointGroups = [[pointGroups]]
             vectorGroups = [[vectorGroups]]
         # if point group is flatten - create a single group
-        elif not isinstance(pointGroups[0][0], Iterable):
+        elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
             pointGroups = [pointGroups]
             vectorGroups = [vectorGroups]
 
@@ -144,6 +146,7 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
             (self.__class__.__name__,
              self.numOfPointGroups,
              self.numOfTotalPoints)
+
 
 class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
     """Daylight Factor Recipe."""
