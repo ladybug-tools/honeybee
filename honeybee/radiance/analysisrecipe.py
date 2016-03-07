@@ -137,8 +137,10 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         with open(filePath, "w") as outf:
             try:
                 outf.write(self.toRadString())
+                return True
             except Exception as e:
                 print "Failed to write points to file:\n%s" % e
+                return False
 
     def __repr__(self):
         """Represent grid based recipe."""

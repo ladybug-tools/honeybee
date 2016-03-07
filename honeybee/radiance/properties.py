@@ -71,7 +71,7 @@ class RadianceProperties(object):
 
     def __repr__(self):
         """Represnt Radiance properties."""
-        return "Radiance Properties > %s" % self.radianceMaterial
+        return "Radiance Properties > %s" % self.radianceMaterial.name
 
 if __name__ == "__main__":
     rp = RadianceProperties()

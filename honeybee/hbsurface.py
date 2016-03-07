@@ -3,6 +3,7 @@ from radiance.properties import RadianceProperties
 from radiance.geometry import polygon
 import surfacetype
 import geometryoperation as go
+import os
 
 
 class HBAnalysisSurface(object):
@@ -128,9 +129,7 @@ class HBAnalysisSurface(object):
         self.__isTypeSetByUser = __isTypeSetByUser
 
     def __surfaceTypeFromPoints(self):
-        # calculate normal of the surface by surface points
-        __surfaceNormal = go.calculateNormalFromPoints(self.points[0])
-        __angleToZAxis = go.calculateVectorAngleToZAxis(__surfaceNormal)
+        __angleToZAxis = go.calculateVectorAngleToZAxis(self.normal)
         return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis, self.points[0])
 
     @property
@@ -157,6 +156,9 @@ class HBAnalysisSurface(object):
         # here so user can add points as needed. It will be checked once user wants
         # to write the surface to Radiance or EnergyPlus
         self.addPointList(pts, True)
+
+        # calculate normal of the surface by surface points
+        self.normal = go.calculateNormalFromPoints(self.points[0])
 
         try:
             if not self.isTypeSetByUser:
@@ -253,6 +255,26 @@ class HBAnalysisSurface(object):
         return "%s\n%s" % (self.radianceMaterial, __pgString) if includeMaterials \
             else __pgString
 
+    def radStringToFile(self, filePath, includeMaterials=False):
+        """Write Radiance definition for this surface to a file.
+
+        Args:
+            filePath: Full path for a valid file path (e.g. c:/ladybug/geo.rad)
+
+        Returns:
+            True in case of success. False in case of failure.
+        """
+        assert os.path.isdir(os.path.split(filePath)[0]), \
+            "Cannot find %s." % os.path.split(filePath)[0]
+
+        with open(filePath, "w") as outf:
+            try:
+                outf.write(self.toRadString(includeMaterials))
+                return True
+            except Exception as e:
+                print "Failed to write %s to file:\n%s" % (self.name, e)
+                return False
+
     @property
     def epProperties(self):
         """Get and set EnergyPlus properties."""
@@ -280,6 +302,10 @@ class HBAnalysisSurface(object):
     def toEPString(self, includeConstruction=False, includeMaterials=False):
         """Return EnergyPlus definition for this surface."""
         raise NotImplementedError
+
+    def __repr__(self):
+        """Represnt Honeybee surface."""
+        return "HBSurface: %s" % self.name
 
 if __name__ == "__main__":
     # create a surface
