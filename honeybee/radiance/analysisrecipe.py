@@ -1,8 +1,10 @@
 """Radiance Analysis Recipes."""
 
+from ..hbpointgroup import AnalysisPointGroup
 from sky.skyBase import RadianceSky
-from sky.certainIlluminance import SkyWithCertainIlluminanceLevel
 from parameters import RadianceParameters, LowQuality
+from collections import Iterable
+import os
 
 
 class HBDaylightAnalysisRecipe(object):
@@ -16,23 +18,25 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
     Attributes:
         sky: A honeybee sky for the analysis
-        testPts: A list of test points as (x, y, z)
-        ptsVectors: An optional list of point vectors as (x, y, z).
-        radParameters: Radiance parameters for this analysis (Default:
-            RadianceParameters.LowQuality)
+        pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test points.
+            Each list of test points will be converted to a TestPointGroup. If testPts
+            is a single flattened list only one TestPointGroup will be created.
+        vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
+            of corresponding point in testPts. If the vector is not provided (0, 0, 1)
+            will be assigned.
+        radParameters: Radiance parameters for this analysis.
+            (Default: RadianceParameters.LowQuality)
     """
 
-    def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
+    def __init__(self, sky, pointGroups, vectorGroups=[], radParameters=None):
         """Create grid-based recipe."""
         self.sky = sky
         """A honeybee sky for the analysis"""
-        self.testPts = testPts
-        """A list of test points as (x, y, z)"""
-        self.ptsVectors = ptsVectors
-        """An optional list of point vectors as Rhino.Geometry.Vector3d
-            +Z Vector will be assigned if vectors are not provided."""
+
         self.radianceParameters = radParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)"""
+
+        self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
     def sky(self):
@@ -57,44 +61,89 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
             "Invalid radiance parameters object"
         self.__radParameters = radParameters
 
-    # TODO: @sariths do we need test point groups for 3Phase method?
-    # in that case we should accept lists of lists for test points
     @property
-    def testPts(self):
-        """List of test points."""
-        return self.__testPts
-
-    @testPts.setter
-    def testPts(self, pts):
-        """Set list of test points."""
-        self.__testPts = pts
+    def points(self):
+        """Return nested list of points."""
+        return [ap.poins for ap in self.analysisPointsGroups]
 
     @property
-    def ptsVectors(self):
-        """List of vectors for each test point.
+    def numOfPointGroups(self):
+        """Number of point groups."""
+        return len(self.analysisPointsGroups)
 
-        +Z Vector will be assigned if vectors are not provided
+    @property
+    def numOfTotalPoints(self):
+        """Number of total points."""
+        return sum(len(ap) for ap in self.analysisPointsGroups)
+
+    @property
+    def vectors(self):
+        """Nested list of vectors."""
+        return [ap.vectors for ap in self.analysisPointsGroups]
+
+    @property
+    def analysisPointsGroups(self):
+        """Return list of AnalysisPointGroups."""
+        return self.__analysisPointGroups
+
+    def createAnalysisPointGroups(self, pointGroups, vectorGroups):
+        """Create AnalysisPointGroups from input points and vectors.
+
+        You can acces AnalysisPointGroups using self.analysisPointsGroups property.
         """
-        return self.__ptsVectors
+        self.__analysisPointGroups = []
+        # input is single point! Create a single group but seriously!
+        if not isinstance(pointGroups[0], Iterable):
+            pointGroups = [[pointGroups]]
+            vectorGroups = [[vectorGroups]]
+        # if point group is flatten - create a single group
+        elif not isinstance(pointGroups[0][0], Iterable):
+            pointGroups = [pointGroups]
+            vectorGroups = [vectorGroups]
 
-    # TODO: Add check for vectors. Remove null values. assign 0, 0, 1 in case of None
-    @ptsVectors.setter
-    def ptsVectors(self, vectors):
-        """List of vectors for each test point.
+        for groupCount, pts in enumerate(pointGroups):
+            try:
+                # create a list for vectors if it's not provided by user
+                vectors = vectorGroups[groupCount]
+                if vectors == [[]]:
+                    vectors = [(0, 0, 1)]
+            except IndexError:
+                vectors = [(0, 0, 1)]
+            finally:
+                # last check for vectors in case user input is a flatten lists
+                # for nested group of points.
+                if not isinstance(vectors[0], Iterable):
+                    vectors = [vectors]
+                self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
 
-        +Z Vector will be assigned if vectors are not provided
+    def toRadString(self):
+        """Return a multiline string of analysis points for Radiance."""
+        return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
+
+    def toFile(self, filePath):
+        """Write point groups to file.
+
+        Args:
+            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+
+        Returns:
+            True in case of success. False in case of failure.
         """
-        if vectors == []:
-            self.__ptsVectors = [(0, 0, 1) for pt in self.testPts]
-        else:
-            assert len(self.testPts) == len(vectors), \
-                "Length of test points should be equal to length of vectors."
-            self.__ptsVectors = vectors
+        assert os.path.isdir(os.path.split(filePath)[0]), \
+            "Cannot find %s." % os.path.split(filePath)[0]
+
+        with open(filePath, "w") as outf:
+            try:
+                outf.write(self.toRadString())
+            except Exception as e:
+                print "Failed to write points to file:\n%s" % e
 
     def __repr__(self):
         """Represent grid based recipe."""
-        return "%s #testPts:%d" % (self.__class__.__name__, len(self.testPts))
-
+        return "%s #PointGroup: %d #Points: %d" % \
+            (self.__class__.__name__,
+             self.numOfPointGroups,
+             self.numOfTotalPoints)
 
 class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
     """Daylight Factor Recipe."""
@@ -122,8 +171,12 @@ class HBImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
 if __name__ == "__main__":
     # test code
+    from sky.certainIlluminance import SkyWithCertainIlluminanceLevel
+
     sky = SkyWithCertainIlluminanceLevel(2000)
-    rp = HBGridBasedAnalysisRecipe(sky, [(0, 0, 0), (10, 0, 0)])
+    rp = HBGridBasedAnalysisRecipe(sky, [[(0, 0, 0), (10, 0, 0)]])
 
     print rp
     print "vectors:", rp.ptsVectors
+
+    rp.writePointsToFile("c:/ladybug/points.pts")

@@ -304,6 +304,7 @@ class Vector2:
         n = other.normalized()
         return self.dot(n)*n
 
+
 class Vector3:
     __slots__ = ['x', 'y', 'z']
     __hash__ = None
@@ -312,6 +313,21 @@ class Vector3:
         self.x = x
         self.y = y
         self.z = z
+
+    @property
+    def X(self):
+        """Return x value."""
+        return self.x
+
+    @property
+    def Y(self):
+        """Return y value."""
+        return self.y
+
+    @property
+    def Z(self):
+        """Return z value."""
+        return self.z
 
     def __copy__(self):
         return self.__class__(self.x, self.y, self.z)
@@ -322,6 +338,9 @@ class Vector3:
         return 'Vector3(%.2f, %.2f, %.2f)' % (self.x,
                                               self.y,
                                               self.z)
+
+    def __str__(self):
+        return '%.3f %.3f %.3f' % (self.x, self.y, self.z)
 
     def __eq__(self, other):
         if isinstance(other, Vector3):
@@ -502,8 +521,8 @@ class Vector3:
 
     def __neg__(self):
         return Vector3(-self.x,
-                        -self.y,
-                        -self.z)
+                       -self.y,
+                       -self.z)
 
     __pos__ = __copy__
 
@@ -544,11 +563,11 @@ class Vector3:
         return self
 
     def flipped(self):
-        """Calculate a flipped vector"""
+        """Return flipped vector"""
         # added by Mostapha Sadeghipour
         return Vector3(-self.x,
-                        -self.y,
-                        -self.z)
+                       -self.y,
+                       -self.z)
 
     def dot(self, other):
         assert isinstance(other, Vector3)
