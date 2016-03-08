@@ -1612,6 +1612,7 @@ class Vector2:
         n = other.normalized()
         return self.dot(n)*n
 
+
 class Vector3:
     __slots__ = ['x', 'y', 'z']
     __hash__ = None
@@ -1620,6 +1621,21 @@ class Vector3:
         self.x = x
         self.y = y
         self.z = z
+
+    @property
+    def X(self):
+        """Return x value."""
+        return self.x
+
+    @property
+    def Y(self):
+        """Return y value."""
+        return self.y
+
+    @property
+    def Z(self):
+        """Return z value."""
+        return self.z
 
     def __copy__(self):
         return self.__class__(self.x, self.y, self.z)
@@ -1630,6 +1646,9 @@ class Vector3:
         return 'Vector3(%.2f, %.2f, %.2f)' % (self.x,
                                               self.y,
                                               self.z)
+
+    def __str__(self):
+        return '%.3f %.3f %.3f' % (self.x, self.y, self.z)
 
     def __eq__(self, other):
         if isinstance(other, Vector3):
@@ -1810,8 +1829,8 @@ class Vector3:
 
     def __neg__(self):
         return Vector3(-self.x,
-                        -self.y,
-                        -self.z)
+                       -self.y,
+                       -self.z)
 
     __pos__ = __copy__
 
@@ -1852,11 +1871,11 @@ class Vector3:
         return self
 
     def flipped(self):
-        """Calculate a flipped vector"""
+        """Return flipped vector"""
         # added by Mostapha Sadeghipour
         return Vector3(-self.x,
-                        -self.y,
-                        -self.z)
+                       -self.y,
+                       -self.z)
 
     def dot(self, other):
         assert isinstance(other, Vector3)
@@ -7742,6 +7761,51 @@ class Plane:
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
+            <p id="honeybee.vectormath.euclid.Point3.X" class="name">var <span class="ident">X</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.vectormath.euclid.Vector3">Vector3</a></code>.<code><a href="#honeybee.vectormath.euclid.Vector3.X">X</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Return x value.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.vectormath.euclid.Point3.Y" class="name">var <span class="ident">Y</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.vectormath.euclid.Vector3">Vector3</a></code>.<code><a href="#honeybee.vectormath.euclid.Vector3.Y">Y</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Return y value.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.vectormath.euclid.Point3.Z" class="name">var <span class="ident">Z</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.vectormath.euclid.Vector3">Vector3</a></code>.<code><a href="#honeybee.vectormath.euclid.Vector3.Z">Z</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Return z value.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.vectormath.euclid.Point3.x" class="name">var <span class="ident">x</span></p>
             
     <p class="inheritance">
@@ -8008,16 +8072,16 @@ class Plane:
 
     
   
-    <div class="desc inherited"><p>Calculate a flipped vector</p></div>
+    <div class="desc inherited"><p>Return flipped vector</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.vectormath.euclid.Point3.flipped', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.vectormath.euclid.Point3.flipped" class="source">
     <pre><code>def flipped(self):
-    """Calculate a flipped vector"""
+    """Return flipped vector"""
     # added by Mostapha Sadeghipour
     return Vector3(-self.x,
-                    -self.y,
-                    -self.z)
+                   -self.y,
+                   -self.z)
 </code></pre>
   </div>
 </div>
@@ -10320,6 +10384,21 @@ class Plane:
         self.y = y
         self.z = z
 
+    @property
+    def X(self):
+        """Return x value."""
+        return self.x
+
+    @property
+    def Y(self):
+        """Return y value."""
+        return self.y
+
+    @property
+    def Z(self):
+        """Return z value."""
+        return self.z
+
     def __copy__(self):
         return self.__class__(self.x, self.y, self.z)
 
@@ -10329,6 +10408,9 @@ class Plane:
         return 'Vector3(%.2f, %.2f, %.2f)' % (self.x,
                                               self.y,
                                               self.z)
+
+    def __str__(self):
+        return '%.3f %.3f %.3f' % (self.x, self.y, self.z)
 
     def __eq__(self, other):
         if isinstance(other, Vector3):
@@ -10509,8 +10591,8 @@ class Plane:
 
     def __neg__(self):
         return Vector3(-self.x,
-                        -self.y,
-                        -self.z)
+                       -self.y,
+                       -self.z)
 
     __pos__ = __copy__
 
@@ -10551,11 +10633,11 @@ class Plane:
         return self
 
     def flipped(self):
-        """Calculate a flipped vector"""
+        """Return flipped vector"""
         # added by Mostapha Sadeghipour
         return Vector3(-self.x,
-                        -self.y,
-                        -self.z)
+                       -self.y,
+                       -self.z)
 
     def dot(self, other):
         assert isinstance(other, Vector3)
@@ -10615,6 +10697,39 @@ class Plane:
           <li>__builtin__.object</li>
           </ul>
           <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.vectormath.euclid.Vector3.X" class="name">var <span class="ident">X</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return x value.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.vectormath.euclid.Vector3.Y" class="name">var <span class="ident">Y</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return y value.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.vectormath.euclid.Vector3.Z" class="name">var <span class="ident">Z</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return z value.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
             <div class="item">
             <p id="honeybee.vectormath.euclid.Vector3.x" class="name">var <span class="ident">x</span></p>
             
@@ -10791,16 +10906,16 @@ class Plane:
 
     
   
-    <div class="desc"><p>Calculate a flipped vector</p></div>
+    <div class="desc"><p>Return flipped vector</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.vectormath.euclid.Vector3.flipped', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.vectormath.euclid.Vector3.flipped" class="source">
     <pre><code>def flipped(self):
-    """Calculate a flipped vector"""
+    """Return flipped vector"""
     # added by Mostapha Sadeghipour
     return Vector3(-self.x,
-                    -self.y,
-                    -self.z)
+                   -self.y,
+                   -self.z)
 </code></pre>
   </div>
 </div>

@@ -1066,7 +1066,8 @@ class PlasticMaterial(RadianceMaterial):
            surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
 
     @classmethod
-    def bySingleReflectValue(cls, name, rgbReflectance=0, refraction=1.52, modifier="void"):
+    def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
+                             roughness=0, modifier="void"):
         """Create plastic material with single reflectance value.
 
         Attributes:
@@ -1085,8 +1086,8 @@ class PlasticMaterial(RadianceMaterial):
             print wallMaterial
         """
         return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-                   bReflectance=rgbReflectance, specularity=0, roughness=0,
-                   modifier="void")
+                   bReflectance=rgbReflectance, specularity=specularity,
+                   roughness=roughness, modifier="void")
 
     @property
     def rReflectance(self):
@@ -1224,7 +1225,8 @@ if __name__ == "__main__":
            surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
 
     @classmethod
-    def bySingleReflectValue(cls, name, rgbReflectance=0, refraction=1.52, modifier="void"):
+    def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
+                             roughness=0, modifier="void"):
         """Create plastic material with single reflectance value.
 
         Attributes:
@@ -1243,8 +1245,8 @@ if __name__ == "__main__":
             print wallMaterial
         """
         return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-                   bReflectance=rgbReflectance, specularity=0, roughness=0,
-                   modifier="void")
+                   bReflectance=rgbReflectance, specularity=specularity,
+                   roughness=roughness, modifier="void")
 
     @property
     def rReflectance(self):
@@ -1511,7 +1513,7 @@ realistic (Default: 0).</p></div>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue">
-    <p>def <span class="ident">bySingleReflectValue</span>(</p><p>cls, name, rgbReflectance=0, refraction=1.52, modifier=&#39;void&#39;)</p>
+    <p>def <span class="ident">bySingleReflectValue</span>(</p><p>cls, name, rgbReflectance=0, specularity=0, roughness=0, modifier=&#39;void&#39;)</p>
     </div>
     
 
@@ -1535,7 +1537,8 @@ realistic (Default: 0).</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue" class="source">
     <pre><code>@classmethod
-def bySingleReflectValue(cls, name, rgbReflectance=0, refraction=1.52, modifier="void"):
+def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
+                         roughness=0, modifier="void"):
     """Create plastic material with single reflectance value.
     Attributes:
         name: Material name as a string. Do not use white space and special character.
@@ -1552,8 +1555,8 @@ def bySingleReflectValue(cls, name, rgbReflectance=0, refraction=1.52, modifier=
         print wallMaterial
     """
     return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-               bReflectance=rgbReflectance, specularity=0, roughness=0,
-               modifier="void")
+               bReflectance=rgbReflectance, specularity=specularity,
+               roughness=roughness, modifier="void")
 </code></pre>
   </div>
 </div>

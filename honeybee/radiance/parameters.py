@@ -207,12 +207,16 @@ class RadianceParameters(object):
 
         return radPar
 
-    def radianceDefinition(self, remParameters=[]):
+    def toRadString(self, remParameters=[]):
         """Get parameters as a radiance definition."""
         radianceString = []
-        for key in self.__parameters.keys():
+
+        for key in sorted(self.__parameters.keys()):
             if key in remParameters:
                 continue
+            if key == "-xScale" or key == "-yScale":
+                continue
+
             radianceString.append("-%s" % key)
             radianceString.append(str(self.getParameterValue(key)))
 
@@ -220,7 +224,7 @@ class RadianceParameters(object):
 
     def __repr__(self):
         """Return radiance string."""
-        return self.radianceDefinition()
+        return self.toRadString()
 
 
 class LowQuality(RadianceParameters):

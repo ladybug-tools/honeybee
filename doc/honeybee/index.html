@@ -988,7 +988,9 @@ table {
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
+        <li class="mono"><a href="dataoperation.m.html">honeybee.dataoperation</a></li>
         <li class="mono"><a href="geometryoperation.m.html">honeybee.geometryoperation</a></li>
+        <li class="mono"><a href="hbpointgroup.m.html">honeybee.hbpointgroup</a></li>
         <li class="mono"><a href="hbsurface.m.html">honeybee.hbsurface</a></li>
         <li class="mono"><a href="hbzone.m.html">honeybee.hbzone</a></li>
         <li class="mono"><a href="radiance/index.html">honeybee.radiance</a></li>
@@ -1015,9 +1017,10 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee', this);">Show source &equiv;</a></p>
   <div id="source-honeybee" class="source">
     <pre><code>"""Honeybee core library."""
-__all__ = ["hbzone", "hbsurface", "radiance", "surfacetype", "wrapper", "settings"]
+__all__ = ["hbzone", "hbsurface", "surfacetype", "wrapper", "settings",
+           "radiance", "hbpointgroup"]
 
-import hbzone, hbsurface, radiance, surfacetype, wrapper, settings
+import hbzone, hbsurface, hbpointgroup, surfacetype, wrapper, settings, radiance
 </code></pre>
   </div>
 
@@ -1029,10 +1032,24 @@ import hbzone, hbsurface, radiance, surfacetype, wrapper, settings
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
+      <p class="name"><a href="dataoperation.m.html">honeybee.dataoperation</a></p>
+      
+  
+    <div class="desc"><p>Collection of functions for data operation.</p></div>
+
+      </div>
+      <div class="item">
       <p class="name"><a href="geometryoperation.m.html">honeybee.geometryoperation</a></p>
       
   
     <div class="desc"><p>Collection of methods for geometrical operations.</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="hbpointgroup.m.html">honeybee.hbpointgroup</a></p>
+      
+  
+    <div class="desc"><p>Honeybee PointGroup and TestPointGroup.</p></div>
 
       </div>
       <div class="item">

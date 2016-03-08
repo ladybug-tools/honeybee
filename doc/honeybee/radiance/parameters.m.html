@@ -994,9 +994,9 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.parameters.HighQuality.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.HighQuality.getParameterValue">getParameterValue</a></li>
-    <li class="mono"><a href="#honeybee.radiance.parameters.HighQuality.radianceDefinition">radianceDefinition</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.HighQuality.setParameterValue">setParameterValue</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.HighQuality.setParameterValuesFromString">setParameterValuesFromString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.HighQuality.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1007,9 +1007,9 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.parameters.LowQuality.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.LowQuality.getParameterValue">getParameterValue</a></li>
-    <li class="mono"><a href="#honeybee.radiance.parameters.LowQuality.radianceDefinition">radianceDefinition</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.LowQuality.setParameterValue">setParameterValue</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.LowQuality.setParameterValuesFromString">setParameterValuesFromString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.LowQuality.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1020,9 +1020,9 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.parameters.MediumQuality.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.MediumQuality.getParameterValue">getParameterValue</a></li>
-    <li class="mono"><a href="#honeybee.radiance.parameters.MediumQuality.radianceDefinition">radianceDefinition</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.MediumQuality.setParameterValue">setParameterValue</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.MediumQuality.setParameterValuesFromString">setParameterValuesFromString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.MediumQuality.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1033,9 +1033,9 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.parameters.RadianceParameters.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.RadianceParameters.getParameterValue">getParameterValue</a></li>
-    <li class="mono"><a href="#honeybee.radiance.parameters.RadianceParameters.radianceDefinition">radianceDefinition</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.RadianceParameters.setParameterValue">setParameterValue</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.RadianceParameters.setParameterValuesFromString">setParameterValuesFromString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.RadianceParameters.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1267,12 +1267,16 @@ class RadianceParameters(object):
 
         return radPar
 
-    def radianceDefinition(self, remParameters=[]):
+    def toRadString(self, remParameters=[]):
         """Get parameters as a radiance definition."""
         radianceString = []
-        for key in self.__parameters.keys():
+
+        for key in sorted(self.__parameters.keys()):
             if key in remParameters:
                 continue
+            if key == "-xScale" or key == "-yScale":
+                continue
+
             radianceString.append("-%s" % key)
             radianceString.append(str(self.getParameterValue(key)))
 
@@ -1280,7 +1284,7 @@ class RadianceParameters(object):
 
     def __repr__(self):
         """Return radiance string."""
-        return self.radianceDefinition()
+        return self.toRadString()
 
 
 class LowQuality(RadianceParameters):
@@ -1495,38 +1499,6 @@ A value of zero implies no indirect calculation.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.parameters.HighQuality.radianceDefinition">
-    <p>def <span class="ident">radianceDefinition</span>(</p><p>self, remParameters=[])</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.parameters.RadianceParameters">RadianceParameters</a></code>.<code><a href="#honeybee.radiance.parameters.RadianceParameters.radianceDefinition">radianceDefinition</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Get parameters as a radiance definition.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.HighQuality.radianceDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.parameters.HighQuality.radianceDefinition" class="source">
-    <pre><code>def radianceDefinition(self, remParameters=[]):
-    """Get parameters as a radiance definition."""
-    radianceString = []
-    for key in self.__parameters.keys():
-        if key in remParameters:
-            continue
-        radianceString.append("-%s" % key)
-        radianceString.append(str(self.getParameterValue(key)))
-    return " ".join(radianceString)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.HighQuality.setParameterValue">
     <p>def <span class="ident">setParameterValue</span>(</p><p>self, parameter, value)</p>
     </div>
@@ -1588,6 +1560,40 @@ A value of zero implies no indirect calculation.</p></div>
     __params = self.__parseRadParameters(parametersString)
     for key, value in __params.items():
         self.setParameterValue(key, value)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.HighQuality.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self, remParameters=[])</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.parameters.RadianceParameters">RadianceParameters</a></code>.<code><a href="#honeybee.radiance.parameters.RadianceParameters.toRadString">toRadString</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Get parameters as a radiance definition.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.HighQuality.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.HighQuality.toRadString" class="source">
+    <pre><code>def toRadString(self, remParameters=[]):
+    """Get parameters as a radiance definition."""
+    radianceString = []
+    for key in sorted(self.__parameters.keys()):
+        if key in remParameters:
+            continue
+        if key == "-xScale" or key == "-yScale":
+            continue
+        radianceString.append("-%s" % key)
+        radianceString.append(str(self.getParameterValue(key)))
+    return " ".join(radianceString)
 </code></pre>
   </div>
 </div>
@@ -1777,38 +1783,6 @@ A value of zero implies no indirect calculation.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.parameters.LowQuality.radianceDefinition">
-    <p>def <span class="ident">radianceDefinition</span>(</p><p>self, remParameters=[])</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.parameters.RadianceParameters">RadianceParameters</a></code>.<code><a href="#honeybee.radiance.parameters.RadianceParameters.radianceDefinition">radianceDefinition</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Get parameters as a radiance definition.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.LowQuality.radianceDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.parameters.LowQuality.radianceDefinition" class="source">
-    <pre><code>def radianceDefinition(self, remParameters=[]):
-    """Get parameters as a radiance definition."""
-    radianceString = []
-    for key in self.__parameters.keys():
-        if key in remParameters:
-            continue
-        radianceString.append("-%s" % key)
-        radianceString.append(str(self.getParameterValue(key)))
-    return " ".join(radianceString)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.LowQuality.setParameterValue">
     <p>def <span class="ident">setParameterValue</span>(</p><p>self, parameter, value)</p>
     </div>
@@ -1870,6 +1844,40 @@ A value of zero implies no indirect calculation.</p></div>
     __params = self.__parseRadParameters(parametersString)
     for key, value in __params.items():
         self.setParameterValue(key, value)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.LowQuality.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self, remParameters=[])</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.parameters.RadianceParameters">RadianceParameters</a></code>.<code><a href="#honeybee.radiance.parameters.RadianceParameters.toRadString">toRadString</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Get parameters as a radiance definition.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.LowQuality.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.LowQuality.toRadString" class="source">
+    <pre><code>def toRadString(self, remParameters=[]):
+    """Get parameters as a radiance definition."""
+    radianceString = []
+    for key in sorted(self.__parameters.keys()):
+        if key in remParameters:
+            continue
+        if key == "-xScale" or key == "-yScale":
+            continue
+        radianceString.append("-%s" % key)
+        radianceString.append(str(self.getParameterValue(key)))
+    return " ".join(radianceString)
 </code></pre>
   </div>
 </div>
@@ -2059,38 +2067,6 @@ A value of zero implies no indirect calculation.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.parameters.MediumQuality.radianceDefinition">
-    <p>def <span class="ident">radianceDefinition</span>(</p><p>self, remParameters=[])</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.parameters.RadianceParameters">RadianceParameters</a></code>.<code><a href="#honeybee.radiance.parameters.RadianceParameters.radianceDefinition">radianceDefinition</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Get parameters as a radiance definition.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.MediumQuality.radianceDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.parameters.MediumQuality.radianceDefinition" class="source">
-    <pre><code>def radianceDefinition(self, remParameters=[]):
-    """Get parameters as a radiance definition."""
-    radianceString = []
-    for key in self.__parameters.keys():
-        if key in remParameters:
-            continue
-        radianceString.append("-%s" % key)
-        radianceString.append(str(self.getParameterValue(key)))
-    return " ".join(radianceString)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.MediumQuality.setParameterValue">
     <p>def <span class="ident">setParameterValue</span>(</p><p>self, parameter, value)</p>
     </div>
@@ -2152,6 +2128,40 @@ A value of zero implies no indirect calculation.</p></div>
     __params = self.__parseRadParameters(parametersString)
     for key, value in __params.items():
         self.setParameterValue(key, value)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.MediumQuality.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self, remParameters=[])</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.parameters.RadianceParameters">RadianceParameters</a></code>.<code><a href="#honeybee.radiance.parameters.RadianceParameters.toRadString">toRadString</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Get parameters as a radiance definition.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.MediumQuality.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.MediumQuality.toRadString" class="source">
+    <pre><code>def toRadString(self, remParameters=[]):
+    """Get parameters as a radiance definition."""
+    radianceString = []
+    for key in sorted(self.__parameters.keys()):
+        if key in remParameters:
+            continue
+        if key == "-xScale" or key == "-yScale":
+            continue
+        radianceString.append("-%s" % key)
+        radianceString.append(str(self.getParameterValue(key)))
+    return " ".join(radianceString)
 </code></pre>
   </div>
 </div>
@@ -2376,12 +2386,16 @@ A value of zero implies no indirect calculation.</p></div>
 
         return radPar
 
-    def radianceDefinition(self, remParameters=[]):
+    def toRadString(self, remParameters=[]):
         """Get parameters as a radiance definition."""
         radianceString = []
-        for key in self.__parameters.keys():
+
+        for key in sorted(self.__parameters.keys()):
             if key in remParameters:
                 continue
+            if key == "-xScale" or key == "-yScale":
+                continue
+
             radianceString.append("-%s" % key)
             radianceString.append(str(self.getParameterValue(key)))
 
@@ -2389,7 +2403,7 @@ A value of zero implies no indirect calculation.</p></div>
 
     def __repr__(self):
         """Return radiance string."""
-        return self.radianceDefinition()
+        return self.toRadString()
 </code></pre>
   </div>
 </div>
@@ -2553,34 +2567,6 @@ A value of zero implies no indirect calculation.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.parameters.RadianceParameters.radianceDefinition">
-    <p>def <span class="ident">radianceDefinition</span>(</p><p>self, remParameters=[])</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Get parameters as a radiance definition.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.RadianceParameters.radianceDefinition', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.parameters.RadianceParameters.radianceDefinition" class="source">
-    <pre><code>def radianceDefinition(self, remParameters=[]):
-    """Get parameters as a radiance definition."""
-    radianceString = []
-    for key in self.__parameters.keys():
-        if key in remParameters:
-            continue
-        radianceString.append("-%s" % key)
-        radianceString.append(str(self.getParameterValue(key)))
-    return " ".join(radianceString)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.RadianceParameters.setParameterValue">
     <p>def <span class="ident">setParameterValue</span>(</p><p>self, parameter, value)</p>
     </div>
@@ -2634,6 +2620,36 @@ A value of zero implies no indirect calculation.</p></div>
     __params = self.__parseRadParameters(parametersString)
     for key, value in __params.items():
         self.setParameterValue(key, value)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.RadianceParameters.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self, remParameters=[])</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get parameters as a radiance definition.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.RadianceParameters.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.RadianceParameters.toRadString" class="source">
+    <pre><code>def toRadString(self, remParameters=[]):
+    """Get parameters as a radiance definition."""
+    radianceString = []
+    for key in sorted(self.__parameters.keys()):
+        if key in remParameters:
+            continue
+        if key == "-xScale" or key == "-yScale":
+            continue
+        radianceString.append("-%s" % key)
+        radianceString.append(str(self.getParameterValue(key)))
+    return " ".join(radianceString)
 </code></pre>
   </div>
 </div>

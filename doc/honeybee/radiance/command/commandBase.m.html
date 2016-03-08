@@ -1017,16 +1017,17 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.commandBase', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.commandBase" class="source">
     <pre><code>"""Radiance base command."""
-import honeybee.settings
+from ... import settings
 
 
+# TODO: Implement piping as on option
 class RadianceCommand(object):
     """Base class for commands."""
 
     def __init__(self):
         """Initialize Radiance command."""
         # set up DefaultSettings
-        defSettings = honeybee.settings.DefaultSettings(mute=True)
+        defSettings = settings.DefaultSettings(mute=True)
 
         self.radbinFolder = defSettings.radbinFolder
         self.radlibFolder = defSettings.radlibFolder
@@ -1063,7 +1064,7 @@ class RadianceCommand(object):
     def __init__(self):
         """Initialize Radiance command."""
         # set up DefaultSettings
-        defSettings = honeybee.settings.DefaultSettings(mute=True)
+        defSettings = settings.DefaultSettings(mute=True)
 
         self.radbinFolder = defSettings.radbinFolder
         self.radlibFolder = defSettings.radlibFolder
@@ -1125,7 +1126,7 @@ class RadianceCommand(object):
     <pre><code>def __init__(self):
     """Initialize Radiance command."""
     # set up DefaultSettings
-    defSettings = honeybee.settings.DefaultSettings(mute=True)
+    defSettings = settings.DefaultSettings(mute=True)
     self.radbinFolder = defSettings.radbinFolder
     self.radlibFolder = defSettings.radlibFolder
     # if path is not found then raise an exception

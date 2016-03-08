@@ -993,6 +993,9 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toFile">toFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1006,6 +1009,9 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toFile">toFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1015,6 +1021,9 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toFile">toFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1048,9 +1057,11 @@ table {
   <div id="source-honeybee.radiance.analysisrecipe" class="source">
     <pre><code>"""Radiance Analysis Recipes."""
 
-from sky.skyBase import RadianceSky
-from sky.certainIlluminance import SkyWithCertainIlluminanceLevel
-from parameters import RadianceParameters, LowQuality
+from ..hbpointgroup import AnalysisPointGroup
+from .sky.skyBase import RadianceSky
+from .parameters import RadianceParameters, LowQuality
+from collections import Iterable
+import os
 
 
 class HBDaylightAnalysisRecipe(object):
@@ -1064,23 +1075,25 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
     Attributes:
         sky: A honeybee sky for the analysis
-        testPts: A list of test points as (x, y, z)
-        ptsVectors: An optional list of point vectors as (x, y, z).
-        radParameters: Radiance parameters for this analysis (Default:
-            RadianceParameters.LowQuality)
+        pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test points.
+            Each list of test points will be converted to a TestPointGroup. If testPts
+            is a single flattened list only one TestPointGroup will be created.
+        vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
+            of corresponding point in testPts. If the vector is not provided (0, 0, 1)
+            will be assigned.
+        radParameters: Radiance parameters for this analysis.
+            (Default: RadianceParameters.LowQuality)
     """
 
-    def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
+    def __init__(self, sky, pointGroups, vectorGroups=[], radParameters=None):
         """Create grid-based recipe."""
         self.sky = sky
         """A honeybee sky for the analysis"""
-        self.testPts = testPts
-        """A list of test points as (x, y, z)"""
-        self.ptsVectors = ptsVectors
-        """An optional list of point vectors as Rhino.Geometry.Vector3d
-            +Z Vector will be assigned if vectors are not provided."""
+
         self.radianceParameters = radParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)"""
+
+        self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
     def sky(self):
@@ -1105,43 +1118,93 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
             "Invalid radiance parameters object"
         self.__radParameters = radParameters
 
-    # TODO: @sariths do we need test point groups for 3Phase method?
-    # in that case we should accept lists of lists for test points
     @property
-    def testPts(self):
-        """List of test points."""
-        return self.__testPts
-
-    @testPts.setter
-    def testPts(self, pts):
-        """Set list of test points."""
-        self.__testPts = pts
+    def points(self):
+        """Return nested list of points."""
+        return [ap.poins for ap in self.analysisPointsGroups]
 
     @property
-    def ptsVectors(self):
-        """List of vectors for each test point.
+    def numOfPointGroups(self):
+        """Number of point groups."""
+        return len(self.analysisPointsGroups)
 
-        +Z Vector will be assigned if vectors are not provided
+    @property
+    def numOfTotalPoints(self):
+        """Number of total points."""
+        return sum(len(ap) for ap in self.analysisPointsGroups)
+
+    @property
+    def vectors(self):
+        """Nested list of vectors."""
+        return [ap.vectors for ap in self.analysisPointsGroups]
+
+    @property
+    def analysisPointsGroups(self):
+        """Return list of AnalysisPointGroups."""
+        return self.__analysisPointGroups
+
+    def createAnalysisPointGroups(self, pointGroups, vectorGroups):
+        """Create AnalysisPointGroups from input points and vectors.
+
+        You can acces AnalysisPointGroups using self.analysisPointsGroups property.
         """
-        return self.__ptsVectors
+        self.__analysisPointGroups = []
+        if len(pointGroups) == 0:
+            return
+        # input is single point! Create a single group but seriously!
+        elif not isinstance(pointGroups[0], Iterable):
+            pointGroups = [[pointGroups]]
+            vectorGroups = [[vectorGroups]]
+        # if point group is flatten - create a single group
+        elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
+            pointGroups = [pointGroups]
+            vectorGroups = [vectorGroups]
 
-    # TODO: Add check for vectors. Remove null values. assign 0, 0, 1 in case of None
-    @ptsVectors.setter
-    def ptsVectors(self, vectors):
-        """List of vectors for each test point.
+        for groupCount, pts in enumerate(pointGroups):
+            try:
+                # create a list for vectors if it's not provided by user
+                vectors = vectorGroups[groupCount]
+                if vectors == [[]]:
+                    vectors = [(0, 0, 1)]
+            except IndexError:
+                vectors = [(0, 0, 1)]
+            finally:
+                # last check for vectors in case user input is a flatten lists
+                # for nested group of points.
+                if not isinstance(vectors[0], Iterable):
+                    vectors = [vectors]
+                self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
 
-        +Z Vector will be assigned if vectors are not provided
+    def toRadString(self):
+        """Return a multiline string of analysis points for Radiance."""
+        return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
+
+    def toFile(self, filePath):
+        """Write point groups to file.
+
+        Args:
+            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+
+        Returns:
+            True in case of success. False in case of failure.
         """
-        if vectors == []:
-            self.__ptsVectors = [(0, 0, 1) for pt in self.testPts]
-        else:
-            assert len(self.testPts) == len(vectors), \
-                "Length of test points should be equal to length of vectors."
-            self.__ptsVectors = vectors
+        assert os.path.isdir(os.path.split(filePath)[0]), \
+            "Cannot find %s." % os.path.split(filePath)[0]
+
+        with open(filePath, "w") as outf:
+            try:
+                outf.write(self.toRadString())
+                return True
+            except Exception as e:
+                print "Failed to write points to file:\n%s" % e
+                return False
 
     def __repr__(self):
         """Represent grid based recipe."""
-        return "%s #testPts:%d" % (self.__class__.__name__, len(self.testPts))
+        return "%s #PointGroup: %d #Points: %d" % \
+            (self.__class__.__name__,
+             self.numOfPointGroups,
+             self.numOfTotalPoints)
 
 
 class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
@@ -1170,11 +1233,15 @@ class HBImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
 if __name__ == "__main__":
     # test code
+    from sky.certainIlluminance import SkyWithCertainIlluminanceLevel
+
     sky = SkyWithCertainIlluminanceLevel(2000)
-    rp = HBGridBasedAnalysisRecipe(sky, [(0, 0, 0), (10, 0, 0)])
+    rp = HBGridBasedAnalysisRecipe(sky, [[(0, 0, 0), (10, 0, 0)]])
 
     print rp
     print "vectors:", rp.ptsVectors
+
+    rp.writePointsToFile("c:/ladybug/points.pts")
 </code></pre>
   </div>
 
@@ -1214,17 +1281,61 @@ if __name__ == "__main__":
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.ptsVectors" class="name">var <span class="ident">ptsVectors</span></p>
+            <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.analysisPointsGroups" class="name">var <span class="ident">analysisPointsGroups</span></p>
             
     <p class="inheritance">
      <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.ptsVectors">ptsVectors</a></code>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.analysisPointsGroups">analysisPointsGroups</a></code>
     </p>
 
             
   
-    <div class="desc"><p>List of vectors for each test point.</p>
-<p>+Z Vector will be assigned if vectors are not provided</p></div>
+    <div class="desc inherited"><p>Return list of AnalysisPointGroups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.numOfPointGroups" class="name">var <span class="ident">numOfPointGroups</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.numOfPointGroups">numOfPointGroups</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Number of point groups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.numOfTotalPoints" class="name">var <span class="ident">numOfTotalPoints</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.numOfTotalPoints">numOfTotalPoints</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Number of total points.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.points" class="name">var <span class="ident">points</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.points">points</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Return nested list of points.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1260,16 +1371,16 @@ if __name__ == "__main__":
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.testPts" class="name">var <span class="ident">testPts</span></p>
+            <p id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.vectors" class="name">var <span class="ident">vectors</span></p>
             
     <p class="inheritance">
      <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.testPts">testPts</a></code>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.vectors">vectors</a></code>
     </p>
 
             
   
-    <div class="desc"><p>List of test points.</p></div>
+    <div class="desc inherited"><p>Nested list of vectors.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1295,6 +1406,128 @@ if __name__ == "__main__":
     <pre><code>def __init__(self):
     """Create annual daylight recipe."""
     raise NotImplementedError()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.createAnalysisPointGroups">
+    <p>def <span class="ident">createAnalysisPointGroups</span>(</p><p>self, pointGroups, vectorGroups)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Create AnalysisPointGroups from input points and vectors.</p>
+<p>You can acces AnalysisPointGroups using self.analysisPointsGroups property.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.createAnalysisPointGroups', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.createAnalysisPointGroups" class="source">
+    <pre><code>def createAnalysisPointGroups(self, pointGroups, vectorGroups):
+    """Create AnalysisPointGroups from input points and vectors.
+    You can acces AnalysisPointGroups using self.analysisPointsGroups property.
+    """
+    self.__analysisPointGroups = []
+    if len(pointGroups) == 0:
+        return
+    # input is single point! Create a single group but seriously!
+    elif not isinstance(pointGroups[0], Iterable):
+        pointGroups = [[pointGroups]]
+        vectorGroups = [[vectorGroups]]
+    # if point group is flatten - create a single group
+    elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
+        pointGroups = [pointGroups]
+        vectorGroups = [vectorGroups]
+    for groupCount, pts in enumerate(pointGroups):
+        try:
+            # create a list for vectors if it's not provided by user
+            vectors = vectorGroups[groupCount]
+            if vectors == [[]]:
+                vectors = [(0, 0, 1)]
+        except IndexError:
+            vectors = [(0, 0, 1)]
+        finally:
+            # last check for vectors in case user input is a flatten lists
+            # for nested group of points.
+            if not isinstance(vectors[0], Iterable):
+                vectors = [vectors]
+            self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toFile">
+    <p>def <span class="ident">toFile</span>(</p><p>self, filePath)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toFile">toFile</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Write point groups to file.</p>
+<p>Args:
+    filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)</p>
+<p>Returns:
+    True in case of success. False in case of failure.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toFile" class="source">
+    <pre><code>def toFile(self, filePath):
+    """Write point groups to file.
+    Args:
+        filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+    Returns:
+        True in case of success. False in case of failure.
+    """
+    assert os.path.isdir(os.path.split(filePath)[0]), \
+        "Cannot find %s." % os.path.split(filePath)[0]
+    with open(filePath, "w") as outf:
+        try:
+            outf.write(self.toRadString())
+            return True
+        except Exception as e:
+            print "Failed to write points to file:\n%s" % e
+            return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toRadString">toRadString</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Return a multiline string of analysis points for Radiance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBAnnualAnalysisRecipe.toRadString" class="source">
+    <pre><code>def toRadString(self):
+    """Return a multiline string of analysis points for Radiance."""
+    return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
 </code></pre>
   </div>
 </div>
@@ -1359,17 +1592,61 @@ if __name__ == "__main__":
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.ptsVectors" class="name">var <span class="ident">ptsVectors</span></p>
+            <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.analysisPointsGroups" class="name">var <span class="ident">analysisPointsGroups</span></p>
             
     <p class="inheritance">
      <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.ptsVectors">ptsVectors</a></code>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.analysisPointsGroups">analysisPointsGroups</a></code>
     </p>
 
             
   
-    <div class="desc"><p>List of vectors for each test point.</p>
-<p>+Z Vector will be assigned if vectors are not provided</p></div>
+    <div class="desc inherited"><p>Return list of AnalysisPointGroups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.numOfPointGroups" class="name">var <span class="ident">numOfPointGroups</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.numOfPointGroups">numOfPointGroups</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Number of point groups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.numOfTotalPoints" class="name">var <span class="ident">numOfTotalPoints</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.numOfTotalPoints">numOfTotalPoints</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Number of total points.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.points" class="name">var <span class="ident">points</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.points">points</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Return nested list of points.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1405,16 +1682,16 @@ if __name__ == "__main__":
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.testPts" class="name">var <span class="ident">testPts</span></p>
+            <p id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.vectors" class="name">var <span class="ident">vectors</span></p>
             
     <p class="inheritance">
      <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.testPts">testPts</a></code>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.vectors">vectors</a></code>
     </p>
 
             
   
-    <div class="desc"><p>List of test points.</p></div>
+    <div class="desc inherited"><p>Nested list of vectors.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1446,6 +1723,128 @@ if __name__ == "__main__":
 
   </div>
   
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.createAnalysisPointGroups">
+    <p>def <span class="ident">createAnalysisPointGroups</span>(</p><p>self, pointGroups, vectorGroups)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Create AnalysisPointGroups from input points and vectors.</p>
+<p>You can acces AnalysisPointGroups using self.analysisPointsGroups property.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.createAnalysisPointGroups', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.createAnalysisPointGroups" class="source">
+    <pre><code>def createAnalysisPointGroups(self, pointGroups, vectorGroups):
+    """Create AnalysisPointGroups from input points and vectors.
+    You can acces AnalysisPointGroups using self.analysisPointsGroups property.
+    """
+    self.__analysisPointGroups = []
+    if len(pointGroups) == 0:
+        return
+    # input is single point! Create a single group but seriously!
+    elif not isinstance(pointGroups[0], Iterable):
+        pointGroups = [[pointGroups]]
+        vectorGroups = [[vectorGroups]]
+    # if point group is flatten - create a single group
+    elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
+        pointGroups = [pointGroups]
+        vectorGroups = [vectorGroups]
+    for groupCount, pts in enumerate(pointGroups):
+        try:
+            # create a list for vectors if it's not provided by user
+            vectors = vectorGroups[groupCount]
+            if vectors == [[]]:
+                vectors = [(0, 0, 1)]
+        except IndexError:
+            vectors = [(0, 0, 1)]
+        finally:
+            # last check for vectors in case user input is a flatten lists
+            # for nested group of points.
+            if not isinstance(vectors[0], Iterable):
+                vectors = [vectors]
+            self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toFile">
+    <p>def <span class="ident">toFile</span>(</p><p>self, filePath)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toFile">toFile</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Write point groups to file.</p>
+<p>Args:
+    filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)</p>
+<p>Returns:
+    True in case of success. False in case of failure.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toFile" class="source">
+    <pre><code>def toFile(self, filePath):
+    """Write point groups to file.
+    Args:
+        filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+    Returns:
+        True in case of success. False in case of failure.
+    """
+    assert os.path.isdir(os.path.split(filePath)[0]), \
+        "Cannot find %s." % os.path.split(filePath)[0]
+    with open(filePath, "w") as outf:
+        try:
+            outf.write(self.toRadString())
+            return True
+        except Exception as e:
+            print "Failed to write points to file:\n%s" % e
+            return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe">HBGridBasedAnalysisRecipe</a></code>.<code><a href="#honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toRadString">toRadString</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Return a multiline string of analysis points for Radiance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBDaylightFactorRecipe.toRadString" class="source">
+    <pre><code>def toRadString(self):
+    """Return a multiline string of analysis points for Radiance."""
+    return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       </div>
       </div>
       
@@ -1456,10 +1855,14 @@ if __name__ == "__main__":
     <div class="desc"><p>Grid base analysis base class.</p>
 <p>Attributes:
     sky: A honeybee sky for the analysis
-    testPts: A list of test points as (x, y, z)
-    ptsVectors: An optional list of point vectors as (x, y, z).
-    radParameters: Radiance parameters for this analysis (Default:
-        RadianceParameters.LowQuality)</p></div>
+    pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test points.
+        Each list of test points will be converted to a TestPointGroup. If testPts
+        is a single flattened list only one TestPointGroup will be created.
+    vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
+        of corresponding point in testPts. If the vector is not provided (0, 0, 1)
+        will be assigned.
+    radParameters: Radiance parameters for this analysis.
+        (Default: RadianceParameters.LowQuality)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe" class="source">
@@ -1468,23 +1871,25 @@ if __name__ == "__main__":
 
     Attributes:
         sky: A honeybee sky for the analysis
-        testPts: A list of test points as (x, y, z)
-        ptsVectors: An optional list of point vectors as (x, y, z).
-        radParameters: Radiance parameters for this analysis (Default:
-            RadianceParameters.LowQuality)
+        pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test points.
+            Each list of test points will be converted to a TestPointGroup. If testPts
+            is a single flattened list only one TestPointGroup will be created.
+        vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
+            of corresponding point in testPts. If the vector is not provided (0, 0, 1)
+            will be assigned.
+        radParameters: Radiance parameters for this analysis.
+            (Default: RadianceParameters.LowQuality)
     """
 
-    def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
+    def __init__(self, sky, pointGroups, vectorGroups=[], radParameters=None):
         """Create grid-based recipe."""
         self.sky = sky
         """A honeybee sky for the analysis"""
-        self.testPts = testPts
-        """A list of test points as (x, y, z)"""
-        self.ptsVectors = ptsVectors
-        """An optional list of point vectors as Rhino.Geometry.Vector3d
-            +Z Vector will be assigned if vectors are not provided."""
+
         self.radianceParameters = radParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)"""
+
+        self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
     def sky(self):
@@ -1509,43 +1914,93 @@ if __name__ == "__main__":
             "Invalid radiance parameters object"
         self.__radParameters = radParameters
 
-    # TODO: @sariths do we need test point groups for 3Phase method?
-    # in that case we should accept lists of lists for test points
     @property
-    def testPts(self):
-        """List of test points."""
-        return self.__testPts
-
-    @testPts.setter
-    def testPts(self, pts):
-        """Set list of test points."""
-        self.__testPts = pts
+    def points(self):
+        """Return nested list of points."""
+        return [ap.poins for ap in self.analysisPointsGroups]
 
     @property
-    def ptsVectors(self):
-        """List of vectors for each test point.
+    def numOfPointGroups(self):
+        """Number of point groups."""
+        return len(self.analysisPointsGroups)
 
-        +Z Vector will be assigned if vectors are not provided
+    @property
+    def numOfTotalPoints(self):
+        """Number of total points."""
+        return sum(len(ap) for ap in self.analysisPointsGroups)
+
+    @property
+    def vectors(self):
+        """Nested list of vectors."""
+        return [ap.vectors for ap in self.analysisPointsGroups]
+
+    @property
+    def analysisPointsGroups(self):
+        """Return list of AnalysisPointGroups."""
+        return self.__analysisPointGroups
+
+    def createAnalysisPointGroups(self, pointGroups, vectorGroups):
+        """Create AnalysisPointGroups from input points and vectors.
+
+        You can acces AnalysisPointGroups using self.analysisPointsGroups property.
         """
-        return self.__ptsVectors
+        self.__analysisPointGroups = []
+        if len(pointGroups) == 0:
+            return
+        # input is single point! Create a single group but seriously!
+        elif not isinstance(pointGroups[0], Iterable):
+            pointGroups = [[pointGroups]]
+            vectorGroups = [[vectorGroups]]
+        # if point group is flatten - create a single group
+        elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
+            pointGroups = [pointGroups]
+            vectorGroups = [vectorGroups]
 
-    # TODO: Add check for vectors. Remove null values. assign 0, 0, 1 in case of None
-    @ptsVectors.setter
-    def ptsVectors(self, vectors):
-        """List of vectors for each test point.
+        for groupCount, pts in enumerate(pointGroups):
+            try:
+                # create a list for vectors if it's not provided by user
+                vectors = vectorGroups[groupCount]
+                if vectors == [[]]:
+                    vectors = [(0, 0, 1)]
+            except IndexError:
+                vectors = [(0, 0, 1)]
+            finally:
+                # last check for vectors in case user input is a flatten lists
+                # for nested group of points.
+                if not isinstance(vectors[0], Iterable):
+                    vectors = [vectors]
+                self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
 
-        +Z Vector will be assigned if vectors are not provided
+    def toRadString(self):
+        """Return a multiline string of analysis points for Radiance."""
+        return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
+
+    def toFile(self, filePath):
+        """Write point groups to file.
+
+        Args:
+            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+
+        Returns:
+            True in case of success. False in case of failure.
         """
-        if vectors == []:
-            self.__ptsVectors = [(0, 0, 1) for pt in self.testPts]
-        else:
-            assert len(self.testPts) == len(vectors), \
-                "Length of test points should be equal to length of vectors."
-            self.__ptsVectors = vectors
+        assert os.path.isdir(os.path.split(filePath)[0]), \
+            "Cannot find %s." % os.path.split(filePath)[0]
+
+        with open(filePath, "w") as outf:
+            try:
+                outf.write(self.toRadString())
+                return True
+            except Exception as e:
+                print "Failed to write points to file:\n%s" % e
+                return False
 
     def __repr__(self):
         """Represent grid based recipe."""
-        return "%s #testPts:%d" % (self.__class__.__name__, len(self.testPts))
+        return "%s #PointGroup: %d #Points: %d" % \
+            (self.__class__.__name__,
+             self.numOfPointGroups,
+             self.numOfTotalPoints)
 </code></pre>
   </div>
 </div>
@@ -1560,13 +2015,45 @@ if __name__ == "__main__":
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.ptsVectors" class="name">var <span class="ident">ptsVectors</span></p>
+            <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.analysisPointsGroups" class="name">var <span class="ident">analysisPointsGroups</span></p>
             
 
             
   
-    <div class="desc"><p>An optional list of point vectors as Rhino.Geometry.Vector3d
-+Z Vector will be assigned if vectors are not provided.</p></div>
+    <div class="desc"><p>Return list of AnalysisPointGroups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.numOfPointGroups" class="name">var <span class="ident">numOfPointGroups</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Number of point groups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.numOfTotalPoints" class="name">var <span class="ident">numOfTotalPoints</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Number of total points.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.points" class="name">var <span class="ident">points</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return nested list of points.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1594,12 +2081,12 @@ if __name__ == "__main__":
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.testPts" class="name">var <span class="ident">testPts</span></p>
+            <p id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.vectors" class="name">var <span class="ident">vectors</span></p>
             
 
             
   
-    <div class="desc"><p>A list of test points as (x, y, z)</p></div>
+    <div class="desc"><p>Nested list of vectors.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1608,7 +2095,7 @@ if __name__ == "__main__":
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, sky, testPts, ptsVectors=[], radParameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, sky, pointGroups, vectorGroups=[], radParameters=None)</p>
     </div>
     
 
@@ -1618,17 +2105,123 @@ if __name__ == "__main__":
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.__init__" class="source">
-    <pre><code>def __init__(self, sky, testPts, ptsVectors=[], radParameters=None):
+    <pre><code>def __init__(self, sky, pointGroups, vectorGroups=[], radParameters=None):
     """Create grid-based recipe."""
     self.sky = sky
     """A honeybee sky for the analysis"""
-    self.testPts = testPts
-    """A list of test points as (x, y, z)"""
-    self.ptsVectors = ptsVectors
-    """An optional list of point vectors as Rhino.Geometry.Vector3d
-        +Z Vector will be assigned if vectors are not provided."""
     self.radianceParameters = radParameters
     """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)"""
+    self.createAnalysisPointGroups(pointGroups, vectorGroups)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.createAnalysisPointGroups">
+    <p>def <span class="ident">createAnalysisPointGroups</span>(</p><p>self, pointGroups, vectorGroups)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Create AnalysisPointGroups from input points and vectors.</p>
+<p>You can acces AnalysisPointGroups using self.analysisPointsGroups property.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.createAnalysisPointGroups', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.createAnalysisPointGroups" class="source">
+    <pre><code>def createAnalysisPointGroups(self, pointGroups, vectorGroups):
+    """Create AnalysisPointGroups from input points and vectors.
+    You can acces AnalysisPointGroups using self.analysisPointsGroups property.
+    """
+    self.__analysisPointGroups = []
+    if len(pointGroups) == 0:
+        return
+    # input is single point! Create a single group but seriously!
+    elif not isinstance(pointGroups[0], Iterable):
+        pointGroups = [[pointGroups]]
+        vectorGroups = [[vectorGroups]]
+    # if point group is flatten - create a single group
+    elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
+        pointGroups = [pointGroups]
+        vectorGroups = [vectorGroups]
+    for groupCount, pts in enumerate(pointGroups):
+        try:
+            # create a list for vectors if it's not provided by user
+            vectors = vectorGroups[groupCount]
+            if vectors == [[]]:
+                vectors = [(0, 0, 1)]
+        except IndexError:
+            vectors = [(0, 0, 1)]
+        finally:
+            # last check for vectors in case user input is a flatten lists
+            # for nested group of points.
+            if not isinstance(vectors[0], Iterable):
+                vectors = [vectors]
+            self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toFile">
+    <p>def <span class="ident">toFile</span>(</p><p>self, filePath)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Write point groups to file.</p>
+<p>Args:
+    filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)</p>
+<p>Returns:
+    True in case of success. False in case of failure.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toFile" class="source">
+    <pre><code>def toFile(self, filePath):
+    """Write point groups to file.
+    Args:
+        filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+    Returns:
+        True in case of success. False in case of failure.
+    """
+    assert os.path.isdir(os.path.split(filePath)[0]), \
+        "Cannot find %s." % os.path.split(filePath)[0]
+    with open(filePath, "w") as outf:
+        try:
+            outf.write(self.toRadString())
+            return True
+        except Exception as e:
+            print "Failed to write points to file:\n%s" % e
+            return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a multiline string of analysis points for Radiance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisrecipe.HBGridBasedAnalysisRecipe.toRadString" class="source">
+    <pre><code>def toRadString(self):
+    """Return a multiline string of analysis points for Radiance."""
+    return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
 </code></pre>
   </div>
 </div>

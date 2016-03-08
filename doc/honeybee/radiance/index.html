@@ -996,6 +996,7 @@ table {
         <li class="mono"><a href="material/index.html">honeybee.radiance.material</a></li>
         <li class="mono"><a href="parameters.m.html">honeybee.radiance.parameters</a></li>
         <li class="mono"><a href="properties.m.html">honeybee.radiance.properties</a></li>
+        <li class="mono"><a href="recipe/index.html">honeybee.radiance.recipe</a></li>
         <li class="mono"><a href="sky/index.html">honeybee.radiance.sky</a></li>
       </ul>
     </li>
@@ -1016,10 +1017,9 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance" class="source">
     <pre><code>"""Honeybee Radiance libraries."""
-__all__ = ["properties", "analysisrecipe", "command", "material", "parameters",
-    "sky", "helper"]
+__all__ = ["properties", "recipe", "material", "parameters", "sky", "helper", "analysis", "geometry"]
 
-import properties, analysisrecipe, command, material, parameters, sky, helper
+import properties, recipe, material, parameters, sky, helper, analysis, geometry
 </code></pre>
   </div>
 
@@ -1082,6 +1082,12 @@ import properties, analysisrecipe, command, material, parameters, sky, helper
       
   
     <div class="desc"><p>Radiance Properties for HBSurfaces.</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="recipe/index.html">honeybee.radiance.recipe</a></p>
+      
+  
 
       </div>
       <div class="item">

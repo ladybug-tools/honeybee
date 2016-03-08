@@ -1086,10 +1086,16 @@ class RadianceProperties(object):
         """Check if material is set by user."""
         return self.__isMaterialSetByUser
 
+    def __repr__(self):
+        """Represnt Radiance properties."""
+        if not self.radianceMaterial:
+            return "Radiance Properties > Material.Unset"
+        else:
+            return "Radiance Properties > %s" % self.radianceMaterial.name
 
 if __name__ == "__main__":
     rp = RadianceProperties()
-    print rp.radianceMaterial
+    print rp
     print rp.isMaterialSetByUser
 </code></pre>
   </div>
@@ -1178,6 +1184,13 @@ if __name__ == "__main__":
     def isMaterialSetByUser(self):
         """Check if material is set by user."""
         return self.__isMaterialSetByUser
+
+    def __repr__(self):
+        """Represnt Radiance properties."""
+        if not self.radianceMaterial:
+            return "Radiance Properties > Material.Unset"
+        else:
+            return "Radiance Properties > %s" % self.radianceMaterial.name
 </code></pre>
   </div>
 </div>

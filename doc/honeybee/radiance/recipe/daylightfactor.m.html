@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.settings API documentation</title>
-    <meta name="description" content="Honeybee system setting." />
+    <title>honeybee.radiance.recipe.daylightfactor API documentation</title>
+    <meta name="description" content="Radiance Analysis Recipes." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -988,11 +988,15 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.settings.DefaultSettings">DefaultSettings</a></span>
+        <span class="class_name"><a href="#honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe">HBDaylightFactorRecipe</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#honeybee.settings.DefaultSettings.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.ptsToFile">ptsToFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toFile">toFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1010,130 +1014,22 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.settings</span> module</h1>
-  <p>Honeybee system setting.</p>
+  <h1 class="title"><span class="name">honeybee.radiance.recipe.daylightfactor</span> module</h1>
+  <p>Radiance Analysis Recipes.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.settings', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.settings" class="source">
-    <pre><code>"""Honeybee system setting."""
-import os
-import sys
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightfactor', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightfactor" class="source">
+    <pre><code>"""Radiance Analysis Recipes."""
+
+from gridbased import HBGridBasedAnalysisRecipe
 
 
-class DefaultSettings(object):
-    """Default system settings."""
+class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
+    """Daylight Factor Recipe."""
 
-    # You can manually set the path to Radinace and EnergyPlus here between r" "
-    __userPath = {
-        "pathToRadianceFolder": r" ",
-        "pathToEnergyPlusFolder": r" ",
-    }
-
-    def __init__(self, mute=False):
-        """Set up default settings for Honeybee.
-
-        It includes:
-            Default path to Radinace folders.
-            Default path to EnergyPlus folders.
-        """
-        self.mute = mute
-        if self.__userPath["pathToRadianceFolder"].strip() is not "":
-            self.radbinFolder = os.path.join(
-                self.__userPath["pathToRadianceFolder"], "bin")
-        else:
-            if sys.platform == 'win32':
-                __radbin, __radFile = self.__which("rad.exe")
-                self.radbinFolder = __radbin
-
-            # TODO: @sariths we need a method to search and find the executables
-            elif sys.platform == 'linux2':
-                raise NotImplementedError
-
-    def __which(self, program):
-        """Find executable programs.
-
-        Args:
-            program: Full file name for the program (e.g. rad.exe)
-
-        Returns:
-            File directory and full path to program in case of success.
-            None, None in case of failure.
-        """
-        def is_exe(fpath):
-            # Make sure it's not part of Dive installation as DIVA doesn't
-            # follow the standard structure folder for Daysim and Radiance
-            if fpath.upper().find("DIVA"):
-                return False
-            # Return true if file exists and is executable
-            return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-        # check for the file in all path in environment
-        for path in os.environ["PATH"].split(os.pathsep):
-            path.strip('"')  # strip "" from Windows path
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return path, exe_file
-
-        # couldn't find it! return None :|
-        return None, None
-
-    @property
-    def radbinFolder(self):
-        """Path to Radiance binary folder."""
-        return self.__radbin
-
-    @radbinFolder.setter
-    def radbinFolder(self, path):
-        if path is None and sys.platform == 'win32':
-            # finding by path failed. Let's check typical folders on Windows
-            if os.path.isfile(r"c:\radiance\bin\rad.exe"):
-                path = r"c:\radiance\bin"
-            elif os.path.isfile(r"c:\program files\radiance\bin\rad.exe"):
-                path = r"c:\program files\radiance\bin"
-        elif path is None and sys.platform == 'linux2':
-            raise NotImplementedError
-
-        if not path or not os.path.isdir(path):
-            if not self.mute:
-                print "Warning: Radiance bin folder not found on your machine.\n" + \
-                    "Use currentSettings.radbinFolder = 'pathToFolder' to set it up manually."
-            self.__radbin = None
-            self.radlibFolder = None
-        else:
-            # set up lib path
-            self.__radbin = os.path.normpath(path)
-            self.radlibFolder = os.path.join(os.path.split(self.__radbin)[0], "lib")
-            if not self.mute:
-                print "Path to radiance binaries is set to: %s" % self.__radbin
-
-    @property
-    def radlibFolder(self):
-        """Path to Radiance library folder."""
-        return self.__radlib
-
-    @radlibFolder.setter
-    def radlibFolder(self, path):
-        if path is not None:
-            self.__radlib = os.path.normpath(path)
-            if not self.mute:
-                if not os.path.isdir(self.__radlib):
-                    print "Warning: Radiance lib folder not found on your machine.\n" + \
-                        "Use currentSettings.radlibFolder = 'pathToFolder' to set it up manually."
-                else:
-                    print "Path to radiance libraries is set to: %s" % self.__radlib
-        else:
-            self.__radlib = None
-
-    @property
-    def epFolder(self):
-        """Path to EnergyPlus folder."""
-        raise NotImplementedError
-        # return self.__eplus
-
-
-if __name__ == "__main__":
-    setting = DefaultSettings(mute=False)
-    print setting.radbinFolder
+    def __init__(self):
+        """Create daylight factor recipe."""
+        raise NotImplementedError()
 </code></pre>
   </div>
 
@@ -1145,121 +1041,19 @@ if __name__ == "__main__":
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.settings.DefaultSettings" class="name">class <span class="ident">DefaultSettings</span></p>
+      <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe" class="name">class <span class="ident">HBDaylightFactorRecipe</span></p>
       
   
-    <div class="desc"><p>Default system settings.</p></div>
+    <div class="desc"><p>Daylight Factor Recipe.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.settings.DefaultSettings', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.settings.DefaultSettings" class="source">
-    <pre><code>class DefaultSettings(object):
-    """Default system settings."""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe" class="source">
+    <pre><code>class HBDaylightFactorRecipe(HBGridBasedAnalysisRecipe):
+    """Daylight Factor Recipe."""
 
-    # You can manually set the path to Radinace and EnergyPlus here between r" "
-    __userPath = {
-        "pathToRadianceFolder": r" ",
-        "pathToEnergyPlusFolder": r" ",
-    }
-
-    def __init__(self, mute=False):
-        """Set up default settings for Honeybee.
-
-        It includes:
-            Default path to Radinace folders.
-            Default path to EnergyPlus folders.
-        """
-        self.mute = mute
-        if self.__userPath["pathToRadianceFolder"].strip() is not "":
-            self.radbinFolder = os.path.join(
-                self.__userPath["pathToRadianceFolder"], "bin")
-        else:
-            if sys.platform == 'win32':
-                __radbin, __radFile = self.__which("rad.exe")
-                self.radbinFolder = __radbin
-
-            # TODO: @sariths we need a method to search and find the executables
-            elif sys.platform == 'linux2':
-                raise NotImplementedError
-
-    def __which(self, program):
-        """Find executable programs.
-
-        Args:
-            program: Full file name for the program (e.g. rad.exe)
-
-        Returns:
-            File directory and full path to program in case of success.
-            None, None in case of failure.
-        """
-        def is_exe(fpath):
-            # Make sure it's not part of Dive installation as DIVA doesn't
-            # follow the standard structure folder for Daysim and Radiance
-            if fpath.upper().find("DIVA"):
-                return False
-            # Return true if file exists and is executable
-            return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-        # check for the file in all path in environment
-        for path in os.environ["PATH"].split(os.pathsep):
-            path.strip('"')  # strip "" from Windows path
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return path, exe_file
-
-        # couldn't find it! return None :|
-        return None, None
-
-    @property
-    def radbinFolder(self):
-        """Path to Radiance binary folder."""
-        return self.__radbin
-
-    @radbinFolder.setter
-    def radbinFolder(self, path):
-        if path is None and sys.platform == 'win32':
-            # finding by path failed. Let's check typical folders on Windows
-            if os.path.isfile(r"c:\radiance\bin\rad.exe"):
-                path = r"c:\radiance\bin"
-            elif os.path.isfile(r"c:\program files\radiance\bin\rad.exe"):
-                path = r"c:\program files\radiance\bin"
-        elif path is None and sys.platform == 'linux2':
-            raise NotImplementedError
-
-        if not path or not os.path.isdir(path):
-            if not self.mute:
-                print "Warning: Radiance bin folder not found on your machine.\n" + \
-                    "Use currentSettings.radbinFolder = 'pathToFolder' to set it up manually."
-            self.__radbin = None
-            self.radlibFolder = None
-        else:
-            # set up lib path
-            self.__radbin = os.path.normpath(path)
-            self.radlibFolder = os.path.join(os.path.split(self.__radbin)[0], "lib")
-            if not self.mute:
-                print "Path to radiance binaries is set to: %s" % self.__radbin
-
-    @property
-    def radlibFolder(self):
-        """Path to Radiance library folder."""
-        return self.__radlib
-
-    @radlibFolder.setter
-    def radlibFolder(self, path):
-        if path is not None:
-            self.__radlib = os.path.normpath(path)
-            if not self.mute:
-                if not os.path.isdir(self.__radlib):
-                    print "Warning: Radiance lib folder not found on your machine.\n" + \
-                        "Use currentSettings.radlibFolder = 'pathToFolder' to set it up manually."
-                else:
-                    print "Path to radiance libraries is set to: %s" % self.__radlib
-        else:
-            self.__radlib = None
-
-    @property
-    def epFolder(self):
-        """Path to EnergyPlus folder."""
-        raise NotImplementedError
+    def __init__(self):
+        """Create daylight factor recipe."""
+        raise NotImplementedError()
 </code></pre>
   </div>
 </div>
@@ -1268,49 +1062,85 @@ if __name__ == "__main__":
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.settings.DefaultSettings">DefaultSettings</a></li>
+          <li><a href="#honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe">HBDaylightFactorRecipe</a></li>
+          <li>honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe</li>
+          <li>honeybee.radiance.recipe.recipeBase.HBDaylightAnalysisRecipe</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.settings.DefaultSettings.epFolder" class="name">var <span class="ident">epFolder</span></p>
+            <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.analysisPointsGroups" class="name">var <span class="ident">analysisPointsGroups</span></p>
             
 
             
   
-    <div class="desc"><p>Path to EnergyPlus folder.</p></div>
+    <div class="desc"><p>Return list of AnalysisPointGroups.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.settings.DefaultSettings.mute" class="name">var <span class="ident">mute</span></p>
+            <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.numOfPointGroups" class="name">var <span class="ident">numOfPointGroups</span></p>
             
 
             
   
+    <div class="desc"><p>Number of point groups.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.settings.DefaultSettings.radbinFolder" class="name">var <span class="ident">radbinFolder</span></p>
+            <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.numOfTotalPoints" class="name">var <span class="ident">numOfTotalPoints</span></p>
             
 
             
   
-    <div class="desc"><p>Path to Radiance binary folder.</p></div>
+    <div class="desc"><p>Number of total points.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.settings.DefaultSettings.radlibFolder" class="name">var <span class="ident">radlibFolder</span></p>
+            <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.points" class="name">var <span class="ident">points</span></p>
             
 
             
   
-    <div class="desc"><p>Path to Radiance library folder.</p></div>
+    <div class="desc"><p>Return nested list of points.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.radianceParameters" class="name">var <span class="ident">radianceParameters</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get and set Radiance parameters.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.sky" class="name">var <span class="ident">sky</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get and set sky definition.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.vectors" class="name">var <span class="ident">vectors</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Nested list of vectors.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1318,37 +1148,191 @@ if __name__ == "__main__":
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.settings.DefaultSettings.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, mute=False)</p>
+    <div class="name def" id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Set up default settings for Honeybee.</p>
-<p>It includes:
-    Default path to Radinace folders.
-    Default path to EnergyPlus folders.</p></div>
+    <div class="desc"><p>Create daylight factor recipe.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.settings.DefaultSettings.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.settings.DefaultSettings.__init__" class="source">
-    <pre><code>def __init__(self, mute=False):
-    """Set up default settings for Honeybee.
-    It includes:
-        Default path to Radinace folders.
-        Default path to EnergyPlus folders.
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.__init__" class="source">
+    <pre><code>def __init__(self):
+    """Create daylight factor recipe."""
+    raise NotImplementedError()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.createAnalysisPointGroups">
+    <p>def <span class="ident">createAnalysisPointGroups</span>(</p><p>self, pointGroups, vectorGroups)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Create AnalysisPointGroups from input points and vectors.</p>
+<p>You can acces AnalysisPointGroups using self.analysisPointsGroups property.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.createAnalysisPointGroups', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.createAnalysisPointGroups" class="source">
+    <pre><code>def createAnalysisPointGroups(self, pointGroups, vectorGroups):
+    """Create AnalysisPointGroups from input points and vectors.
+    You can acces AnalysisPointGroups using self.analysisPointsGroups property.
     """
-    self.mute = mute
-    if self.__userPath["pathToRadianceFolder"].strip() is not "":
-        self.radbinFolder = os.path.join(
-            self.__userPath["pathToRadianceFolder"], "bin")
-    else:
-        if sys.platform == 'win32':
-            __radbin, __radFile = self.__which("rad.exe")
-            self.radbinFolder = __radbin
-        # TODO: @sariths we need a method to search and find the executables
-        elif sys.platform == 'linux2':
-            raise NotImplementedError
+    self.__analysisPointGroups = []
+    if len(pointGroups) == 0:
+        return
+    # input is single point! Create a single group but seriously!
+    elif not isinstance(pointGroups[0], Iterable):
+        pointGroups = [[pointGroups]]
+        vectorGroups = [[vectorGroups]]
+    # if point group is flatten - create a single group
+    elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
+        pointGroups = [pointGroups]
+        vectorGroups = [vectorGroups]
+    for groupCount, pts in enumerate(pointGroups):
+        try:
+            # create a list for vectors if it's not provided by user
+            vectors = vectorGroups[groupCount]
+            if vectors == [[]]:
+                vectors = [(0, 0, 1)]
+        except IndexError:
+            vectors = [(0, 0, 1)]
+        finally:
+            # last check for vectors in case user input is a flatten lists
+            # for nested group of points.
+            if not isinstance(vectors[0], Iterable):
+                vectors = [vectors]
+            self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.ptsToFile">
+    <p>def <span class="ident">ptsToFile</span>(</p><p>self, filePath)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Write point groups to file.</p>
+<p>Args:
+    filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)</p>
+<p>Returns:
+    True in case of success. False in case of failure.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.ptsToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.ptsToFile" class="source">
+    <pre><code>def ptsToFile(self, filePath):
+    """Write point groups to file.
+    Args:
+        filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+    Returns:
+        True in case of success. False in case of failure.
+    """
+    targetFolder = os.path.split(filePath)[0]
+    # check targer folder
+    self.toFile(targetFolder)
+    with open(filePath, "w") as outf:
+        try:
+            outf.write(self.toRadString())
+            return True
+        except Exception as e:
+            print "Failed to write points to file:\n%s" % e
+            return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toFile">
+    <p>def <span class="ident">toFile</span>(</p><p>self, tragetFolder, projectName, HBObjects=None, radFiles=None, useRelativePath=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Write analysis files to target folder.</p>
+<p>Files for a grid based analysis are:
+    test points <projectName.pts>: List of analysis points.
+    sky file &lt;<em>.sky&gt;: Radiance sky for this analysis.
+    material file &lt;</em>.mat&gt;: Radiance material file.
+    geometry file &lt;<em>.rad&gt;: Radiance geometry file.
+    sky file &lt;</em>.sky&gt;: Radiance sky for this analysis.
+    batch file &lt;<em>.bat&gt;: An executable batch file which has the list of commands.
+        oconve &lt;</em>.sky&gt; <projectName.mat> <projectName.rad> <additional radFiles> &gt; <projectName.oct>
+        rtrace <radianceParameters> <projectName.oct> &gt; <projectName.res>
+    results file &lt;*.res&gt;: Results file once the analysis is over.</p>
+<p>Args:
+    tragetFolder:
+    projectName:
+    HBObjects:
+    radFiles:
+    useRelativePath:</p>
+<p>Returns:
+    True in case of success. False in case of failure.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toFile" class="source">
+    <pre><code>def toFile(self, tragetFolder, projectName, HBObjects=None, radFiles=None,
+           useRelativePath=False):
+    """Write analysis files to target folder.
+    Files for a grid based analysis are:
+        test points <projectName.pts>: List of analysis points.
+        sky file <*.sky>: Radiance sky for this analysis.
+        material file <*.mat>: Radiance material file.
+        geometry file <*.rad>: Radiance geometry file.
+        sky file <*.sky>: Radiance sky for this analysis.
+        batch file <*.bat>: An executable batch file which has the list of commands.
+            oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles> > <projectName.oct>
+            rtrace <radianceParameters> <projectName.oct> > <projectName.res>
+        results file <*.res>: Results file once the analysis is over.
+    Args:
+        tragetFolder:
+        projectName:
+        HBObjects:
+        radFiles:
+        useRelativePath:
+    Returns:
+        True in case of success. False in case of failure.
+    """
+    pass
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a multiline string of analysis points for Radiance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightfactor.HBDaylightFactorRecipe.toRadString" class="source">
+    <pre><code>def toRadString(self):
+    """Return a multiline string of analysis points for Radiance."""
+    return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
 </code></pre>
   </div>
 </div>
