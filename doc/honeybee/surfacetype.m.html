@@ -1285,8 +1285,8 @@ class SurfaceTypes(object):
         """
         __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
 
-        if len(points) > 3:
-            __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+        # if len(points) > 3:
+        #     __srfType = cls.reEvaluateSurfaceType(__srfType, points)
 
         return cls.__types[__srfType]
 
@@ -1996,8 +1996,8 @@ class SurfaceTypes(object):
         """
         __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
 
-        if len(points) > 3:
-            __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+        # if len(points) > 3:
+        #     __srfType = cls.reEvaluateSurfaceType(__srfType, points)
 
         return cls.__types[__srfType]
 
@@ -2196,8 +2196,8 @@ def byNormalAngleAndPoints(cls, normalAngle, points=[]):
         Surface type as surfaceTypeBase object.
     """
     __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
-    if len(points) > 3:
-        __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+    # if len(points) > 3:
+    #     __srfType = cls.reEvaluateSurfaceType(__srfType, points)
     return cls.__types[__srfType]
 </code></pre>
   </div>

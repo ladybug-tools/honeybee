@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.hbzone API documentation</title>
-    <meta name="description" content="" />
+    <title>honeybee.helper API documentation</title>
+    <meta name="description" content="A collection of auxiliary funtions for working with files and directories." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -984,20 +984,15 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
-
-    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
-      <ul>
-        <li class="mono">
-        <span class="class_name"><a href="#honeybee.hbzone.HBZone">HBZone</a></span>
-        
-          
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
   <ul>
-    <li class="mono"><a href="#honeybee.hbzone.HBZone.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.helper.nukedir">nukedir</a></li>
+    <li class="mono"><a href="#honeybee.helper.preparedir">preparedir</a></li>
   </ul>
 
-        </li>
-      </ul>
     </li>
+
 
     </ul>
   </div>
@@ -1010,21 +1005,63 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.hbzone</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.helper</span> module</h1>
+  <p>A collection of auxiliary funtions for working with files and directories.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbzone', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbzone" class="source">
-    <pre><code>from hbobject import HBObject
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.helper', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.helper" class="source">
+    <pre><code>"""A collection of auxiliary funtions for working with files and directories."""
+import os
 
 
-class HBZone(HBObject):
-    """Honeybee base class."""
+def preparedir(targetDir):
+    """Prepare a folder for analysis.
 
-    def __init__(self, name, buildingProgram, zoneProgram, isConditioned=True):
-        """Initialize Honeybee Zone."""
-        self.name = name
-        """Zone name"""
+    This method creates the folder if it is not created, and removes the file in
+    the folder if the folder already existed.
+    """
+    if os.path.isdir(targetDir):
+        nukedir(targetDir, False)
+    else:
+        try:
+            os.mkdir(targetDir)
+        except Exception as e:
+            print "Failed to create folder: %s\n%s" % (targetDir, e)
+            return False
+    return True
+
+
+def nukedir(targetDir, rmdir=False):
+    """Delete all the files inside targetDir.
+
+    Usage:
+        nukedir("c:/ladybug/libs", True)
+    """
+    d = os.path.normpath(targetDir)
+
+    if not os.path.isdir(d):
+        return
+
+    files = os.listdir(d)
+
+    for f in files:
+        if f == '.' or f == '..':
+            continue
+        path = os.path.join(d, f)
+
+        if os.path.isdir(path):
+            nukedir(path)
+        else:
+            try:
+                os.remove(path)
+            except:
+                print "Failed to remove %s" % path
+
+    if rmdir:
+        try:
+            os.rmdir(d)
+        except:
+            print "Failed to remove %s" % d
 </code></pre>
   </div>
 
@@ -1032,85 +1069,96 @@ class HBZone(HBObject):
 
   <section id="section-items">
 
-
-    <h2 class="section-title" id="header-classes">Classes</h2>
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
-      <div class="item">
-      <p id="honeybee.hbzone.HBZone" class="name">class <span class="ident">HBZone</span></p>
-      
-  
-    <div class="desc"><p>Honeybee base class.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbzone.HBZone', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbzone.HBZone" class="source">
-    <pre><code>class HBZone(HBObject):
-    """Honeybee base class."""
-
-    def __init__(self, name, buildingProgram, zoneProgram, isConditioned=True):
-        """Initialize Honeybee Zone."""
-        self.name = name
-        """Zone name"""
-</code></pre>
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#honeybee.hbzone.HBZone">HBZone</a></li>
-          <li>honeybee.hbobject.HBObject</li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="honeybee.hbzone.HBZone.isHBObject" class="name">var <span class="ident">isHBObject</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Return True.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.hbzone.HBZone.name" class="name">var <span class="ident">name</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Zone name</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
-            
   <div class="item">
-    <div class="name def" id="honeybee.hbzone.HBZone.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, buildingProgram, zoneProgram, isConditioned=True)</p>
+    <div class="name def" id="honeybee.helper.nukedir">
+    <p>def <span class="ident">nukedir</span>(</p><p>targetDir, rmdir=False)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Initialize Honeybee Zone.</p></div>
+    <div class="desc"><p>Delete all the files inside targetDir.</p>
+<p>Usage:
+    nukedir("c:/ladybug/libs", True)</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbzone.HBZone.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbzone.HBZone.__init__" class="source">
-    <pre><code>def __init__(self, name, buildingProgram, zoneProgram, isConditioned=True):
-    """Initialize Honeybee Zone."""
-    self.name = name
-    """Zone name"""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.helper.nukedir', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.helper.nukedir" class="source">
+    <pre><code>def nukedir(targetDir, rmdir=False):
+    """Delete all the files inside targetDir.
+
+    Usage:
+        nukedir("c:/ladybug/libs", True)
+    """
+    d = os.path.normpath(targetDir)
+
+    if not os.path.isdir(d):
+        return
+
+    files = os.listdir(d)
+
+    for f in files:
+        if f == '.' or f == '..':
+            continue
+        path = os.path.join(d, f)
+
+        if os.path.isdir(path):
+            nukedir(path)
+        else:
+            try:
+                os.remove(path)
+            except:
+                print "Failed to remove %s" % path
+
+    if rmdir:
+        try:
+            os.rmdir(d)
+        except:
+            print "Failed to remove %s" % d
 </code></pre>
   </div>
 </div>
 
   </div>
   
-      </div>
-      </div>
+      
+  <div class="item">
+    <div class="name def" id="honeybee.helper.preparedir">
+    <p>def <span class="ident">preparedir</span>(</p><p>targetDir)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Prepare a folder for analysis.</p>
+<p>This method creates the folder if it is not created, and removes the file in
+the folder if the folder already existed.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.helper.preparedir', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.helper.preparedir" class="source">
+    <pre><code>def preparedir(targetDir):
+    """Prepare a folder for analysis.
+
+    This method creates the folder if it is not created, and removes the file in
+    the folder if the folder already existed.
+    """
+    if os.path.isdir(targetDir):
+        nukedir(targetDir, False)
+    else:
+        try:
+            os.mkdir(targetDir)
+        except Exception as e:
+            print "Failed to create folder: %s\n%s" % (targetDir, e)
+            return False
+    return True
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+
 
   </section>
 

@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.hbzone API documentation</title>
+    <title>honeybee.hbobject API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -988,13 +988,8 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.hbzone.HBZone">HBZone</a></span>
+        <span class="class_name"><a href="#honeybee.hbobject.HBObject">HBObject</a></span>
         
-          
-  <ul>
-    <li class="mono"><a href="#honeybee.hbzone.HBZone.__init__">__init__</a></li>
-  </ul>
-
         </li>
       </ul>
     </li>
@@ -1010,21 +1005,17 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.hbzone</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.hbobject</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbzone', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbzone" class="source">
-    <pre><code>from hbobject import HBObject
-
-
-class HBZone(HBObject):
-    """Honeybee base class."""
-
-    def __init__(self, name, buildingProgram, zoneProgram, isConditioned=True):
-        """Initialize Honeybee Zone."""
-        self.name = name
-        """Zone name"""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbobject', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbobject" class="source">
+    <pre><code>lass HBObject(object):
+   """Base class for Honeybee Zone and Surface."""
+   @property
+   def isHBObject(self):
+       """Return True."""
+       return True
 </code></pre>
   </div>
 
@@ -1036,20 +1027,20 @@ class HBZone(HBObject):
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.hbzone.HBZone" class="name">class <span class="ident">HBZone</span></p>
+      <p id="honeybee.hbobject.HBObject" class="name">class <span class="ident">HBObject</span></p>
       
   
-    <div class="desc"><p>Honeybee base class.</p></div>
+    <div class="desc"><p>Base class for Honeybee Zone and Surface.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbzone.HBZone', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbzone.HBZone" class="source">
-    <pre><code>class HBZone(HBObject):
-    """Honeybee base class."""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbobject.HBObject', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbobject.HBObject" class="source">
+    <pre><code>class HBObject(object):
+    """Base class for Honeybee Zone and Surface."""
 
-    def __init__(self, name, buildingProgram, zoneProgram, isConditioned=True):
-        """Initialize Honeybee Zone."""
-        self.name = name
-        """Zone name"""
+    @property
+    def isHBObject(self):
+        """Return True."""
+        return True
 </code></pre>
   </div>
 </div>
@@ -1058,13 +1049,12 @@ class HBZone(HBObject):
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.hbzone.HBZone">HBZone</a></li>
-          <li>honeybee.hbobject.HBObject</li>
+          <li><a href="#honeybee.hbobject.HBObject">HBObject</a></li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.hbzone.HBZone.isHBObject" class="name">var <span class="ident">isHBObject</span></p>
+            <p id="honeybee.hbobject.HBObject.isHBObject" class="name">var <span class="ident">isHBObject</span></p>
             
 
             
@@ -1074,41 +1064,6 @@ class HBZone(HBObject):
 </div>
 
             </div>
-            <div class="item">
-            <p id="honeybee.hbzone.HBZone.name" class="name">var <span class="ident">name</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Zone name</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbzone.HBZone.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, buildingProgram, zoneProgram, isConditioned=True)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Initialize Honeybee Zone.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbzone.HBZone.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbzone.HBZone.__init__" class="source">
-    <pre><code>def __init__(self, name, buildingProgram, zoneProgram, isConditioned=True):
-    """Initialize Honeybee Zone."""
-    self.name = name
-    """Zone name"""
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
       </div>
       </div>
 

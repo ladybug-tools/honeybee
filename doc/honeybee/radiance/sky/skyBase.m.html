@@ -994,8 +994,8 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.sky.skyBase.RadianceSky.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.skyBase.RadianceSky.genRadianceSkyLine">genRadianceSkyLine</a></li>
-    <li class="mono"><a href="#honeybee.radiance.sky.skyBase.RadianceSky.save">save</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.skyBase.RadianceSky.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.sky.skyBase.RadianceSky.writeToFile">writeToFile</a></li>
   </ul>
 
         </li>
@@ -1077,16 +1077,21 @@ class RadianceSky:
         """Return radiance definition as a string."""
         return self.__head + self.main + self.__tale
 
-    def save(self, filePath):
+    def writeToFile(self, targetFolder, name=None):
         """Save sky definition to a file."""
-        __dir, __name = os.path.split(filePath)
+        assert os.path.exists(targetFolder), \
+            "%s doesn't exist. create folder and try again." % targetFolder
 
-        assert os.path.exists(__dir), \
-            "%s doesn't exist. create folder and try again." % __dir
+        name = self.name if not name else name
 
-        with open(filePath, "wb") as skyFile:
-            # write the sky to file
-            skyFile.write(self.toRadString())
+        filePath = os.path.normpath(os.path.join(targetFolder, name + ".sky"))
+
+        try:
+            with open(filePath, "wb") as skyFile:
+                # write the sky to file
+                skyFile.write(self.toRadString())
+        except Exception as e:
+            raise Exception("Failed to write the sky file to: %s" % e)
 </code></pre>
   </div>
 
@@ -1159,16 +1164,21 @@ class RadianceSky:
         """Return radiance definition as a string."""
         return self.__head + self.main + self.__tale
 
-    def save(self, filePath):
+    def writeToFile(self, targetFolder, name=None):
         """Save sky definition to a file."""
-        __dir, __name = os.path.split(filePath)
+        assert os.path.exists(targetFolder), \
+            "%s doesn't exist. create folder and try again." % targetFolder
 
-        assert os.path.exists(__dir), \
-            "%s doesn't exist. create folder and try again." % __dir
+        name = self.name if not name else name
 
-        with open(filePath, "wb") as skyFile:
-            # write the sky to file
-            skyFile.write(self.toRadString())
+        filePath = os.path.normpath(os.path.join(targetFolder, name + ".sky"))
+
+        try:
+            with open(filePath, "wb") as skyFile:
+                # write the sky to file
+                skyFile.write(self.toRadString())
+        except Exception as e:
+            raise Exception("Failed to write the sky file to: %s" % e)
 </code></pre>
   </div>
 </div>
@@ -1268,33 +1278,6 @@ def genRadianceSkyLine(self):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.sky.skyBase.RadianceSky.save">
-    <p>def <span class="ident">save</span>(</p><p>self, filePath)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Save sky definition to a file.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.skyBase.RadianceSky.save', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.sky.skyBase.RadianceSky.save" class="source">
-    <pre><code>def save(self, filePath):
-    """Save sky definition to a file."""
-    __dir, __name = os.path.split(filePath)
-    assert os.path.exists(__dir), \
-        "%s doesn't exist. create folder and try again." % __dir
-    with open(filePath, "wb") as skyFile:
-        # write the sky to file
-        skyFile.write(self.toRadString())
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="honeybee.radiance.sky.skyBase.RadianceSky.toRadString">
     <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
     </div>
@@ -1309,6 +1292,37 @@ def genRadianceSkyLine(self):
     <pre><code>def toRadString(self):
     """Return radiance definition as a string."""
     return self.__head + self.main + self.__tale
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.sky.skyBase.RadianceSky.writeToFile">
+    <p>def <span class="ident">writeToFile</span>(</p><p>self, targetFolder, name=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Save sky definition to a file.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.skyBase.RadianceSky.writeToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.sky.skyBase.RadianceSky.writeToFile" class="source">
+    <pre><code>def writeToFile(self, targetFolder, name=None):
+    """Save sky definition to a file."""
+    assert os.path.exists(targetFolder), \
+        "%s doesn't exist. create folder and try again." % targetFolder
+    name = self.name if not name else name
+    filePath = os.path.normpath(os.path.join(targetFolder, name + ".sky"))
+    try:
+        with open(filePath, "wb") as skyFile:
+            # write the sky to file
+            skyFile.write(self.toRadString())
+    except Exception as e:
+        raise Exception("Failed to write the sky file to: %s" % e)
 </code></pre>
   </div>
 </div>

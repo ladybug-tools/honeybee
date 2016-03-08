@@ -1019,9 +1019,12 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysis', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysis" class="source">
     <pre><code>"""Radiance Analysis workflows."""
+from subprocess import Popen
+import time
+import os
 
 
-# TODO: (@sariths) Add electrical lighting as an input.
+# TODO: (@sariths) Should we add electrical lighting as an input in rad files.
 class AnalysisBase(object):
     """Base analysis class for Radiance analysis."""
 
@@ -1035,34 +1038,90 @@ class AnalysisBase(object):
             otherRADFiles: An ordered list of additional radiance file to be
                 added to the analysis.
         """
-        pass
+        self.__isExecuted = False
+        self.__done = False
 
     @property
     def isRunning(self):
         """Return is analysis is still running."""
-        pass
+        if not self.__isExecuted:
+            return False
+        return not self.__done
 
     @property
     def isOver(self):
         """Return if analysis is done."""
-        pass
+        return self.__done
 
     @property
     def progress(self):
         """Return progress value between 0-100."""
-        pass
+        raise NotImplementedError
 
     def write(self):
         """Write analysis files."""
-        pass
+        raise NotImplementedError
 
-    def run(self, minimize=False, wait=True):
+    def run(self, minimize=False):
         """Run analysis."""
-        pass
+        self.__isExecuted = True
+        self.__executeBatchFiles(minimize=minimize)
 
     def results(self):
         """Get analysis results."""
         pass
+
+    def __executeBatchFiles(self, batchFiles, maxPRuns=None, minimize=False,
+                            waitingTime=0.5):
+        """Run a list of batch files in parallel.
+
+        Args:
+            batchFiles: List of batch files.
+            maxPRuns: Max number of files to be ran in parallel (default: 1).
+            minimize: Set to True if you want NOT to see the cmd window.
+        """
+        if not maxPRuns:
+            maxPRuns = 1
+        maxPRuns = int(maxPRuns)
+        total = len(batchFiles)
+
+        if maxPRuns < 1:
+            maxPRuns = 1
+        if maxPRuns > total:
+            maxPRuns = total
+
+        running = 0
+        self.__done = False
+        jobs = []
+        pid = 0
+
+        try:
+            while not self.__done:
+                if running < maxPRuns and pid < total:
+                    # execute the files
+                    jobs.append(Popen(os.path.normpath(batchFiles[pid]), shell=minimize))
+                    pid += 1
+                    time.sleep(waitingTime)
+
+                # count how many jobs are running and how many are done
+                running = 0
+                finished = 0
+                for job in jobs:
+                    if job.poll() is None:
+                        # one job is still running
+                        running += 1
+                    else:
+                        finished += 1
+
+                if running == maxPRuns:
+                    # wait for half a second
+                    time.sleep(waitingTime)
+
+                if finished == total:
+                    self.__done = True
+
+        except Exception, e:
+            print "Failed to execute batch files: %s" % str(e)
 
     def __repr__(self):
         """Represent Analysis class."""
@@ -1098,34 +1157,90 @@ class AnalysisBase(object):
             otherRADFiles: An ordered list of additional radiance file to be
                 added to the analysis.
         """
-        pass
+        self.__isExecuted = False
+        self.__done = False
 
     @property
     def isRunning(self):
         """Return is analysis is still running."""
-        pass
+        if not self.__isExecuted:
+            return False
+        return not self.__done
 
     @property
     def isOver(self):
         """Return if analysis is done."""
-        pass
+        return self.__done
 
     @property
     def progress(self):
         """Return progress value between 0-100."""
-        pass
+        raise NotImplementedError
 
     def write(self):
         """Write analysis files."""
-        pass
+        raise NotImplementedError
 
-    def run(self, minimize=False, wait=True):
+    def run(self, minimize=False):
         """Run analysis."""
-        pass
+        self.__isExecuted = True
+        self.__executeBatchFiles(minimize=minimize)
 
     def results(self):
         """Get analysis results."""
         pass
+
+    def __executeBatchFiles(self, batchFiles, maxPRuns=None, minimize=False,
+                            waitingTime=0.5):
+        """Run a list of batch files in parallel.
+
+        Args:
+            batchFiles: List of batch files.
+            maxPRuns: Max number of files to be ran in parallel (default: 1).
+            minimize: Set to True if you want NOT to see the cmd window.
+        """
+        if not maxPRuns:
+            maxPRuns = 1
+        maxPRuns = int(maxPRuns)
+        total = len(batchFiles)
+
+        if maxPRuns < 1:
+            maxPRuns = 1
+        if maxPRuns > total:
+            maxPRuns = total
+
+        running = 0
+        self.__done = False
+        jobs = []
+        pid = 0
+
+        try:
+            while not self.__done:
+                if running < maxPRuns and pid < total:
+                    # execute the files
+                    jobs.append(Popen(os.path.normpath(batchFiles[pid]), shell=minimize))
+                    pid += 1
+                    time.sleep(waitingTime)
+
+                # count how many jobs are running and how many are done
+                running = 0
+                finished = 0
+                for job in jobs:
+                    if job.poll() is None:
+                        # one job is still running
+                        running += 1
+                    else:
+                        finished += 1
+
+                if running == maxPRuns:
+                    # wait for half a second
+                    time.sleep(waitingTime)
+
+                if finished == total:
+                    self.__done = True
+
+        except Exception, e:
+            print "Failed to execute batch files: %s" % str(e)
 
     def __repr__(self):
         """Represent Analysis class."""
@@ -1204,7 +1319,8 @@ class AnalysisBase(object):
         otherRADFiles: An ordered list of additional radiance file to be
             added to the analysis.
     """
-    pass
+    self.__isExecuted = False
+    self.__done = False
 </code></pre>
   </div>
 </div>
@@ -1236,7 +1352,7 @@ class AnalysisBase(object):
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.analysis.AnalysisBase.run">
-    <p>def <span class="ident">run</span>(</p><p>self, minimize=False, wait=True)</p>
+    <p>def <span class="ident">run</span>(</p><p>self, minimize=False)</p>
     </div>
     
 
@@ -1246,9 +1362,10 @@ class AnalysisBase(object):
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysis.AnalysisBase.run', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.analysis.AnalysisBase.run" class="source">
-    <pre><code>def run(self, minimize=False, wait=True):
+    <pre><code>def run(self, minimize=False):
     """Run analysis."""
-    pass
+    self.__isExecuted = True
+    self.__executeBatchFiles(minimize=minimize)
 </code></pre>
   </div>
 </div>
@@ -1270,7 +1387,7 @@ class AnalysisBase(object):
   <div id="source-honeybee.radiance.analysis.AnalysisBase.write" class="source">
     <pre><code>def write(self):
     """Write analysis files."""
-    pass
+    raise NotImplementedError
 </code></pre>
   </div>
 </div>

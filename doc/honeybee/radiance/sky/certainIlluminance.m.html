@@ -994,8 +994,8 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.genRadianceSkyLine">genRadianceSkyLine</a></li>
-    <li class="mono"><a href="#honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.save">save</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.writeToFile">writeToFile</a></li>
   </ul>
 
         </li>
@@ -1029,13 +1029,18 @@ class SkyWithCertainIlluminanceLevel(RadianceSky):
 
     Usage:
         sky = HBCertainIlluminanceLevelSky(1000)
-        sky.save("c:/ladybug/skies/1000luxsky.sky")
+        sky.toFile("c:/ladybug/skies", "1000luxsky.sky")
     """
 
     def __init__(self, illuminanceValue):
         """Create sky."""
         RadianceSky.__init__(self)
         self.illuminanceValue = illuminanceValue
+
+    @property
+    def name(self):
+        """Sky default name."""
+        return "Uniform_CIE_%d" % int(self.illuminanceValue)
 
     @property
     def illuminanceValue(self):
@@ -1082,7 +1087,7 @@ if __name__ == "__main__":
     illuminanceValue: Desired illuminance value in lux</p>
 <p>Usage:
     sky = HBCertainIlluminanceLevelSky(1000)
-    sky.save("c:/ladybug/skies/1000luxsky.sky")</p></div>
+    sky.toFile("c:/ladybug/skies", "1000luxsky.sky")</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel" class="source">
@@ -1094,13 +1099,18 @@ if __name__ == "__main__":
 
     Usage:
         sky = HBCertainIlluminanceLevelSky(1000)
-        sky.save("c:/ladybug/skies/1000luxsky.sky")
+        sky.toFile("c:/ladybug/skies", "1000luxsky.sky")
     """
 
     def __init__(self, illuminanceValue):
         """Create sky."""
         RadianceSky.__init__(self)
         self.illuminanceValue = illuminanceValue
+
+    @property
+    def name(self):
+        """Sky default name."""
+        return "Uniform_CIE_%d" % int(self.illuminanceValue)
 
     @property
     def illuminanceValue(self):
@@ -1155,6 +1165,17 @@ if __name__ == "__main__":
 </div>
 
             </div>
+            <div class="item">
+            <p id="honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Sky default name.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
@@ -1204,33 +1225,6 @@ if __name__ == "__main__":
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.save">
-    <p>def <span class="ident">save</span>(</p><p>self, filePath)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Save sky definition to a file.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.save', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.save" class="source">
-    <pre><code>def save(self, filePath):
-    """Save sky definition to a file."""
-    __dir, __name = os.path.split(filePath)
-    assert os.path.exists(__dir), \
-        "%s doesn't exist. create folder and try again." % __dir
-    with open(filePath, "wb") as skyFile:
-        # write the sky to file
-        skyFile.write(self.toRadString())
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.toRadString">
     <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
     </div>
@@ -1245,6 +1239,37 @@ if __name__ == "__main__":
     <pre><code>def toRadString(self):
     """Return radiance definition as a string."""
     return self.__head + self.main + self.__tale
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.writeToFile">
+    <p>def <span class="ident">writeToFile</span>(</p><p>self, targetFolder, name=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Save sky definition to a file.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.writeToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.writeToFile" class="source">
+    <pre><code>def writeToFile(self, targetFolder, name=None):
+    """Save sky definition to a file."""
+    assert os.path.exists(targetFolder), \
+        "%s doesn't exist. create folder and try again." % targetFolder
+    name = self.name if not name else name
+    filePath = os.path.normpath(os.path.join(targetFolder, name + ".sky"))
+    try:
+        with open(filePath, "wb") as skyFile:
+            # write the sky to file
+            skyFile.write(self.toRadString())
+    except Exception as e:
+        raise Exception("Failed to write the sky file to: %s" % e)
 </code></pre>
   </div>
 </div>
