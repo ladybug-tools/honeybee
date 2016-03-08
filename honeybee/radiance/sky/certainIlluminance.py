@@ -9,13 +9,18 @@ class SkyWithCertainIlluminanceLevel(RadianceSky):
 
     Usage:
         sky = HBCertainIlluminanceLevelSky(1000)
-        sky.save("c:/ladybug/skies/1000luxsky.sky")
+        sky.toFile("c:/ladybug/skies", "1000luxsky.sky")
     """
 
     def __init__(self, illuminanceValue):
         """Create sky."""
         RadianceSky.__init__(self)
         self.illuminanceValue = illuminanceValue
+
+    @property
+    def name(self):
+        """Sky default name."""
+        return "Uniform_CIE_%d" % int(self.illuminanceValue)
 
     @property
     def illuminanceValue(self):

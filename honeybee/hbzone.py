@@ -1,5 +1,7 @@
+from hbobject import HBObject
 
-class HBZone(object):
+
+class HBZone(HBObject):
     """Honeybee base class."""
 
     def __init__(self, name, buildingProgram, zoneProgram, isConditioned=True):

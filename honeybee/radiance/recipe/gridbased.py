@@ -3,7 +3,10 @@
 from ...hbpointgroup import AnalysisPointGroup
 from .recipeBase import HBDaylightAnalysisRecipe
 from collections import Iterable
+from ..command.oconv import Oconv
+from ...helper import preparedir
 import os
+from collections import namedtuple
 
 
 class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
@@ -17,13 +20,16 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
             of corresponding point in testPts. If the vector is not provided (0, 0, 1)
             will be assigned.
+        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         radParameters: Radiance parameters for this analysis.
             (Default: RadianceParameters.LowQuality)
     """
 
-    def __init__(self, sky, pointGroups, vectorGroups=[], radParameters=None):
+    def __init__(self, sky, pointGroups, vectorGroups=[], radParameters=None,
+                 hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        HBDaylightAnalysisRecipe.__init__(self, sky=sky, radParameters=radParameters)
+        HBDaylightAnalysisRecipe.__init__(self, sky=sky, radParameters=radParameters,
+                                          hbObjects=hbObjects, subFolder=subFolder)
 
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
@@ -84,42 +90,98 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
                     vectors = [vectors]
                 self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
 
-    def toRadString(self):
-        """Return a multiline string of analysis points for Radiance."""
-        return "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
+    def toRadString(self, hbObjects=False, points=False):
+        """Return a tuple of multiline string radiance definition.
 
-    def ptsToFile(self, filePath):
+        Args:
+            hbObjects: Set to True to generate string for materials and geometries (Default: False).
+            points: Set to True to generate string for points (Default: False).
+
+        Returns:
+            A namedTuple of multiline data. Keys are: points materials geometries
+
+        Usage:
+            s = self.toRadString(True, True)
+            ptsString , matString, geoString = s
+            or
+            s = self.toRadString(points=True)
+            ptsString = s.points
+        """
+        _radDefinition = namedtuple("RadString", "points materials geometries")
+        _ptsStr = ""
+        _matStr = ""
+        _geoStr = ""
+
+        if points:
+            _ptsStr = "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
+
+        if hbObjects:
+            _matStr, _geoStr = self.hbObjectsToRadString()
+
+        return _radDefinition(_ptsStr, _matStr, _geoStr)
+
+    def writePointsToFile(self, targetDir, projectName, mkdir=False):
         """Write point groups to file.
 
         Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+            targetDir: Path to project directory (e.g. c:/ladybug)
+            projectName: Project name as string.Points will be saved as
+                projectName.pts
 
         Returns:
-            True in case of success. False in case of failure.
+            Path to file in case of success.
+
+        Exceptions:
+            ValueError if targetDir doesn't exist and mkdir is False.
         """
-        targetFolder = os.path.split(filePath)[0]
+        assert type(projectName) is str, "projectName should be a string."
+        projectName += ".pts"
 
-        # check targer folder
-        self.toFile(targetFolder)
+        _pts = self.write(os.path.join(targetDir, projectName),
+                          self.toRadString(points=True).points, mkdir)
 
-        with open(filePath, "w") as outf:
-            try:
-                outf.write(self.toRadString())
-                return True
-            except Exception as e:
-                print "Failed to write points to file:\n%s" % e
-                return False
+        if _pts:
+            return _pts
+
+    def writeHBObjectsToFile(self, targetDir, projectName, mkdir=False,
+                             writeMaterial=True, writeGeometry=True):
+        """Write HBobjects to *.rad and .mat files.
+
+        Args:
+            targetDir: Path to project directory (e.g. c:/ladybug)
+            projectName: Project name as string. Geometries will be saved as
+                projectName.rad and materials will be saved as projectName.mat
+            mkdir: Set to True to create the directory if doesn't exist (Default: False)
+
+        Returns:
+            Path to materiald and geometry files as a tuple (*.mat, *.rad).
+
+        Exceptions:
+            ValueError if targetDir doesn't exist and mkdir is False.
+        """
+        assert type(projectName) is str, "projectName should be a string."
+
+        _matStr, _geoStr = self.hbObjectsToRadString()
+
+        _mat = self.write(os.path.join(targetDir, projectName + ".mat"),
+                          _matStr, mkdir) if writeMaterial else " "
+
+        _geo = self.write(os.path.join(targetDir, projectName + ".rad"),
+                          _geoStr, mkdir) if writeMaterial else " "
+
+        if _mat and _geo:
+            return _mat, _geo
 
     # TODO: Add path to PATH and use relative path in batch files
-    def toFile(self, tragetFolder, projectName, HBObjects=None, radFiles=None,
-               useRelativePath=False):
+    def writeToFile(self, targetFolder, projectName, radFiles=None,
+                    useRelativePath=False):
         """Write analysis files to target folder.
 
         Files for a grid based analysis are:
             test points <projectName.pts>: List of analysis points.
             sky file <*.sky>: Radiance sky for this analysis.
-            material file <*.mat>: Radiance material file.
-            geometry file <*.rad>: Radiance geometry file.
+            material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
+            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
             sky file <*.sky>: Radiance sky for this analysis.
             batch file <*.bat>: An executable batch file which has the list of commands.
                 oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles> > <projectName.oct>
@@ -127,16 +189,50 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
             results file <*.res>: Results file once the analysis is over.
 
         Args:
-            tragetFolder:
-            projectName:
-            HBObjects:
-            radFiles:
-            useRelativePath:
+            targetFolder: Path to parent folder. Files will be created under
+                targetFolder/gridbased. use self.subFolder to change subfolder name.
+            projectName: Name of this project as a string.
+            radFiles: A list of additional .rad files to be added to the scene
+            useRelativePath: Set to True to use relative path in bat file <NotImplemented!>.
 
         Returns:
-            True in case of success. False in case of failure.
+            True in case of success.
         """
-        pass
+        # 0.prepare target folder
+        # create main folder targetFolder\projectName
+        _basePath = os.path.join(targetFolder, projectName)
+        _ispath = preparedir(_basePath)
+        assert _ispath, "Failed to create %s. Try a different path!" % _basePath
+
+        # create main folder targetFolder\projectName\gridbased
+        _path = os.path.join(_basePath, self.subFolder)
+        _ispath = preparedir(_path)
+
+        assert _ispath, "Failed to create %s. Try a different path!" % _path
+
+        # 1.write sky file
+        skyFile = self.sky.writeToFile(_path)
+
+        # 2.write points
+        pointsFile = self.writePointsToFile(_path, projectName)
+
+        # 3.write materials and geometry files
+        matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
+
+        # 4.write batch file
+
+        # # 4.1.prepare oconv
+        # oc = Oconv(fileName=projectName, workingDir=targetFolder)
+        # oc.addFiles([skyFile, matFile, geoFile])
+
+        # # 4.2.prepare rtrace
+
+        # # 4.3 write batch file
+
+        # batchFile.append(oc.commandline())
+
+        print "Files are written to: %s" % _path
+        return _path
 
     def __repr__(self):
         """Represent grid based recipe."""

@@ -211,8 +211,8 @@ class SurfaceTypes(object):
         """
         __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
 
-        if len(points) > 3:
-            __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+        # if len(points) > 3:
+        #     __srfType = cls.reEvaluateSurfaceType(__srfType, points)
 
         return cls.__types[__srfType]
 

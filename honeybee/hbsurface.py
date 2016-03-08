@@ -1,12 +1,14 @@
-import types
+from hbobject import HBObject
 from radiance.properties import RadianceProperties
 from radiance.geometry import polygon
 import surfacetype
 import geometryoperation as go
+
 import os
+import types
 
 
-class HBAnalysisSurface(object):
+class HBAnalysisSurface(HBObject):
     """Base class for Honeybee surface.
 
     Args:

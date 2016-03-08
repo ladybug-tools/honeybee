@@ -57,13 +57,18 @@ class RadianceSky:
         """Return radiance definition as a string."""
         return self.__head + self.main + self.__tale
 
-    def save(self, filePath):
+    def writeToFile(self, targetFolder, name=None):
         """Save sky definition to a file."""
-        __dir, __name = os.path.split(filePath)
+        assert os.path.exists(targetFolder), \
+            "%s doesn't exist. create folder and try again." % targetFolder
 
-        assert os.path.exists(__dir), \
-            "%s doesn't exist. create folder and try again." % __dir
+        name = self.name if not name else name
 
-        with open(filePath, "wb") as skyFile:
-            # write the sky to file
-            skyFile.write(self.toRadString())
+        filePath = os.path.normpath(os.path.join(targetFolder, name + ".sky"))
+
+        try:
+            with open(filePath, "wb") as skyFile:
+                # write the sky to file
+                skyFile.write(self.toRadString())
+        except Exception as e:
+            raise Exception("Failed to write the sky file to: %s" % e)
