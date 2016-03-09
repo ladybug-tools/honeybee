@@ -4,10 +4,11 @@ from ...hbpointgroup import AnalysisPointGroup
 from .recipeBase import HBDaylightAnalysisRecipe
 from collections import Iterable
 from ..command.oconv import Oconv
+from ..command.rtrace import Rtrace
 from ...helper import preparedir
 import os
 from collections import namedtuple
-
+import subprocess
 
 class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     """Grid base analysis base class.
@@ -30,7 +31,7 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         """Create grid-based recipe."""
         HBDaylightAnalysisRecipe.__init__(self, sky=sky, radParameters=radParameters,
                                           hbObjects=hbObjects, subFolder=subFolder)
-
+        self.batchFile = None
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
@@ -220,19 +221,46 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
 
         # 4.write batch file
+        batchFileLines = []
+
+        # TODO: This line won't work for in linux.
+        dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
+        batchFileLines.append(dirLine)
 
         # # 4.1.prepare oconv
-        # oc = Oconv(fileName=projectName, workingDir=targetFolder)
-        # oc.addFiles([skyFile, matFile, geoFile])
+        oc = Oconv(projectName)
+        oc.inputFiles = [skyFile, matFile, geoFile]
 
         # # 4.2.prepare rtrace
+        rt = Rtrace(projectName)
+        rt.octFile = os.path.join(_path, projectName + ".oct")
+        rt.pointFile = pointsFile
 
         # # 4.3 write batch file
+        batchFileLines.append(oc.toRadString())
+        batchFileLines.append(rt.toRadString())
+        batchFile = os.path.join(_path, projectName + ".bat")
 
-        # batchFile.append(oc.commandline())
+        self.write(batchFile, "\n".join(batchFileLines))
+
+        self.batchFile = batchFile
 
         print "Files are written to: %s" % _path
         return _path
+
+    # TODO: Update the method to batch run and move it to baseclass
+    def run(self, debug=False):
+        """Run the analysis."""
+        if self.batchFile:
+            if debug:
+                with open(self.batchFile, "a") as bf:
+                    bf.write("\npause")
+
+            subprocess.call(self.batchFile)
+            return self.batchFile.replace(".bat", ".res")
+            # subprocess.Popen(['cmd', self.batchFile], shell=minimize)
+        else:
+            raise Exception("You need to write the files before running the recipe.")
 
     def __repr__(self):
         """Represent grid based recipe."""

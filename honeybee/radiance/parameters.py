@@ -207,16 +207,13 @@ class RadianceParameters(object):
 
         return radPar
 
-    def toRadString(self, remParameters=[]):
+    def toRadString(self, remParameters=["xScale", "yScale"]):
         """Get parameters as a radiance definition."""
         radianceString = []
 
         for key in sorted(self.__parameters.keys()):
             if key in remParameters:
                 continue
-            if key == "-xScale" or key == "-yScale":
-                continue
-
             radianceString.append("-%s" % key)
             radianceString.append(str(self.getParameterValue(key)))
 

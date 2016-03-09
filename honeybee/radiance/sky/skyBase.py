@@ -70,5 +70,6 @@ class RadianceSky:
             with open(filePath, "wb") as skyFile:
                 # write the sky to file
                 skyFile.write(self.toRadString())
+                return filePath
         except Exception as e:
             raise Exception("Failed to write the sky file to: %s" % e)

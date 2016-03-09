@@ -24,7 +24,7 @@ class DefaultSettings(object):
             self.radbinFolder = os.path.join(
                 self.__userPath["pathToRadianceFolder"], "bin")
         else:
-            if sys.platform == 'win32':
+            if sys.platform == 'win32' or sys.platform == 'cli':
                 __radbin, __radFile = self.__which("rad.exe")
                 self.radbinFolder = __radbin
 
@@ -67,7 +67,7 @@ class DefaultSettings(object):
 
     @radbinFolder.setter
     def radbinFolder(self, path):
-        if path is None and sys.platform == 'win32':
+        if path is None and (sys.platform == 'win32' or sys.platform == 'cli'):
             # finding by path failed. Let's check typical folders on Windows
             if os.path.isfile(r"c:\radiance\bin\rad.exe"):
                 path = r"c:\radiance\bin"

@@ -996,6 +996,7 @@ table {
     <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.hbObjectsToRadString">hbObjectsToRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.run">run</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.toRadString">toRadString</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.writeHBObjectsToFile">writeHBObjectsToFile</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.writePointsToFile">writePointsToFile</a></li>
@@ -1028,10 +1029,11 @@ from ...hbpointgroup import AnalysisPointGroup
 from .recipeBase import HBDaylightAnalysisRecipe
 from collections import Iterable
 from ..command.oconv import Oconv
+from ..command.rtrace import Rtrace
 from ...helper import preparedir
 import os
 from collections import namedtuple
-
+import subprocess
 
 class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     """Grid base analysis base class.
@@ -1054,7 +1056,7 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         """Create grid-based recipe."""
         HBDaylightAnalysisRecipe.__init__(self, sky=sky, radParameters=radParameters,
                                           hbObjects=hbObjects, subFolder=subFolder)
-
+        self.batchFile = None
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
@@ -1244,19 +1246,46 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
 
         # 4.write batch file
+        batchFileLines = []
+
+        # TODO: This line won't work for in linux.
+        dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
+        batchFileLines.append(dirLine)
 
         # # 4.1.prepare oconv
-        # oc = Oconv(fileName=projectName, workingDir=targetFolder)
-        # oc.addFiles([skyFile, matFile, geoFile])
+        oc = Oconv(projectName)
+        oc.inputFiles = [skyFile, matFile, geoFile]
 
         # # 4.2.prepare rtrace
+        rt = Rtrace(projectName)
+        rt.octFile = os.path.join(_path, projectName + ".oct")
+        rt.pointFile = pointsFile
 
         # # 4.3 write batch file
+        batchFileLines.append(oc.toRadString())
+        batchFileLines.append(rt.toRadString())
+        batchFile = os.path.join(_path, projectName + ".bat")
 
-        # batchFile.append(oc.commandline())
+        self.write(batchFile, "\n".join(batchFileLines))
+
+        self.batchFile = batchFile
 
         print "Files are written to: %s" % _path
         return _path
+
+    # TODO: Update the method to batch run and move it to baseclass
+    def run(self, debug=False):
+        """Run the analysis."""
+        if self.batchFile:
+            if debug:
+                with open(self.batchFile, "a") as bf:
+                    bf.write("\npause")
+
+            subprocess.call(self.batchFile)
+            return self.batchFile.replace(".bat", ".res")
+            # subprocess.Popen(['cmd', self.batchFile], shell=minimize)
+        else:
+            raise Exception("You need to write the files before running the recipe.")
 
     def __repr__(self):
         """Represent grid based recipe."""
@@ -1327,7 +1356,7 @@ if __name__ == "__main__":
         """Create grid-based recipe."""
         HBDaylightAnalysisRecipe.__init__(self, sky=sky, radParameters=radParameters,
                                           hbObjects=hbObjects, subFolder=subFolder)
-
+        self.batchFile = None
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
@@ -1517,19 +1546,46 @@ if __name__ == "__main__":
         matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
 
         # 4.write batch file
+        batchFileLines = []
+
+        # TODO: This line won't work for in linux.
+        dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
+        batchFileLines.append(dirLine)
 
         # # 4.1.prepare oconv
-        # oc = Oconv(fileName=projectName, workingDir=targetFolder)
-        # oc.addFiles([skyFile, matFile, geoFile])
+        oc = Oconv(projectName)
+        oc.inputFiles = [skyFile, matFile, geoFile]
 
         # # 4.2.prepare rtrace
+        rt = Rtrace(projectName)
+        rt.octFile = os.path.join(_path, projectName + ".oct")
+        rt.pointFile = pointsFile
 
         # # 4.3 write batch file
+        batchFileLines.append(oc.toRadString())
+        batchFileLines.append(rt.toRadString())
+        batchFile = os.path.join(_path, projectName + ".bat")
 
-        # batchFile.append(oc.commandline())
+        self.write(batchFile, "\n".join(batchFileLines))
+
+        self.batchFile = batchFile
 
         print "Files are written to: %s" % _path
         return _path
+
+    # TODO: Update the method to batch run and move it to baseclass
+    def run(self, debug=False):
+        """Run the analysis."""
+        if self.batchFile:
+            if debug:
+                with open(self.batchFile, "a") as bf:
+                    bf.write("\npause")
+
+            subprocess.call(self.batchFile)
+            return self.batchFile.replace(".bat", ".res")
+            # subprocess.Popen(['cmd', self.batchFile], shell=minimize)
+        else:
+            raise Exception("You need to write the files before running the recipe.")
 
     def __repr__(self):
         """Represent grid based recipe."""
@@ -1602,6 +1658,16 @@ def write(filePath, data, mkdir=False):
             
   
     <div class="desc"><p>Return list of AnalysisPointGroups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.batchFile" class="name">var <span class="ident">batchFile</span></p>
+            
+
+            
+  
   <div class="source_cont">
 </div>
 
@@ -1713,6 +1779,7 @@ def write(filePath, data, mkdir=False):
     """Create grid-based recipe."""
     HBDaylightAnalysisRecipe.__init__(self, sky=sky, radParameters=radParameters,
                                       hbObjects=hbObjects, subFolder=subFolder)
+    self.batchFile = None
     self.createAnalysisPointGroups(pointGroups, vectorGroups)
 </code></pre>
   </div>
@@ -1827,6 +1894,36 @@ def write(filePath, data, mkdir=False):
     else:
         print "Warning: Found no Honeybee objects."
     return _radDefinition(_matStr, _geoStr)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.run">
+    <p>def <span class="ident">run</span>(</p><p>self, debug=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Run the analysis.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.run', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.gridbased.HBGridBasedAnalysisRecipe.run" class="source">
+    <pre><code>def run(self, debug=False):
+    """Run the analysis."""
+    if self.batchFile:
+        if debug:
+            with open(self.batchFile, "a") as bf:
+                bf.write("\npause")
+        subprocess.call(self.batchFile)
+        return self.batchFile.replace(".bat", ".res")
+        # subprocess.Popen(['cmd', self.batchFile], shell=minimize)
+    else:
+        raise Exception("You need to write the files before running the recipe.")
 </code></pre>
   </div>
 </div>
@@ -2048,12 +2145,23 @@ def write(filePath, data, mkdir=False):
     # 3.write materials and geometry files
     matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
     # 4.write batch file
+    batchFileLines = []
+    # TODO: This line won't work for in linux.
+    dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
+    batchFileLines.append(dirLine)
     # # 4.1.prepare oconv
-    # oc = Oconv(fileName=projectName, workingDir=targetFolder)
-    # oc.addFiles([skyFile, matFile, geoFile])
+    oc = Oconv(projectName)
+    oc.inputFiles = [skyFile, matFile, geoFile]
     # # 4.2.prepare rtrace
+    rt = Rtrace(projectName)
+    rt.octFile = os.path.join(_path, projectName + ".oct")
+    rt.pointFile = pointsFile
     # # 4.3 write batch file
-    # batchFile.append(oc.commandline())
+    batchFileLines.append(oc.toRadString())
+    batchFileLines.append(rt.toRadString())
+    batchFile = os.path.join(_path, projectName + ".bat")
+    self.write(batchFile, "\n".join(batchFileLines))
+    self.batchFile = batchFile
     print "Files are written to: %s" % _path
     return _path
 </code></pre>
