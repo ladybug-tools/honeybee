@@ -75,7 +75,7 @@ class Oconv(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         return "%s -r %d %s %s > %s" % (
-            os.path.join(self.radbinFolder, "oconv"),
+            os.path.join(self.radbinPath, "oconv"),
             self.r,
             "-f" if self.freeze else "",
             " ".join(self.inputFiles),

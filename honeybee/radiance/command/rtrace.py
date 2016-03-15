@@ -50,7 +50,7 @@ class Rtrace(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         return "%s -I -h %s -e error.txt %s < %s > %s" % (
-            os.path.join(self.radbinFolder, "rtrace"),
+            os.path.join(self.radbinPath, "rtrace"),
             self.radianceParameters
                 .toRadString(["xScale", "yScale", "av", "dj", "pj", "ps", "pt"]),
             self.octFile,
