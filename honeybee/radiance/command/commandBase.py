@@ -1,5 +1,5 @@
 """Radiance base command."""
-from ... import settings
+from ... import config
 
 from abc import ABCMeta, abstractmethod
 import os
@@ -14,16 +14,36 @@ class RadianceCommand(object):
 
     def __init__(self):
         """Initialize Radiance command."""
-        # set up DefaultSettings
-        defSettings = settings.DefaultSettings(mute=True)
+        self.radbinPath = config.radbinPath
+        self.radlibPath = config.radlibPath
 
-        self.radbinFolder = defSettings.radbinFolder
-        self.radlibFolder = defSettings.radlibFolder
+    @property
+    def radbinPath(self):
+        """Get and set path to radiance binaries.
 
-        # if path is not found then raise an exception
-        assert self.radbinFolder is not None, \
-            "Can't find %s.exe.\n" % self.__class__.__name__ + \
-            "Modify honeybee.settings to set path to Radiance binaries."
+        If you set a new value the value will be changed globally.
+        """
+        return config.radbinPath
+
+    @radbinPath.setter
+    def radbinPath(self, path):
+        self.__checkExecutable(radbinPath=path, raiseException=True)
+        # change the path in config so user need to set it up once in a single script
+        config.radbinPath = path
+
+    @property
+    def radlibPath(self):
+        """Get and set path to radiance libraries.
+
+        If you set a new value the value will be changed globally.
+        """
+        return config.radlibPath
+
+    @radlibPath.setter
+    def radlibPath(self, path):
+        self.__checkLibs(radlibPath=path, raiseException=True)
+        # change the path in config so user need to set it up once in a single script
+        config.radlibPath = path
 
     @abstractmethod
     def toRadString(self, relativePath=False):
@@ -35,13 +55,46 @@ class RadianceCommand(object):
         """Return list of input files for this command."""
         pass
 
-    def __checkFiles(self):
+    def __checkExecutable(self, radbinPath=None, raiseException=False):
+        """Check if executable file exist."""
+        radbinPath = self.radbinPath if not radbinPath else radbinPath
+
+        __executable = os.path.normpath(
+            os.path.join(str(radbinPath), '{}.exe'.format(self.__class__.__name__))
+        )
+
+        if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
+            __err = "Can't find %s.\n" % __executable + \
+                "Use radbinPath method to set the path to " + \
+                "Radiance binaries before executing the command."
+            if raiseException:
+                raise ValueError(__err)
+            else:
+                print __err
+
+    def __checkLibs(self, radlibPath=None, raiseException=False):
+        """Check if path to libraries is set correctly."""
+        radlibPath = self.radlibPath if not radlibPath else radlibPath
+
+        if not os.path.isdir(radlibPath):
+            __err = "Can't find %s.\n" % radlibPath + \
+                "Use radlibPath method to set the path to " + \
+                "Radiance libraries before executing the command."
+            if raiseException:
+                raise ValueError(__err)
+            else:
+                print __err
+
+    def __checkFiles(self, raiseExceptionBin=True, raiseExceptionLib=True):
         """Check if the input files exist on the computer."""
         assert len(self.inputFiles) != 0, \
             "You need at least one file to create an octree."
 
         for f in self.inputFiles:
-            assert os.path.exists(f), "%s doesn't exist" % f
+            assert os.path.exists(f), "Invalid Input File: %s doesn't exist" % f
+
+        self.__checkExecutable(raiseException=True)
+        self.__checkLibs(raiseException=True)
 
     def execute(self, shell=True):
         """Execute the command."""
