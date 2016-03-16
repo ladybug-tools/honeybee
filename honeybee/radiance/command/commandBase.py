@@ -1,7 +1,7 @@
 """Radiance base command."""
 from ... import config
 
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 import os
 import subprocess
 
@@ -50,7 +50,7 @@ class RadianceCommand(object):
         """Return full command as a string."""
         pass
 
-    @abstractmethod
+    @abstractproperty
     def inputFiles(self):
         """Return list of input files for this command."""
         pass
