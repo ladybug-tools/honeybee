@@ -42,7 +42,6 @@ class Epw2wea(RadianceCommand):
 if __name__ == "__main__":
     test1 = Epw2wea(r'd:\testepw\x.epw',r'd:\testepw\x.wea')
     print(test1.toRadString())
-    pass
 
     # test2 = Epw2wea(r'd:\tesepwt\x.epw')
     # test3 = Epw2wea(r'd:\textepw\x.epw',r'd:\text\x.wea')
