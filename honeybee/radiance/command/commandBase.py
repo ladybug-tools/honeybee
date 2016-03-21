@@ -1,5 +1,5 @@
 """Radiance base command."""
-from honeybee import config
+from ... import config
 
 from abc import ABCMeta, abstractmethod
 import os
@@ -88,10 +88,10 @@ class RadianceCommand(object):
     def __checkFiles(self, raiseExceptionBin=True, raiseExceptionLib=True):
         """Check if the input files exist on the computer."""
 
-        assert len(self.inputFiles) != 0, \
+        assert len(self.inputFiles()) != 0, \
             "You need at least one file to create an octree."
 
-        for f in self.inputFiles:
+        for f in self.inputFiles():
             assert os.path.exists(f), "Invalid Input File: %s doesn't exist" % f
 
         self.__checkExecutable(raiseException=True)
