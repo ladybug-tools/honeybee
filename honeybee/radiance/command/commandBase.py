@@ -87,11 +87,10 @@ class RadianceCommand(object):
 
     def __checkFiles(self, raiseExceptionBin=True, raiseExceptionLib=True):
         """Check if the input files exist on the computer."""
-
-        assert len(self.inputFiles()) != 0, \
+        assert len(self.inputFiles) != 0, \
             "You need at least one file to create an octree."
 
-        for f in self.inputFiles():
+        for f in self.inputFiles:
             assert os.path.exists(f), "Invalid Input File: %s doesn't exist" % f
 
         self.__checkExecutable(raiseException=True)
@@ -101,8 +100,7 @@ class RadianceCommand(object):
         """Execute the command."""
         # check if the files exist on the computer
         self.__checkFiles()
-        PopenInst= subprocess.Popen(['cmd', self.toRadString()], shell=shell)
-
+        subprocess.Popen(['cmd', self.toRadString()], shell=shell)
 
     def __repr__(self):
         """Class representation."""
