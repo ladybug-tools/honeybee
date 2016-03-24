@@ -2,8 +2,6 @@
 
 Import this module in every module that you need to access Honeybee configurations.
 
-config.configs returns all configs as a dictionary
-
 Usage:
 
     import config
@@ -135,91 +133,13 @@ class Folders(object):
         raise NotImplementedError
         # return self.__eplus
 
-
-class Platform(object):
-    """Identify how the script is currently executing.
-
-    0: Running as standard python script
-    1: Running inside grasshopper component
-    2: Running inside dynamo node
-    3: Running inside dynamo node from Revit
-
-    Usage:
-
-        platfrom = Platform(mute=True)
-        p = platfrom.platform
-        pId = platfrom.platfromId
-        print "Platform is {} > {}.".format(p, pId)
-
-        >> Platform is 1 > gh.
-    """
-
-    def __init__(self, mute=False):
-        """Find currect platfrom and platfromId."""
-        __cwd = os.getcwdu().lower()
-        self.platfrom = None
-        self.platfromId = 0
-
-        if __cwd.find("rhino") > -1:
-            # It's running from inside grasshopper component
-            self.platfrom = "gh"
-            self.platfromId = 1
-        elif __cwd.find("dynamo") > -1:
-            # It's running from inside dynamo script
-            self.platfrom = "ds"
-            self.platfromId = 2
-        elif __cwd.find("revit") > -1:
-            # It's running from inside Revit from a Dynamo node
-            self.platfrom = "rvt"
-            self.platfromId = 3
-
-        if not mute:
-            print "platform is {} > {}.".format(self.platfromId, self.platfrom)
-
-
-# set-up default values.
-configs = {
-    "radlibPath": None,
-    "radbinPath": None,
-    "epPath": None,
-    "platform": None,
-    "platformId": 0
-}
-
-# replace default values
-p = Platform(mute=True)
-configs['platfrom'] = p.platfrom
-configs['platfromId'] = p.platfromId
-
 f = Folders(mute=True)
-configs["radlibPath"] = f.radlibPath
-configs["radbinPath"] = f.radbinPath
-
-radlibPath = configs["radlibPath"]
+radlibPath = f.radlibPath
 """Path to Radinace libraries folder."""
 
-radbinPath = configs["radbinPath"]
+radbinPath = f.radbinPath
 """Path to Radinace binaries folder."""
 
-epPath = configs["epPath"]
+# NotImplemented yet
+epPath = None
 """Path to EnergyPlus folder."""
-
-platform = configs["platform"]
-"""Current platform that imports the libraries as a string.
-
-Values:
-    None: Running as standard python script
-    'gh': Grasshopper
-    'ds': Dynamo
-    'rvt': Dynamo from inside Revit
-"""
-
-platformId = configs["platformId"]
-"""Current platformId that imports the libraries as a string.
-
-Values:
-    0: Running as standard python script
-    1: Grasshopper
-    2: Dynamo
-    3: Dynamo from inside Revit
-"""
