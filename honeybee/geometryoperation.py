@@ -45,7 +45,11 @@ def calculateCenterPointFromPoints(pts):
 def calculateVectorAngleToZAxis(vector):
     """Calculate angle between vectoe and (0, 0, 1) in degrees."""
     zAxis = Vector3(0, 0, 1)
-    return math.degrees(zAxis.angle(Vector3(*vector)))
+    try:
+        return math.degrees(zAxis.angle(Vector3(*vector)))
+    except TypeError:
+        # Vectors from Dynamo are not iterable!
+        return math.degrees(zAxis.angle(Vector3(vector.X, vector.Y, vector.Z)))
 
 if __name__ == "__main__":
     pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))

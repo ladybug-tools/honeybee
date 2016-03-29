@@ -41,6 +41,11 @@ class RadianceParameters(object):
 
         self.__additionalRadPars = ["u", "bv", "dv", "w"]
 
+    @property
+    def isRadianceParameters(self):
+        """Return True to indicate this object is a RadianceParameters."""
+        return True
+
     def getParameterValue(self, parameter):
         """Get current parameter value.
 

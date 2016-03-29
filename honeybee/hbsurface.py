@@ -217,7 +217,7 @@ class HBAnalysisSurface(HBObject):
         if radProperties is None:
             self.__radProperties = RadianceProperties()
         else:
-            assert isinstance(radProperties, RadianceProperties), \
+            assert hasattr(radProperties, 'isRadianceProperties'), \
                 "%s is not a valid RadianceProperties" % str(radProperties)
             self.__radProperties = radProperties
 
@@ -246,16 +246,22 @@ class HBAnalysisSurface(HBObject):
     def radianceMaterial(self, values):
         self.radProperties.radianceMaterial = values
 
-    # TODO: Add support for multiple point list in one surface
-    # I just need to iterate through the point list
     def toRadString(self, includeMaterials=False):
         """Return Radiance definition for this surface as a string."""
-        __pgString = polygon(name=self.name,
-                             materialName=self.radianceMaterial.name,
-                             pts=self.points[0])
+        __numPtGroups = len(self.points)
+        __pgStrings = range(__numPtGroups)
 
-        return "%s\n%s" % (self.radianceMaterial, __pgString) if includeMaterials \
-            else __pgString
+        for ptCount, pts in enumerate(self.points):
+            # modify name for each sub_surface
+            _name = self.name if __numPtGroups == 1 else self.name + "_{}".format(ptCount)
+
+            # collect definition for each subsurface
+            __pgStrings[ptCount] = polygon(
+                name=_name, materialName=self.radianceMaterial.name, pts=pts
+            )
+
+        return "%s\n%s" % (self.radianceMaterial, "\n".join(__pgStrings)) if includeMaterials \
+            else "\n".join(__pgStrings)
 
     def radStringToFile(self, filePath, includeMaterials=False):
         """Write Radiance definition for this surface to a file.

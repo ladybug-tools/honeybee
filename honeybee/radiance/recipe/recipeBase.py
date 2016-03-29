@@ -1,7 +1,6 @@
 """Radiance Analysis Recipes."""
 from abc import ABCMeta, abstractmethod
-from ..sky.skyBase import RadianceSky
-from ..parameters import RadianceParameters, LowQuality
+from ..parameters import LowQuality
 from ...helper import preparedir
 
 import os
@@ -13,6 +12,8 @@ class HBDaylightAnalysisRecipe(object):
 
     Attributes:
         sky: A honeybee sky for the analysis.
+        simulationType: 0: Illuminance(lux), 1: Radiation(kWh), 2: Luminance(Candela)
+            (Default: 0)
         radParameters: Radiance parameters for this analysis.
             (Default: RadianceParameters.LowQuality)
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
@@ -21,19 +22,60 @@ class HBDaylightAnalysisRecipe(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, sky, radParameters=None, hbObjects=None, subFolder=""):
+    def __init__(self, sky, simulationType=None, radParameters=None,
+                 hbObjects=None, subFolder=""):
         """Create Analysis recipe."""
         self.sky = sky
         """A honeybee sky for the analysis."""
 
+        self.simulationType = simulationType
+        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
+        """
+
         self.radianceParameters = radParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+
+        self.simulationType = simulationType
 
         self.hbObjects = hbObjects
         """An optional list of Honeybee surfaces or zones. (Default: None)"""
 
         self.subFolder = subFolder
         """Sub-folder for this analysis recipe. (e.g. "gridbased", "imagebased")"""
+
+        self.isCalculated = False
+        self.isChanged = True
+
+    @property
+    def isAnalysisRecipe(self):
+        """Return true to indicate it is an analysis recipe."""
+        return True
+
+    @property
+    def simulationType(self):
+        """Get/set simulation Type.
+
+        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
+        """
+        return self.__simType
+
+    @simulationType.setter
+    def simulationType(self, value):
+        try:
+            value = int(value)
+        except:
+            value = 0
+
+        assert 0 <= value <= 2, \
+            "Simulation type should be between 0-2. Current value: {}".format(value)
+
+        # If this is a radiation analysis make sure the sky is climate-based
+        if value == 1:
+            assert self.sky.isClimateBased, \
+                "The sky for radition analysis should be climate-based."
+
+        self.__simType = value
 
     @property
     def hbObjects(self):
@@ -57,11 +99,11 @@ class HBDaylightAnalysisRecipe(object):
 
     @sky.setter
     def sky(self, newSky):
-        assert isinstance(newSky, RadianceSky), "%s is not a valid Honeybee sky." % type(newSky)
+        assert hasattr(newSky, "isRadianceSky"), "%s is not a valid Honeybee sky." % type(newSky)
         self.__sky = newSky
 
     @property
-    def radianceParameters(self, radianceParameters):
+    def radianceParameters(self):
         """Get and set Radiance parameters."""
         return self.__radParameters
 
@@ -69,7 +111,7 @@ class HBDaylightAnalysisRecipe(object):
     def radianceParameters(self, radParameters):
         if not radParameters:
             radParameters = LowQuality()
-        assert isinstance(radParameters, RadianceParameters), \
+        assert hasattr(radParameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(radParameters)
         self.__radParameters = radParameters
 

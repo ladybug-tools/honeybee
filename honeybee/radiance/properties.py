@@ -19,6 +19,11 @@ class RadianceProperties(object):
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
 
     @property
+    def isRadianceProperties(self):
+        """Indicate this object is RadianceProperties."""
+        return True
+
+    @property
     def radianceMaterial(self):
         """Return Radiance Material."""
         return self.__radianceMaterial
@@ -59,7 +64,7 @@ class RadianceProperties(object):
         if __newMaterial is None:
             self.__radianceMaterial = None
         else:
-            assert isinstance(__newMaterial, RadianceMaterial), \
+            assert hasattr(__newMaterial, 'isRadianceMaterial'), \
                 "%s is not a valid Radiance material" % __newMaterial
 
             self.__radianceMaterial = __newMaterial

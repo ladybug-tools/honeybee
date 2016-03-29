@@ -8,6 +8,7 @@ class SkyWithCertainIlluminanceLevel(RadianceSky):
         illuminanceValue: Desired illuminance value in lux
 
     Usage:
+
         sky = HBCertainIlluminanceLevelSky(1000)
         sky.toFile("c:/ladybug/skies", "1000luxsky.sky")
     """
@@ -16,6 +17,11 @@ class SkyWithCertainIlluminanceLevel(RadianceSky):
         """Create sky."""
         RadianceSky.__init__(self)
         self.illuminanceValue = illuminanceValue
+
+    @property
+    def isClimateBased(self):
+        """Return True if the sky is generated from values from weather file."""
+        return False
 
     @property
     def name(self):

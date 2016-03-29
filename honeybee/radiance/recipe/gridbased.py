@@ -1,14 +1,16 @@
 """Radiance Analysis Recipes."""
 
+from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
 from ...hbpointgroup import AnalysisPointGroup
 from .recipeBase import HBDaylightAnalysisRecipe
-from collections import Iterable
 from ..command.oconv import Oconv
 from ..command.rtrace import Rtrace
 from ...helper import preparedir
+
 import os
-from collections import namedtuple
+from collections import namedtuple, Iterable
 import subprocess
+
 
 class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     """Grid base analysis base class.
@@ -21,23 +23,39 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
             of corresponding point in testPts. If the vector is not provided (0, 0, 1)
             will be assigned.
-        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
+        simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
         radParameters: Radiance parameters for this analysis.
             (Default: RadianceParameters.LowQuality)
+        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
+        subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
     """
 
-    def __init__(self, sky, pointGroups, vectorGroups=[], radParameters=None,
-                 hbObjects=None, subFolder="gridbased"):
+    # TODO: implemnt isChanged at HBDaylightAnalysisRecipe level to reload the results
+    # if there has been no changes in inputs.
+    def __init__(self, sky, pointGroups, vectorGroups=[], simulationType=0,
+                 radParameters=None, hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        HBDaylightAnalysisRecipe.__init__(self, sky=sky, radParameters=radParameters,
-                                          hbObjects=hbObjects, subFolder=subFolder)
-        self.batchFile = None
+        HBDaylightAnalysisRecipe.__init__(self, sky=sky,
+                                          simulationType=simulationType,
+                                          radParameters=radParameters,
+                                          hbObjects=hbObjects,
+                                          subFolder=subFolder)
+
+        self.__batchFile = None
+        self.resultsFile = []
+
+        # create a result loader to load the results once the analysis is done.
+        self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
+                                                     self.resultsFile)
+
+        # create point groups
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
     def points(self):
         """Return nested list of points."""
-        return [ap.poins for ap in self.analysisPointsGroups]
+        return [ap.points for ap in self.analysisPointsGroups]
 
     @property
     def numOfPointGroups(self):
@@ -87,9 +105,26 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
             finally:
                 # last check for vectors in case user input is a flatten lists
                 # for nested group of points.
-                if not isinstance(vectors[0], Iterable):
+                if not isinstance(vectors[0], Iterable) and not hasattr(vectors[0], 'X'):
                     vectors = [vectors]
+
                 self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
+
+    def flatten(self, inputList):
+        """Return a flattened genertor from an input list.
+
+        Usage:
+
+            inputList = [['a'], ['b', 'c', 'd'], [['e']], ['f']]
+            list(flatten(inputList))
+            >> ['a', 'b', 'c', 'd', 'e', 'f']
+        """
+        for el in inputList:
+            if isinstance(el, Iterable) and not isinstance(el, basestring):
+                for sub in self.flatten(el):
+                    yield sub
+            else:
+                yield el
 
     def toRadString(self, hbObjects=False, points=False):
         """Return a tuple of multiline string radiance definition.
@@ -211,6 +246,10 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
         assert _ispath, "Failed to create %s. Try a different path!" % _path
 
+        # Check if anything has changed
+        # if not self.isChanged:
+        #     print "Inputs has not changed! Check files at %s" % _path
+
         # 1.write sky file
         skyFile = self.sky.writeToFile(_path)
 
@@ -232,7 +271,9 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         oc.inputFiles = [skyFile, matFile, geoFile]
 
         # # 4.2.prepare rtrace
-        rt = Rtrace(projectName)
+        rt = Rtrace(projectName,
+                    simulationType=self.simulationType,
+                    radianceParameters=self.radianceParameters)
         rt.octFile = os.path.join(_path, projectName + ".oct")
         rt.pointFile = pointsFile
 
@@ -243,7 +284,7 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
         self.write(batchFile, "\n".join(batchFileLines))
 
-        self.batchFile = batchFile
+        self.__batchFile = batchFile
 
         print "Files are written to: %s" % _path
         return _path
@@ -251,21 +292,39 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     # TODO: Update the method to batch run and move it to baseclass
     def run(self, debug=False):
         """Run the analysis."""
-        if self.batchFile:
+        if self.__batchFile:
             if debug:
-                with open(self.batchFile, "a") as bf:
+                with open(self.__batchFile, "a") as bf:
                     bf.write("\npause")
 
-            subprocess.call(self.batchFile)
-            return self.batchFile.replace(".bat", ".res")
-            # subprocess.Popen(['cmd', self.batchFile], shell=minimize)
+            subprocess.call(self.__batchFile)
+
+            self.isCalculated = True
+            # self.isChanged = False
+
+            self.resultsFile = [self.__batchFile.replace(".bat", ".res")]
+            return True
         else:
             raise Exception("You need to write the files before running the recipe.")
 
+    def results(self, flattenResults=True):
+        """Return results for this analysis."""
+        assert self.isCalculated, \
+            "You haven't run the Recipe yet. Use self.run " + \
+            "to run the analysis before loading the results."
+
+        self.loader.simulationType = self.simulationType
+        self.loader.resultFiles = self.resultsFile
+        return self.loader.results
+
     def __repr__(self):
         """Represent grid based recipe."""
-        return "%s #PointGroup: %d #Points: %d" % \
+        _analysisType = {
+            0: "Illuminance", 1: "Radiation", 2: "Luminance"
+        }
+        return "%s: %s\n#PointGroups: %d #Points: %d" % \
             (self.__class__.__name__,
+             _analysisType[self.simulationType],
              self.numOfPointGroups,
              self.numOfTotalPoints)
 

@@ -87,12 +87,15 @@ class PointGroup(object):
             self.__pointsCount += 1
             try:
                 yield Point3(*pt)
+            except TypeError:
+                # handle Dynamo points
+                yield Point3(pt.X, pt.Y, pt.Z)
             except:
                 self.__pointsCount -= 1
                 if not pt:
                     print "None input point found and removed from the list."
                 else:
-                    print "Failed to convert %s to a point." % str(pt)
+                    raise ValueError("Failed to convert %s to a point." % str(pt))
 
     def sortPointsClockWise(self, normal):
         """Sort points clockwise based on an input normal."""
@@ -146,7 +149,11 @@ class AnalysisPointGroup(PointGroup):
             raise IndexError("%s is not a valid input for vectors.\n" % str(vectors) +
                              "Do you need to wrap the vectors in a list?")
         except TypeError:
-            raise TypeError("Can't create a vector from %s.\n" % str(vectors))
+            try:
+                # Dynamo Vectors are not iterable!
+                __vectors = [Vector3(v.X, v.Y, v.Z) for v in flattenTupleList(vectors)]
+            except:
+                raise TypeError("Can't create a vector from %s.\n" % str(vectors))
 
         self.__vectors = []
         # map vectors to points
