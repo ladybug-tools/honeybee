@@ -1,5 +1,7 @@
 # import honeybee
 from honeybee.radiance.command.oconv import Oconv
+from honeybee.radiance.command.gendaymtx import Gendaymtx
+from honeybee.radiance.command.rcollate import Rcollate
 
 oc = Oconv()
 oc.inputFiles = [
@@ -9,8 +11,17 @@ oc.inputFiles = [
 
 print oc.toRadString()
 
+
+genday = Gendaymtx(v=True,h=True)
+genday.inputFiles =[r'C:\Ladybug\annual\annualSimulation\State_College__Penn_State___Su_PA_USA.wea'] #This path needs to be present physically !
+print(genday.toRadString())
+
+
+
+
+
 try:
-    oc.radbinPath = "c:/radiance/b"
+    oc.radbinPath = "c:/radiance/bin"
 except ValueError as e:
     print e
 
