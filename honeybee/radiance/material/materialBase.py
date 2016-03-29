@@ -28,6 +28,11 @@ class RadianceMaterial(object):
         """Material modifier. Default is void"""
 
     @property
+    def isRadianceMaterial(self):
+        """Indicate that this object is a Radiance Material."""
+        return True
+
+    @property
     def name(self):
         """Get/set material name."""
         return self.__name

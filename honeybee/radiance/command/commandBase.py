@@ -96,11 +96,18 @@ class RadianceCommand(object):
         self.__checkExecutable(raiseException=True)
         self.__checkLibs(raiseException=True)
 
-    def execute(self, shell=True):
+    # TODO: Add Error handling
+    def execute(self):
         """Execute the command."""
         # check if the files exist on the computer
         self.__checkFiles()
-        subprocess.Popen(['cmd', self.toRadString()], shell=shell)
+
+        p = subprocess.Popen(self.toRadString(), shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        for line in p.stdout.readlines():
+            print line,
+        p.wait()
 
     def __repr__(self):
         """Class representation."""
