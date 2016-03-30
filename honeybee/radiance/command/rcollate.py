@@ -13,15 +13,15 @@ class Rcollate(RadianceCommand):
     Attributes:
 
     """
-    h = RadDescrBoolFlags('h', 'header information',
-                          expectedInputs=(True, 'i', 'o'))
-    w = RadDescrBoolFlags('w', 'warning messages', expectedInputs=(True,))
-    t = RadDescrBoolFlags('t', 'transpose', expectedInputs=(True,))
-    ic = RadDescrNum('ic', 'input columns', numType=int)
-    ir = RadDescrNum('ir', 'input rows', numType=int)
-    oc = RadDescrNum('ic', 'ouput columns', numType=int)
-    orX = RadDescrNum('orX', 'output rows', numType=int)
-    matrixFile = RadDescrPath('matrixFile', 'matrix file', expandRelative=True,
+    h = RadianceBoolFlag('h', 'header information',
+                         expectedInputs=(True, 'i', 'o'))
+    w = RadianceBoolFlag('w', 'warning messages', expectedInputs=(True,))
+    t = RadianceBoolFlag('t', 'transpose', expectedInputs=(True,))
+    ic = RadianceNumber('ic', 'input columns', numType=int)
+    ir = RadianceNumber('ir', 'input rows', numType=int)
+    oc = RadianceNumber('ic', 'ouput columns', numType=int)
+    orX = RadianceNumber('orX', 'output rows', numType=int)
+    matrixFile = RadiancePath('matrixFile', 'matrix file', expandRelative=True,
                               checkExists=True)
 
     def __init__(self, h=None, w=None, t=None, ic=None, ir=None, oc=None,
@@ -61,9 +61,9 @@ class Rcollate(RadianceCommand):
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        fmtBool = Rfmt.fmtBool
-        fmtJoin = Rfmt.fmtJoined
-        fmtNormal = Rfmt.fmtNormal
+        fmtBool = Rfmt.boolean
+        fmtJoin = Rfmt.joined
+        fmtNormal = Rfmt.normal
 
         fmtDict = {'h': ('h', fmtBool),
                    'w': ('w', fmtBool),

@@ -14,6 +14,7 @@ print oc.toRadString()
 
 genday = Gendaymtx(v=True,h=True)
 genday.inputFiles =[r'C:\Ladybug\annual\annualSimulation\State_College__Penn_State___Su_PA_USA.wea'] #This path needs to be present physically !
+genday.execute()
 print(genday.toRadString())
 
 
