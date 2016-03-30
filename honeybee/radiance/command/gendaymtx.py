@@ -25,7 +25,8 @@ class Gendaymtx(RadianceCommand):
     o = RadianceBoolFlag('o', 'output format', expectedInputs=('f', 'd'))
     O= RadianceBoolFlag('O', 'radiation type', expectedInputs=(0, 1, "'0'", "'1'"))
     weaFile = RadiancePath('weaFile', descriptiveName='weather file path',
-                           expandRelative=True, checkExists=True)
+                           expandRelative=True, checkExists=True,
+                           extension='.wea')
 
     def __init__(self,weaFile=None,v=None,h=None,d=None,s=None,r=None,m=None,g=None,c=None,
                  o=None,O=None,outputName=None):

@@ -286,7 +286,7 @@ class RadiancePath(RadianceDefault):
                             self._nameString, finalValue))
 
             if self._extension:
-                assert finalValue.endswith(self._extension), \
+                assert finalValue.lower().endswith(self._extension.lower()), \
                     "The accepted extension for %s is %s. The provided input" \
                     "was %s" % (self._nameString, self._extension, value)
             setattr(instance, self._name, finalValue)
