@@ -49,7 +49,32 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
                                                      self.resultsFile)
 
-        # create point groups
+        # create analysisi point groups
+        self.createAnalysisPointGroups(pointGroups, vectorGroups)
+
+    @property
+    def pointGroups(self):
+        """Return analysis point groups."""
+        return self.analysisPointsGroups
+
+    @pointGroups.setter
+    def pointGroups(self):
+        """Return analysis point groups."""
+        raise ValueError("You can't set pointGroups directly. " +
+                         "Use updatePointGroups method instead.")
+
+    def updatePointGroups(self, pointGroups, vectorGroups=[]):
+        """Update point groups.
+
+        Args:
+            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
+                test points. Each list of test points will be converted to a
+                TestPointGroup. If testPts is a single flattened list only one
+                TestPointGroup will be created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+                represents direction of corresponding point in testPts. If the
+                vector is not provided (0, 0, 1) will be assigned.
+        """
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
 
     @property
@@ -83,9 +108,10 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         You can acces AnalysisPointGroups using self.analysisPointsGroups property.
         """
         self.__analysisPointGroups = []
+
         if len(pointGroups) == 0:
             return
-        # input is single point! Create a single group but seriously!
+        # input is single point! Create a single group but seriously!?
         elif not isinstance(pointGroups[0], Iterable):
             pointGroups = [[pointGroups]]
             vectorGroups = [[vectorGroups]]
