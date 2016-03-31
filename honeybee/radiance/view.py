@@ -1,19 +1,30 @@
 # coding=utf-8
 u"""Create a radiance view."""
 from datatype import RadianceNumericTuple, RadianceNumber
+import math
+from copy import deepcopy
 
 
+# TODO: Add a method to add paramters from string.
+# I want to make sure that this won't be duplicated by parameters class
 class View(object):
     u"""A radiance view."""
 
     # init radiance types
     viewPoint = RadianceNumericTuple('vp', 'view point', tupleSize=3, numType=float)
     viewDirection = RadianceNumericTuple('vd', 'view direction', tupleSize=3, numType=float)
-    upVector = RadianceNumericTuple('vu', 'view up vector', tupleSize=3, numType=float)
-    viewType = RadianceNumber('vt', 'view type')
+    viewUpVector = RadianceNumericTuple('vu', 'view up vector', tupleSize=3, numType=float)
+    # viewType = RadianceNumber('vt', 'view type')  # This will be changed later. Waiting for Sarith's input.
+    viewHSize = RadianceNumber('vh', 'view horizontal size', numType=float)
+    viewVSize = RadianceNumber('vv', 'view vertical size', numType=float)
+    xRes = RadianceNumber('x', 'x resolution', numType=int)
+    yRes = RadianceNumber('y', 'y resolution', numType=int)
+    viewShift = RadianceNumber('vs', 'view shift', numType=float)
+    viewLift = RadianceNumber('vl', 'view lift', numType=float)
+    __viewForeClip = RadianceNumber('vo', 'view fore clip distance', numType=float)
 
-    def __init__(self, viewPoint=None, viewDirection=None, upVector=None,
-                 viewType=0, xRes=None, yRes=None, sectionPlane=None,
+    def __init__(self, viewPoint=None, viewDirection=None, viewUpVector=None,
+                 viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
                  viewShift=0, viewLift=0):
         u"""Init view.
 
@@ -25,6 +36,7 @@ class View(object):
                 length of this vector indicates the focal distance as needed by
                 the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
             upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).
+                Default: (0, 1, 0)
             viewType: Set view type (-vt) to one of the choices below.
                     0: Perspective (v)
                     1: Hemispherical fisheye (h)
@@ -34,8 +46,16 @@ class View(object):
                     5: Planisphere [stereographic] projection (s)
                 For more detailed description about view types check rpict manual
                 page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-            xRes: Set the maximum x resolution to an integer.
-            yRes: Set the maximum y resolution to an integer.
+            viewHSize: Set the view horizontal size (-vs). For a perspective
+                projection (including fisheye views), val is the horizontal field
+                of view (in degrees). For a parallel projection, val is the view
+                width in world coordinates.
+            viewVSize: Set the view vertical size (-vv). For a perspective
+                projection (including fisheye views), val is the horizontal field
+                of view (in degrees). For a parallel projection, val is the view
+                width in world coordinates.
+            xRes: Set the maximum x resolution (-x) to an integer.
+            yRes: Set the maximum y resolution (-y) to an integer.
             viewShift: Set the view shift (-vs). This is the amount the actual
                 image will be shifted to the right of the specified view. This
                 option is useful for generating skewed perspectives or rendering
@@ -45,100 +65,197 @@ class View(object):
                 as well.
             viewLift: Set the view lift (-vl) to a value. This is the amount the
                 actual image will be lifted up from the specified view.
+
+        Usage:
+
+            v = View()
+            # set x and y resolution
+            v.xRes = v.yRes = 600
+            # add a fore clip
+            v.addForeClip(distance=100)
+            print v
+
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
+
+            # split the view into a view grid
+            gridViews = v.calculateViewGrid(2, 2)
+            for g in gridViews:
+                print g
+
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500 -vo 100.000
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500 -vo 100.000
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500 -vo 100.000
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500 -vo 100.000
         """
-        self.viewPoint = viewPoint
+        self.viewPoint = (0, 0, 0) if not viewPoint else viewPoint
+        """Set the view point (-vp) to (x, y, z)."""
 
+        self.viewDirection = (0, 0, 1) if not viewDirection else viewDirection
+        """Set the view direction (-vd) vector to (x, y, z)."""
 
-    def calculateViewGrid(self, xDiv=1, yDiv=1):
+        self.viewUpVector = (0, 1, 0) if not viewUpVector else viewUpVector
+        """Set the view up (-vu) vector (vertical direction) to (x, y, z)."""
+
+        __viewTypes = {0: 'vtv', 1: 'vth', 2: 'vtl', 3: 'vtc', 4: 'vta', 5: 'vts'}
+        self.viewType = __viewTypes[viewType] if viewType in __viewTypes else __viewTypes[0]
+        """Set view type (-vt) to one of the choices below.
+                0: Perspective (v), 1: Hemispherical fisheye (h),
+                2: Parallel (l),    3: Cylindrical panorma (c),
+                4: Angular fisheye (a),
+                5: Planisphere [stereographic] projection (s)
+        """
+
+        # set view size to 180 degrees for fisheye views
+        if self.viewType in ['vth', 'vta', 'vts']:
+            viewHSize = 180
+            viewVSize = 180
+
+        self.viewHSize = viewHSize
+        """Set the view horizontal size (-vs). For a perspective projection
+        (including fisheye views), val is the horizontal field of view (in
+        degrees). For a parallel projection, val is the view width in world
+        coordinates."""
+
+        self.viewVSize = viewVSize
+        """Set the view vertical size (-vv). For a perspective projection
+        (including fisheye views), val is the horizontal field of view (in
+        degrees). For a parallel projection, val is the view width in world
+        coordinates."""
+
+        self.xRes = xRes
+        """Set the maximum x resolution (-x)."""
+
+        self.yRes = yRes
+        """Set the maximum y resolution (-y)."""
+
+        self.viewShift = viewShift
+        """Set the view shift (-vs). This is the amount the actual
+            image will be shifted to the right of the specified view.
+        """
+
+        self.viewLift = viewLift
+        """Set the view lift (-vl) to a value. This is the amount the
+            actual image will be lifted up from the specified view.
+        """
+
+    def calculateViewGrid(self, xDivCount=1, yDivCount=1):
         """Return a list of views for grid of views.
 
         Views will be returned row by row from right to left.
         Args:
-            xDiv: Set number of divisions in x direction (Default: 1).
-            yDiv: Set number of divisions in y direction (Default: 1).
+            xDivCount: Set number of divisions in x direction (Default: 1).
+            yDivCount: Set number of divisions in y direction (Default: 1).
         Returns:
             A tuple of views. Views are sorted row by row from right to left.
         """
-        pass
+        PI = math.pi
+        try:
+            xDivCount = abs(xDivCount)
+            yDivCount = abs(yDivCount)
+        except TypeError as e:
+            raise ValueError("Division count should be a number.\n%s" % str(e))
+
+        assert xDivCount * yDivCount != 0, "Division count should be larger than 0."
+
+        if xDivCount == yDivCount == 1:
+            return [self]
+
+        _views = range(xDivCount * yDivCount)
+        _x = int(self.xRes / xDivCount)
+        _y = int(self.yRes / yDivCount)
+
+        if self.viewType == 'vtl':
+            # parallel view
+            _vh = self.viewHSize / xDivCount
+            _vv = self.viewVSize / yDivCount
+
+        elif self.viewType == 'vtv':
+            # perspective
+            _vh = (2. * 180. / PI) * math.atan(((PI / 180. / 2.) * self.viewHSize) / xDivCount)
+            _vv = (2. * 180. / PI) * math.atan(math.tan((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+
+        elif self.viewType in ['vth', 'vta', 'vts']:
+            # fish eye
+            _vh = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewHSize) / xDivCount)
+            _vv = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+
+        else:
+            print "Grid views are not supported for %s." % self.viewType
+            return [self]
+
+        # create a set of new views
+        for viewCount in range(len(_views)):
+            # calculate view shift and view lift
+            if xDivCount == 1:
+                _vs = 0
+            else:
+                _vs = (((viewCount % xDivCount) / (xDivCount - 1)) - 0.5) * (xDivCount - 1)
+
+            if yDivCount == 1:
+                _vl = 0
+            else:
+                _vl = ((int(viewCount / yDivCount) / (yDivCount - 1)) - 0.5) * (yDivCount - 1)
+
+            # create a copy from the current copy
+            _nView = deepcopy(self)
+
+            # update parameters
+            _nView.viewHSize = _vh
+            _nView.viewVSize = _vv
+            _nView.xRes = _x
+            _nView.yRes = _y
+            _nView.viewShift = _vs
+            _nView.viewLift = _vl
+
+            # add the new view to views list
+            _views[viewCount] = _nView
+
+        return _views
+
+    def addForeClip(self, distance):
+        """Set view fore clip (-vo) at a distance from the view point.
+
+        The plane will be perpendicular to the view direction for perspective
+        and parallel view types. For fisheye view types, the clipping plane is
+        actually a clipping sphere, centered on the view point with radius val.
+        Objects in front of this imaginary surface will not be visible. This may
+        be useful for seeing through walls (to get a longer perspective from an
+        exterior view point) or for incremental rendering. A value of zero implies
+        no foreground clipping. A negative value produces some interesting effects,
+        since it creates an inverted image for objects behind the viewpoint.
+        """
+        self.__viewForeClip = distance
 
     def toRadString(self):
         """Return full Radiance definition."""
+        # create base information of view
+        _view = "-%s -vp %.3f %.3f %.3f -vd %.3f %.3f %.3f -vu %.3f %.3f %.3f" % (
+            self.viewType,
+            self.viewPoint[0], self.viewPoint[1], self.viewPoint[2],
+            self.viewDirection[0], self.viewDirection[1], self.viewDirection[2],
+            self.viewUpVector[0], self.viewUpVector[1], self.viewUpVector[2]
+        )
+
+        # view size properties
+        _viewSize = "-vh %.3f -vv %.3f -x %d -y %d" % (
+            self.viewHSize, self.viewVSize, self.xRes, self.yRes
+        )
+
+        __viewComponents = [_view, _viewSize]
+
+        # add lift and shift if not 0
+        if self.viewLift != 0 and self.viewShift != 0:
+            __viewComponents.append(
+                "-vs %.3f -vl %.3f" % (self.viewShift, self.viewLift)
+            )
+
         try:
-            viewHA = 180 - rs.VectorAngle(sc.doc.Views.ActiveView.ActiveViewport.GetFrustumRightPlane()[1][1], sc.doc.Views.ActiveView.ActiveViewport.GetFrustumLeftPlane()[1][1])
-        except:
-            viewHA = 180 - rs.VectorAngle(sc.doc.Views.ActiveView.ActiveViewport.GetFrustumRightPlane()[1].Normal, sc.doc.Views.ActiveView.ActiveViewport.GetFrustumLeftPlane()[1].Normal)
+            __viewComponents.append("-vo %.3f" % self.__viewForeClip)
+        except AttributeError:
+            # fore plane section is not set
+            pass
 
-        if viewHA == 0: viewHA = 180
-        try:
-            viewVA = 180 - rs.VectorAngle(sc.doc.Views.ActiveView.ActiveViewport.GetFrustumBottomPlane()[1][1], sc.doc.Views.ActiveView.ActiveViewport.GetFrustumTopPlane()[1][1])
-        except:
-            viewVA = 180 - rs.VectorAngle(sc.doc.Views.ActiveView.ActiveViewport.GetFrustumBottomPlane()[1].Normal, sc.doc.Views.ActiveView.ActiveViewport.GetFrustumTopPlane()[1].Normal)
-
-        if viewVA == 0: viewVA = 180
-        PI = math.pi
-
-        if cameraType == 2:
-            # Thank you to Brent Watanabe for the great discussion, and his help in figuring this out
-            # I should find the bounding box of the geometry and set X and Y based of that!
-            if nXDiv != 1:
-                viewHSizeP = viewHSizeP/nXDiv
-                viewHSize = viewHSize/nXDiv
-            if nYDiv != 1:
-                viewVSizeP = viewVSizeP/nYDiv
-                viewVSize = viewVSize/nYDiv
-
-            view = "-vtl -vp " + \
-               `viewPoint[0]` + " " + `viewPoint[1]` + " " + `viewPoint[2]` + " " + \
-               " -vd " + `viewDirection[0]` + " " + `viewDirection[1]` + " " + `viewDirection[2]` + " " + \
-               " -vu " + `viewUp[0]` + " " +  `viewUp[1]` + " " + `viewUp[2]` + \
-               " -vh " + `int(viewHSizeP)` + " -vv " + `int(viewVSizeP)` + \
-               " -vs " + "%.3f"%vs + " -vl " + "%.3f"%vl + \
-               " -x " + `int(viewHSize)` + " -y " + `int(viewVSize)`
-
-        elif cameraType == 0:
-            # perspective
-
-            # recalculate vh and vv
-            if nXDiv != 1:
-                viewHA = (2.*180./PI)*math.atan(((PI/180./2.) * viewHA)/nXDiv)
-                viewHSize = viewHSize/nXDiv
-            if nYDiv != 1:
-                viewVA = (2.*180./PI)*math.atan(math.tan((PI/180./2.)*viewVA)/nYDiv)
-                viewVSize = viewVSize/nYDiv
-
-            view = "-vtv -vp " + \
-               "%.3f"%viewPoint[0] + " " + "%.3f"%viewPoint[1] + " " + "%.3f"%viewPoint[2] + " " + \
-               " -vd " + "%.3f"%viewDirection[0] + " " + "%.3f"%viewDirection[1] + " " + "%.3f"%viewDirection[2] + " " + \
-               " -vu " + "%.3f"%viewUp[0] + " " +  "%.3f"%viewUp[1] + " " + "%.3f"%viewUp[2] + " " + \
-               " -vh " + "%.3f"%viewHA + " -vv " + "%.3f"%viewVA + \
-               " -vs " + "%.3f"%vs + " -vl " + "%.3f"%vl + " -x " + `int(viewHSize)` + " -y " + `int(viewVSize)`
-
-        elif cameraType == 1:
-            # fish eye
-            # recalculate vh and vv
-            viewHA = 180
-            viewVA = 180
-            if nXDiv != 1:
-                viewHA = (2.*180./PI)*math.asin(math.sin((PI/180./2.)*viewHA)/nXDiv)
-                viewHSize = viewHSize/nXDiv
-            if nYDiv != 1:
-                viewVA = (2.*180./PI)*math.asin(math.sin((PI/180./2.)*viewVA)/nYDiv)
-                viewVSize = viewVSize/nYDiv
-
-            view = "-vth -vp " + \
-               `viewPoint[0]` + " " + `viewPoint[1]` + " " + `viewPoint[2]` + " " + \
-               " -vd " + `viewDirection[0]` + " " + `viewDirection[1]` + " " + `viewDirection[2]` + " " + \
-               " -vu " + `viewUp[0]` + " " +  `viewUp[1]` + " " + `viewUp[2]` + " " + \
-               " -vh " + "%.3f"%viewHA + " -vv " + "%.3f"%viewVA + \
-               " -vs " + "%.3f"%vs + " -vl " + "%.3f"%vl + " -x " + `int(viewHSize)` + " -y " + `int(viewVSize)`
-
-        if sectionPlane!=None:
-            # map the point on the plane
-            pointOnPlane = sectionPlane.ClosestPoint(viewPoint)
-            distance = pointOnPlane.DistanceTo(viewPoint)
-            view += " -vo " + str(distance)
-
-        return view + " "
+        return " ".join(__viewComponents)
 
     def saveToFile(self, working):
         """Save view to a file."""
