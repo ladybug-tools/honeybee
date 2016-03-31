@@ -1,3 +1,3 @@
-# honeybee-core
+# honeybee
 
-#### [API Documentation](http://ladybug-analysis-tools.github.io/honeybee-core/doc/)
+#### [API Documentation](http://ladybug-analysis-tools.github.io/honeybee/doc/)

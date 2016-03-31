@@ -989,6 +989,7 @@ table {
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
+        <li class="mono"><a href="config.m.html">honeybee.config</a></li>
         <li class="mono"><a href="dataoperation.m.html">honeybee.dataoperation</a></li>
         <li class="mono"><a href="geometryoperation.m.html">honeybee.geometryoperation</a></li>
         <li class="mono"><a href="hbobject.m.html">honeybee.hbobject</a></li>
@@ -997,10 +998,8 @@ table {
         <li class="mono"><a href="hbzone.m.html">honeybee.hbzone</a></li>
         <li class="mono"><a href="helper.m.html">honeybee.helper</a></li>
         <li class="mono"><a href="radiance/index.html">honeybee.radiance</a></li>
-        <li class="mono"><a href="settings.m.html">honeybee.settings</a></li>
         <li class="mono"><a href="surfacetype.m.html">honeybee.surfacetype</a></li>
         <li class="mono"><a href="vectormath/index.html">honeybee.vectormath</a></li>
-        <li class="mono"><a href="wrapper.m.html">honeybee.wrapper</a></li>
       </ul>
     </li>
     </ul>
@@ -1020,10 +1019,10 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee', this);">Show source &equiv;</a></p>
   <div id="source-honeybee" class="source">
     <pre><code>"""Honeybee core library."""
-__all__ = ["hbzone", "hbsurface", "surfacetype", "wrapper", "settings",
+__all__ = ["config", "hbzone", "hbsurface", "surfacetype",
            "radiance", "hbpointgroup"]
 
-import hbzone, hbsurface, hbpointgroup, surfacetype, wrapper, settings, radiance
+import config, hbzone, hbsurface, hbpointgroup, surfacetype, radiance
 </code></pre>
   </div>
 
@@ -1034,6 +1033,21 @@ import hbzone, hbsurface, hbpointgroup, surfacetype, wrapper, settings, radiance
 
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+      <div class="item">
+      <p class="name"><a href="config.m.html">honeybee.config</a></p>
+      
+  
+    <div class="desc"><p>Honeybee configurations.</p>
+<p>Import this module in every module that you need to access Honeybee configurations.</p>
+<p>Usage:</p>
+<pre><code>import config
+print config.radlibPath
+print config.radbinPath
+print config.platform
+config.radbinPath = "c:/radiance/bin"
+</code></pre></div>
+
+      </div>
       <div class="item">
       <p class="name"><a href="dataoperation.m.html">honeybee.dataoperation</a></p>
       
@@ -1088,13 +1102,6 @@ import hbzone, hbsurface, hbpointgroup, surfacetype, wrapper, settings, radiance
 
       </div>
       <div class="item">
-      <p class="name"><a href="settings.m.html">honeybee.settings</a></p>
-      
-  
-    <div class="desc"><p>Honeybee system setting.</p></div>
-
-      </div>
-      <div class="item">
       <p class="name"><a href="surfacetype.m.html">honeybee.surfacetype</a></p>
       
   
@@ -1103,12 +1110,6 @@ import hbzone, hbsurface, hbpointgroup, surfacetype, wrapper, settings, radiance
       </div>
       <div class="item">
       <p class="name"><a href="vectormath/index.html">honeybee.vectormath</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="wrapper.m.html">honeybee.wrapper</a></p>
       
   
 

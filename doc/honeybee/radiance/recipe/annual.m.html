@@ -996,9 +996,12 @@ table {
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.write">write</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.createAnalysisPointGroups">createAnalysisPointGroups</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.flatten">flatten</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.hbObjectsToRadString">hbObjectsToRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.results">results</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.run">run</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.updatePointGroups">updatePointGroups</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.writeHBObjectsToFile">writeHBObjectsToFile</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.writePointsToFile">writePointsToFile</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.writeToFile">writeToFile</a></li>
@@ -1141,6 +1144,17 @@ def write(filePath, data, mkdir=False):
 
             </div>
             <div class="item">
+            <p id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.isAnalysisRecipe" class="name">var <span class="ident">isAnalysisRecipe</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return true to indicate it is an analysis recipe.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.numOfPointGroups" class="name">var <span class="ident">numOfPointGroups</span></p>
             
 
@@ -1163,6 +1177,17 @@ def write(filePath, data, mkdir=False):
 
             </div>
             <div class="item">
+            <p id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.pointGroups" class="name">var <span class="ident">pointGroups</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return analysis point groups.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.points" class="name">var <span class="ident">points</span></p>
             
 
@@ -1180,6 +1205,18 @@ def write(filePath, data, mkdir=False):
             
   
     <div class="desc"><p>Get and set Radiance parameters.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.simulationType" class="name">var <span class="ident">simulationType</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get/set simulation Type.</p>
+<p>0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)</p></div>
   <div class="source_cont">
 </div>
 
@@ -1261,7 +1298,7 @@ def write(filePath, data, mkdir=False):
     self.__analysisPointGroups = []
     if len(pointGroups) == 0:
         return
-    # input is single point! Create a single group but seriously!
+    # input is single point! Create a single group but seriously!?
     elif not isinstance(pointGroups[0], Iterable):
         pointGroups = [[pointGroups]]
         vectorGroups = [[vectorGroups]]
@@ -1280,9 +1317,46 @@ def write(filePath, data, mkdir=False):
         finally:
             # last check for vectors in case user input is a flatten lists
             # for nested group of points.
-            if not isinstance(vectors[0], Iterable):
+            if not isinstance(vectors[0], Iterable) and not hasattr(vectors[0], 'X'):
                 vectors = [vectors]
             self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.flatten">
+    <p>def <span class="ident">flatten</span>(</p><p>self, inputList)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a flattened genertor from an input list.</p>
+<p>Usage:</p>
+<pre><code>inputList = [['a'], ['b', 'c', 'd'], [['e']], ['f']]
+list(flatten(inputList))
+&gt;&gt; ['a', 'b', 'c', 'd', 'e', 'f']
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.flatten', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.flatten" class="source">
+    <pre><code>def flatten(self, inputList):
+    """Return a flattened genertor from an input list.
+    Usage:
+        inputList = [['a'], ['b', 'c', 'd'], [['e']], ['f']]
+        list(flatten(inputList))
+        >> ['a', 'b', 'c', 'd', 'e', 'f']
+    """
+    for el in inputList:
+        if isinstance(el, Iterable) and not isinstance(el, basestring):
+            for sub in self.flatten(el):
+                yield sub
+        else:
+            yield el
 </code></pre>
   </div>
 </div>
@@ -1355,6 +1429,33 @@ def write(filePath, data, mkdir=False):
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.results">
+    <p>def <span class="ident">results</span>(</p><p>self, flattenResults=True)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return results for this analysis.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.results', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.results" class="source">
+    <pre><code>def results(self, flattenResults=True):
+    """Return results for this analysis."""
+    assert self.isCalculated, \
+        "You haven't run the Recipe yet. Use self.run " + \
+        "to run the analysis before loading the results."
+    self.loader.simulationType = self.simulationType
+    self.loader.resultFiles = self.resultsFile
+    return self.loader.results
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.run">
     <p>def <span class="ident">run</span>(</p><p>self, debug=False)</p>
     </div>
@@ -1368,13 +1469,15 @@ def write(filePath, data, mkdir=False):
   <div id="source-honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.run" class="source">
     <pre><code>def run(self, debug=False):
     """Run the analysis."""
-    if self.batchFile:
+    if self.__batchFile:
         if debug:
-            with open(self.batchFile, "a") as bf:
+            with open(self.__batchFile, "a") as bf:
                 bf.write("\npause")
-        subprocess.call(self.batchFile)
-        return self.batchFile.replace(".bat", ".res")
-        # subprocess.Popen(['cmd', self.batchFile], shell=minimize)
+        subprocess.call(self.__batchFile)
+        self.isCalculated = True
+        # self.isChanged = False
+        self.resultsFile = [self.__batchFile.replace(".bat", ".res")]
+        return True
     else:
         raise Exception("You need to write the files before running the recipe.")
 </code></pre>
@@ -1430,6 +1533,45 @@ def write(filePath, data, mkdir=False):
     if hbObjects:
         _matStr, _geoStr = self.hbObjectsToRadString()
     return _radDefinition(_ptsStr, _matStr, _geoStr)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.updatePointGroups">
+    <p>def <span class="ident">updatePointGroups</span>(</p><p>self, pointGroups, vectorGroups=[])</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Update point groups.</p>
+<p>Args:
+    pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
+        test points. Each list of test points will be converted to a
+        TestPointGroup. If testPts is a single flattened list only one
+        TestPointGroup will be created.
+    vectorGroups: An optional list of (x, y, z) vectors. Each vector
+        represents direction of corresponding point in testPts. If the
+        vector is not provided (0, 0, 1) will be assigned.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.updatePointGroups', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.annual.HBAnnualAnalysisRecipe.updatePointGroups" class="source">
+    <pre><code>def updatePointGroups(self, pointGroups, vectorGroups=[]):
+    """Update point groups.
+    Args:
+        pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
+            test points. Each list of test points will be converted to a
+            TestPointGroup. If testPts is a single flattened list only one
+            TestPointGroup will be created.
+        vectorGroups: An optional list of (x, y, z) vectors. Each vector
+            represents direction of corresponding point in testPts. If the
+            vector is not provided (0, 0, 1) will be assigned.
+    """
+    self.createAnalysisPointGroups(pointGroups, vectorGroups)
 </code></pre>
   </div>
 </div>
@@ -1591,6 +1733,9 @@ def write(filePath, data, mkdir=False):
     _path = os.path.join(_basePath, self.subFolder)
     _ispath = preparedir(_path)
     assert _ispath, "Failed to create %s. Try a different path!" % _path
+    # Check if anything has changed
+    # if not self.isChanged:
+    #     print "Inputs has not changed! Check files at %s" % _path
     # 1.write sky file
     skyFile = self.sky.writeToFile(_path)
     # 2.write points
@@ -1606,7 +1751,9 @@ def write(filePath, data, mkdir=False):
     oc = Oconv(projectName)
     oc.inputFiles = [skyFile, matFile, geoFile]
     # # 4.2.prepare rtrace
-    rt = Rtrace(projectName)
+    rt = Rtrace(projectName,
+                simulationType=self.simulationType,
+                radianceParameters=self.radianceParameters)
     rt.octFile = os.path.join(_path, projectName + ".oct")
     rt.pointFile = pointsFile
     # # 4.3 write batch file
@@ -1614,7 +1761,7 @@ def write(filePath, data, mkdir=False):
     batchFileLines.append(rt.toRadString())
     batchFile = os.path.join(_path, projectName + ".bat")
     self.write(batchFile, "\n".join(batchFileLines))
-    self.batchFile = batchFile
+    self.__batchFile = batchFile
     print "Files are written to: %s" % _path
     return _path
 </code></pre>

@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.wrapper API documentation</title>
+    <title>honeybee.radiance.command.gensky API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -989,12 +989,13 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.wrapper.Wrapper">Wrapper</a></span>
+        <span class="class_name"><a href="#honeybee.radiance.command.gensky.Gensky">Gensky</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#honeybee.wrapper.Wrapper.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.wrapper.Wrapper.unwrap">unwrap</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.gensky.Gensky.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.gensky.Gensky.execute">execute</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.gensky.Gensky.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1012,36 +1013,42 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.wrapper</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.command.gensky</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.wrapper', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.wrapper" class="source">
-    <pre><code>class Wrapper():
-    """A Wrapper class to overwrite object __clrtype__ in Ladybug objects.
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gensky', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gensky" class="source">
+    <pre><code># coding=utf-8
+from commandBase import RadianceCommand
+import os
+import sys
+from ..datatype import *
+from ..datatype import RadInputStringFormatter as Rfmt
 
-        Wrapper makes the outputs to be human readable and doesn't have any
-        technical value.
 
-        Attributes:
-            data: The class to be wrapped. check __repr__ method of class to
-                be set to a human readable string
+class Gensky(RadianceCommand):
+    u"""
+    gensky - generate a RADIANCE description of the sky
 
-        Usage:
-            # wrap legend parameters class
-            OUT = wrapper(legendpar.LegendParameters())
+    Attributes:
 
-            # unwarp a wrapped legend parameter
-            lp = IN[0].unwarp()
     """
-    def __init__(self, data):
-        self.__data = data
+    s = RadianceBoolFlag('s', 'sunny sky', acceptedInputs=(True, False))
+    c = RadianceBoolFlag('c', 'cloudy sky', acceptedInputs=(True,))
+    i = RadianceBoolFlag('i', 'intermediate sky', acceptedInputs=(True, False))
+    u = RadianceBoolFlag('u', 'uniform cloudy sky', acceptedInputs=(True,))
+    g = RadianceNumber('g', 'average ground reflectance', numType=float,
+                       checkPositive=True, validRange=(0,1))
+    b = RadianceNumber('b', 'zenith brightness from sun angle and turbidity',
+                       numType=float, checkPositive=True)
+    B = RadianceNumber('B', 'zenith brightness from horizontal diffuse irradiance',
+                       numType=float, checkPositive=True)
+    r = RadianceNumber('r', 'solar radiance from solar altitude',
+                       numType=float, checkPositive=True)
+    R = RadianceNumber('R', 'solar radiance from horizontal direct irradiance',
+                       numType=float, checkPositive=True)
 
-    def unwrap(self):
-        return self.__data
-
-    def __repr__(self):
-        return self.__data.__repr__()
+    t = RadianceNumber('t', 'turbidity factor', numType=float, checkPositive=True)
 </code></pre>
   </div>
 
@@ -1053,49 +1060,37 @@ table {
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.wrapper.Wrapper" class="name">class <span class="ident">Wrapper</span></p>
+      <p id="honeybee.radiance.command.gensky.Gensky" class="name">class <span class="ident">Gensky</span></p>
       
   
-    <div class="desc"><p>A Wrapper class to overwrite object <strong>clrtype</strong> in Ladybug objects.</p>
-<p>Wrapper makes the outputs to be human readable and doesn't have any
-technical value.</p>
-<p>Attributes:
-    data: The class to be wrapped. check <strong>repr</strong> method of class to
-        be set to a human readable string</p>
-<p>Usage:
-    # wrap legend parameters class
-    OUT = wrapper(legendpar.LegendParameters())</p>
-<pre><code># unwarp a wrapped legend parameter
-lp = IN[0].unwarp()
-</code></pre></div>
+    <div class="desc"><p>gensky - generate a RADIANCE description of the sky</p>
+<p>Attributes:</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.wrapper.Wrapper', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.wrapper.Wrapper" class="source">
-    <pre><code>class Wrapper():
-    """A Wrapper class to overwrite object __clrtype__ in Ladybug objects.
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gensky.Gensky', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gensky.Gensky" class="source">
+    <pre><code>class Gensky(RadianceCommand):
+    u"""
+    gensky - generate a RADIANCE description of the sky
 
-        Wrapper makes the outputs to be human readable and doesn't have any
-        technical value.
+    Attributes:
 
-        Attributes:
-            data: The class to be wrapped. check __repr__ method of class to
-                be set to a human readable string
-
-        Usage:
-            # wrap legend parameters class
-            OUT = wrapper(legendpar.LegendParameters())
-
-            # unwarp a wrapped legend parameter
-            lp = IN[0].unwarp()
     """
-    def __init__(self, data):
-        self.__data = data
+    s = RadianceBoolFlag('s', 'sunny sky', acceptedInputs=(True, False))
+    c = RadianceBoolFlag('c', 'cloudy sky', acceptedInputs=(True,))
+    i = RadianceBoolFlag('i', 'intermediate sky', acceptedInputs=(True, False))
+    u = RadianceBoolFlag('u', 'uniform cloudy sky', acceptedInputs=(True,))
+    g = RadianceNumber('g', 'average ground reflectance', numType=float,
+                       checkPositive=True, validRange=(0,1))
+    b = RadianceNumber('b', 'zenith brightness from sun angle and turbidity',
+                       numType=float, checkPositive=True)
+    B = RadianceNumber('B', 'zenith brightness from horizontal diffuse irradiance',
+                       numType=float, checkPositive=True)
+    r = RadianceNumber('r', 'solar radiance from solar altitude',
+                       numType=float, checkPositive=True)
+    R = RadianceNumber('R', 'solar radiance from horizontal direct irradiance',
+                       numType=float, checkPositive=True)
 
-    def unwrap(self):
-        return self.__data
-
-    def __repr__(self):
-        return self.__data.__repr__()
+    t = RadianceNumber('t', 'turbidity factor', numType=float, checkPositive=True)
 </code></pre>
   </div>
 </div>
@@ -1104,23 +1099,165 @@ lp = IN[0].unwarp()
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.wrapper.Wrapper">Wrapper</a></li>
+          <li><a href="#honeybee.radiance.command.gensky.Gensky">Gensky</a></li>
+          <li>honeybee.radiance.command.commandBase.RadianceCommand</li>
+          <li>__builtin__.object</li>
           </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.B" class="name">var <span class="ident">B</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.R" class="name">var <span class="ident">R</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.b" class="name">var <span class="ident">b</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.c" class="name">var <span class="ident">c</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.g" class="name">var <span class="ident">g</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.i" class="name">var <span class="ident">i</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.r" class="name">var <span class="ident">r</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.s" class="name">var <span class="ident">s</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.t" class="name">var <span class="ident">t</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.u" class="name">var <span class="ident">u</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return list of input files for this command.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get and set path to radiance binaries.</p>
+<p>If you set a new value the value will be changed globally.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gensky.Gensky.radlibPath" class="name">var <span class="ident">radlibPath</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get and set path to radiance libraries.</p>
+<p>If you set a new value the value will be changed globally.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.wrapper.Wrapper.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, data)</p>
+    <div class="name def" id="honeybee.radiance.command.gensky.Gensky.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Initialize Radiance command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.wrapper.Wrapper.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.wrapper.Wrapper.__init__" class="source">
-    <pre><code>def __init__(self, data):
-    self.__data = data
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gensky.Gensky.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gensky.Gensky.__init__" class="source">
+    <pre><code>def __init__(self):
+    """Initialize Radiance command."""
+    self.radbinPath = config.radbinPath
+    self.radlibPath = config.radlibPath
 </code></pre>
   </div>
 </div>
@@ -1129,18 +1266,49 @@ lp = IN[0].unwarp()
   
             
   <div class="item">
-    <div class="name def" id="honeybee.wrapper.Wrapper.unwrap">
-    <p>def <span class="ident">unwrap</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.gensky.Gensky.execute">
+    <p>def <span class="ident">execute</span>(</p><p>self)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Execute the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.wrapper.Wrapper.unwrap', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.wrapper.Wrapper.unwrap" class="source">
-    <pre><code>def unwrap(self):
-    return self.__data
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gensky.Gensky.execute', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gensky.Gensky.execute" class="source">
+    <pre><code>def execute(self):
+    """Execute the command."""
+    # check if the files exist on the computer
+    self.__checkFiles()
+    p = subprocess.Popen(self.toRadString(), shell=True,
+                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in p.stdout.readlines():
+        print line,
+    p.wait()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.gensky.Gensky.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self, relativePath=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return full command as a string.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gensky.Gensky.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gensky.Gensky.toRadString" class="source">
+    <pre><code>@abstractmethod
+def toRadString(self, relativePath=False):
+    """Return full command as a string."""
+    pass
 </code></pre>
   </div>
 </div>

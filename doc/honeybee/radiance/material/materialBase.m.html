@@ -1050,6 +1050,11 @@ class RadianceMaterial(object):
         """Material modifier. Default is void"""
 
     @property
+    def isRadianceMaterial(self):
+        """Indicate that this object is a Radiance Material."""
+        return True
+
+    @property
     def name(self):
         """Get/set material name."""
         return self.__name
@@ -1142,6 +1147,11 @@ class RadianceMaterial(object):
         """Material modifier. Default is void"""
 
     @property
+    def isRadianceMaterial(self):
+        """Indicate that this object is a Radiance Material."""
+        return True
+
+    @property
     def name(self):
         """Get/set material name."""
         return self.__name
@@ -1207,6 +1217,17 @@ class RadianceMaterial(object):
             
   
     <div class="desc"><p>Return first line of Material definition.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.materialBase.RadianceMaterial.isRadianceMaterial" class="name">var <span class="ident">isRadianceMaterial</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Indicate that this object is a Radiance Material.</p></div>
   <div class="source_cont">
 </div>
 

@@ -1029,6 +1029,7 @@ class SkyWithCertainIlluminanceLevel(RadianceSky):
         illuminanceValue: Desired illuminance value in lux
 
     Usage:
+
         sky = HBCertainIlluminanceLevelSky(1000)
         sky.toFile("c:/ladybug/skies", "1000luxsky.sky")
     """
@@ -1037,6 +1038,11 @@ class SkyWithCertainIlluminanceLevel(RadianceSky):
         """Create sky."""
         RadianceSky.__init__(self)
         self.illuminanceValue = illuminanceValue
+
+    @property
+    def isClimateBased(self):
+        """Return True if the sky is generated from values from weather file."""
+        return False
 
     @property
     def name(self):
@@ -1086,9 +1092,10 @@ if __name__ == "__main__":
     <div class="desc"><p>Uniform CIE sky based on illuminance value.</p>
 <p>Attributes:
     illuminanceValue: Desired illuminance value in lux</p>
-<p>Usage:
-    sky = HBCertainIlluminanceLevelSky(1000)
-    sky.toFile("c:/ladybug/skies", "1000luxsky.sky")</p></div>
+<p>Usage:</p>
+<pre><code>sky = HBCertainIlluminanceLevelSky(1000)
+sky.toFile("c:/ladybug/skies", "1000luxsky.sky")
+</code></pre></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel" class="source">
@@ -1099,6 +1106,7 @@ if __name__ == "__main__":
         illuminanceValue: Desired illuminance value in lux
 
     Usage:
+
         sky = HBCertainIlluminanceLevelSky(1000)
         sky.toFile("c:/ladybug/skies", "1000luxsky.sky")
     """
@@ -1107,6 +1115,11 @@ if __name__ == "__main__":
         """Create sky."""
         RadianceSky.__init__(self)
         self.illuminanceValue = illuminanceValue
+
+    @property
+    def isClimateBased(self):
+        """Return True if the sky is generated from values from weather file."""
+        return False
 
     @property
     def name(self):
@@ -1151,6 +1164,28 @@ if __name__ == "__main__":
 
             
   
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.isClimateBased" class="name">var <span class="ident">isClimateBased</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return True if the sky is generated from values from weather file.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.sky.certainIlluminance.SkyWithCertainIlluminanceLevel.isRadianceSky" class="name">var <span class="ident">isRadianceSky</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return True for skies.</p></div>
   <div class="source_cont">
 </div>
 

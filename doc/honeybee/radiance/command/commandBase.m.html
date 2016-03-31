@@ -995,7 +995,6 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.command.commandBase.RadianceCommand.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.commandBase.RadianceCommand.execute">execute</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.commandBase.RadianceCommand.inputFiles">inputFiles</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.commandBase.RadianceCommand.toRadString">toRadString</a></li>
   </ul>
 
@@ -1020,9 +1019,9 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.commandBase', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.commandBase" class="source">
     <pre><code>"""Radiance base command."""
-from ... import settings
+from ... import config
 
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 import os
 import subprocess
 
@@ -1035,40 +1034,100 @@ class RadianceCommand(object):
 
     def __init__(self):
         """Initialize Radiance command."""
-        # set up DefaultSettings
-        defSettings = settings.DefaultSettings(mute=True)
+        self.radbinPath = config.radbinPath
+        self.radlibPath = config.radlibPath
 
-        self.radbinFolder = defSettings.radbinFolder
-        self.radlibFolder = defSettings.radlibFolder
+    @property
+    def radbinPath(self):
+        """Get and set path to radiance binaries.
 
-        # if path is not found then raise an exception
-        assert self.radbinFolder is not None, \
-            "Can't find %s.exe.\n" % self.__class__.__name__ + \
-            "Modify honeybee.settings to set path to Radiance binaries."
+        If you set a new value the value will be changed globally.
+        """
+        return config.radbinPath
+
+    @radbinPath.setter
+    def radbinPath(self, path):
+        self.__checkExecutable(radbinPath=path, raiseException=True)
+        # change the path in config so user need to set it up once in a single script
+        config.radbinPath = path
+
+    @property
+    def radlibPath(self):
+        """Get and set path to radiance libraries.
+
+        If you set a new value the value will be changed globally.
+        """
+        return config.radlibPath
+
+    @radlibPath.setter
+    def radlibPath(self, path):
+        self.__checkLibs(radlibPath=path, raiseException=True)
+        # change the path in config so user need to set it up once in a single script
+        config.radlibPath = path
 
     @abstractmethod
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         pass
 
-    @abstractmethod
+    @abstractproperty
     def inputFiles(self):
         """Return list of input files for this command."""
         pass
 
-    def __checkFiles(self):
+    def __checkExecutable(self, radbinPath=None, raiseException=False):
+        """Check if executable file exist."""
+        radbinPath = self.radbinPath if not radbinPath else radbinPath
+
+        __executable = os.path.normpath(
+            os.path.join(str(radbinPath), '{}.exe'.format(self.__class__.__name__))
+        )
+
+        if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
+            __err = "Can't find %s.\n" % __executable + \
+                "Use radbinPath method to set the path to " + \
+                "Radiance binaries before executing the command."
+            if raiseException:
+                raise ValueError(__err)
+            else:
+                print __err
+
+    def __checkLibs(self, radlibPath=None, raiseException=False):
+        """Check if path to libraries is set correctly."""
+        radlibPath = self.radlibPath if not radlibPath else radlibPath
+
+        if not os.path.isdir(radlibPath):
+            __err = "Can't find %s.\n" % radlibPath + \
+                "Use radlibPath method to set the path to " + \
+                "Radiance libraries before executing the command."
+            if raiseException:
+                raise ValueError(__err)
+            else:
+                print __err
+
+    def __checkFiles(self, raiseExceptionBin=True, raiseExceptionLib=True):
         """Check if the input files exist on the computer."""
         assert len(self.inputFiles) != 0, \
             "You need at least one file to create an octree."
 
         for f in self.inputFiles:
-            assert os.path.exists(f), "%s doesn't exist" % f
+            assert os.path.exists(f), "Invalid Input File: %s doesn't exist" % f
 
-    def execute(self, shell=True):
+        self.__checkExecutable(raiseException=True)
+        self.__checkLibs(raiseException=True)
+
+    # TODO: Add Error handling
+    def execute(self):
         """Execute the command."""
         # check if the files exist on the computer
         self.__checkFiles()
-        subprocess.Popen(['cmd', self.toRadString()], shell=shell)
+
+        p = subprocess.Popen(self.toRadString(), shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        for line in p.stdout.readlines():
+            print line,
+        p.wait()
 
     def __repr__(self):
         """Class representation."""
@@ -1098,40 +1157,100 @@ class RadianceCommand(object):
 
     def __init__(self):
         """Initialize Radiance command."""
-        # set up DefaultSettings
-        defSettings = settings.DefaultSettings(mute=True)
+        self.radbinPath = config.radbinPath
+        self.radlibPath = config.radlibPath
 
-        self.radbinFolder = defSettings.radbinFolder
-        self.radlibFolder = defSettings.radlibFolder
+    @property
+    def radbinPath(self):
+        """Get and set path to radiance binaries.
 
-        # if path is not found then raise an exception
-        assert self.radbinFolder is not None, \
-            "Can't find %s.exe.\n" % self.__class__.__name__ + \
-            "Modify honeybee.settings to set path to Radiance binaries."
+        If you set a new value the value will be changed globally.
+        """
+        return config.radbinPath
+
+    @radbinPath.setter
+    def radbinPath(self, path):
+        self.__checkExecutable(radbinPath=path, raiseException=True)
+        # change the path in config so user need to set it up once in a single script
+        config.radbinPath = path
+
+    @property
+    def radlibPath(self):
+        """Get and set path to radiance libraries.
+
+        If you set a new value the value will be changed globally.
+        """
+        return config.radlibPath
+
+    @radlibPath.setter
+    def radlibPath(self, path):
+        self.__checkLibs(radlibPath=path, raiseException=True)
+        # change the path in config so user need to set it up once in a single script
+        config.radlibPath = path
 
     @abstractmethod
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         pass
 
-    @abstractmethod
+    @abstractproperty
     def inputFiles(self):
         """Return list of input files for this command."""
         pass
 
-    def __checkFiles(self):
+    def __checkExecutable(self, radbinPath=None, raiseException=False):
+        """Check if executable file exist."""
+        radbinPath = self.radbinPath if not radbinPath else radbinPath
+
+        __executable = os.path.normpath(
+            os.path.join(str(radbinPath), '{}.exe'.format(self.__class__.__name__))
+        )
+
+        if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
+            __err = "Can't find %s.\n" % __executable + \
+                "Use radbinPath method to set the path to " + \
+                "Radiance binaries before executing the command."
+            if raiseException:
+                raise ValueError(__err)
+            else:
+                print __err
+
+    def __checkLibs(self, radlibPath=None, raiseException=False):
+        """Check if path to libraries is set correctly."""
+        radlibPath = self.radlibPath if not radlibPath else radlibPath
+
+        if not os.path.isdir(radlibPath):
+            __err = "Can't find %s.\n" % radlibPath + \
+                "Use radlibPath method to set the path to " + \
+                "Radiance libraries before executing the command."
+            if raiseException:
+                raise ValueError(__err)
+            else:
+                print __err
+
+    def __checkFiles(self, raiseExceptionBin=True, raiseExceptionLib=True):
         """Check if the input files exist on the computer."""
         assert len(self.inputFiles) != 0, \
             "You need at least one file to create an octree."
 
         for f in self.inputFiles:
-            assert os.path.exists(f), "%s doesn't exist" % f
+            assert os.path.exists(f), "Invalid Input File: %s doesn't exist" % f
 
-    def execute(self, shell=True):
+        self.__checkExecutable(raiseException=True)
+        self.__checkLibs(raiseException=True)
+
+    # TODO: Add Error handling
+    def execute(self):
         """Execute the command."""
         # check if the files exist on the computer
         self.__checkFiles()
-        subprocess.Popen(['cmd', self.toRadString()], shell=shell)
+
+        p = subprocess.Popen(self.toRadString(), shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        for line in p.stdout.readlines():
+            print line,
+        p.wait()
 
     def __repr__(self):
         """Class representation."""
@@ -1149,7 +1268,18 @@ class RadianceCommand(object):
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.commandBase.RadianceCommand.radbinFolder" class="name">var <span class="ident">radbinFolder</span></p>
+            <p id="honeybee.radiance.command.commandBase.RadianceCommand.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return list of input files for this command.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.commandBase.RadianceCommand.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
             
 
             
@@ -1159,7 +1289,7 @@ class RadianceCommand(object):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.commandBase.RadianceCommand.radlibFolder" class="name">var <span class="ident">radlibFolder</span></p>
+            <p id="honeybee.radiance.command.commandBase.RadianceCommand.radlibPath" class="name">var <span class="ident">radlibPath</span></p>
             
 
             
@@ -1184,14 +1314,8 @@ class RadianceCommand(object):
   <div id="source-honeybee.radiance.command.commandBase.RadianceCommand.__init__" class="source">
     <pre><code>def __init__(self):
     """Initialize Radiance command."""
-    # set up DefaultSettings
-    defSettings = settings.DefaultSettings(mute=True)
-    self.radbinFolder = defSettings.radbinFolder
-    self.radlibFolder = defSettings.radlibFolder
-    # if path is not found then raise an exception
-    assert self.radbinFolder is not None, \
-        "Can't find %s.exe.\n" % self.__class__.__name__ + \
-        "Modify honeybee.settings to set path to Radiance binaries."
+    self.radbinPath = config.radbinPath
+    self.radlibPath = config.radlibPath
 </code></pre>
   </div>
 </div>
@@ -1201,7 +1325,7 @@ class RadianceCommand(object):
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.command.commandBase.RadianceCommand.execute">
-    <p>def <span class="ident">execute</span>(</p><p>self, shell=True)</p>
+    <p>def <span class="ident">execute</span>(</p><p>self)</p>
     </div>
     
 
@@ -1211,34 +1335,15 @@ class RadianceCommand(object):
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.commandBase.RadianceCommand.execute', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.commandBase.RadianceCommand.execute" class="source">
-    <pre><code>def execute(self, shell=True):
+    <pre><code>def execute(self):
     """Execute the command."""
     # check if the files exist on the computer
     self.__checkFiles()
-    subprocess.Popen(['cmd', self.toRadString()], shell=shell)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.command.commandBase.RadianceCommand.inputFiles">
-    <p>def <span class="ident">inputFiles</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Return list of input files for this command.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.commandBase.RadianceCommand.inputFiles', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.commandBase.RadianceCommand.inputFiles" class="source">
-    <pre><code>@abstractmethod
-def inputFiles(self):
-    """Return list of input files for this command."""
-    pass
+    p = subprocess.Popen(self.toRadString(), shell=True,
+                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in p.stdout.readlines():
+        print line,
+    p.wait()
 </code></pre>
   </div>
 </div>

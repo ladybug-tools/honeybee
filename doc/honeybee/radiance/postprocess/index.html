@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.settings API documentation</title>
-    <meta name="description" content="Honeybee system setting." />
+    <title>honeybee.radiance.postprocess API documentation</title>
+    <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
 
@@ -986,20 +986,12 @@ table {
     <ul id="index">
 
 
-    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
-      <ul>
-        <li class="mono">
-        <span class="class_name"><a href="#honeybee.settings.DefaultSettings">DefaultSettings</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#honeybee.settings.DefaultSettings.__init__">__init__</a></li>
-  </ul>
 
-        </li>
+    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+      <ul>
+        <li class="mono"><a href="gridbasedresults.m.html">honeybee.radiance.postprocess.gridbasedresults</a></li>
       </ul>
     </li>
-
     </ul>
   </div>
 
@@ -1011,130 +1003,14 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.settings</span> module</h1>
-  <p>Honeybee system setting.</p>
+  <h1 class="title"><span class="name">honeybee.radiance.postprocess</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.settings', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.settings" class="source">
-    <pre><code>"""Honeybee system setting."""
-import os
-import sys
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.postprocess', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.postprocess" class="source">
+    <pre><code>__all__ = ["gridbasedresults"]
 
-
-class DefaultSettings(object):
-    """Default system settings."""
-
-    # You can manually set the path to Radinace and EnergyPlus here between r" "
-    __userPath = {
-        "pathToRadianceFolder": r" ",
-        "pathToEnergyPlusFolder": r" ",
-    }
-
-    def __init__(self, mute=False):
-        """Set up default settings for Honeybee.
-
-        It includes:
-            Default path to Radinace folders.
-            Default path to EnergyPlus folders.
-        """
-        self.mute = mute
-        if self.__userPath["pathToRadianceFolder"].strip() is not "":
-            self.radbinFolder = os.path.join(
-                self.__userPath["pathToRadianceFolder"], "bin")
-        else:
-            if sys.platform == 'win32' or sys.platform == 'cli':
-                __radbin, __radFile = self.__which("rad.exe")
-                self.radbinFolder = __radbin
-
-            # TODO: @sariths we need a method to search and find the executables
-            elif sys.platform == 'linux2':
-                raise NotImplementedError
-
-    def __which(self, program):
-        """Find executable programs.
-
-        Args:
-            program: Full file name for the program (e.g. rad.exe)
-
-        Returns:
-            File directory and full path to program in case of success.
-            None, None in case of failure.
-        """
-        def is_exe(fpath):
-            # Make sure it's not part of Dive installation as DIVA doesn't
-            # follow the standard structure folder for Daysim and Radiance
-            if fpath.upper().find("DIVA"):
-                return False
-            # Return true if file exists and is executable
-            return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-        # check for the file in all path in environment
-        for path in os.environ["PATH"].split(os.pathsep):
-            path.strip('"')  # strip "" from Windows path
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return path, exe_file
-
-        # couldn't find it! return None :|
-        return None, None
-
-    @property
-    def radbinFolder(self):
-        """Path to Radiance binary folder."""
-        return self.__radbin
-
-    @radbinFolder.setter
-    def radbinFolder(self, path):
-        if path is None and (sys.platform == 'win32' or sys.platform == 'cli'):
-            # finding by path failed. Let's check typical folders on Windows
-            if os.path.isfile(r"c:\radiance\bin\rad.exe"):
-                path = r"c:\radiance\bin"
-            elif os.path.isfile(r"c:\program files\radiance\bin\rad.exe"):
-                path = r"c:\program files\radiance\bin"
-        elif path is None and sys.platform == 'linux2':
-            raise NotImplementedError
-
-        if not path or not os.path.isdir(path):
-            if not self.mute:
-                print "Warning: Radiance bin folder not found on your machine.\n" + \
-                    "Use currentSettings.radbinFolder = 'pathToFolder' to set it up manually."
-            self.__radbin = None
-            self.radlibFolder = None
-        else:
-            # set up lib path
-            self.__radbin = os.path.normpath(path)
-            self.radlibFolder = os.path.join(os.path.split(self.__radbin)[0], "lib")
-            if not self.mute:
-                print "Path to radiance binaries is set to: %s" % self.__radbin
-
-    @property
-    def radlibFolder(self):
-        """Path to Radiance library folder."""
-        return self.__radlib
-
-    @radlibFolder.setter
-    def radlibFolder(self, path):
-        if path is not None:
-            self.__radlib = os.path.normpath(path)
-            if not self.mute:
-                if not os.path.isdir(self.__radlib):
-                    print "Warning: Radiance lib folder not found on your machine.\n" + \
-                        "Use currentSettings.radlibFolder = 'pathToFolder' to set it up manually."
-                else:
-                    print "Path to radiance libraries is set to: %s" % self.__radlib
-        else:
-            self.__radlib = None
-
-    @property
-    def epFolder(self):
-        """Path to EnergyPlus folder."""
-        raise NotImplementedError
-        # return self.__eplus
-
-
-if __name__ == "__main__":
-    setting = DefaultSettings(mute=False)
-    print setting.radbinFolder
+import gridbasedresults
 </code></pre>
   </div>
 
@@ -1143,222 +1019,15 @@ if __name__ == "__main__":
   <section id="section-items">
 
 
-    <h2 class="section-title" id="header-classes">Classes</h2>
-      
+
+    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p id="honeybee.settings.DefaultSettings" class="name">class <span class="ident">DefaultSettings</span></p>
+      <p class="name"><a href="gridbasedresults.m.html">honeybee.radiance.postprocess.gridbasedresults</a></p>
       
   
-    <div class="desc"><p>Default system settings.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.settings.DefaultSettings', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.settings.DefaultSettings" class="source">
-    <pre><code>class DefaultSettings(object):
-    """Default system settings."""
+    <div class="desc"><p>Post process results for a Radiance Grid-based daylight analysis.</p></div>
 
-    # You can manually set the path to Radinace and EnergyPlus here between r" "
-    __userPath = {
-        "pathToRadianceFolder": r" ",
-        "pathToEnergyPlusFolder": r" ",
-    }
-
-    def __init__(self, mute=False):
-        """Set up default settings for Honeybee.
-
-        It includes:
-            Default path to Radinace folders.
-            Default path to EnergyPlus folders.
-        """
-        self.mute = mute
-        if self.__userPath["pathToRadianceFolder"].strip() is not "":
-            self.radbinFolder = os.path.join(
-                self.__userPath["pathToRadianceFolder"], "bin")
-        else:
-            if sys.platform == 'win32' or sys.platform == 'cli':
-                __radbin, __radFile = self.__which("rad.exe")
-                self.radbinFolder = __radbin
-
-            # TODO: @sariths we need a method to search and find the executables
-            elif sys.platform == 'linux2':
-                raise NotImplementedError
-
-    def __which(self, program):
-        """Find executable programs.
-
-        Args:
-            program: Full file name for the program (e.g. rad.exe)
-
-        Returns:
-            File directory and full path to program in case of success.
-            None, None in case of failure.
-        """
-        def is_exe(fpath):
-            # Make sure it's not part of Dive installation as DIVA doesn't
-            # follow the standard structure folder for Daysim and Radiance
-            if fpath.upper().find("DIVA"):
-                return False
-            # Return true if file exists and is executable
-            return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-        # check for the file in all path in environment
-        for path in os.environ["PATH"].split(os.pathsep):
-            path.strip('"')  # strip "" from Windows path
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return path, exe_file
-
-        # couldn't find it! return None :|
-        return None, None
-
-    @property
-    def radbinFolder(self):
-        """Path to Radiance binary folder."""
-        return self.__radbin
-
-    @radbinFolder.setter
-    def radbinFolder(self, path):
-        if path is None and (sys.platform == 'win32' or sys.platform == 'cli'):
-            # finding by path failed. Let's check typical folders on Windows
-            if os.path.isfile(r"c:\radiance\bin\rad.exe"):
-                path = r"c:\radiance\bin"
-            elif os.path.isfile(r"c:\program files\radiance\bin\rad.exe"):
-                path = r"c:\program files\radiance\bin"
-        elif path is None and sys.platform == 'linux2':
-            raise NotImplementedError
-
-        if not path or not os.path.isdir(path):
-            if not self.mute:
-                print "Warning: Radiance bin folder not found on your machine.\n" + \
-                    "Use currentSettings.radbinFolder = 'pathToFolder' to set it up manually."
-            self.__radbin = None
-            self.radlibFolder = None
-        else:
-            # set up lib path
-            self.__radbin = os.path.normpath(path)
-            self.radlibFolder = os.path.join(os.path.split(self.__radbin)[0], "lib")
-            if not self.mute:
-                print "Path to radiance binaries is set to: %s" % self.__radbin
-
-    @property
-    def radlibFolder(self):
-        """Path to Radiance library folder."""
-        return self.__radlib
-
-    @radlibFolder.setter
-    def radlibFolder(self, path):
-        if path is not None:
-            self.__radlib = os.path.normpath(path)
-            if not self.mute:
-                if not os.path.isdir(self.__radlib):
-                    print "Warning: Radiance lib folder not found on your machine.\n" + \
-                        "Use currentSettings.radlibFolder = 'pathToFolder' to set it up manually."
-                else:
-                    print "Path to radiance libraries is set to: %s" % self.__radlib
-        else:
-            self.__radlib = None
-
-    @property
-    def epFolder(self):
-        """Path to EnergyPlus folder."""
-        raise NotImplementedError
-</code></pre>
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#honeybee.settings.DefaultSettings">DefaultSettings</a></li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="honeybee.settings.DefaultSettings.epFolder" class="name">var <span class="ident">epFolder</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Path to EnergyPlus folder.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.settings.DefaultSettings.mute" class="name">var <span class="ident">mute</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.settings.DefaultSettings.radbinFolder" class="name">var <span class="ident">radbinFolder</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Path to Radiance binary folder.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.settings.DefaultSettings.radlibFolder" class="name">var <span class="ident">radlibFolder</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Path to Radiance library folder.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="honeybee.settings.DefaultSettings.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, mute=False)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Set up default settings for Honeybee.</p>
-<p>It includes:
-    Default path to Radinace folders.
-    Default path to EnergyPlus folders.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.settings.DefaultSettings.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.settings.DefaultSettings.__init__" class="source">
-    <pre><code>def __init__(self, mute=False):
-    """Set up default settings for Honeybee.
-    It includes:
-        Default path to Radinace folders.
-        Default path to EnergyPlus folders.
-    """
-    self.mute = mute
-    if self.__userPath["pathToRadianceFolder"].strip() is not "":
-        self.radbinFolder = os.path.join(
-            self.__userPath["pathToRadianceFolder"], "bin")
-    else:
-        if sys.platform == 'win32' or sys.platform == 'cli':
-            __radbin, __radFile = self.__which("rad.exe")
-            self.radbinFolder = __radbin
-        # TODO: @sariths we need a method to search and find the executables
-        elif sys.platform == 'linux2':
-            raise NotImplementedError
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
       </div>
-      </div>
-
   </section>
 
     </article>
