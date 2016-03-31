@@ -65,7 +65,7 @@ class Rcollate(RadianceCommand):
         fmtJoin = Rfmt.joined
         fmtNormal = Rfmt.normal
 
-        fmtDict = {'h': ('h', fmtBool),
+        fmtDict = {'h': ('h', fmtJoin),
                    'w': ('w', fmtBool),
                    't': ('t', fmtBool),
                    'ic': ('ic', fmtNormal),
@@ -84,18 +84,19 @@ class Rcollate(RadianceCommand):
                 pass
 
         outputFileName = self.outputName
-        if not self.outputName:
+        if self.outputName:
             outputFileName = os.path.splitext(self.inputFiles[0])[0] + '.dat'
 
         radString = "%s %s %s > %s" % (
             os.path.join(self.radbinPath, 'rcollate'),
             commandInputs,
-            self.inputFiles[0],
+            self.inputFiles,
             outputFileName
         )
 
         return radString
 
+    @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.matrixFile
+        return "matrixFile"
