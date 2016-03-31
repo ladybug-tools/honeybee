@@ -1,0 +1,2147 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>honeybee.radiance.datatype API documentation</title>
+    <meta name="description" content="Descriptors, factory classes etc for the Radiance library" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+
+  <!-- highlight.js for highlighting source code. -->
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
+
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 0.9em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    margin-left: 25%;
+    max-width: 90%;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    position: fixed;
+    height: 100%;
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; }
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+
+  .desc {
+    white-space: pre-wrap;
+  }
+
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+        position: inherit;
+        float: none;
+        width: auto;
+    }
+    #content {
+      width: 95%;
+      margin-left: auto;
+      border-left: none;
+      padding: 30px;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.datatype.RadianceBoolFlag">RadianceBoolFlag</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.datatype.RadianceBoolFlag.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.datatype.RadianceNumber">RadianceNumber</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.datatype.RadianceNumber.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.datatype.RadianceNumericTuple">RadianceNumericTuple</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.datatype.RadianceNumericTuple.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.datatype.RadiancePath">RadiancePath</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.datatype.RadiancePath.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">honeybee.radiance.datatype</span> module</h1>
+  <p>Descriptors, factory classes etc for the Radiance library</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype" class="source">
+    <pre><code># coding=utf-8
+"""Descriptors, factory classes etc for the Radiance library"""
+
+import warnings
+import os
+
+__all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
+           'RadianceNumericTuple']
+
+
+class RadianceDefault(object):
+    """
+    The default descriptor for radiance commands. Provides base case attributes
+    for other descriptors.
+
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+    """
+
+    def __init__(self, name, descriptiveName=None, acceptedInputs=None,
+                 validRange=None):
+        """
+        The constructor (__init__) initializes name, descriptiveName,
+        acceptedInputs and validRange. If specified, tests if validRange is
+        specified properly. Creates a readable description of the command with
+        the nameString attribute.
+        """
+        self._name = "_" + name
+        self._descriptiveName = descriptiveName
+        self._acceptedInputs = acceptedInputs
+
+        # check if the valid range is a 2-number tuple. Sort it if it isn't
+        # sorted already.
+        if validRange:
+            assert isinstance(validRange, (tuple, list)) and len(
+                validRange) == 2, \
+                "The input for validRange should be a tuple/list containing" \
+                " expected minimum and maximum values"
+            validRange = sorted(validRange)
+
+        self._validRange = validRange
+
+        # create nameString.
+        nameString = lambda: "%s (%s)" % (
+            name, descriptiveName) if descriptiveName else name
+        self._nameString = nameString()
+
+    def __get__(self, instance, owner):
+        """
+        Raise an AttributeError through getattr if the value hasn't been
+        specified at all. None value has no meaning in Radiance. So, if None is
+        spefied as an input, then raise a standard exception. If everything is
+        the way it should be, then just return the value of the attribute.
+        """
+        value = getattr(instance, self._name)
+        if value is None:
+            raise Exception(
+                "The value for %s hasn't been specified" % self._nameString)
+        else:
+            return value
+
+    def __set__(self, instance, value):
+        """
+        If _acceptedInputs is specified then check if the input is among the
+        _acceptedInputs and assign it as an attribute. Else Raise a value
+        error.
+        """
+        if self._acceptedInputs and value is not None:
+            inputs = list(self._acceptedInputs)
+            if value not in inputs:
+                raise ValueError("The value for %s should be one of the"
+                                 " following: %s. The provided value was %s"
+                                 % (self._nameString,
+                                    ",".join(map(str, inputs)), value))
+            setattr(instance, self._name, value)
+
+
+class RadianceBoolFlag(RadianceDefault):
+    """This input is expected to a boolean value (i.e. True or False).
+
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+    """
+    pass
+
+
+class RadianceNumber(RadianceDefault):
+    """
+    This input is expected to be an integer or floating point number.
+
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+        checkPositive: Optional. Check if the number should be greater than
+            or equal to zero.
+
+        numType: Optional. Acceptable inputs are float or int. If specified, the
+            __set__ method will ensure that the value is stored in that type.
+            Also, if the number changes (for example from 4.212 to 4 due to int
+            being specified as _type_), then a warning will be issued.
+    """
+
+    def __init__(self, name, descriptiveName=None, validRange=None,
+                 acceptedInputs=None, numType=None, checkPositive=False, ):
+
+        RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
+                                 validRange)
+        self._checkPositive = checkPositive
+        self._type = numType
+
+    def __set__(self, instance, value):
+        """Re-iplements the __set__ method by testing the numeric input,
+        converting from str to float or int (if required)and checking for valid
+        values.
+        """
+        if value is not None:
+            RadianceDefault.__set__(self, instance, value)
+            varName = self._nameString
+
+            if value is None:
+                finalValue = None
+            else:
+                try:
+                    # Assign type if specified.
+                    if self._type:
+                        finalValue = self._type(value)
+                    else:
+                        if isinstance(value, str):
+                            finalValue = float(value)
+                        else:
+                            finalValue = value
+                    if self._checkPositive:
+                        msg = "The value for %s should be greater than 0." \
+                              " The value specified was %s" % (varName, value)
+                        assert value >= 0, msg
+                # Value error will be raised if the input was anything else
+                # other than a number.
+                except ValueError:
+                    msg = "The value for %s should be a number. " \
+                          "%s was specified instead " % (varName, value)
+                    raise ValueError(msg)
+                except TypeError:
+                    msg = "The type of input for %s should a float or int. " \
+                          "%s was specified instead" % (varName, value)
+                    raise TypeError(msg)
+            # Raise a warning if the number got modified.
+            if hash(finalValue) != hash(value) and self._type:
+                msg = "The expected type for %s is %s." \
+                      "The provided input %s has been converted to %s" % \
+                      (varName, self._type, value, finalValue)
+                warnings.warn(msg)
+
+            # Raise a warning if the number isn't in the valid range.
+            if self._validRange:
+                minVal, maxVal = self._validRange
+                if not (minVal <= finalValue <= maxVal):
+                    msg = "The specified input for %s is %s. This is beyond " \
+                          "the valid range. The value for %s should be " \
+                          "between %s and %s" % (varName, finalValue, varName,
+                                                 maxVal, minVal)
+                    warnings.warn(msg)
+
+            setattr(instance, self._name, finalValue)
+
+
+class RadianceNumericTuple(RadianceDefault):
+    """
+    This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.
+
+    (Attributes inherited from base-class are explained there.)
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+        tupleSize: Optional. Specify the number of inputs that are expected.
+
+        numType: Optional. Acceptable inputs are float or int. If specified, the
+            __set__ method will ensure that the value is stored in that type.
+    """
+    def __init__(self, name, descriptiveName=None, validRange=None,
+                 acceptedInputs=None, tupleSize=None, numType=None):
+
+        RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
+                                 validRange)
+        self._tupleSize = tupleSize
+        self._type = numType
+
+    def __set__(self, instance, value):
+        """
+        Check for tuple size and valid range if specified. Parse from strings
+        if input is specified as a string instead of a number.
+        """
+        if value is not None:
+            if self._type:
+                numType = self._type
+            else:
+                numType = float
+
+            try:
+                finalValue = value.replace(',', ' ').split()
+            except AttributeError:
+                finalValue = value
+
+            finalValue = map(numType, finalValue)
+
+            if self._tupleSize:
+                assert len(finalValue) is self._tupleSize, \
+                    "The number of inputs required for %s are %s. " \
+                    "The provided input was %s" % \
+                    (self._nameString, self._tupleSize, value)
+
+            if self._validRange:
+                minVal, maxVal = self._validRange
+                allinRange = True
+                for numValue in finalValue:
+                    if not (minVal <= numValue <= maxVal):
+                        allinRange = False
+                        break
+                if not allinRange:
+                    msg = "The specified input for %s is %s. " \
+                          "One or more numbers are not in the valid range" \
+                          ". The values should be between %s and %s" \
+                          % (self._nameString, finalValue, maxVal, minVal)
+                    warnings.warn(msg)
+
+            setattr(instance, self._name, finalValue)
+
+
+class RadiancePath(RadianceDefault):
+    """
+    This input is expected to be a file path.
+
+    (Attributes inherited from base-class are explained there.)
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        expandRelative: Optional. Make relative paths absolute.
+
+        checkExists: Optional. Check if the file exists. Useful in the case of
+            input files such as epw files etc. where it is essential for those
+            files to exist before the command executes.
+
+        extension: Optional. Test the extension of the file.
+    """
+    def __init__(self, name, descriptiveName=None, expandRelative=False,
+                 checkExists=False, extension=None):
+        RadianceDefault.__init__(self, name, descriptiveName)
+        self._expandRelative = expandRelative
+        self._checkExists = checkExists
+        self._extension = extension
+
+    def __set__(self, instance, value):
+        """
+        Run tests based on _expandRelative, _checkExists and _extension before
+        assigning the value to attribute.
+        """
+        if value is not None:
+            assert isinstance(value, str), \
+                "The input for %s should be string containing the path name." \
+                " %s was provided instead" % (self._nameString, value)
+
+            if self._expandRelative:
+                finalValue = os.path.abspath(value)
+            else:
+                finalValue = value
+
+            if self._checkExists:
+                if not os.path.exists(finalValue):
+                    raise IOError(
+                        "The specified path for %s was not found in %s" % (
+                            self._nameString, finalValue))
+
+            if self._extension:
+                assert finalValue.lower().endswith(self._extension.lower()), \
+                    "The accepted extension for %s is %s. The provided input" \
+                    "was %s" % (self._nameString, self._extension, value)
+            setattr(instance, self._name, finalValue)
+
+
+class RadInputStringFormatter:
+    """This class implements a bunch of static methods for formatting Radiance
+    input flags. I am encapsulating them within this one class for the sake of
+    clarity. The methods are static because self in this case doesn't have
+    anything to do with the operation of methods in this class.
+    """
+
+    @staticmethod
+    def normal(flagVal, inputVal):
+        """The normal format is something like -ab 5 , -ad 100, -g 0.5 0.2 0.3
+           Args:
+               flagVal:The alphabet(s) denoting the flag. Like ab for ambient
+                bounces.
+
+               inputVal: The input value for the flag.
+        """
+        output = " -%s" % flagVal
+
+        try:
+            output += inputVal
+        # raise if ip is not a str.
+        except TypeError:
+            try:
+                for values in inputVal:
+                    output += " %s " % values
+            # raise if ip is not iterable.
+            except TypeError:
+                output += " %s " % inputVal
+
+        return output
+
+    @staticmethod
+    def joined(flagVal, inputVal):
+        """ For cases like -of , -O1 etc. where everthing after the first two
+            characters is input.
+        Args:
+            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
+            bounces.
+            inputVal: The input value for the flag.
+         """
+        output = ""
+        if inputVal is not None:
+            # The value is set to be True instead of an option.
+            if inputVal is True:
+                inputVal = ''
+            output = " -%s%s " % (flagVal, inputVal)
+        return output
+
+    @staticmethod
+    def boolean(flagVal, inputVal):
+        """If the input is just a normal toggle like -v or -h etc.
+        Args:
+            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
+            bounces.
+            inputVal: The input value for the flag.
+        """
+        output = ""
+        if inputVal is True:
+            output = "-%s " % flagVal
+        return output
+
+    @staticmethod
+    def boolDualSign(flagVal, inputVal):
+        """If the input is just a normal toggle like -v or -h etc.
+        Args:
+            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
+            bounces.
+            inputVal: The input value for the flag.
+        """
+        output = ""
+        if inputVal is True:
+            output = "+%s " % flagVal
+        elif inputVal is False:
+            output = "-%s " % flagVal
+        return output
+
+
+if __name__ == "__main__":
+    class SomeRadianceBinary(object):
+        ab = RadianceNumber('ab', 'ambinent bounces', None, [], int, True)
+        dj = RadianceNumber('dj', 'source jitter')
+        weaFile = RadiancePath('weaFile', 'Weather File Path', True, True,
+                               extension='.wea')
+
+        def __init__(self, ab=None, dj=None, weaFile=None):
+            self.ab = ab
+            self.dj = dj
+            self.weaFile = weaFile
+
+    radBinary = SomeRadianceBinary(5, 1.4, r"C:\Users\Sarith\Desktop\x.rad")
+    print(radBinary.dj)
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="honeybee.radiance.datatype.RadianceBoolFlag" class="name">class <span class="ident">RadianceBoolFlag</span></p>
+      
+  
+    <div class="desc"><p>This input is expected to a boolean value (i.e. True or False).</p>
+<p>Attributes:
+    name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+        in rtrace etc. Note that some of the radiance flags are actually
+        keywords in python. For example -or in rcollate or -as in rtrace.
+        In such cases the name of the flag should be specified as orX or
+        asX respectively. Refer the rcollate definition for an example.</p>
+<pre><code>descriptiveName: This is the human-readable name of the flag. For
+    example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+    These descriptions are usually available in the manual pages of
+    Radiance. Although this is an optional input, for the purposes of
+    debugging and readability, it is strongly suggested that this input
+    be specified for all instances.
+
+acceptedInputs:Optional. List of inputs that are permissible for a
+    particular command option. For example, the -h flag in rcollate
+    only accepts 'i' or 'o' as options. So, in cases where permissible
+    inputs are known it is recommended that this input be specified.If
+    the user-specified input doesn't exist in _acceptedInputs then a
+    value error will be raised.
+
+validRange: Optional. The valid range for several prominent radiance
+    parameters is between 0 and 1. There are likely to be other
+    parameters with similar valid ranges. If _validRange is specified,
+    a warning will be issued in case the provided input is not within
+    that range.
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceBoolFlag', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceBoolFlag" class="source">
+    <pre><code>class RadianceBoolFlag(RadianceDefault):
+    """This input is expected to a boolean value (i.e. True or False).
+
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+    """
+    pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.datatype.RadianceBoolFlag">RadianceBoolFlag</a></li>
+          <li>honeybee.radiance.datatype.RadianceDefault</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.datatype.RadianceBoolFlag.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, descriptiveName=None, acceptedInputs=None, validRange=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>The constructor (<strong>init</strong>) initializes name, descriptiveName,
+acceptedInputs and validRange. If specified, tests if validRange is
+specified properly. Creates a readable description of the command with
+the nameString attribute.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceBoolFlag.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceBoolFlag.__init__" class="source">
+    <pre><code>def __init__(self, name, descriptiveName=None, acceptedInputs=None,
+             validRange=None):
+    """
+    The constructor (__init__) initializes name, descriptiveName,
+    acceptedInputs and validRange. If specified, tests if validRange is
+    specified properly. Creates a readable description of the command with
+    the nameString attribute.
+    """
+    self._name = "_" + name
+    self._descriptiveName = descriptiveName
+    self._acceptedInputs = acceptedInputs
+    # check if the valid range is a 2-number tuple. Sort it if it isn't
+    # sorted already.
+    if validRange:
+        assert isinstance(validRange, (tuple, list)) and len(
+            validRange) == 2, \
+            "The input for validRange should be a tuple/list containing" \
+            " expected minimum and maximum values"
+        validRange = sorted(validRange)
+    self._validRange = validRange
+    # create nameString.
+    nameString = lambda: "%s (%s)" % (
+        name, descriptiveName) if descriptiveName else name
+    self._nameString = nameString()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="honeybee.radiance.datatype.RadianceNumber" class="name">class <span class="ident">RadianceNumber</span></p>
+      
+  
+    <div class="desc"><p>This input is expected to be an integer or floating point number.</p>
+<p>Attributes:
+    name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+        in rtrace etc. Note that some of the radiance flags are actually
+        keywords in python. For example -or in rcollate or -as in rtrace.
+        In such cases the name of the flag should be specified as orX or
+        asX respectively. Refer the rcollate definition for an example.</p>
+<pre><code>descriptiveName: This is the human-readable name of the flag. For
+    example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+    These descriptions are usually available in the manual pages of
+    Radiance. Although this is an optional input, for the purposes of
+    debugging and readability, it is strongly suggested that this input
+    be specified for all instances.
+
+acceptedInputs:Optional. List of inputs that are permissible for a
+    particular command option. For example, the -h flag in rcollate
+    only accepts 'i' or 'o' as options. So, in cases where permissible
+    inputs are known it is recommended that this input be specified.If
+    the user-specified input doesn't exist in _acceptedInputs then a
+    value error will be raised.
+
+validRange: Optional. The valid range for several prominent radiance
+    parameters is between 0 and 1. There are likely to be other
+    parameters with similar valid ranges. If _validRange is specified,
+    a warning will be issued in case the provided input is not within
+    that range.
+checkPositive: Optional. Check if the number should be greater than
+    or equal to zero.
+
+numType: Optional. Acceptable inputs are float or int. If specified, the
+    __set__ method will ensure that the value is stored in that type.
+    Also, if the number changes (for example from 4.212 to 4 due to int
+    being specified as _type_), then a warning will be issued.
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceNumber', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceNumber" class="source">
+    <pre><code>class RadianceNumber(RadianceDefault):
+    """
+    This input is expected to be an integer or floating point number.
+
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+        checkPositive: Optional. Check if the number should be greater than
+            or equal to zero.
+
+        numType: Optional. Acceptable inputs are float or int. If specified, the
+            __set__ method will ensure that the value is stored in that type.
+            Also, if the number changes (for example from 4.212 to 4 due to int
+            being specified as _type_), then a warning will be issued.
+    """
+
+    def __init__(self, name, descriptiveName=None, validRange=None,
+                 acceptedInputs=None, numType=None, checkPositive=False, ):
+
+        RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
+                                 validRange)
+        self._checkPositive = checkPositive
+        self._type = numType
+
+    def __set__(self, instance, value):
+        """Re-iplements the __set__ method by testing the numeric input,
+        converting from str to float or int (if required)and checking for valid
+        values.
+        """
+        if value is not None:
+            RadianceDefault.__set__(self, instance, value)
+            varName = self._nameString
+
+            if value is None:
+                finalValue = None
+            else:
+                try:
+                    # Assign type if specified.
+                    if self._type:
+                        finalValue = self._type(value)
+                    else:
+                        if isinstance(value, str):
+                            finalValue = float(value)
+                        else:
+                            finalValue = value
+                    if self._checkPositive:
+                        msg = "The value for %s should be greater than 0." \
+                              " The value specified was %s" % (varName, value)
+                        assert value >= 0, msg
+                # Value error will be raised if the input was anything else
+                # other than a number.
+                except ValueError:
+                    msg = "The value for %s should be a number. " \
+                          "%s was specified instead " % (varName, value)
+                    raise ValueError(msg)
+                except TypeError:
+                    msg = "The type of input for %s should a float or int. " \
+                          "%s was specified instead" % (varName, value)
+                    raise TypeError(msg)
+            # Raise a warning if the number got modified.
+            if hash(finalValue) != hash(value) and self._type:
+                msg = "The expected type for %s is %s." \
+                      "The provided input %s has been converted to %s" % \
+                      (varName, self._type, value, finalValue)
+                warnings.warn(msg)
+
+            # Raise a warning if the number isn't in the valid range.
+            if self._validRange:
+                minVal, maxVal = self._validRange
+                if not (minVal <= finalValue <= maxVal):
+                    msg = "The specified input for %s is %s. This is beyond " \
+                          "the valid range. The value for %s should be " \
+                          "between %s and %s" % (varName, finalValue, varName,
+                                                 maxVal, minVal)
+                    warnings.warn(msg)
+
+            setattr(instance, self._name, finalValue)
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.datatype.RadianceNumber">RadianceNumber</a></li>
+          <li>honeybee.radiance.datatype.RadianceDefault</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.datatype.RadianceNumber.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, numType=None, checkPositive=False)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceNumber.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceNumber.__init__" class="source">
+    <pre><code>def __init__(self, name, descriptiveName=None, validRange=None,
+             acceptedInputs=None, numType=None, checkPositive=False, ):
+    RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
+                             validRange)
+    self._checkPositive = checkPositive
+    self._type = numType
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="honeybee.radiance.datatype.RadianceNumericTuple" class="name">class <span class="ident">RadianceNumericTuple</span></p>
+      
+  
+    <div class="desc"><p>This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.</p>
+<p>(Attributes inherited from base-class are explained there.)
+Attributes:
+    name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+        in rtrace etc. Note that some of the radiance flags are actually
+        keywords in python. For example -or in rcollate or -as in rtrace.
+        In such cases the name of the flag should be specified as orX or
+        asX respectively. Refer the rcollate definition for an example.</p>
+<pre><code>descriptiveName: This is the human-readable name of the flag. For
+    example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+    These descriptions are usually available in the manual pages of
+    Radiance. Although this is an optional input, for the purposes of
+    debugging and readability, it is strongly suggested that this input
+    be specified for all instances.
+
+acceptedInputs:Optional. List of inputs that are permissible for a
+    particular command option. For example, the -h flag in rcollate
+    only accepts 'i' or 'o' as options. So, in cases where permissible
+    inputs are known it is recommended that this input be specified.If
+    the user-specified input doesn't exist in _acceptedInputs then a
+    value error will be raised.
+
+validRange: Optional. The valid range for several prominent radiance
+    parameters is between 0 and 1. There are likely to be other
+    parameters with similar valid ranges. If _validRange is specified,
+    a warning will be issued in case the provided input is not within
+    that range.
+tupleSize: Optional. Specify the number of inputs that are expected.
+
+numType: Optional. Acceptable inputs are float or int. If specified, the
+    __set__ method will ensure that the value is stored in that type.
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceNumericTuple', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceNumericTuple" class="source">
+    <pre><code>class RadianceNumericTuple(RadianceDefault):
+    """
+    This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.
+
+    (Attributes inherited from base-class are explained there.)
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+        tupleSize: Optional. Specify the number of inputs that are expected.
+
+        numType: Optional. Acceptable inputs are float or int. If specified, the
+            __set__ method will ensure that the value is stored in that type.
+    """
+    def __init__(self, name, descriptiveName=None, validRange=None,
+                 acceptedInputs=None, tupleSize=None, numType=None):
+
+        RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
+                                 validRange)
+        self._tupleSize = tupleSize
+        self._type = numType
+
+    def __set__(self, instance, value):
+        """
+        Check for tuple size and valid range if specified. Parse from strings
+        if input is specified as a string instead of a number.
+        """
+        if value is not None:
+            if self._type:
+                numType = self._type
+            else:
+                numType = float
+
+            try:
+                finalValue = value.replace(',', ' ').split()
+            except AttributeError:
+                finalValue = value
+
+            finalValue = map(numType, finalValue)
+
+            if self._tupleSize:
+                assert len(finalValue) is self._tupleSize, \
+                    "The number of inputs required for %s are %s. " \
+                    "The provided input was %s" % \
+                    (self._nameString, self._tupleSize, value)
+
+            if self._validRange:
+                minVal, maxVal = self._validRange
+                allinRange = True
+                for numValue in finalValue:
+                    if not (minVal <= numValue <= maxVal):
+                        allinRange = False
+                        break
+                if not allinRange:
+                    msg = "The specified input for %s is %s. " \
+                          "One or more numbers are not in the valid range" \
+                          ". The values should be between %s and %s" \
+                          % (self._nameString, finalValue, maxVal, minVal)
+                    warnings.warn(msg)
+
+            setattr(instance, self._name, finalValue)
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.datatype.RadianceNumericTuple">RadianceNumericTuple</a></li>
+          <li>honeybee.radiance.datatype.RadianceDefault</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.datatype.RadianceNumericTuple.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceNumericTuple.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceNumericTuple.__init__" class="source">
+    <pre><code>def __init__(self, name, descriptiveName=None, validRange=None,
+             acceptedInputs=None, tupleSize=None, numType=None):
+    RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
+                             validRange)
+    self._tupleSize = tupleSize
+    self._type = numType
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="honeybee.radiance.datatype.RadiancePath" class="name">class <span class="ident">RadiancePath</span></p>
+      
+  
+    <div class="desc"><p>This input is expected to be a file path.</p>
+<p>(Attributes inherited from base-class are explained there.)
+Attributes:
+    name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+        in rtrace etc. Note that some of the radiance flags are actually
+        keywords in python. For example -or in rcollate or -as in rtrace.
+        In such cases the name of the flag should be specified as orX or
+        asX respectively. Refer the rcollate definition for an example.</p>
+<pre><code>descriptiveName: This is the human-readable name of the flag. For
+    example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+    These descriptions are usually available in the manual pages of
+    Radiance. Although this is an optional input, for the purposes of
+    debugging and readability, it is strongly suggested that this input
+    be specified for all instances.
+
+expandRelative: Optional. Make relative paths absolute.
+
+checkExists: Optional. Check if the file exists. Useful in the case of
+    input files such as epw files etc. where it is essential for those
+    files to exist before the command executes.
+
+extension: Optional. Test the extension of the file.
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadiancePath', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadiancePath" class="source">
+    <pre><code>class RadiancePath(RadianceDefault):
+    """
+    This input is expected to be a file path.
+
+    (Attributes inherited from base-class are explained there.)
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        expandRelative: Optional. Make relative paths absolute.
+
+        checkExists: Optional. Check if the file exists. Useful in the case of
+            input files such as epw files etc. where it is essential for those
+            files to exist before the command executes.
+
+        extension: Optional. Test the extension of the file.
+    """
+    def __init__(self, name, descriptiveName=None, expandRelative=False,
+                 checkExists=False, extension=None):
+        RadianceDefault.__init__(self, name, descriptiveName)
+        self._expandRelative = expandRelative
+        self._checkExists = checkExists
+        self._extension = extension
+
+    def __set__(self, instance, value):
+        """
+        Run tests based on _expandRelative, _checkExists and _extension before
+        assigning the value to attribute.
+        """
+        if value is not None:
+            assert isinstance(value, str), \
+                "The input for %s should be string containing the path name." \
+                " %s was provided instead" % (self._nameString, value)
+
+            if self._expandRelative:
+                finalValue = os.path.abspath(value)
+            else:
+                finalValue = value
+
+            if self._checkExists:
+                if not os.path.exists(finalValue):
+                    raise IOError(
+                        "The specified path for %s was not found in %s" % (
+                            self._nameString, finalValue))
+
+            if self._extension:
+                assert finalValue.lower().endswith(self._extension.lower()), \
+                    "The accepted extension for %s is %s. The provided input" \
+                    "was %s" % (self._nameString, self._extension, value)
+            setattr(instance, self._name, finalValue)
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.datatype.RadiancePath">RadiancePath</a></li>
+          <li>honeybee.radiance.datatype.RadianceDefault</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.datatype.RadiancePath.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, descriptiveName=None, expandRelative=False, checkExists=False, extension=None)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadiancePath.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadiancePath.__init__" class="source">
+    <pre><code>def __init__(self, name, descriptiveName=None, expandRelative=False,
+             checkExists=False, extension=None):
+    RadianceDefault.__init__(self, name, descriptiveName)
+    self._expandRelative = expandRelative
+    self._checkExists = checkExists
+    self._extension = extension
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a>
+    </p>
+  </footer>
+</div>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

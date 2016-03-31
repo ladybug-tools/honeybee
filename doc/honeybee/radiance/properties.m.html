@@ -1037,6 +1037,11 @@ class RadianceProperties(object):
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
 
     @property
+    def isRadianceProperties(self):
+        """Indicate this object is RadianceProperties."""
+        return True
+
+    @property
     def radianceMaterial(self):
         """Return Radiance Material."""
         return self.__radianceMaterial
@@ -1077,7 +1082,7 @@ class RadianceProperties(object):
         if __newMaterial is None:
             self.__radianceMaterial = None
         else:
-            assert isinstance(__newMaterial, RadianceMaterial), \
+            assert hasattr(__newMaterial, 'isRadianceMaterial'), \
                 "%s is not a valid Radiance material" % __newMaterial
 
             self.__radianceMaterial = __newMaterial
@@ -1136,6 +1141,11 @@ if __name__ == "__main__":
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
 
     @property
+    def isRadianceProperties(self):
+        """Indicate this object is RadianceProperties."""
+        return True
+
+    @property
     def radianceMaterial(self):
         """Return Radiance Material."""
         return self.__radianceMaterial
@@ -1176,7 +1186,7 @@ if __name__ == "__main__":
         if __newMaterial is None:
             self.__radianceMaterial = None
         else:
-            assert isinstance(__newMaterial, RadianceMaterial), \
+            assert hasattr(__newMaterial, 'isRadianceMaterial'), \
                 "%s is not a valid Radiance material" % __newMaterial
 
             self.__radianceMaterial = __newMaterial
@@ -1211,6 +1221,17 @@ if __name__ == "__main__":
             
   
     <div class="desc"><p>Check if material is set by user.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.properties.RadianceProperties.isRadianceProperties" class="name">var <span class="ident">isRadianceProperties</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Indicate this object is RadianceProperties.</p></div>
   <div class="source_cont">
 </div>
 
