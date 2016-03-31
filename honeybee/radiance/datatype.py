@@ -14,44 +14,44 @@ class RadianceDefault(object):
     for other descriptors.
 
     Attributes:
-        _name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
             in rtrace etc. Note that some of the radiance flags are actually
             keywords in python. For example -or in rcollate or -as in rtrace.
             In such cases the name of the flag should be specified as orX or
             asX respectively. Refer the rcollate definition for an example.
 
-        _descriptiveName: This is the human-readable name of the flag. For
+        descriptiveName: This is the human-readable name of the flag. For
             example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
             These descriptions are usually available in the manual pages of
             Radiance. Although this is an optional input, for the purposes of
             debugging and readability, it is strongly suggested that this input
             be specified for all instances.
 
-        _expectedInputs:Optional. List of inputs that are permissible for a
+        acceptedInputs:Optional. List of inputs that are permissible for a
             particular command option. For example, the -h flag in rcollate
             only accepts 'i' or 'o' as options. So, in cases where permissible
             inputs are known it is recommended that this input be specified.If
-            the user-specified input doesn't exist in _expectedInputs then a
+            the user-specified input doesn't exist in _acceptedInputs then a
             value error will be raised.
 
-        _validRange: Optional. The valid range for several prominent radiance
+        validRange: Optional. The valid range for several prominent radiance
             parameters is between 0 and 1. There are likely to be other
             parameters with similar valid ranges. If _validRange is specified,
             a warning will be issued in case the provided input is not within
             that range.
     """
 
-    def __init__(self, name, descriptiveName=None, expectedInputs=None,
+    def __init__(self, name, descriptiveName=None, acceptedInputs=None,
                  validRange=None):
         """
         The constructor (__init__) initializes name, descriptiveName,
-        expectedInputs and validRange. If specified, tests if validRange is
+        acceptedInputs and validRange. If specified, tests if validRange is
         specified properly. Creates a readable description of the command with
         the nameString attribute.
         """
         self._name = "_" + name
         self._descriptiveName = descriptiveName
-        self._expectedInputs = expectedInputs
+        self._acceptedInputs = acceptedInputs
 
         # check if the valid range is a 2-number tuple. Sort it if it isn't
         # sorted already.
@@ -85,12 +85,12 @@ class RadianceDefault(object):
 
     def __set__(self, instance, value):
         """
-        If _expectedInputs is specified then check if the input is among the
-        _expectedInputs and assign it as an attribute. Else Raise a value
+        If _acceptedInputs is specified then check if the input is among the
+        _acceptedInputs and assign it as an attribute. Else Raise a value
         error.
         """
-        if self._expectedInputs and value is not None:
-            inputs = list(self._expectedInputs)
+        if self._acceptedInputs and value is not None:
+            inputs = list(self._acceptedInputs)
             if value not in inputs:
                 raise ValueError("The value for %s should be one of the"
                                  " following: %s. The provided value was %s"
@@ -100,30 +100,81 @@ class RadianceDefault(object):
 
 
 class RadianceBoolFlag(RadianceDefault):
-    """Descriptor for all the inputs that are boolean flags or single
-    alphabets
+    """This input is expected to a boolean value (i.e. True or False).
+
+    Attributes:
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
     """
     pass
 
 
 class RadianceNumber(RadianceDefault):
     """
-    Descriptor to set numbers.
-    (Attributes inherited from base-class are explained there.)
+    This input is expected to be an integer or floating point number.
+
     Attributes:
-        _checkPositive: Optional. Check if the number should be greater than
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
+
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+        checkPositive: Optional. Check if the number should be greater than
             or equal to zero.
 
-        _type: Optional. Acceptable inputs are float or int. If specified, the
+        numType: Optional. Acceptable inputs are float or int. If specified, the
             __set__ method will ensure that the value is stored in that type.
             Also, if the number changes (for example from 4.212 to 4 due to int
             being specified as _type_), then a warning will be issued.
     """
 
     def __init__(self, name, descriptiveName=None, validRange=None,
-                 expectedInputs=None, numType=None, checkPositive=False, ):
+                 acceptedInputs=None, numType=None, checkPositive=False, ):
 
-        RadianceDefault.__init__(self, name, descriptiveName, expectedInputs,
+        RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange)
         self._checkPositive = checkPositive
         self._type = numType
@@ -185,19 +236,44 @@ class RadianceNumber(RadianceDefault):
 
 class RadianceNumericTuple(RadianceDefault):
     """
-    Descriptor to set numeric tuples like -r 0.5 0.4 0.3 etc.
+    This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.
 
     (Attributes inherited from base-class are explained there.)
     Attributes:
-        _tupleSize: Optional. Specify the number of inputs that are expected.
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
 
-        _type: Optional. Acceptable inputs are float or int. If specified, the
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        acceptedInputs:Optional. List of inputs that are permissible for a
+            particular command option. For example, the -h flag in rcollate
+            only accepts 'i' or 'o' as options. So, in cases where permissible
+            inputs are known it is recommended that this input be specified.If
+            the user-specified input doesn't exist in _acceptedInputs then a
+            value error will be raised.
+
+        validRange: Optional. The valid range for several prominent radiance
+            parameters is between 0 and 1. There are likely to be other
+            parameters with similar valid ranges. If _validRange is specified,
+            a warning will be issued in case the provided input is not within
+            that range.
+        tupleSize: Optional. Specify the number of inputs that are expected.
+
+        numType: Optional. Acceptable inputs are float or int. If specified, the
             __set__ method will ensure that the value is stored in that type.
     """
     def __init__(self, name, descriptiveName=None, validRange=None,
-                 expectedInputs=None, tupleSize=None, numType=None):
+                 acceptedInputs=None, tupleSize=None, numType=None):
 
-        RadianceDefault.__init__(self, name, descriptiveName, expectedInputs,
+        RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange)
         self._tupleSize = tupleSize
         self._type = numType
@@ -245,17 +321,30 @@ class RadianceNumericTuple(RadianceDefault):
 
 class RadiancePath(RadianceDefault):
     """
-    Descriptor to set file paths.
+    This input is expected to be a file path.
 
     (Attributes inherited from base-class are explained there.)
     Attributes:
-        _expandRelative: Optional. Make relative paths absolute.
+        name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
+            in rtrace etc. Note that some of the radiance flags are actually
+            keywords in python. For example -or in rcollate or -as in rtrace.
+            In such cases the name of the flag should be specified as orX or
+            asX respectively. Refer the rcollate definition for an example.
 
-        _checkExists: Optional. Check if the file exists. Useful in the case of
+        descriptiveName: This is the human-readable name of the flag. For
+            example 'ambient divisions' for 'ab', 'view file' for 'vf' etc.
+            These descriptions are usually available in the manual pages of
+            Radiance. Although this is an optional input, for the purposes of
+            debugging and readability, it is strongly suggested that this input
+            be specified for all instances.
+
+        expandRelative: Optional. Make relative paths absolute.
+
+        checkExists: Optional. Check if the file exists. Useful in the case of
             input files such as epw files etc. where it is essential for those
             files to exist before the command executes.
 
-        _extension: Optional. Test the extension of the file.
+        extension: Optional. Test the extension of the file.
     """
     def __init__(self, name, descriptiveName=None, expandRelative=False,
                  checkExists=False, extension=None):
@@ -302,6 +391,11 @@ class RadInputStringFormatter:
     @staticmethod
     def normal(flagVal, inputVal):
         """The normal format is something like -ab 5 , -ad 100, -g 0.5 0.2 0.3
+           Args:
+               flagVal:The alphabet(s) denoting the flag. Like ab for ambient
+                bounces.
+
+               inputVal: The input value for the flag.
         """
         output = " -%s" % flagVal
 
@@ -319,21 +413,30 @@ class RadInputStringFormatter:
         return output
 
     @staticmethod
-    def joined(flagval, inputVal):
+    def joined(flagVal, inputVal):
         """ For cases like -of , -O1 etc. where everthing after the first two
-         characters is input.
+            characters is input.
+        Args:
+            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
+            bounces.
+            inputVal: The input value for the flag.
          """
         output = ""
         if inputVal is not None:
             # The value is set to be True instead of an option.
             if inputVal is True:
                 inputVal = ''
-            output = " -%s%s " % (flagval, inputVal)
+            output = " -%s%s " % (flagVal, inputVal)
         return output
 
     @staticmethod
     def boolean(flagVal, inputVal):
-        """If the input is just a normal toggle like -v or -h etc."""
+        """If the input is just a normal toggle like -v or -h etc.
+        Args:
+            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
+            bounces.
+            inputVal: The input value for the flag.
+        """
         output = ""
         if inputVal is True:
             output = "-%s " % flagVal
@@ -341,7 +444,12 @@ class RadInputStringFormatter:
 
     @staticmethod
     def boolDualSign(flagVal, inputVal):
-        """If the input is just a normal toggle like -v or -h etc."""
+        """If the input is just a normal toggle like -v or -h etc.
+        Args:
+            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
+            bounces.
+            inputVal: The input value for the flag.
+        """
         output = ""
         if inputVal is True:
             output = "+%s " % flagVal

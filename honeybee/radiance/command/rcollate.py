@@ -14,9 +14,9 @@ class Rcollate(RadianceCommand):
 
     """
     h = RadianceBoolFlag('h', 'header information',
-                         expectedInputs=(True, 'i', 'o'))
-    w = RadianceBoolFlag('w', 'warning messages', expectedInputs=(True,))
-    t = RadianceBoolFlag('t', 'transpose', expectedInputs=(True,))
+                         acceptedInputs=(True, 'i', 'o'))
+    w = RadianceBoolFlag('w', 'warning messages', acceptedInputs=(True,))
+    t = RadianceBoolFlag('t', 'transpose', acceptedInputs=(True,))
     ic = RadianceNumber('ic', 'input columns', numType=int)
     ir = RadianceNumber('ir', 'input rows', numType=int)
     oc = RadianceNumber('ic', 'ouput columns', numType=int)
