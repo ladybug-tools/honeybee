@@ -13,10 +13,10 @@ class Gensky(RadianceCommand):
     Attributes:
 
     """
-    s = RadianceBoolFlag('s', 'sunny sky', expectedInputs=(True, False))
-    c = RadianceBoolFlag('c', 'cloudy sky', expectedInputs=(True,))
-    i = RadianceBoolFlag('i', 'intermediate sky', expectedInputs=(True, False))
-    u = RadianceBoolFlag('u', 'uniform cloudy sky', expectedInputs=(True,))
+    s = RadianceBoolFlag('s', 'sunny sky', acceptedInputs=(True, False))
+    c = RadianceBoolFlag('c', 'cloudy sky', acceptedInputs=(True,))
+    i = RadianceBoolFlag('i', 'intermediate sky', acceptedInputs=(True, False))
+    u = RadianceBoolFlag('u', 'uniform cloudy sky', acceptedInputs=(True,))
     g = RadianceNumber('g', 'average ground reflectance', numType=float,
                        checkPositive=True, validRange=(0,1))
     b = RadianceNumber('b', 'zenith brightness from sun angle and turbidity',
