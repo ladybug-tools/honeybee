@@ -39,10 +39,15 @@ class RadianceDefault(object):
             parameters with similar valid ranges. If _validRange is specified,
             a warning will be issued in case the provided input is not within
             that range.
+
+        defaultValue: Optional. The value to be assigned in case no value is
+            assigned by the user. If the default value is not specified then
+            the attribute won't be considered int the creation of the
+            toRadString string representation of the component.
     """
 
     def __init__(self, name, descriptiveName=None, acceptedInputs=None,
-                 validRange=None):
+                 validRange=None, defaultValue=None):
         """
         The constructor (__init__) initializes name, descriptiveName,
         acceptedInputs and validRange. If specified, tests if validRange is
@@ -52,6 +57,7 @@ class RadianceDefault(object):
         self._name = "_" + name
         self._descriptiveName = descriptiveName
         self._acceptedInputs = acceptedInputs
+        self._defaultValue = defaultValue
 
         # check if the valid range is a 2-number tuple. Sort it if it isn't
         # sorted already.
@@ -76,12 +82,15 @@ class RadianceDefault(object):
         spefied as an input, then raise a standard exception. If everything is
         the way it should be, then just return the value of the attribute.
         """
-        value = getattr(instance, self._name)
-        if value is None:
-            raise Exception(
-                "The value for %s hasn't been specified" % self._nameString)
-        else:
-            return value
+        try:
+            value = getattr(instance, self._name)
+        except AttributeError:
+            if self._defaultValue is not None:
+                value = self._defaultValue
+            else:
+                value = None
+
+        return value
 
     def __set__(self, instance, value):
         """
@@ -128,6 +137,11 @@ class RadianceBoolFlag(RadianceDefault):
             parameters with similar valid ranges. If _validRange is specified,
             a warning will be issued in case the provided input is not within
             that range.
+
+        defaultValue: Optional. The value to be assigned in case no value is
+            assigned by the user. If the default value is not specified then
+            the attribute won't be considered int the creation of the
+            toRadString string representation of the component.
     """
     pass
 
@@ -162,6 +176,7 @@ class RadianceNumber(RadianceDefault):
             parameters with similar valid ranges. If _validRange is specified,
             a warning will be issued in case the provided input is not within
             that range.
+
         checkPositive: Optional. Check if the number should be greater than
             or equal to zero.
 
@@ -169,13 +184,19 @@ class RadianceNumber(RadianceDefault):
             __set__ method will ensure that the value is stored in that type.
             Also, if the number changes (for example from 4.212 to 4 due to int
             being specified as _type_), then a warning will be issued.
+
+        defaultValue: Optional. The value to be assigned in case no value is
+            assigned by the user. If the default value is not specified then
+            the attribute won't be considered int the creation of the
+            toRadString string representation of the component.
     """
 
     def __init__(self, name, descriptiveName=None, validRange=None,
-                 acceptedInputs=None, numType=None, checkPositive=False, ):
+                 acceptedInputs=None, numType=None, checkPositive=False,
+                 defaultValue=None):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
-                                 validRange)
+                                 validRange,defaultValue)
         self._checkPositive = checkPositive
         self._type = numType
 
@@ -269,12 +290,18 @@ class RadianceNumericTuple(RadianceDefault):
 
         numType: Optional. Acceptable inputs are float or int. If specified, the
             __set__ method will ensure that the value is stored in that type.
+
+        defaultValue: Optional. The value to be assigned in case no value is
+            assigned by the user. If the default value is not specified then
+            the attribute won't be considered int the creation of the
+            toRadString string representation of the component.
     """
     def __init__(self, name, descriptiveName=None, validRange=None,
-                 acceptedInputs=None, tupleSize=None, numType=None):
+                 acceptedInputs=None, tupleSize=None, numType=None,
+                 defaultValue=None):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
-                                 validRange)
+                                 validRange,defaultValue)
         self._tupleSize = tupleSize
         self._type = numType
 
