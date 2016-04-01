@@ -13,22 +13,22 @@ class Rcollate(RadianceCommand):
     Attributes:
 
     """
-    h = RadianceBoolFlag('h', 'header information',
-                         acceptedInputs=(True, 'i', 'o'))
+    headerInfo = RadianceBoolFlag('h', 'header information',
+                                  acceptedInputs=(True, 'i', 'o'))
     w = RadianceBoolFlag('w', 'warning messages', acceptedInputs=(True,))
     t = RadianceBoolFlag('t', 'transpose', acceptedInputs=(True,))
     ic = RadianceNumber('ic', 'input columns', numType=int)
-    ir = RadianceNumber('ir', 'input rows', numType=int)
+    ir = RadianceNumber('ir', 'input rows', numType=int,defaultValue=45)
     oc = RadianceNumber('ic', 'ouput columns', numType=int)
     orX = RadianceNumber('orX', 'output rows', numType=int)
     matrixFile = RadiancePath('matrixFile', 'matrix file', expandRelative=True,
                               checkExists=True)
 
-    def __init__(self, h=None, w=None, t=None, ic=None, ir=None, oc=None,
+    def __init__(self, headerInfo=None, w=None, t=None, ic=None, ir=None, oc=None,
                  orX=None,
                  f=None, matrixFile=None, outputName=None):
         RadianceCommand.__init__(self)
-        self.h = h
+        self.h = headerInfo
         self.w = w
         self.t = t
         self.ic = ic
@@ -76,16 +76,18 @@ class Rcollate(RadianceCommand):
 
         commandInputs = ""
         for key, value in fmtDict.items():
-            try:
                 currentValue = getattr(self, key)
-                currentFlag, currentFormatter = value
-                commandInputs += currentFormatter(currentFlag, currentValue)
-            except AttributeError:
-                pass
+                if currentValue is not None:
+                    currentFlag, currentFormatter = value
+                    commandInputs += currentFormatter(currentFlag, currentValue)
 
         outputFileName = self.outputName
-        if self.outputName:
-            outputFileName = os.path.splitext(self.inputFiles[0])[0] + '.dat'
+        if not self.outputName:
+            try:
+                outputFileName = os.path.splitext(self.inputFiles[0])[0] + \
+                                 '.dat'
+            except TypeError:
+                outputFileName = None
 
         radString = "%s %s %s > %s" % (
             os.path.join(self.radbinPath, 'rcollate'),
@@ -99,4 +101,4 @@ class Rcollate(RadianceCommand):
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return "matrixFile"
+        self.matrixFile
