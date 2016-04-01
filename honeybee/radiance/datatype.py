@@ -343,7 +343,7 @@ class RadianceNumericTuple(RadianceDefault):
                           % (self._nameString, finalValue, maxVal, minVal)
                     warnings.warn(msg)
 
-            setattr(instance, self._name, finalValue)
+            setattr(instance, self._name, tuple(finalValue))
 
 
 class RadiancePath(RadianceDefault):
