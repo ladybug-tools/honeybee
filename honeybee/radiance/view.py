@@ -11,17 +11,28 @@ class View(object):
     u"""A radiance view."""
 
     # init radiance types
-    viewPoint = RadianceNumericTuple('vp', 'view point', tupleSize=3, numType=float)
-    viewDirection = RadianceNumericTuple('vd', 'view direction', tupleSize=3, numType=float)
-    viewUpVector = RadianceNumericTuple('vu', 'view up vector', tupleSize=3, numType=float)
-    # viewType = RadianceNumber('vt', 'view type')  # This will be changed later. Waiting for Sarith's input.
+    viewPoint = RadianceNumericTuple('vp', 'view point', tupleSize=3, numType=float,
+                                     defaultValue=(0, 0, 0))
+
+    viewDirection = RadianceNumericTuple('vd', 'view direction', tupleSize=3,
+                                         numType=float, defaultValue=(0, 0, 1))
+
+    viewUpVector = RadianceNumericTuple('vu', 'view up vector', tupleSize=3,
+                                        numType=float, defaultValue=(0, 1, 0))
+
     viewHSize = RadianceNumber('vh', 'view horizontal size', numType=float)
     viewVSize = RadianceNumber('vv', 'view vertical size', numType=float)
+
     xRes = RadianceNumber('x', 'x resolution', numType=int)
     yRes = RadianceNumber('y', 'y resolution', numType=int)
     viewShift = RadianceNumber('vs', 'view shift', numType=float)
     viewLift = RadianceNumber('vl', 'view lift', numType=float)
+
     __viewForeClip = RadianceNumber('vo', 'view fore clip distance', numType=float)
+
+    _viewTypes = {0: 'vtv', 1: 'vth', 2: 'vtl', 3: 'vtc', 4: 'vta', 5: 'vts'}
+    __viewType = RadianceNumber('vt', 'view type', numType=int, validRange=[0, 5],
+                                defaultValue=0)
 
     def __init__(self, viewPoint=None, viewDirection=None, viewUpVector=None,
                  viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
@@ -87,28 +98,14 @@ class View(object):
             > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500 -vo 100.000
             > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500 -vo 100.000
         """
-        self.viewPoint = (0, 0, 0) if not viewPoint else viewPoint
+        self.viewPoint = viewPoint
         """Set the view point (-vp) to (x, y, z)."""
 
-        self.viewDirection = (0, 0, 1) if not viewDirection else viewDirection
+        self.viewDirection = viewDirection
         """Set the view direction (-vd) vector to (x, y, z)."""
 
-        self.viewUpVector = (0, 1, 0) if not viewUpVector else viewUpVector
+        self.viewUpVector = viewUpVector
         """Set the view up (-vu) vector (vertical direction) to (x, y, z)."""
-
-        __viewTypes = {0: 'vtv', 1: 'vth', 2: 'vtl', 3: 'vtc', 4: 'vta', 5: 'vts'}
-        self.viewType = __viewTypes[viewType] if viewType in __viewTypes else __viewTypes[0]
-        """Set view type (-vt) to one of the choices below.
-                0: Perspective (v), 1: Hemispherical fisheye (h),
-                2: Parallel (l),    3: Cylindrical panorma (c),
-                4: Angular fisheye (a),
-                5: Planisphere [stereographic] projection (s)
-        """
-
-        # set view size to 180 degrees for fisheye views
-        if self.viewType in ['vth', 'vta', 'vts']:
-            viewHSize = 180
-            viewVSize = 180
 
         self.viewHSize = viewHSize
         """Set the view horizontal size (-vs). For a perspective projection
@@ -138,6 +135,35 @@ class View(object):
             actual image will be lifted up from the specified view.
         """
 
+        self.viewType = viewType
+        """Set and get view type (-vt) to one of the choices below (0-5).
+        0: Perspective (v), 1: Hemispherical fisheye (h),
+        2: Parallel (l),    3: Cylindrical panorma (c),
+        4: Angular fisheye (a),
+        5: Planisphere [stereographic] projection (s)
+        """
+
+    @property
+    def viewType(self):
+        """Set and get view type (-vt) to one of the choices below (0-5).
+
+        0: Perspective (v), 1: Hemispherical fisheye (h),
+        2: Parallel (l),    3: Cylindrical panorma (c),
+        4: Angular fisheye (a),
+        5: Planisphere [stereographic] projection (s)
+        """
+        return self.__viewType
+
+    @viewType.setter
+    def viewType(self, value):
+        self.__viewType = value
+
+        # set view size to 180 degrees for fisheye views
+        if self.viewType in [1, 4, 5]:
+            self.viewHSize = 180
+            self.viewVSize = 180
+            print "Changed viewHSize and viewVSize to 180 for fisheye view type."
+
     def calculateViewGrid(self, xDivCount=1, yDivCount=1):
         """Return a list of views for grid of views.
 
@@ -164,17 +190,17 @@ class View(object):
         _x = int(self.xRes / xDivCount)
         _y = int(self.yRes / yDivCount)
 
-        if self.viewType == 'vtl':
-            # parallel view
+        if self.viewType == 2:
+            # parallel view (vtl)
             _vh = self.viewHSize / xDivCount
             _vv = self.viewVSize / yDivCount
 
-        elif self.viewType == 'vtv':
-            # perspective
+        elif self.viewType == 0:
+            # perspective (vtv)
             _vh = (2. * 180. / PI) * math.atan(((PI / 180. / 2.) * self.viewHSize) / xDivCount)
             _vv = (2. * 180. / PI) * math.atan(math.tan((PI / 180. / 2.) * self.viewVSize) / yDivCount)
 
-        elif self.viewType in ['vth', 'vta', 'vts']:
+        elif self.viewType in [1, 4, 5]:
             # fish eye
             _vh = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewHSize) / xDivCount)
             _vv = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewVSize) / yDivCount)
@@ -230,7 +256,7 @@ class View(object):
         """Return full Radiance definition."""
         # create base information of view
         _view = "-%s -vp %.3f %.3f %.3f -vd %.3f %.3f %.3f -vu %.3f %.3f %.3f" % (
-            self.viewType,
+            self._viewTypes[self.viewType],
             self.viewPoint[0], self.viewPoint[1], self.viewPoint[2],
             self.viewDirection[0], self.viewDirection[1], self.viewDirection[2],
             self.viewUpVector[0], self.viewUpVector[1], self.viewUpVector[2]
@@ -249,11 +275,8 @@ class View(object):
                 "-vs %.3f -vl %.3f" % (self.viewShift, self.viewLift)
             )
 
-        try:
+        if self.__viewForeClip:
             __viewComponents.append("-vo %.3f" % self.__viewForeClip)
-        except AttributeError:
-            # fore plane section is not set
-            pass
 
         return " ".join(__viewComponents)
 
