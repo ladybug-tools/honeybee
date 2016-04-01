@@ -252,7 +252,7 @@ class RadianceNumber(RadianceDefault):
                                                  maxVal, minVal)
                     warnings.warn(msg)
 
-            setattr(instance, self._name, finalValue)
+            setattr(instance, self._name, RadianceNumberValue(self._name, finalValue))
 
 
 class RadianceNumericTuple(RadianceDefault):
@@ -408,6 +408,25 @@ class RadiancePath(RadianceDefault):
             setattr(instance, self._name, finalValue)
 
 
+class RadianceNumberValue(object):
+    """An object that represents radiance number."""
+
+    __slots__ = ['_name', '_value']
+
+    def __init__(self, name, value):
+        self._name = name.replace("_", "")
+        self._value = value
+
+    def __str__(self):
+        return str(self._value)
+
+    def __repr__(self):
+        return self._value
+
+    def toRadString(self):
+        """Return formatted value for Radiance."""
+        return "-%s %s" % (self._name, str(self._value))
+
 class RadInputStringFormatter:
     """This class implements a bunch of static methods for formatting Radiance
     input flags. I am encapsulating them within this one class for the sake of
@@ -488,7 +507,7 @@ class RadInputStringFormatter:
 if __name__ == "__main__":
     class SomeRadianceBinary(object):
         ab = RadianceNumber('ab', 'ambinent bounces', None, [], int, True)
-        dj = RadianceNumber('dj', 'source jitter')
+        dj = RadianceNumber('dj', 'source jitter', validRange=[0, 2])
         weaFile = RadiancePath('weaFile', 'Weather File Path', True, True,
                                extension='.wea')
 
@@ -497,5 +516,9 @@ if __name__ == "__main__":
             self.dj = dj
             self.weaFile = weaFile
 
-    radBinary = SomeRadianceBinary(5, 1.4, r"C:\Users\Sarith\Desktop\x.rad")
+    radBinary = SomeRadianceBinary(5, 1.4)
     print(radBinary.dj)
+
+    radBinary.dj = 1.6
+    print(radBinary.dj)
+    print(radBinary.dj.toRadString())
