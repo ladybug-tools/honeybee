@@ -40,8 +40,8 @@ class ViewTestCase(unittest.TestCase):
         """Change location and direction."""
         self.v.viewPoint = (0, 0, 10)
         self.v.viewDirection = (0, 0, -1)
-        self.assertEqual(self.v.viewPoint, [0, 0, 10])
-        self.assertEqual(self.v.viewDirection, [0, 0, -1])
+        self.assertEqual(self.v.viewPoint, (0, 0, 10))
+        self.assertEqual(self.v.viewDirection, (0, 0, -1))
 
 
 if __name__ == '__main__':
