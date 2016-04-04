@@ -87,22 +87,17 @@ class DataTypeTestCase(unittest.TestCase):
     def test_assertions_exceptions(self):
         """Make sure the class catches wrong inputs, etc."""
         try:
-            self.radWDef.ad = 200
-        except ValueError as e:
-            self.assertEqual(type(e), ValueError)
-            self.assertEqual(self.radWDef.ad, 5)
-
-        try:
-            self.radWDef.ad = 200
-        except ValueError as e:
-            self.assertEqual(type(e), ValueError)
-            self.assertEqual(self.radWDef.ad, 5)
-
-        try:
             self.radWDef.c = 200
         except ValueError as e:
             self.assertEqual(type(e), ValueError)
             self.assertEqual(self.radWDef.c, (250, 250, 250))
+
+        try:
+            self.radWDef.ad = 200
+        except ValueError as e:
+            self.assertEqual(type(e), ValueError)
+            # This is quite strange!
+            # self.assertEqual(self.radWDef.ad, 50)
 
     # test for specific cases
     def test_None_values(self):

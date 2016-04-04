@@ -1,1 +1,1 @@
-import radiance_recipe_gridbased_test,radiance_view_test
+import radiance_datatype_test,radiance_parameters_parameterbase_test,radiance_recipe_gridbased_test,radiance_view_test
