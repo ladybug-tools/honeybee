@@ -162,6 +162,7 @@ class RadianceValue(RadianceDefault):
         o = RadianceValue('o', 'output format', defaultValue='f',
                           acceptedInputs=('f', 'd'))
     """
+    __slots__ = ()
 
     def __init__(self, name, descriptiveName=None, acceptedInputs=None,
                  defaultValue=None, isJoined=False):
@@ -226,18 +227,18 @@ class RadianceBoolFlag(RadianceDefault):
             else:
                 value = RadianceBoolType(self._name, None,
                                          self._isDualSign)
-
         return value
 
     def __set__(self, instance, value):
         """Overwrite set for RadianceBoolType."""
-        if self._acceptedInputs and value is not None:
-            inputs = list(self._acceptedInputs)
-            if value not in inputs:
-                raise ValueError("The value for %s should be one of the"
-                                 " following: %s. The provided value was %s"
-                                 % (self._nameString,
-                                    ",".join(map(str, inputs)), value))
+        if value is not None:
+            if self._acceptedInputs:
+                inputs = list(self._acceptedInputs)
+                if value not in inputs:
+                    raise ValueError("The value for %s should be one of the"
+                                     " following: %s. The provided value was %s"
+                                     % (self._nameString,
+                                        ",".join(map(str, inputs)), value))
             setattr(instance, self._name, RadianceBoolType(self._name, bool(value),
                     self._isDualSign))
 
@@ -286,6 +287,8 @@ class RadianceNumber(RadianceDefault):
             the attribute won't be considered int the creation of the
             toRadString string representation of the component.
     """
+
+    __slots__ = ('_checkPositive', '_type')
 
     def __init__(self, name, descriptiveName=None, validRange=None,
                  acceptedInputs=None, numType=None, checkPositive=False,

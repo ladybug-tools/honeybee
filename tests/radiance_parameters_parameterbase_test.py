@@ -1,5 +1,5 @@
 import unittest
-from honeybee.radiance.parameters._parametersBase import RadianceParameters
+from honeybee.radiance.parameters._parametersbase import RadianceParameters
 from honeybee.radiance.datatype import RadianceNumber, RadianceValue
 
 
