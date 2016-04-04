@@ -27,4 +27,4 @@ def main(verbose=True, pathToPython="c:\\python27"):
 
 if __name__ == "__main__":
     print "Running tests..."
-    main(verbose=True)
+    main(verbose=False)

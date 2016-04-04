@@ -3,6 +3,7 @@
 from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
 from ...hbpointgroup import AnalysisPointGroup
 from .recipeBase import HBDaylightAnalysisRecipe
+from ..parameters.gridbased import LowQuality
 from ..command.oconv import Oconv
 from ..command.rtrace import Rtrace
 from ...helper import preparedir
@@ -25,8 +26,8 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
             will be assigned.
         simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
-        radParameters: Radiance parameters for this analysis.
-            (Default: RadianceParameters.LowQuality)
+        radParameters: Radiance parameters for grid based analysis (rtrace).
+            (Default: gridbased.LowQuality)
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
     """
@@ -38,13 +39,12 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         """Create grid-based recipe."""
         HBDaylightAnalysisRecipe.__init__(self, sky=sky,
                                           simulationType=simulationType,
-                                          radParameters=radParameters,
                                           hbObjects=hbObjects,
                                           subFolder=subFolder)
 
         self.__batchFile = None
         self.resultsFile = []
-
+        self.radianceParameters = radParameters
         # create a result loader to load the results once the analysis is done.
         self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
                                                      self.resultsFile)
@@ -62,6 +62,19 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         """Return analysis point groups."""
         raise ValueError("You can't set pointGroups directly. " +
                          "Use updatePointGroups method instead.")
+
+    @property
+    def radianceParameters(self):
+        """Get and set Radiance parameters."""
+        return self.__radParameters
+
+    @radianceParameters.setter
+    def radianceParameters(self, radParameters):
+        if not radParameters:
+            radParameters = LowQuality()
+        assert hasattr(radParameters, "isRadianceParameters"), \
+            "%s is not a radiance parameters." % type(radParameters)
+        self.__radParameters = radParameters
 
     def updatePointGroups(self, pointGroups, vectorGroups=[]):
         """Update point groups.
@@ -116,7 +129,8 @@ class HBGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
             pointGroups = [[pointGroups]]
             vectorGroups = [[vectorGroups]]
         # if point group is flatten - create a single group
-        elif not isinstance(pointGroups[0][0], Iterable) and not hasattr(pointGroups[0][0], "X"):
+        elif not isinstance(pointGroups[0][0], Iterable) \
+                and not hasattr(pointGroups[0][0], "X"):
             pointGroups = [pointGroups]
             vectorGroups = [vectorGroups]
 
