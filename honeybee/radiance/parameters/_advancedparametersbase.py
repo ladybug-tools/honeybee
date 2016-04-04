@@ -1,5 +1,5 @@
 """Radiance Parameters Base class with methods to add descriptor type parameters."""
-from _parametersBase import RadianceParameters
+from _parametersbase import RadianceParameters
 from ..datatype import RadiancePath, RadianceNumber, RadianceBoolFlag, \
     RadianceNumericTuple, RadianceValue
 
@@ -37,7 +37,7 @@ class AdvancedRadianceParameters(RadianceParameters):
 
     def addRadianceNumber(self, name, descriptiveName=None, validRange=None,
                           acceptedInputs=None, numType=None, checkPositive=False,
-                          defaultValue=None):
+                          defaultValue=None, attributeName=None):
         """Add a radiance number to parameters.
 
         Attributes:
@@ -79,19 +79,24 @@ class AdvancedRadianceParameters(RadianceParameters):
                 assigned by the user. If the default value is not specified then
                 the attribute won't be considered int the creation of the
                 toRadString string representation of the component.
+
+            attributeName: Optional. A string the will be used as the attribute
+                name that will be added to parameters class. If None name will be
+                used insted.
         """
         # set the new attribute based on inputs
+        _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
-                name,
+                _attrname,
                 RadianceNumber(name, descriptiveName, validRange, acceptedInputs,
                                numType, checkPositive, defaultValue)
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(name)
+        self.dynamicKeys.append(_attrname)
 
     def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
-                         defaultValue=None, isJoined=False):
+                         defaultValue=None, isJoined=False, attributeName=None):
         """
         Add a radiance string value.
 
@@ -123,19 +128,24 @@ class AdvancedRadianceParameters(RadianceParameters):
 
             isJoined: Set to True if the Boolean should be returned as a joined
                 output (i.e. -of, -od) (Default: False)
+
+            attributeName: Optional. A string the will be used as the attribute
+                name that will be added to parameters class. If None name will be
+                used insted.
         """
         # set the new attribute based on inputs
+        _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
-                name,
+                _attrname,
                 RadianceValue(name, descriptiveName, acceptedInputs,
                               defaultValue, isJoined)
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(name)
+        self.dynamicKeys.append(_attrname)
 
     def addRadiancePath(self, name, descriptiveName=None, relativePath=None,
-                        checkExists=False, extension=None):
+                        checkExists=False, extension=None, attributeName=None):
         """
         Add a radiance file path.
 
@@ -161,19 +171,24 @@ class AdvancedRadianceParameters(RadianceParameters):
                 files to exist before the command executes.
 
             extension: Optional. Test the extension of the file.
+
+            attributeName: Optional. A string the will be used as the attribute
+                name that will be added to parameters class. If None name will be
+                used insted.
         """
         # set the new attribute based on inputs
+        _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
-                name,
+                _attrname,
                 RadiancePath(name, descriptiveName, relativePath,
                              checkExists, extension)
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(name)
+        self.dynamicKeys.append(_attrname)
 
-    def addRadianceBoolFlag(self, name, descriptiveName=None,
-                            defaultValue=None, isDualSign=False):
+    def addRadianceBoolFlag(self, name, descriptiveName=None, defaultValue=None,
+                            isDualSign=False, attributeName=None):
         """Add a boolean value to parameters.
 
         Attributes:
@@ -197,19 +212,24 @@ class AdvancedRadianceParameters(RadianceParameters):
 
             isDualSign: Set to True if the Boolean should return +/- value.
                 (i.e. +I/-I) (Default: False)
+
+            attributeName: Optional. A string the will be used as the attribute
+                name that will be added to parameters class. If None name will be
+                used insted.
         """
         # set the new attribute based on inputs
+        _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
-                name,
+                _attrname,
                 RadianceBoolFlag(name, descriptiveName, defaultValue, isDualSign)
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(name)
+        self.dynamicKeys.append(_attrname)
 
     def addRadianceNumericTuple(self, name, descriptiveName=None, validRange=None,
                                 acceptedInputs=None, tupleSize=None, numType=None,
-                                defaultValue=None):
+                                defaultValue=None, attributeName=None):
         """Add a radiance numeric tuple e.g (0.5,0.3,0.2).
 
         Attributes:
@@ -247,14 +267,19 @@ class AdvancedRadianceParameters(RadianceParameters):
                 assigned by the user. If the default value is not specified then
                 the attribute won't be considered int the creation of the
                 toRadString string representation of the component.
+
+            attributeName: Optional. A string the will be used as the attribute
+                name that will be added to parameters class. If None name will be
+                used insted.
         """
         # set the new attribute based on inputs
+        _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
-                name,
+                _attrname,
                 RadianceNumericTuple(name, descriptiveName, validRange,
                                      acceptedInputs, tupleSize, numType,
                                      defaultValue)
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(name)
+        self.dynamicKeys.append(_attrname)

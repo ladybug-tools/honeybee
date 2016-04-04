@@ -1,5 +1,5 @@
 """Radiance Properties for HBSurfaces."""
-from material.materialBase import RadianceMaterial
+from material.materialbase import RadianceMaterial
 
 
 # TODO: Currently Radiance properties for HBSurface is limited to material

@@ -590,6 +590,71 @@ class RadianceBoolType(RadianceDataType):
         except TypeError:
             raise ValueError("Failed to set the value to {}".format(self._value))
 
+    def __int__(self):
+        return int(self._value)
+
+    def __float__(self):
+        return float(self._value)
+
+    def __eq__(self, other):
+        return self._value == float(other)
+
+    def __ne__(self, other):
+        return self._value != float(other)
+
+    def __lt__(self, other):
+        return self._value < other
+
+    def __gt__(self, other):
+        return self._value > other
+
+    def __le__(self, other):
+        return self._value <= other
+
+    def __ge__(self, other):
+        return self._value >= other
+
+    def __add__(self, other):
+        return self._value + other
+
+    def __sub__(self, other):
+        return self._value - other
+
+    def __mul__(self, other):
+        return self._value * other
+
+    def __floordiv__(self, other):
+        return self._value // other
+
+    def __div__(self, other):
+        return self._value / other
+
+    def __mod__(self, other):
+        return self._value % other
+
+    def __pow__(self, other):
+        return self._value**other
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+        return other - self._value
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __rfloordiv__(self, other):
+        return other // self._value
+
+    def __rdiv__(self, other):
+        return other / self._value
+
+    def __rmod__(self, other):
+        return other % self._value
+
+    def __rpow__(self, other):
+        return other**self._value
 
 class RadiancePathType(RadianceDataType):
     """Radiance path."""
@@ -616,6 +681,13 @@ class RadiancePathType(RadianceDataType):
 
         except TypeError:
             raise ValueError("Failed to set the value to {}".format(self._value))
+
+    @property
+    def normpath(self):
+        if self._value is None:
+            return None
+        else:
+            return os.path.normpath(self._value)
 
 
 class RadianceNumberType(RadianceDataType):

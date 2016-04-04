@@ -91,7 +91,7 @@ class RadianceCommand(object):
             "You need at least one file to create an octree."
 
         for f in self.inputFiles:
-            assert os.path.exists(f), "Invalid Input File: %s doesn't exist" % f
+            assert os.path.exists(str(f)), "Invalid Input File: %s doesn't exist" % f
 
         self.__checkExecutable(raiseException=True)
         self.__checkLibs(raiseException=True)

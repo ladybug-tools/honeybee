@@ -1,6 +1,6 @@
 """Radiance Analysis Recipes."""
 
-from recipeBase import HBDaylightAnalysisRecipe
+from recipebase import HBDaylightAnalysisRecipe
 
 
 class HBImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):

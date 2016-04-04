@@ -1,3 +1,3 @@
-__all__ = ["recipeBase", "gridbased", "imagebased", "daylightfactor", "annual"]
+__all__ = ["recipebase", "gridbased", "imagebased", "daylightfactor", "annual"]
 
-import recipeBase, gridbased, imagebased, daylightfactor, annual
+import recipebase, gridbased, imagebased, daylightfactor, annual

@@ -2,7 +2,7 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Plastic
 """
-from materialBase import RadianceMaterial
+from materialbase import RadianceMaterial
 
 
 class PlasticMaterial(RadianceMaterial):
