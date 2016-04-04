@@ -17,8 +17,9 @@ dmtxpar = GendaymtxParameters()
 # ask only for direct sun
 dmtxpar.onlyDirect = True
 
-dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea",
-                 gendaymtxParameters=dmtxpar)
+# dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea",
+#                  gendaymtxParameters=dmtxpar)
 
-dmtx.gendaymtxParameters.verboseReport = False
+dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea")
+# dmtx.gendaymtxParameters.verboseReport = False
 dmtx.execute()

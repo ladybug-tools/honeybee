@@ -1,6 +1,8 @@
 # coding=utf-8
 from commandbase import RadianceCommand
 from ..datatype import RadiancePath
+from ..parameters.gendaymtx import GendaymtxParameters
+
 import os
 
 
@@ -76,12 +78,24 @@ class Gendaymtx(RadianceCommand):
         self.outputName = outputName
         self.gendaymtxParameters = gendaymtxParameters
 
+    @property
+    def gendaymtxParameters(self):
+        """Get and set gendaymtxParameters."""
+        return self.__gendaymtxParameters
+
+    @gendaymtxParameters.setter
+    def gendaymtxParameters(self, mtx):
+        self.__gendaymtxParameters = mtx if mtx is not None \
+            else GendaymtxParameters()
+
+        assert hasattr(self.gendaymtxParameters, "isRadianceParameters"), \
+            "input gendaymtxParameters is not a valid parameters type."
+
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-
         # generate the name from self.weaFile
         outputFile = os.path.splitext(str(self.weaFile))[0] + ".mtx" \
-            if self.outputName is None and self.weaFile != None \
+            if self.outputName is None and self.weaFile.normpath is not None \
             else self.outputName
 
         radString = "%s %s %s > %s" % (
@@ -92,7 +106,7 @@ class Gendaymtx(RadianceCommand):
         )
 
         # make sure wea file is provided
-        assert self.weaFile != None, \
+        assert str(self.weaFile.normpath is not None), \
             "To generate a valid gendaymtx you need to specify the path to wea file." + \
             "\nCurrent command won't work: %s" % radString
 
