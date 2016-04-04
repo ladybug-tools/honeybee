@@ -1,6 +1,5 @@
 """Radiance Analysis Recipes."""
 from abc import ABCMeta, abstractmethod
-from ..parameters import LowQuality
 from ...helper import preparedir
 
 import os
@@ -101,19 +100,6 @@ class HBDaylightAnalysisRecipe(object):
     def sky(self, newSky):
         assert hasattr(newSky, "isRadianceSky"), "%s is not a valid Honeybee sky." % type(newSky)
         self.__sky = newSky
-
-    @property
-    def radianceParameters(self):
-        """Get and set Radiance parameters."""
-        return self.__radParameters
-
-    @radianceParameters.setter
-    def radianceParameters(self, radParameters):
-        if not radParameters:
-            radParameters = LowQuality()
-        assert hasattr(radParameters, "isRadianceParameters"), \
-            "%s is not a radiance parameters." % type(radParameters)
-        self.__radParameters = radParameters
 
     @property
     def subFolder(self):

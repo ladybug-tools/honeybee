@@ -1,6 +1,6 @@
 import os
 from commandBase import RadianceCommand
-from ..parameters import LowQuality
+from ..parameters.gridbased import LowQuality
 
 
 class Rtrace(RadianceCommand):
@@ -84,7 +84,7 @@ class Rtrace(RadianceCommand):
     def radianceParameters(self, radParameters):
         if not radParameters:
             radParameters = LowQuality()
-        assert hasattr(radParameters, 'isRadianceParameters'), \
+        assert hasattr(radParameters, 'isGridBasedRadianceParameters'), \
             "%s is not a radiance parameters." % type(radParameters)
         self.__radParameters = radParameters
 
