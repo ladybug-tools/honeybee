@@ -1,15 +1,11 @@
-from honeybee.radiance.parameters.gridbased import GridBasedParameters, LowQuality
+from honeybee.radiance.sky.certainIlluminance import SkyWithCertainIlluminanceLevel as radSky
+from honeybee.radiance.recipe.gridbased import HBGridBasedAnalysisRecipe
 
-rp = GridBasedParameters(0)
-print rp.toRadString()
+sky = radSky(1000)
+rp = HBGridBasedAnalysisRecipe(sky, pointGroups=[0, 0, 0])
 
-
-rp = GridBasedParameters(1)
-print rp.toRadString()
-
-rp = GridBasedParameters(2)
-print rp.toRadString()
-
-rp.ab = 5
-rp.u = True
-print rp.toRadString()
+print rp.radianceParameters
+rp.writeToFile("c:\\ladybug", "test3")
+rp.run(debug=False)
+print
+print rp.results(flattenResults=True)

@@ -1,6 +1,7 @@
 import os
 from commandBase import RadianceCommand
 from ..parameters.gridbased import LowQuality
+from ..datatype import RadiancePath
 
 
 class Rtrace(RadianceCommand):
@@ -9,27 +10,36 @@ class Rtrace(RadianceCommand):
     Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html
 
     Attributes:
-        outputName: Results file name. Usually the same as the project name
-            (Default: untitled)
-        octFiles: Sorted list of full path to input rad files (Default: [])
-        radParameters: Radiance parameters for this analysis.
-            (Default: RadianceParameters.LowQuality)
+        projectName: Name of this run. It will be used to set-up results file
+            name (Default: untitled).
+        octFile: Full path to input oct files (Default: None)
+        pointFile: Full path to input pt files (Default: None)
+        simulationType: An integer to define type of analysis.
+            0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
+        radianceParameters: Radiance parameters for this analysis.
+            (Default: girdbased.LowQuality)
     """
 
-    def __init__(self, outputName="untitled", octFile=None, pointFile=None,
-                 simulationType=None, radianceParameters=None):
+    outputFile = RadiancePath("res", "results file", extension=".res")
+    octFile = RadiancePath("oct", "octree file", extension=".oct")
+    pointFile = RadiancePath("points", "test point file", extension=".pts")
+
+    def __init__(self, projectName="untitled", octFile=None, pointFile=None,
+                 simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
         RadianceCommand.__init__(self)
 
-        self.outputName = outputName
+        self.outputFile = projectName if projectName.lower().endswith(".res") \
+            else projectName + ".res"
         """oct file name which is usually the same as the project name (Default: untitled)"""
 
         self.octFile = octFile
-        """Full path to oct file."""
+        """Full path to input oct file."""
 
         self.pointFile = pointFile
-        """Full path to points file."""
+        """Full path to input points file."""
 
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
@@ -38,6 +48,13 @@ class Rtrace(RadianceCommand):
 
         self.radianceParameters = radianceParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+
+        # add -h to parameters to get no header, True is no header
+        self.radianceParameters.addRadianceBoolFlag("h", "output header switch", defaultValue=True)
+
+        # add error file as an extra parameter for rtrace.
+        # this can be added under default radiance parameters later.
+        self.radianceParameters.addRadianceValue("e", "error output file", defaultValue="error.txt")
 
     @property
     def simulationType(self):
@@ -88,16 +105,17 @@ class Rtrace(RadianceCommand):
             "%s is not a radiance parameters." % type(radParameters)
         self.__radParameters = radParameters
 
+    # TODO: Implement relative path
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        return "%s %s -h %s -e error.txt %s < %s > %s" % (
+        return "%s %s %s %s < %s > %s" % (
             os.path.join(self.radbinPath, "rtrace"),
             self.iswitch,
-            self.radianceParameters
-                .toRadString(["xScale", "yScale", "av", "dj", "pj", "ps", "pt"]),
-            self.octFile,
-            self.pointFile,
-            self.outputName if self.outputName.lower().endswith(".res") else self.outputName + ".res")
+            self.radianceParameters.toRadString(),
+            self.octFile.toRadString(),
+            self.pointFile.toRadString(),
+            self.outputFile.toRadString()
+        )
 
     def inputFiles(self):
         """Input files for this command."""

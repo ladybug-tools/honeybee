@@ -33,22 +33,22 @@ class GridBasedParameters(AdvancedRadianceParameters):
         rp = GridBasedParameters(0)
         print rp.toRadString()
 
-        > -aa 0.25 -ps 8 -ab 2 -dj 0 -ad 512 -pt 0.15 -dc 0.25 -st 0.85 -lw 0.05 -as 128 -ar 16 -lr 4 -pj 0.6 -dt 0.5 -dr 0 -ds 0.5 -dp 64
+        > -aa 0.25 -ab 2 -ad 512 -dc 0.25 -st 0.85 -lw 0.05 -as 128 -ar 16 -lr 4 -dt 0.5 -dr 0 -ds 0.5 -dp 64
 
         rp = GridBasedParameters(1)
         print rp.toRadString()
 
-        > -aa 0.2 -ps 4 -ab 3 -dj 0.5 -ad 2048 -pt 0.1 -dc 0.5 -st 0.5 -lw 0.01 -as 2048 -ar 64 -lr 6 -pj 0.9 -dt 0.25 -dr 1 -ds 0.25 -dp 256
+        > -aa 0.2 -ab 3 -ad 2048 -dc 0.5 -st 0.5 -lw 0.01 -as 2048 -ar 64 -lr 6 -dt 0.25 -dr 1 -ds 0.25 -dp 256
 
         rp = GridBasedParameters(2)
         print rp.toRadString()
-        > -aa 0.1 -ps 2 -ab 6 -dj 0.7 -ad 4096 -pt 0.05 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8 -pj 0.9 -dt 0.15 -dr 3 -ds 0.05 -dp 512
+        > -aa 0.1 -ab 6 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512
 
         rp.ab = 5
         rp.u = True
         print rp.toRadString()
 
-        > -aa 0.1 -ps 2 -ab 5 -dj 0.7 -ad 4096 -pt 0.05 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8 -pj 0.9 -dt 0.15 -dr 3 -ds 0.05 -dp 512 -u
+        > -aa 0.1 -ab 5 -dj 0.7 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512 -u
     """
 
     def __init__(self, quality):

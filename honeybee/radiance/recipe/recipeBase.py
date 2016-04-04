@@ -21,8 +21,7 @@ class HBDaylightAnalysisRecipe(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, sky, simulationType=None, radParameters=None,
-                 hbObjects=None, subFolder=""):
+    def __init__(self, sky, simulationType=None, hbObjects=None, subFolder=""):
         """Create Analysis recipe."""
         self.sky = sky
         """A honeybee sky for the analysis."""
@@ -31,9 +30,6 @@ class HBDaylightAnalysisRecipe(object):
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         """
-
-        self.radianceParameters = radParameters
-        """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
 
         self.simulationType = simulationType
 
