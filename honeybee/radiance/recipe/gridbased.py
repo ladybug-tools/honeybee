@@ -2,7 +2,7 @@
 
 from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
 from ...hbpointgroup import AnalysisPointGroup
-from .recipeBase import HBDaylightAnalysisRecipe
+from .recipebase import HBDaylightAnalysisRecipe
 from ..parameters.gridbased import LowQuality
 from ..command.oconv import Oconv
 from ..command.rtrace import Rtrace

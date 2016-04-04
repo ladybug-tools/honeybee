@@ -1,5 +1,5 @@
 import os
-from commandBase import RadianceCommand
+from commandbase import RadianceCommand
 from ..parameters.gridbased import LowQuality
 from ..datatype import RadiancePath
 
@@ -15,7 +15,7 @@ class Rtrace(RadianceCommand):
         octFile: Full path to input oct files (Default: None)
         pointFile: Full path to input pt files (Default: None)
         simulationType: An integer to define type of analysis.
-            0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         radianceParameters: Radiance parameters for this analysis.
             (Default: girdbased.LowQuality)

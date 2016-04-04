@@ -1,4 +1,4 @@
-from commandBase import RadianceCommand
+from commandbase import RadianceCommand
 import os
 
 

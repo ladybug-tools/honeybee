@@ -1,8 +1,7 @@
 # coding=utf-8
-from commandBase import RadianceCommand
-import os, sys
-from ..datatype import *
-from ..datatype import RadInputStringFormatter as Rfmt
+from commandbase import RadianceCommand
+from ..datatype import RadiancePath
+import os
 
 
 class Gendaymtx(RadianceCommand):
@@ -13,110 +12,93 @@ class Gendaymtx(RadianceCommand):
     Please note that the first two inputs for each descriptor are for internal
     naming purposes only.
 
-    If provided in the above descriptors:
-    acceptedInputs : stands for inputs that acceptable for that attribute. For
-                    example, if the acceptedInputs=(True,False), specifying 2.3
-                    as the input will raise an error.
-
-    numType: stands for the numeric type that is acceptable.
-
     Attributes:
-    v = RadianceBoolFlag('v', 'verbose reporting', acceptedInputs=(True,False))
-    h = RadianceBoolFlag('h', 'disable header', acceptedInputs=(True,False))
-    d = RadianceBoolFlag('d', 'sun mtx only', acceptedInputs=(True,False))
-    s = RadianceBoolFlag('s', 'sky mtx only', acceptedInputs=(True,False))
-    r = RadianceNumber('r', 'zenith rotation', numType=float)
-    m = RadianceNumber('m', 'sky patches', numType=int)
-    g = RadianceNumericTuple('g', 'ground color', validRange=(0, 1),
-                             tupleSize=3,
-                             numType=float)
-    c = RadianceNumericTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
-                             numType=float)
-    o = RadianceBoolFlag('o', 'output format', acceptedInputs=('f', 'd'))
-    O = RadianceBoolFlag('O', 'radiation type',
-                         acceptedInputs=(0, 1, "'0'", "'1'"))
-    weaFile = RadiancePath('weaFile', descriptiveName='weather file path',
-                           expandRelative=True, checkExists=True,
-                           extension='.wea')
+        weaFile: Full path to input wea file (Default: None).
+        outputName: An optional name for output file name. If None the name of
+            .epw file will be used.
+        gendaymtxParameters: Radiance parameters for gendaymtx. If None Default
+            parameters will be set. You can use self.gendaymtxParameters to view,
+            add or remove the parameters before executing the command.
 
-    If this docstring is being viewed through a help file, a detailed
-    description of the descriptors can be found by scrolling down to the
-    section about Data descriptors.
+    Usage:
+
+        from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters
+        from honeybee.radiance.command.gendaymtx import Gendaymtx
+
+        # create and modify gendaymtxParameters
+        # generate sky matrix with default values
+        gmtx = GendaymtxParameters()
+
+        # ask only for direct sun
+        gmtx.onlyDirect = True
+
+        # create gendaymtx
+        dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea",
+                         gendaymtxParameters=dmtxpar)
+
+        # run gendaymtx
+        dmtx.execute()
+        > c:\radiance\bin\gendaymtx: reading weather tape 'C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea'
+        > c:\radiance\bin\gendaymtx: location 'IZMIR_TUR'
+        > c:\radiance\bin\gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west
+        > c:\radiance\bin\gendaymtx: 146 sky patches per time step
+        > c:\radiance\bin\gendaymtx: stepping through month 1...
+        > c:\radiance\bin\gendaymtx: stepping through month 2...
+        > c:\radiance\bin\gendaymtx: stepping through month 3...
+        > c:\radiance\bin\gendaymtx: stepping through month 4...
+        > c:\radiance\bin\gendaymtx: stepping through month 5...
+        > c:\radiance\bin\gendaymtx: stepping through month 6...
+        > c:\radiance\bin\gendaymtx: stepping through month 7...
+        > c:\radiance\bin\gendaymtx: stepping through month 8...
+        > c:\radiance\bin\gendaymtx: stepping through month 9...
+        > c:\radiance\bin\gendaymtx: stepping through month 10...
+        > c:\radiance\bin\gendaymtx: stepping through month 11...
+        > c:\radiance\bin\gendaymtx: stepping through month 12...
+        > c:\radiance\bin\gendaymtx: writing matrix with 8760 time steps...
+        > c:\radiance\bin\gendaymtx: done.
+
+        # change it not to be verbose
+        dmtx.gendaymtxParameters.verboseReport = False
+
+        # run it again
+        dmtx.execute()
+        >
     """
-    v = RadianceBoolFlag('v', 'verbose reporting', acceptedInputs=(True,False))
-    h = RadianceBoolFlag('h', 'disable header', acceptedInputs=(True,False))
-    d = RadianceBoolFlag('d', 'sun mtx only', acceptedInputs=(True,False))
-    s = RadianceBoolFlag('s', 'sky mtx only', acceptedInputs=(True,False))
-    r = RadianceNumber('r', 'zenith rotation', numType=float)
-    m = RadianceNumber('m', 'sky patches', numType=int)
-    g = RadianceNumericTuple('g', 'ground color', validRange=(0, 1),
-                             tupleSize=3,
-                             numType=float)
-    c = RadianceNumericTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
-                             numType=float)
-    o = RadianceBoolFlag('o', 'output format', acceptedInputs=('f', 'd'))
-    O = RadianceBoolFlag('O', 'radiation type',
-                         acceptedInputs=(0, 1, "'0'", "'1'"))
     weaFile = RadiancePath('weaFile', descriptiveName='weather file path',
-                           expandRelative=True, checkExists=True,
+                           relativePath=None, checkExists=False,
                            extension='.wea')
 
-    def __init__(self, weaFile=None, v=None, h=None, d=None, s=None, r=None,
-                 m=None, g=None, c=None,
-                 o=None, O=None, outputName=None):
+    def __init__(self, weaFile=None, outputName=None, gendaymtxParameters=None):
+        """Init command."""
         RadianceCommand.__init__(self)
-        self.v = v
-        self.h = h
-        self.d = d
-        self.s = s
-        self.r = r
-        self.m = m
-        self.g = g
-        self.c = c
-        self.o = o
-        self.O = O
+
         self.weaFile = weaFile
         self.outputName = outputName
+        self.gendaymtxParameters = gendaymtxParameters
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        fmtBool = Rfmt.boolean
-        fmtJoin = Rfmt.joined
-        fmtNormal = Rfmt.normal
 
-        fmtDict = {'v': ('v', fmtBool),
-                   'h': ('h', fmtBool),
-                   'd': ('d', fmtBool),
-                   's': ('s', fmtBool),
-                   'r': ('r', fmtNormal),
-                   'm': ('m', fmtNormal),
-                   'g': ('g', fmtNormal),
-                   'c': ('c', fmtNormal),
-                   'o': ('o', fmtJoin),
-                   'O': ('O', fmtJoin)}
-
-        commandInputs = ""
-        for key, value in fmtDict.items():
-            try:
-                currentValue = getattr(self, key)
-                currentFlag, currentFormatter = value
-                commandInputs += currentFormatter(currentFlag, currentValue)
-            except AttributeError:
-                pass
-
-        outputFileName = self.outputName
-        if not self.outputName:
-            outputFileName = os.path.splitext(self.inputFiles[0])[0] + '.mtx'
+        # generate the name from self.weaFile
+        outputFile = os.path.splitext(str(self.weaFile))[0] + ".mtx" \
+            if self.outputName is None and self.weaFile != None \
+            else self.outputName
 
         radString = "%s %s %s > %s" % (
             os.path.join(self.radbinPath, 'gendaymtx'),
-            commandInputs,
-            self.inputFiles[0],
-            outputFileName
+            self.gendaymtxParameters.toRadString(),
+            self.weaFile,
+            outputFile
         )
+
+        # make sure wea file is provided
+        assert self.weaFile != None, \
+            "To generate a valid gendaymtx you need to specify the path to wea file." + \
+            "\nCurrent command won't work: %s" % radString
 
         return radString
 
+    @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.weaFile
+        return (self.weaFile,)

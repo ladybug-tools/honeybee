@@ -4,7 +4,7 @@ from honeybee.radiance.datatype import RadianceNumber, RadianceValue
 
 
 class ParametersTestCase(unittest.TestCase):
-    """Test for (honeybee/radiance/parameters/_parametersBase.py)."""
+    """Test for (honeybee/radiance/parameters/_parametersbase.py)."""
 
     # preparing to test
     def setUp(self):
