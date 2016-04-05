@@ -29,7 +29,8 @@ class AdvancedParametersTestCase(unittest.TestCase):
     # test default values
     def test_default_values(self):
         """Make sure default values are set correctly."""
-        self.assertEqual(self.rp.toRadString(), '-ab 20 -of -c 0 0 254 +I c:\\ladybug\\test.wea')
+        for v in ('-ab 20', '-of', '-c 0 0 254', '+I', 'c:\\ladybug\\test.wea'):
+            self.assertIn(v, self.rp.toRadString())
 
     # test for assertion and exceptions
     def test_assertions_exceptions(self):
@@ -43,7 +44,8 @@ class AdvancedParametersTestCase(unittest.TestCase):
         self.rp.o = 'd'
         self.rp.c = (0, 0, 0)
         self.rp.I = False
-        self.assertEqual(self.rp.toRadString(), '-ab 10 -od -c 0 0 0 -I c:\\ladybug\\test.wea')
+        for v in ('-ab 10', '-od', '-c 0 0 0', '-I', 'c:\\ladybug\\test.wea'):
+            self.assertIn(v, self.rp.toRadString())
 
 
 if __name__ == '__main__':

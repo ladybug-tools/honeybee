@@ -81,16 +81,15 @@ class Rtrace(RadianceCommand):
 
         self.__simType = value
 
-    @property
-    def iswitch(self):
-        """Return I/i switch.
-
-        -I > Boolean switch to compute irradiance rather than radiance, with the input
-        origin and direction interpreted instead as measurement point and orientation.
-        """
-        _switch = {0: "-I", 1: "-I", 2: ""}
-
-        return _switch[self.simulationType]
+        # trun on/off I paramter
+        # -I > Boolean switch to compute irradiance rather than radiance, with
+        # the input origin and direction interpreted instead as measurement point
+        # and orientation.
+        if self.__simType in (0, 1):
+            self.radianceParameters.I = True
+        else:
+            # luminance
+            self.radianceParameters.I = False
 
     @property
     def radianceParameters(self):

@@ -93,7 +93,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
     def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
                          defaultValue=None, isJoined=False, attributeName=None):
@@ -142,7 +142,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
     def addRadiancePath(self, name, descriptiveName=None, relativePath=None,
                         checkExists=False, extension=None, attributeName=None):
@@ -185,7 +185,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
     def addRadianceBoolFlag(self, name, descriptiveName=None, defaultValue=None,
                             isDualSign=False, attributeName=None):
@@ -225,7 +225,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
     def addRadianceNumericTuple(self, name, descriptiveName=None, validRange=None,
                                 acceptedInputs=None, tupleSize=None, numType=None,
@@ -282,4 +282,4 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)

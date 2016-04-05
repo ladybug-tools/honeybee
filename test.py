@@ -1,4 +1,4 @@
-from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters
+from honeybee.radiance.parameters.rcontrib import RcontribParameters
 from honeybee.radiance.command.gendaymtx import Gendaymtx
 import os
 # sky = radSky(1000)
@@ -12,14 +12,25 @@ import os
 
 
 # generate sky matrix with default values
-dmtxpar = GendaymtxParameters()
+rcp = RcontribParameters()
 
 # ask only for direct sun
-dmtxpar.onlyDirect = True
+print rcp.toRadString()
+
+rcp.modFile = "c:/ladybug/suns.txt"
+print rcp.toRadString()
+
+rcp.I = True
+rcp.ab = 0
+rcp.ad = 10000
+print rcp.toRadString()
+
+rcp.quality = 1
+print rcp.toRadString()
 
 # dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea",
 #                  gendaymtxParameters=dmtxpar)
 
-dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea")
+# dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea")
 # dmtx.gendaymtxParameters.verboseReport = False
-dmtx.execute()
+# dmtx.execute()

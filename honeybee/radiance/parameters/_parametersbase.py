@@ -30,11 +30,11 @@ class RadianceParameters(object):
         # place holder for dynamic parameter names
         # use radiance.datatype classes to create dynamic parameters
         # self.
-        self.dynamicKeys = []
+        self.__dynamicParameters = []
 
         # static parameters are the parameters which are set from a string.
         # static parameters are collected here
-        self.staticKeys = []
+        self.__staticParameters = []
 
     @property
     def isRadianceParameters(self):
@@ -44,24 +44,17 @@ class RadianceParameters(object):
     @property
     def keys(self):
         """Return list of current parameters."""
-        return self.dynamicKeys + self.staticKeys
+        return set(self.__dynamicParameters + self.__staticParameters)
 
     @property
     def dynamicKeys(self):
         """Return list of dynamic parameters."""
-        return self.__dynamicParameters
-
-    @dynamicKeys.setter
-    def dynamicKeys(self, values):
-        for v in values:
-            assert hasattr(self.__class__, v), \
-                "Can't find '%s' in %s attributes." % (v, self.__class__.__name__)
-        self.__dynamicParameters = values
+        return set(self.__dynamicParameters)
 
     @property
     def staticKeys(self):
         """Return list of dynamic parameters."""
-        return self.__staticParameters
+        return set(self.__staticParameters)
 
     @staticKeys.setter
     def staticKeys(self, values):
@@ -70,8 +63,26 @@ class RadianceParameters(object):
     @property
     def values(self):
         """Return list of current values."""
-        return [getattr(self, dynamicKey) for dynamicKey in self.dynamicKeys] + \
-               [getattr(self, dynamicKey) for dynamicKey in self.staticKeys]
+        return [getattr(self, key) for key in self.keys]
+
+    def appendParametersToDynamicKeys(self, values):
+        """Append a list of  parameter names to list of dynamic keys.
+
+        This method is only useful for base class developements and should not be
+        used otherwise.
+        """
+        for v in values:
+            self.appendParameterToDynamicKeys(v)
+
+    def appendParameterToDynamicKeys(self, v):
+        """Append a single parameter names to list of dynamic keys.
+
+        This method is only useful for base class developements and should not be
+        used otherwise.
+        """
+        assert hasattr(self.__class__, v), \
+            "Can't find '%s' in %s attributes." % (v, self.__class__.__name__)
+        self.__dynamicParameters.append(v)
 
     def removeParameters(self):
         """Remove all the current parameters."""
