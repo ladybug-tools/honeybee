@@ -1048,10 +1048,10 @@ class Gendaymtx(RadianceCommand):
     s = RadianceBoolFlag('s', 'sky mtx only', acceptedInputs=(True,False))
     r = RadianceNumber('r', 'zenith rotation', numType=float)
     m = RadianceNumber('m', 'sky patches', numType=int)
-    g = RadianceNumericTuple('g', 'ground color', validRange=(0, 1),
+    g = RadianceTuple('g', 'ground color', validRange=(0, 1),
                              tupleSize=3,
                              numType=float)
-    c = RadianceNumericTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
+    c = RadianceTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
                              numType=float)
     o = RadianceBoolFlag('o', 'output format', acceptedInputs=('f', 'd'))
     O = RadianceBoolFlag('O', 'radiation type',
@@ -1070,10 +1070,10 @@ class Gendaymtx(RadianceCommand):
     s = RadianceBoolFlag('s', 'sky mtx only', acceptedInputs=(True,False))
     r = RadianceNumber('r', 'zenith rotation', numType=float)
     m = RadianceNumber('m', 'sky patches', numType=int)
-    g = RadianceNumericTuple('g', 'ground color', validRange=(0, 1),
+    g = RadianceTuple('g', 'ground color', validRange=(0, 1),
                              tupleSize=3,
                              numType=float)
-    c = RadianceNumericTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
+    c = RadianceTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
                              numType=float)
     o = RadianceBoolFlag('o', 'output format', acceptedInputs=('f', 'd'))
     O = RadianceBoolFlag('O', 'radiation type',
@@ -1171,10 +1171,10 @@ d = RadianceBoolFlag('d', 'sun mtx only', acceptedInputs=(True,False))
 s = RadianceBoolFlag('s', 'sky mtx only', acceptedInputs=(True,False))
 r = RadianceNumber('r', 'zenith rotation', numType=float)
 m = RadianceNumber('m', 'sky patches', numType=int)
-g = RadianceNumericTuple('g', 'ground color', validRange=(0, 1),
+g = RadianceTuple('g', 'ground color', validRange=(0, 1),
                          tupleSize=3,
                          numType=float)
-c = RadianceNumericTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
+c = RadianceTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
                          numType=float)
 o = RadianceBoolFlag('o', 'output format', acceptedInputs=('f', 'd'))
 O = RadianceBoolFlag('O', 'radiation type',
@@ -1210,10 +1210,10 @@ section about Data descriptors.</p></div>
     s = RadianceBoolFlag('s', 'sky mtx only', acceptedInputs=(True,False))
     r = RadianceNumber('r', 'zenith rotation', numType=float)
     m = RadianceNumber('m', 'sky patches', numType=int)
-    g = RadianceNumericTuple('g', 'ground color', validRange=(0, 1),
+    g = RadianceTuple('g', 'ground color', validRange=(0, 1),
                              tupleSize=3,
                              numType=float)
-    c = RadianceNumericTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
+    c = RadianceTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
                              numType=float)
     o = RadianceBoolFlag('o', 'output format', acceptedInputs=('f', 'd'))
     O = RadianceBoolFlag('O', 'radiation type',
@@ -1232,10 +1232,10 @@ section about Data descriptors.</p></div>
     s = RadianceBoolFlag('s', 'sky mtx only', acceptedInputs=(True,False))
     r = RadianceNumber('r', 'zenith rotation', numType=float)
     m = RadianceNumber('m', 'sky patches', numType=int)
-    g = RadianceNumericTuple('g', 'ground color', validRange=(0, 1),
+    g = RadianceTuple('g', 'ground color', validRange=(0, 1),
                              tupleSize=3,
                              numType=float)
-    c = RadianceNumericTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
+    c = RadianceTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
                              numType=float)
     o = RadianceBoolFlag('o', 'output format', acceptedInputs=('f', 'd'))
     O = RadianceBoolFlag('O', 'radiation type',
