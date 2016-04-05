@@ -1,3 +1,3 @@
-__all__ = ["gridbased", "gendaymtx"]
+__all__ = ["gridbased", "gendaymtx", "rcontrib"]
 
-import gridbased, gendaymtx
+import gridbased, gendaymtx, rcontrib

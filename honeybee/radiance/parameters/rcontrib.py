@@ -1,3 +1,4 @@
+# coding=utf-8
 """Radiance rcontrib Parameters."""
 from gridbased import GridBasedParameters
 
@@ -35,7 +36,7 @@ class RcontribParameters(GridBasedParameters):
         rcp.ad = 10000
         rcp.I = True
 
-        # check the new values. -d is added.
+        # check radiance parameters with the new values
         print rcp.toRadString()
         > -ab 0 -ad 10000 -M c:/ladybug/suns.txt -I
 
