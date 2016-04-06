@@ -1,0 +1,59 @@
+# start of generic materials definition(s)
+void plastic Context_Material
+0
+0
+5 0.350 0.350 0.350 0 0
+
+
+void plastic Interior_Ceiling
+0
+0
+5 0.800 0.800 0.800 0 0
+
+
+void plastic Interior_Floor
+0
+0
+5 0.200 0.200 0.200 0 0
+
+
+void plastic Exterior_Floor
+0
+0
+5 0.200 0.200 0.200 0 0
+
+
+void glass Exterior_Window
+0
+0
+3 0.654 0.654 0.654
+
+
+void glass Interior_Window
+0
+0
+3 0.654 0.654 0.654
+
+
+void plastic Exterior_Roof
+0
+0
+5 0.800 0.800 0.800 0 0
+
+
+void plastic Exterior_Wall
+0
+0
+5 0.500 0.500 0.500 0 0
+
+
+void plastic Interior_Wall
+0
+0
+5 0.500 0.500 0.500 0 0
+
+
+# end of generic materials definition(s)
+
+# start of material(s) specific to this study (if any)
+# end of material(s) specific to this study (if any)
