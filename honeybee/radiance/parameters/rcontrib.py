@@ -14,7 +14,7 @@ class RcontribParameters(GridBasedParameters):
         modFile: [-M file] File path to a file with a list of modifiers
             (Default: None)
 
-        * For the full list of attributes try self.keys
+        * For the full list of attributes try self.parameters
         ** values between []'s indicate Radiance equivalent keys for advanced users
 
     Usage:

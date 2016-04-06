@@ -31,7 +31,7 @@ class GendaymtxParameters(AdvancedRadianceParameters):
             values for visible radiance whereas 1 indicates the results should
             be total solar radiance.
 
-        * For the full list of attributes try self.keys
+        * For the full list of attributes try self.parameters
         ** values between []'s indicate Radiance equivalent keys for advanced users
 
     Usage:

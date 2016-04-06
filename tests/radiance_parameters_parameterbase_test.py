@@ -10,18 +10,19 @@ class ParametersTestCase(unittest.TestCase):
     def setUp(self):
         """Set up the test case by initiating the class."""
         class CustomRP(RadianceParameters):
-            ab = RadianceNumber('ab', 'ambient bounces', defaultValue=15)
-            ad = RadianceValue('ad', 'ambient divisions')
+            ambientBounces = RadianceNumber('ab', 'ambient bounces', defaultValue=15)
+            ambientDivisions = RadianceValue('ad', 'ambient divisions')
 
             def __init__(self, ab=None, ad=None):
                 """Init radiance paramters."""
                 RadianceParameters.__init__(self)
 
-                self.ab = ab
-                self.ad = ad
+                self.ambientBounces = ab
+                self.ambientDivisions = ad
 
                 # add paramter names to dynamic keys
-                self.appendParametersToDynamicKeys(['ab', 'ad'])
+                self.addDefaultParameterName('ambientBounces', 'ab')
+                self.addDefaultParameterName('ambientDivisions', 'ad')
 
         self.rp = CustomRP(ad=12)
 
@@ -52,20 +53,20 @@ class ParametersTestCase(unittest.TestCase):
 
     def test_update_value(self):
         """Make sure values updates correctly."""
-        self.rp.ad = 40
+        self.rp.ambientDivisions = 40
         for v in ('-ab 15', '-ad 40'):
             self.assertIn(v, self.rp.toRadString())
 
     def test_add_value_by_name_value(self):
         """Add a new parameter by name and value."""
-        self.rp.addParamterByNameAndValue('aa', '0.0')
+        self.rp.addAdditionalParameterByNameAndValue('aa', '0.0')
         for v in ('-ab 15', '-ad 12', '-aa 0.0'):
             self.assertIn(v, self.rp.toRadString())
         self.assertEqual(self.rp.aa, '0.0')
 
     def test_remove_static_parameter(self):
         """Remove a static a key after adding the parameter."""
-        self.rp.addParamterByNameAndValue('aa', '0.5')
+        self.rp.addAdditionalParameterByNameAndValue('aa', '0.5')
         # make sure value is added.
         for v in ('-ab 15', '-ad 12', '-aa 0.5'):
             self.assertIn(v, self.rp.toRadString())
