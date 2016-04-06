@@ -1007,11 +1007,11 @@ table {
 
         </li>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.radiance.datatype.RadianceNumericTuple">RadianceNumericTuple</a></span>
+        <span class="class_name"><a href="#honeybee.radiance.datatype.RadianceTuple">RadianceTuple</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#honeybee.radiance.datatype.RadianceNumericTuple.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.datatype.RadianceTuple.__init__">__init__</a></li>
   </ul>
 
         </li>
@@ -1050,7 +1050,7 @@ import warnings
 import os
 
 __all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
-           'RadianceNumericTuple']
+           'RadianceTuple']
 
 
 class RadianceDefault(object):
@@ -1279,7 +1279,7 @@ class RadianceNumber(RadianceDefault):
             setattr(instance, self._name, finalValue)
 
 
-class RadianceNumericTuple(RadianceDefault):
+class RadianceTuple(RadianceDefault):
     """
     This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.
 
@@ -1836,7 +1836,7 @@ numType: Optional. Acceptable inputs are float or int. If specified, the
       </div>
       
       <div class="item">
-      <p id="honeybee.radiance.datatype.RadianceNumericTuple" class="name">class <span class="ident">RadianceNumericTuple</span></p>
+      <p id="honeybee.radiance.datatype.RadianceTuple" class="name">class <span class="ident">RadianceTuple</span></p>
       
   
     <div class="desc"><p>This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.</p>
@@ -1872,9 +1872,9 @@ numType: Optional. Acceptable inputs are float or int. If specified, the
     __set__ method will ensure that the value is stored in that type.
 </code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceNumericTuple', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.datatype.RadianceNumericTuple" class="source">
-    <pre><code>class RadianceNumericTuple(RadianceDefault):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceTuple', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceTuple" class="source">
+    <pre><code>class RadianceTuple(RadianceDefault):
     """
     This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.
 
@@ -1965,14 +1965,14 @@ numType: Optional. Acceptable inputs are float or int. If specified, the
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.radiance.datatype.RadianceNumericTuple">RadianceNumericTuple</a></li>
+          <li><a href="#honeybee.radiance.datatype.RadianceTuple">RadianceTuple</a></li>
           <li>honeybee.radiance.datatype.RadianceDefault</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.datatype.RadianceNumericTuple.__init__">
+    <div class="name def" id="honeybee.radiance.datatype.RadianceTuple.__init__">
     <p>def <span class="ident">__init__</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None)</p>
     </div>
     
@@ -1980,8 +1980,8 @@ numType: Optional. Acceptable inputs are float or int. If specified, the
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceNumericTuple.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.datatype.RadianceNumericTuple.__init__" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceTuple.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceTuple.__init__" class="source">
     <pre><code>def __init__(self, name, descriptiveName=None, validRange=None,
              acceptedInputs=None, tupleSize=None, numType=None):
     RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,

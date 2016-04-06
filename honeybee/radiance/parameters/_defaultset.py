@@ -16,6 +16,7 @@ rtrace_number_parameters = {
     'lw': {'dscrip': 'limit weight', 'type': float, 'defaultValue': .05, 'values': [.05, .01, .005]}}
 
 rtrace_boolean_parameters = {
+    'I': {'dscrip': 'irradiance switch', 'type': bool, 'defaultValue': False, 'values': [False, False, False]},
     'u': {'dscrip': 'uncorrelated random sampling', 'type': bool, 'defaultValue': False, 'values': [False, False, False]}}
 
 rpict_number_parameters = {

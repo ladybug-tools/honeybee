@@ -83,11 +83,11 @@ class GendaymtxParameters(AdvancedRadianceParameters):
                                numType=int, checkPositive=True,
                                attributeName='skyDensity')
 
-        self.addRadianceNumericTuple('g', 'ground color', defaultValue=groundColor,
+        self.addRadianceTuple('g', 'ground color', defaultValue=groundColor,
                                      validRange=(0, 1), tupleSize=3, numType=float,
                                      attributeName='groundColor')
 
-        self.addRadianceNumericTuple('c', 'sky color', defaultValue=skyColor,
+        self.addRadianceTuple('c', 'sky color', defaultValue=skyColor,
                                      validRange=(0, 1), tupleSize=3, numType=float,
                                      attributeName='skyColor')
 

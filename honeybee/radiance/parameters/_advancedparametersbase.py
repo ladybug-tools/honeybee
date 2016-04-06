@@ -1,7 +1,7 @@
 """Radiance Parameters Base class with methods to add descriptor type parameters."""
 from _parametersbase import RadianceParameters
 from ..datatype import RadiancePath, RadianceNumber, RadianceBoolFlag, \
-    RadianceNumericTuple, RadianceValue
+    RadianceTuple, RadianceValue
 
 
 # TODO: Add __new__ to create a new class for each instance. After that the
@@ -23,7 +23,7 @@ class AdvancedRadianceParameters(RadianceParameters):
         rp = CustomParameters()
         rp.addRadianceNumber('ab', 'ambient bounces', defaultValue=20)
         rp.addRadianceValue('o', 'o f', defaultValue='f', isJoined=True)
-        rp.addRadianceNumericTuple('c', 'color', defaultValue=(0, 0, 254), numType=int)
+        rp.addRadianceTuple('c', 'color', defaultValue=(0, 0, 254), numType=int)
         rp.addRadianceBoolFlag('I', 'irradiance switch', defaultValue=True, isDualSign=True)
 
         print rp.toRadString()
@@ -93,7 +93,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
     def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
                          defaultValue=None, isJoined=False, attributeName=None):
@@ -142,7 +142,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
     def addRadiancePath(self, name, descriptiveName=None, relativePath=None,
                         checkExists=False, extension=None, attributeName=None):
@@ -185,7 +185,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
     def addRadianceBoolFlag(self, name, descriptiveName=None, defaultValue=None,
                             isDualSign=False, attributeName=None):
@@ -225,9 +225,9 @@ class AdvancedRadianceParameters(RadianceParameters):
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)
 
-    def addRadianceNumericTuple(self, name, descriptiveName=None, validRange=None,
+    def addRadianceTuple(self, name, descriptiveName=None, validRange=None,
                                 acceptedInputs=None, tupleSize=None, numType=None,
                                 defaultValue=None, attributeName=None):
         """Add a radiance numeric tuple e.g (0.5,0.3,0.2).
@@ -276,10 +276,10 @@ class AdvancedRadianceParameters(RadianceParameters):
         _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
                 _attrname,
-                RadianceNumericTuple(name, descriptiveName, validRange,
+                RadianceTuple(name, descriptiveName, validRange,
                                      acceptedInputs, tupleSize, numType,
                                      defaultValue)
                 )
 
         # add name of the attribute to dynamic keys
-        self.dynamicKeys.append(_attrname)
+        self.appendParameterToDynamicKeys(_attrname)

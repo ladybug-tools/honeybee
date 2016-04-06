@@ -1,6 +1,6 @@
 import unittest
 from honeybee.radiance.datatype import RadiancePath, RadianceNumber, \
-    RadianceBoolFlag, RadianceNumericTuple, RadianceValue
+    RadianceBoolFlag, RadianceTuple, RadianceValue
 
 
 class DataTypeTestCase(unittest.TestCase):
@@ -20,7 +20,7 @@ class DataTypeTestCase(unittest.TestCase):
             d = RadianceBoolFlag('d', 'sun mtx only', defaultValue=None, isDualSign=False)
             i = RadianceBoolFlag('I', 'illuminance', defaultValue=None, isDualSign=True)
 
-            c = RadianceNumericTuple('C', 'color', defaultValue=None, numType=int,
+            c = RadianceTuple('C', 'color', defaultValue=None, numType=int,
                                      validRange=[0, 255])
 
             o = RadianceValue('o', 'output format', defaultValue=None,
@@ -53,7 +53,7 @@ class DataTypeTestCase(unittest.TestCase):
             d = RadianceBoolFlag('d', 'sun mtx only', defaultValue=False, isDualSign=False)
             i = RadianceBoolFlag('I', 'illuminance', defaultValue=False, isDualSign=True)
 
-            c = RadianceNumericTuple('C', 'color', defaultValue=(250, 250, 250),
+            c = RadianceTuple('C', 'color', defaultValue=(250, 250, 250),
                                      numType=int, validRange=[0, 255])
 
             o = RadianceValue('o', 'output format', defaultValue='f',

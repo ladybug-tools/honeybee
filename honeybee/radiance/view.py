@@ -1,6 +1,6 @@
 # coding=utf-8
 u"""Create a radiance view."""
-from datatype import RadianceNumericTuple, RadianceNumber
+from datatype import RadianceTuple, RadianceNumber
 import math
 from copy import deepcopy
 
@@ -11,13 +11,13 @@ class View(object):
     u"""A radiance view."""
 
     # init radiance types
-    viewPoint = RadianceNumericTuple('vp', 'view point', tupleSize=3, numType=float,
+    viewPoint = RadianceTuple('vp', 'view point', tupleSize=3, numType=float,
                                      defaultValue=(0, 0, 0))
 
-    viewDirection = RadianceNumericTuple('vd', 'view direction', tupleSize=3,
+    viewDirection = RadianceTuple('vd', 'view direction', tupleSize=3,
                                          numType=float, defaultValue=(0, 0, 1))
 
-    viewUpVector = RadianceNumericTuple('vu', 'view up vector', tupleSize=3,
+    viewUpVector = RadianceTuple('vu', 'view up vector', tupleSize=3,
                                         numType=float, defaultValue=(0, 1, 0))
 
     viewHSize = RadianceNumber('vh', 'view horizontal size', numType=float)

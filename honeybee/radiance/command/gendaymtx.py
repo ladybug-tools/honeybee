@@ -10,14 +10,10 @@ class Gendaymtx(RadianceCommand):
     u"""
     gendaymtx - Generate an annual Perez sky matrix from a weather tape.
 
-    The attributes for this class and their data descriptors are given below.
-    Please note that the first two inputs for each descriptor are for internal
-    naming purposes only.
-
     Attributes:
-        weaFile: Full path to input wea file (Default: None).
         outputName: An optional name for output file name. If None the name of
             .epw file will be used.
+        weaFile: Full path to input wea file (Default: None).
         gendaymtxParameters: Radiance parameters for gendaymtx. If None Default
             parameters will be set. You can use self.gendaymtxParameters to view,
             add or remove the parameters before executing the command.
@@ -35,29 +31,29 @@ class Gendaymtx(RadianceCommand):
         gmtx.onlyDirect = True
 
         # create gendaymtx
-        dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea",
+        dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
                          gendaymtxParameters=dmtxpar)
 
         # run gendaymtx
         dmtx.execute()
-        > c:\radiance\bin\gendaymtx: reading weather tape 'C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea'
-        > c:\radiance\bin\gendaymtx: location 'IZMIR_TUR'
-        > c:\radiance\bin\gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west
-        > c:\radiance\bin\gendaymtx: 146 sky patches per time step
-        > c:\radiance\bin\gendaymtx: stepping through month 1...
-        > c:\radiance\bin\gendaymtx: stepping through month 2...
-        > c:\radiance\bin\gendaymtx: stepping through month 3...
-        > c:\radiance\bin\gendaymtx: stepping through month 4...
-        > c:\radiance\bin\gendaymtx: stepping through month 5...
-        > c:\radiance\bin\gendaymtx: stepping through month 6...
-        > c:\radiance\bin\gendaymtx: stepping through month 7...
-        > c:\radiance\bin\gendaymtx: stepping through month 8...
-        > c:\radiance\bin\gendaymtx: stepping through month 9...
-        > c:\radiance\bin\gendaymtx: stepping through month 10...
-        > c:\radiance\bin\gendaymtx: stepping through month 11...
-        > c:\radiance\bin\gendaymtx: stepping through month 12...
-        > c:\radiance\bin\gendaymtx: writing matrix with 8760 time steps...
-        > c:\radiance\bin\gendaymtx: done.
+        > c:/radiance/bin/gendaymtx: reading weather tape 'C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea'
+        > c:/radiance/bin/gendaymtx: location 'IZMIR_TUR'
+        > c:/radiance/bin/gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west
+        > c:/radiance/bin/gendaymtx: 146 sky patches per time step
+        > c:/radiance/bin/gendaymtx: stepping through month 1...
+        > c:/radiance/bin/gendaymtx: stepping through month 2...
+        > c:/radiance/bin/gendaymtx: stepping through month 3...
+        > c:/radiance/bin/gendaymtx: stepping through month 4...
+        > c:/radiance/bin/gendaymtx: stepping through month 5...
+        > c:/radiance/bin/gendaymtx: stepping through month 6...
+        > c:/radiance/bin/gendaymtx: stepping through month 7...
+        > c:/radiance/bin/gendaymtx: stepping through month 8...
+        > c:/radiance/bin/gendaymtx: stepping through month 9...
+        > c:/radiance/bin/gendaymtx: stepping through month 10...
+        > c:/radiance/bin/gendaymtx: stepping through month 11...
+        > c:/radiance/bin/gendaymtx: stepping through month 12...
+        > c:/radiance/bin/gendaymtx: writing matrix with 8760 time steps...
+        > c:/radiance/bin/gendaymtx: done.
 
         # change it not to be verbose
         dmtx.gendaymtxParameters.verboseReport = False
@@ -66,16 +62,17 @@ class Gendaymtx(RadianceCommand):
         dmtx.execute()
         >
     """
+
     weaFile = RadiancePath('weaFile', descriptiveName='weather file path',
                            relativePath=None, checkExists=False,
                            extension='.wea')
 
-    def __init__(self, weaFile=None, outputName=None, gendaymtxParameters=None):
+    def __init__(self, outputName=None, weaFile=None, gendaymtxParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        self.weaFile = weaFile
         self.outputName = outputName
+        self.weaFile = weaFile
         self.gendaymtxParameters = gendaymtxParameters
 
     @property
@@ -105,11 +102,8 @@ class Gendaymtx(RadianceCommand):
             outputFile
         )
 
-        # make sure wea file is provided
-        assert str(self.weaFile.normpath is not None), \
-            "To generate a valid gendaymtx you need to specify the path to wea file." + \
-            "\nCurrent command won't work: %s" % radString
-
+        # make sure input files are set by user
+        self.checkInputFiles(radString)
         return radString
 
     @property

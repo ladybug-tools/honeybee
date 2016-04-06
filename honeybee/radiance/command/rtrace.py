@@ -10,8 +10,7 @@ class Rtrace(RadianceCommand):
     Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html
 
     Attributes:
-        projectName: Name of this run. It will be used to set-up results file
-            name (Default: untitled).
+        outputName: Name of output file (Default: untitled).
         octFile: Full path to input oct files (Default: None)
         pointFile: Full path to input pt files (Default: None)
         simulationType: An integer to define type of analysis.
@@ -25,14 +24,14 @@ class Rtrace(RadianceCommand):
     octFile = RadiancePath("oct", "octree file", extension=".oct")
     pointFile = RadiancePath("points", "test point file", extension=".pts")
 
-    def __init__(self, projectName="untitled", octFile=None, pointFile=None,
+    def __init__(self, outputName="untitled", octFile=None, pointFile=None,
                  simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
         RadianceCommand.__init__(self)
 
-        self.outputFile = projectName if projectName.lower().endswith(".res") \
-            else projectName + ".res"
+        self.outputFile = outputName if outputName.lower().endswith(".res") \
+            else outputName + ".res"
         """oct file name which is usually the same as the project name (Default: untitled)"""
 
         self.octFile = octFile
@@ -81,16 +80,15 @@ class Rtrace(RadianceCommand):
 
         self.__simType = value
 
-    @property
-    def iswitch(self):
-        """Return I/i switch.
-
-        -I > Boolean switch to compute irradiance rather than radiance, with the input
-        origin and direction interpreted instead as measurement point and orientation.
-        """
-        _switch = {0: "-I", 1: "-I", 2: ""}
-
-        return _switch[self.simulationType]
+        # trun on/off I paramter
+        # -I > Boolean switch to compute irradiance rather than radiance, with
+        # the input origin and direction interpreted instead as measurement point
+        # and orientation.
+        if self.__simType in (0, 1):
+            self.radianceParameters.I = True
+        else:
+            # luminance
+            self.radianceParameters.I = False
 
     @property
     def radianceParameters(self):
@@ -108,19 +106,19 @@ class Rtrace(RadianceCommand):
     # TODO: Implement relative path
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        return "%s %s %s %s < %s > %s" % (
+        radString = "%s %s %s < %s > %s" % (
             os.path.join(self.radbinPath, "rtrace"),
-            self.iswitch,
             self.radianceParameters.toRadString(),
             self.octFile.toRadString(),
             self.pointFile.toRadString(),
             self.outputFile.toRadString()
         )
 
+        # make sure input files are set by user
+        self.checkInputFiles(radString)
+        return radString
+
+    @property
     def inputFiles(self):
         """Input files for this command."""
         return self.octFile, self.pointFile
-
-
-if __name__ == "__main__":
-    oc = Rtrace()

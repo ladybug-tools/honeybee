@@ -5,7 +5,7 @@ import os
 from collections import Iterable
 
 __all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
-           'RadianceNumericTuple', 'RadianceValue']
+           'RadianceTuple', 'RadianceValue']
 
 
 class RadianceDefault(object):
@@ -355,7 +355,7 @@ class RadianceNumber(RadianceDefault):
             setattr(instance, self._name, RadianceNumberType(self._name, finalValue))
 
 
-class RadianceNumericTuple(RadianceDefault):
+class RadianceTuple(RadianceDefault):
     """
     This input is expected to be a numeric tuple like (0.5,0.3,0.2) etc.
 

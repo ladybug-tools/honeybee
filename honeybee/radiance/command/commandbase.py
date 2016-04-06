@@ -55,6 +55,26 @@ class RadianceCommand(object):
         """Return list of input files for this command."""
         pass
 
+    def checkInputFiles(self, radString=""):
+        """Make sure input files are set to a path.
+
+        This method doesn't check if the file exists since it might be created
+        later during the process.
+
+        Args:
+            radString: Current radString to help user better understand the
+                erorr (Default: "")
+        """
+        # make sure wea file is provided
+        _msg = "To generate a valid %s command you need to specify the path" \
+            " to inpt files:" \
+            "\nCurrent command won't work: %s" \
+            % (self.__class__.__name__, radString)
+
+        for f in self.inputFiles:
+            assert hasattr(f, 'normpath'), _msg
+            assert f.normpath is not None, _msg
+
     def __checkExecutable(self, radbinPath=None, raiseException=False):
         """Check if executable file exist."""
         radbinPath = self.radbinPath if not radbinPath else radbinPath
@@ -85,22 +105,44 @@ class RadianceCommand(object):
             else:
                 print __err
 
-    def __checkFiles(self, raiseExceptionBin=True, raiseExceptionLib=True):
-        """Check if the input files exist on the computer."""
+    def __checkInputFilesExist(self):
         assert len(self.inputFiles) != 0, \
             "You need at least one file to create an octree."
-
         for f in self.inputFiles:
-            assert os.path.exists(str(f)), "Invalid Input File: %s doesn't exist" % f
+            assert os.path.exists(str(f)), \
+                "Invalid Input File: %s doesn't exist" % f
 
+    def __checkFiles(self, raiseExceptionBin=True, raiseExceptionLib=True):
+        """Check files before runnig the command."""
+        self.__checkInputFilesExist()
         self.__checkExecutable(raiseException=True)
         self.__checkLibs(raiseException=True)
+
+    def onToRadString(self):
+        """Overwrite this method to add extra specific checks while generating rad string.
+
+        For instance for rcontrib you want to make sure there is at least one
+        modifier set in the command. This method will be executed right before
+        running the command.
+        """
+        pass
+
+    def onExecution(self):
+        """Overwrite this method to add extra specific checks for the command.
+
+        For instance for rcontrib you want to make sure there is at least one
+        modifier set in the command. This method will be executed right before
+        running the command.
+        """
+        pass
 
     # TODO: Add Error handling
     def execute(self):
         """Execute the command."""
         # check if the files exist on the computer
         self.__checkFiles()
+
+        self.onExecution()
 
         p = subprocess.Popen(self.toRadString(), shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
