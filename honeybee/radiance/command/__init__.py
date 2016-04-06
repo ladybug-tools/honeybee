@@ -1,3 +1,3 @@
-__all__ = ["oconv"]
+__all__ = ["gendaymtx", "oconv", "rcontrib", "rtrace"]
 
-import oconv
+import gendaymtx, oconv, rcontrib, rtrace

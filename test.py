@@ -1,5 +1,8 @@
-from honeybee.radiance.parameters.rcontrib import RcontribParameters
-from honeybee.radiance.command.rcontrib import Rcontrib
+from honeybee.radiance.parameters.oconv import OconvParameters
+from honeybee.radiance.command.oconv import Oconv
+import os
+
+print os.getcwd()
 # sky = radSky(1000)
 # rp = HBGridBasedAnalysisRecipe(sky, pointGroups=[0, 0, 0])
 #
@@ -10,36 +13,24 @@ from honeybee.radiance.command.rcontrib import Rcontrib
 # print rp.results(flattenResults=True)
 
 
-# generate sky matrix with default values
-rcp = RcontribParameters()
+# generate oconv parameters
+rcp = OconvParameters()
 
-# ask only for direct sun
-# print rcp.toRadString()
+# trun off turn off warnings
+rcp.turnOffWarns = True
 
-rcp.modFile = "c:/ladybug/suns.txt"
-# print rcp.toRadString()
+# create an oconv command
+oconv = Oconv(outputName="test3",
+              sceneFiles=((r"C:\ladybug\test3\gridbased\Uniform_CIE_1000.sky",
+                           r"C:\ladybug\test3\gridbased\test3.mat",
+                           r"c:\ladybug\test3\gridbased\test3.rad")),
+              oconvParameters=rcp
+              )
 
-rcp.I = True
-rcp.ab = 0
-rcp.ad = 10000
-# print rcp.toRadString()
+# print command line to check
+print oconv.toRadString()
 
-rcp.quality = 1
-# print rcp.toRadString()
+# execute the command
+outputFilePath = oconv.execute()
 
-rcontrib = Rcontrib(outputName="test3",
-                    octreeFile=r"C:\ladybug\test3\gridbased\test3.oct",
-                    pointsFile=r"C:\ladybug\test3\gridbased\test3.pts")
-
-rcontrib.rcontribParameters.modFile = r"C:\ladybug\test3\sunlist.txt"
-rcontrib.rcontribParameters.I = True
-rcontrib.rcontribParameters.ab = 0
-rcontrib.rcontribParameters.ad = 10000
-
-print rcontrib.toRadString()
-
-rcontrib.execute()
-
-# dmtx = Gendaymtx(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea")
-# dmtx.gendaymtxParameters.verboseReport = False
-# dmtx.execute()
+print outputFilePath

@@ -72,6 +72,10 @@ class RadianceCommand(object):
             % (self.__class__.__name__, radString)
 
         for f in self.inputFiles:
+            # this is for oconv where it has list of files which are not
+            # RadiancePath
+            if isinstance(f, str):
+                continue
             assert hasattr(f, 'normpath'), _msg
             assert f.normpath is not None, _msg
 
@@ -136,9 +140,13 @@ class RadianceCommand(object):
         """
         pass
 
-    # TODO: Add Error handling
+    # TODO: Add post process of the analysis and handle errors for Radiance comments
     def execute(self):
-        """Execute the command."""
+        """Execute the command.
+
+        Returns:
+            Return fullpath to the result file if any as a string.
+        """
         # check if the files exist on the computer
         self.__checkFiles()
 
@@ -150,6 +158,18 @@ class RadianceCommand(object):
         for line in p.stdout.readlines():
             print line,
         p.wait()
+
+        try:
+            if os.path.split(self.outputFile.normpath)[0] == "":
+                # add directory to file if it's not a full path
+                return os.path.join(os.getcwd(),
+                                    self.outputFile.normpath)
+            # return output file
+            return self.outputFile
+
+        except AttributeError:
+            # this command doesn't have an output file
+            pass
 
     def __repr__(self):
         """Class representation."""
