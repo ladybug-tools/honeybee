@@ -15,6 +15,8 @@
 
    check out tests/radiance_oconv_test.py for an example.
 
+![Test Room](testroom.png)
+
 ## List of files
 
 ### room.rad

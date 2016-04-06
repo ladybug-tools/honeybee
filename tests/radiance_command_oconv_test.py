@@ -3,8 +3,8 @@ from honeybee.radiance.command.oconv import Oconv
 import os
 
 
-class ViewTestCase(unittest.TestCase):
-    """Test for (honeybee/radiance/view.py)."""
+class OconvTestCase(unittest.TestCase):
+    """Test for (honeybee/radiance/command/oconv.py)."""
 
     # preparing to test
     def setUp(self):
