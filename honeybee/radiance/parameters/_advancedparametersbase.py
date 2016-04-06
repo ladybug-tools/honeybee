@@ -92,8 +92,8 @@ class AdvancedRadianceParameters(RadianceParameters):
                                numType, checkPositive, defaultValue)
                 )
 
-        # add name of the attribute to dynamic keys
-        self.appendParameterToDynamicKeys(_attrname)
+        # add name of the attribute to default parameters
+        self.addDefaultParameterName(_attrname, name)
 
     def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
                          defaultValue=None, isJoined=False, attributeName=None):
@@ -141,8 +141,8 @@ class AdvancedRadianceParameters(RadianceParameters):
                               defaultValue, isJoined)
                 )
 
-        # add name of the attribute to dynamic keys
-        self.appendParameterToDynamicKeys(_attrname)
+        # add name of the attribute to default parameters
+        self.addDefaultParameterName(_attrname, name)
 
     def addRadiancePath(self, name, descriptiveName=None, relativePath=None,
                         checkExists=False, extension=None, attributeName=None):
@@ -184,8 +184,8 @@ class AdvancedRadianceParameters(RadianceParameters):
                              checkExists, extension)
                 )
 
-        # add name of the attribute to dynamic keys
-        self.appendParameterToDynamicKeys(_attrname)
+        # add name of the attribute to default parameters
+        self.addDefaultParameterName(_attrname, name)
 
     def addRadianceBoolFlag(self, name, descriptiveName=None, defaultValue=None,
                             isDualSign=False, attributeName=None):
@@ -224,8 +224,8 @@ class AdvancedRadianceParameters(RadianceParameters):
                 RadianceBoolFlag(name, descriptiveName, defaultValue, isDualSign)
                 )
 
-        # add name of the attribute to dynamic keys
-        self.appendParameterToDynamicKeys(_attrname)
+        # add name of the attribute to default parameters
+        self.addDefaultParameterName(_attrname, name)
 
     def addRadianceTuple(self, name, descriptiveName=None, validRange=None,
                          acceptedInputs=None, tupleSize=None, numType=None,
@@ -280,5 +280,5 @@ class AdvancedRadianceParameters(RadianceParameters):
                               tupleSize, numType, defaultValue)
                 )
 
-        # add name of the attribute to dynamic keys
-        self.appendParameterToDynamicKeys(_attrname)
+        # add name of the attribute to default parameters
+        self.addDefaultParameterName(_attrname, name)

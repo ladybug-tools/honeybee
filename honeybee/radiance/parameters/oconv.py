@@ -30,7 +30,7 @@ class OconvParameters(AdvancedRadianceParameters):
             optimal for most scenes (Default: 6).
         turnOffWarns: [-w] A Boolean to suppress warnings (Default: False).
 
-        * For the full list of attributes try self.keys
+        * For the full list of attributes try self.parameters
         ** values between []'s indicate Radiance equivalent keys for advanced users
 
     Usage:

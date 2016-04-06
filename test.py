@@ -1,8 +1,6 @@
 from honeybee.radiance.parameters.oconv import OconvParameters
 from honeybee.radiance.command.oconv import Oconv
-import os
 
-print os.getcwd()
 # sky = radSky(1000)
 # rp = HBGridBasedAnalysisRecipe(sky, pointGroups=[0, 0, 0])
 #
@@ -12,13 +10,12 @@ print os.getcwd()
 # print
 # print rp.results(flattenResults=True)
 
-
 # generate oconv parameters
 rcp = OconvParameters()
 
 # trun off turn off warnings
 rcp.turnOffWarns = True
-
+#
 # create an oconv command
 oconv = Oconv(outputName="test3",
               sceneFiles=((r"C:\ladybug\test3\gridbased\Uniform_CIE_1000.sky",
