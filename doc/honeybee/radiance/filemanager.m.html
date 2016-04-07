@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.dataoperation API documentation</title>
-    <meta name="description" content="Collection of functions for data operation." />
+    <title>honeybee.radiance.filemanager API documentation</title>
+    <meta name="description" content="A collection of auxiliary funtions for working with radiance files and objects." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
 
@@ -988,7 +988,9 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#honeybee.dataoperation.flattenTupleList">flattenTupleList</a></li>
+    <li class="mono"><a href="#honeybee.radiance.filemanager.getRadianceObjectsFromFile">getRadianceObjectsFromFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.filemanager.getRadianceObjectsFromString">getRadianceObjectsFromString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.filemanager.importRadianceMaterialsFromFile">importRadianceMaterialsFromFile</a></li>
   </ul>
 
     </li>
@@ -1005,32 +1007,63 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.dataoperation</span> module</h1>
-  <p>Collection of functions for data operation.</p>
+  <h1 class="title"><span class="name">honeybee.radiance.filemanager</span> module</h1>
+  <p>A collection of auxiliary funtions for working with radiance files and objects.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.dataoperation', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.dataoperation" class="source">
-    <pre><code>"""Collection of functions for data operation."""
-import collections
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.filemanager', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.filemanager" class="source">
+    <pre><code>"""A collection of auxiliary funtions for working with radiance files and objects."""
+import re
+import os
 
 
-def flattenTupleList(inputList):
-    """Return a flattened generator from an input list of (x, y, z) tuples.
+def getRadianceObjectsFromString(fullString):
+    """
+    separate a Radinace file string into multiple strings for each object.
+
+    Args:
+        radFileString: Radiance data as a single string. The string can be multiline.
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
+    """
+    rawRadObjects = re.findall(r'(\n|^)(\w*(\h*\w.*\n){1,})', fullString + "\n", re.MULTILINE)
+
+    return [("").join(radObject[:-1]) for radObject in rawRadObjects]
+
+
+def getRadianceObjectsFromFile(filePath):
+    """
+    Parse Radinace file and return a list of radiance objects as separate strings.
+
+    Args:
+        filePath: Path to Radiance file
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
 
     Usage:
-        inputList = [[(0, 0, 0)], [(10, 0, 0), (10, 10, 0)]]
-        print list(flattenPointList(inputList))
-
-        >> [(0, 0, 0), (10, 0, 0), (10, 10, 0)]
+        getRadianceObjectsFromFile("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")
     """
-    for el in inputList:
-        if isinstance(el, collections.Iterable) \
-            and not isinstance(el, basestring) \
-                and (isinstance(el[0], collections.Iterable) or hasattr(el[0], 'X')):
-            for sub in flattenTupleList(el):
-                yield sub
-        else:
-            yield el
+    assert os.path.isfile(filePath), "Can't find %s." % filePath
+
+    with open(filePath, "r") as radFile:
+        return getRadianceObjectsFromString("".join(radFile.readlines()))
+
+
+def importRadianceMaterialsFromFile(filePath):
+    """
+    Parse Radinace file and add return available radiance materials in file.
+
+    Args:
+        filePath: Path to a radiance file
+    """
+    # get all the radiance objects including materials
+    radianceObjects = getRadianceObjectsFromFile(filePath)
+
+    # find materials and create honeybee materials from the string
+    for radObj in radianceObjects:
+        raise NotImplementedError
 </code></pre>
   </div>
 
@@ -1041,39 +1074,110 @@ def flattenTupleList(inputList):
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="honeybee.dataoperation.flattenTupleList">
-    <p>def <span class="ident">flattenTupleList</span>(</p><p>inputList)</p>
+    <div class="name def" id="honeybee.radiance.filemanager.getRadianceObjectsFromFile">
+    <p>def <span class="ident">getRadianceObjectsFromFile</span>(</p><p>filePath)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Return a flattened generator from an input list of (x, y, z) tuples.</p>
+    <div class="desc"><p>Parse Radinace file and return a list of radiance objects as separate strings.</p>
+<p>Args:
+    filePath: Path to Radiance file</p>
+<p>Returns:
+    A list of strings. Each string represents a differnt Rdiance Object</p>
 <p>Usage:
-    inputList = [[(0, 0, 0)], [(10, 0, 0), (10, 10, 0)]]
-    print list(flattenPointList(inputList))</p>
-<pre><code>&gt;&gt; [(0, 0, 0), (10, 0, 0), (10, 10, 0)]
-</code></pre></div>
+    getRadianceObjectsFromFile("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.dataoperation.flattenTupleList', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.dataoperation.flattenTupleList" class="source">
-    <pre><code>def flattenTupleList(inputList):
-    """Return a flattened generator from an input list of (x, y, z) tuples.
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.filemanager.getRadianceObjectsFromFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.filemanager.getRadianceObjectsFromFile" class="source">
+    <pre><code>def getRadianceObjectsFromFile(filePath):
+    """
+    Parse Radinace file and return a list of radiance objects as separate strings.
+
+    Args:
+        filePath: Path to Radiance file
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
 
     Usage:
-        inputList = [[(0, 0, 0)], [(10, 0, 0), (10, 10, 0)]]
-        print list(flattenPointList(inputList))
-
-        >> [(0, 0, 0), (10, 0, 0), (10, 10, 0)]
+        getRadianceObjectsFromFile("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")
     """
-    for el in inputList:
-        if isinstance(el, collections.Iterable) \
-            and not isinstance(el, basestring) \
-                and (isinstance(el[0], collections.Iterable) or hasattr(el[0], 'X')):
-            for sub in flattenTupleList(el):
-                yield sub
-        else:
-            yield el
+    assert os.path.isfile(filePath), "Can't find %s." % filePath
+
+    with open(filePath, "r") as radFile:
+        return getRadianceObjectsFromString("".join(radFile.readlines()))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.filemanager.getRadianceObjectsFromString">
+    <p>def <span class="ident">getRadianceObjectsFromString</span>(</p><p>fullString)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>separate a Radinace file string into multiple strings for each object.</p>
+<p>Args:
+    radFileString: Radiance data as a single string. The string can be multiline.</p>
+<p>Returns:
+    A list of strings. Each string represents a differnt Rdiance Object</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.filemanager.getRadianceObjectsFromString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.filemanager.getRadianceObjectsFromString" class="source">
+    <pre><code>def getRadianceObjectsFromString(fullString):
+    """
+    separate a Radinace file string into multiple strings for each object.
+
+    Args:
+        radFileString: Radiance data as a single string. The string can be multiline.
+
+    Returns:
+        A list of strings. Each string represents a differnt Rdiance Object
+    """
+    rawRadObjects = re.findall(r'(\n|^)(\w*(\h*\w.*\n){1,})', fullString + "\n", re.MULTILINE)
+
+    return [("").join(radObject[:-1]) for radObject in rawRadObjects]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.filemanager.importRadianceMaterialsFromFile">
+    <p>def <span class="ident">importRadianceMaterialsFromFile</span>(</p><p>filePath)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Parse Radinace file and add return available radiance materials in file.</p>
+<p>Args:
+    filePath: Path to a radiance file</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.filemanager.importRadianceMaterialsFromFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.filemanager.importRadianceMaterialsFromFile" class="source">
+    <pre><code>def importRadianceMaterialsFromFile(filePath):
+    """
+    Parse Radinace file and add return available radiance materials in file.
+
+    Args:
+        filePath: Path to a radiance file
+    """
+    # get all the radiance objects including materials
+    radianceObjects = getRadianceObjectsFromFile(filePath)
+
+    # find materials and create honeybee materials from the string
+    for radObj in radianceObjects:
+        raise NotImplementedError
 </code></pre>
   </div>
 </div>
