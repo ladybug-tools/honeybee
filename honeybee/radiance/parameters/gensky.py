@@ -2,7 +2,7 @@
 from _advancedparametersbase import AdvancedRadianceParameters
 
 
-class GenskyParameters(AdvancedRadianceParameters):
+class GenSkyParameters(AdvancedRadianceParameters):
     """Radiance Parameters for grid based analysis.
 
     Read more:
@@ -43,20 +43,25 @@ class GenskyParameters(AdvancedRadianceParameters):
     Usage:
 
         # generate sky matrix with default values
-        gnsky = GenskyParameters()
+        gnskyparam = GenskyParameters()
 
         # check the current values
-        print gensky.toRadString()
+        print gnskyparam.toRadString()
+        > -g 0.5
 
 
-        # ask only for direct sun
-        gnsky.intermSkyWithSun=True
+        # set altitude and azimuth angle values
+        gnsky.altitudeAzimuth = (12,31)
+
+        #check the new values added.
+        print gnskyparam.toRadString()
+        > -g 0.5 -ang 12.0 31.0
 
     """
     pass
 
-    def __init__(self,altitudeAzimuth=None,sunnySkyNoSun=None,
-                 sunnySkyWithSun=None,cloudySky=None,intermSkyNoSun=None,
+    def __init__(self,altitudeAzimuth=None,sunnySkyNoSun=False,
+                 sunnySkyWithSun=False,cloudySky=None,intermSkyNoSun=None,
                  intermSkyWithSun=None,uniformCloudySky=None,groundReflect=None,
                  zenithBright=None,zenithBrightHorzDiff=None,solarRad=None,
                  solarRadHorzDiff=None,turbidity=None,latitude=None,
@@ -64,7 +69,8 @@ class GenskyParameters(AdvancedRadianceParameters):
         AdvancedRadianceParameters.__init__(self)
 
         self.addRadianceTuple('ang','altitude azimuth',tupleSize=2,
-                                     numType=float,attributeName=altitudeAzimuth)
+                                     numType=float,attributeName='altitudeAzimuth',
+                              defaultValue=altitudeAzimuth)
         self.addRadianceBoolFlag('s','sunny sky with no sun',
                                  defaultValue=sunnySkyNoSun,
                                  attributeName='sunnySkyNoSun')

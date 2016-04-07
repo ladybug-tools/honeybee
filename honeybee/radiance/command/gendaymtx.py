@@ -32,7 +32,7 @@ class Gendaymtx(RadianceCommand):
 
         # create gendaymtx
         dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                         gendaymtxParameters=dmtxpar)
+                         gendaymtxParameters=gmtx)
 
         # run gendaymtx
         dmtx.execute()

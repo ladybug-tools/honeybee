@@ -1,13 +1,13 @@
 # coding=utf-8
 # coding=utf-8
-from commandbase import RadianceCommand
-from ..datatype import RadianceTuple,RadiancePath
-from ..parameters.gensky import GenskyParameters
+from _commandbase import RadianceCommand
+from ..datatype import RadiancePath
+from ..parameters.gensky import GenSkyParameters
 
 import os
 
 
-class Gensky(RadianceCommand):
+class GenSky(RadianceCommand):
     u"""
     gensky - Generate an annual Perez sky matrix from a weather tape.
 
@@ -16,7 +16,7 @@ class Gensky(RadianceCommand):
     naming purposes only.
 
     Attributes:
-        weaFile: Full path to input wea file (Default: None).
+        monthDayHour: A tuple containing inputs for month,day and hour.
         outputName: An optional name for output file name. If None the name of
             .epw file will be used.
         genskyParameters: Radiance parameters for gensky. If None Default
@@ -25,61 +25,53 @@ class Gensky(RadianceCommand):
 
     Usage:
 
-        from honeybee.radiance.parameters.gensky import genskyParameters
-        from honeybee.radiance.command.gensky import gensky
+        from honeybee.radiance.parameters.gensky import GenSkyParameters
+        from honeybee.radiance.command.gensky import GenSky
 
-        # create and modify genskyParameters
-        # generate sky matrix with default values
-        gmtx = genskyParameters()
+        # create and modify genskyParameters. In this case a sunny with no sun
+        # will be generated.
+        gnskyParam = GenSkyParameters()
+        gnskyParam.sunnySkyNoSun = True
 
-        # ask only for direct sun
-        gmtx.onlyDirect = True
-
-        # create gensky
-        dmtx = gensky(weaFile="C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea",
-                         genskyParameters=dmtxpar)
+        # create the gensky Command.
+        gnsky = GenSky(monthDayHour=(1,1,11),genskyParameters=gnskyParam,
+        outputName = r'd:\sky.rad' )
 
         # run gensky
-        dmtx.execute()
-        > c:\radiance\bin\gensky: reading weather tape 'C:\ladybug\IZMIR_TUR\IZMIR_TUR.wea'
-        > c:\radiance\bin\gensky: location 'IZMIR_TUR'
-        > c:\radiance\bin\gensky: (lat,long)=(38.5,-27.0) degrees north, west
-        > c:\radiance\bin\gensky: 146 sky patches per time step
-        > c:\radiance\bin\gensky: stepping through month 1...
-        > c:\radiance\bin\gensky: stepping through month 2...
-        > c:\radiance\bin\gensky: stepping through month 3...
-        > c:\radiance\bin\gensky: stepping through month 4...
-        > c:\radiance\bin\gensky: stepping through month 5...
-        > c:\radiance\bin\gensky: stepping through month 6...
-        > c:\radiance\bin\gensky: stepping through month 7...
-        > c:\radiance\bin\gensky: stepping through month 8...
-        > c:\radiance\bin\gensky: stepping through month 9...
-        > c:\radiance\bin\gensky: stepping through month 10...
-        > c:\radiance\bin\gensky: stepping through month 11...
-        > c:\radiance\bin\gensky: stepping through month 12...
-        > c:\radiance\bin\gensky: writing matrix with 8760 time steps...
-        > c:\radiance\bin\gensky: done.
+        gnsky.execute()
 
-        # change it not to be verbose
-        dmtx.genskyParameters.verboseReport = False
-
-        # run it again
-        dmtx.execute()
         >
     """
-    monthDayHour = RadianceTuple('monthDayHour','month day hour',tupleSize=3,
-                                 testType=False)
+    # monthDayHour = RadianceTuple('monthDayHour','month day hour',tupleSize=3,
+    #                              testType=False)
 
-    outputFile = RadiancePath('outputFile', descriptiveName='output sky file',
-                           relativePath=None, checkExists=False)
+    outputName = RadiancePath('outputFile', descriptiveName='output sky file',
+                              relativePath=None, checkExists=False)
 
-    def __init__(self, monthDayHour=None, genskyParameters=None,outputFile=None):
+    def __init__(self, monthDayHour=None, genskyParameters=None,outputName=None):
         """Init command."""
         RadianceCommand.__init__(self)
-
         self.monthDayHour = monthDayHour
         self.genskyParameters = genskyParameters
-        self.outputFile = outputFile
+        self.outputName = outputName
+
+    @property
+    def monthDayHour(self):
+        if self._monthDayHour:
+            return " ".join(map(str,self._monthDayHour))
+        else:
+            return ''
+
+    @monthDayHour.setter
+    def monthDayHour(self,value):
+        try:
+            value = value.split()
+        except AttributeError:
+            pass
+
+        assert len(value)==3,"The input for monthDayHour should be a tuple with" \
+                             " three inputs for month day and hour."
+        self._monthDayHour = value
 
     @property
     def genskyParameters(self):
@@ -89,7 +81,7 @@ class Gensky(RadianceCommand):
     @genskyParameters.setter
     def genskyParameters(self, genskyParam):
         self.__genskyParameters = genskyParam if genskyParam is not None \
-            else GenskyParameters()
+            else GenSkyParameters()
 
         assert hasattr(self.genskyParameters, "isRadianceParameters"), \
             "input genskyParameters is not a valid parameters type."
@@ -97,11 +89,11 @@ class Gensky(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         # generate the name from self.weaFile
-        outputFile = self.outputFile
+        outputFile = self.outputName
         monthDayHour = self.monthDayHour if self.monthDayHour else ''
         radString = "%s %s %s > %s" % (
             os.path.join(self.radbinPath, 'gensky'),
-            self.monthDayHour.toRadString(),
+            self.monthDayHour,
             self.genskyParameters.toRadString(),
             outputFile
         )
