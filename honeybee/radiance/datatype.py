@@ -397,16 +397,17 @@ class RadianceTuple(RadianceDefault):
             toRadString string representation of the component.
     """
 
-    __slots__ = ('_tupleSize', '_type')
+    __slots__ = ('_tupleSize', '_type','_testType')
 
     def __init__(self, name, descriptiveName=None, validRange=None,
                  acceptedInputs=None, tupleSize=None, numType=None,
-                 defaultValue=None):
+                 defaultValue=None,testType=True):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange, defaultValue)
         self._tupleSize = tupleSize
         self._type = numType
+        self._testType = testType
 
     def __set__(self, instance, value):
         """
@@ -414,10 +415,12 @@ class RadianceTuple(RadianceDefault):
         if input is specified as a string instead of a number.
         """
         if value is not None:
-            if self._type:
-                numType = self._type
-            else:
-                numType = float
+
+            if self._testType:
+                if self._type:
+                    numType = self._type
+                else:
+                    numType = float
 
             try:
                 finalValue = value.replace(',', ' ').split()
@@ -425,7 +428,8 @@ class RadianceTuple(RadianceDefault):
                 finalValue = value
 
             try:
-                finalValue = map(numType, finalValue)
+                if self._testType:
+                    finalValue = map(numType, finalValue)
             except TypeError:
                 msg = "The specified input for %s is %s. " \
                       "The value should be a list or a tuple." \
@@ -656,6 +660,7 @@ class RadianceBoolType(RadianceDataType):
     def __rpow__(self, other):
         return other**self._value
 
+
 class RadiancePathType(RadianceDataType):
     """Radiance path."""
 
@@ -763,80 +768,3 @@ class RadianceNumberType(RadianceDataType):
 
     def __rpow__(self, other):
         return other**self._value
-
-
-class RadInputStringFormatter:
-    """This class implements a bunch of static methods for formatting Radiance
-    input flags. I am encapsulating them within this one class for the sake of
-    clarity. The methods are static because self in this case doesn't have
-    anything to do with the operation of methods in this class.
-    """
-
-    @staticmethod
-    def normal(flagVal, inputVal):
-        """The normal format is something like -ab 5 , -ad 100, -g 0.5 0.2 0.3
-           Args:
-               flagVal:The alphabet(s) denoting the flag. Like ab for ambient
-                bounces.
-
-               inputVal: The input value for the flag.
-        """
-        output = " -%s" % flagVal
-
-        try:
-            output += inputVal
-        # raise if ip is not a str.
-        except TypeError:
-            try:
-                for values in inputVal:
-                    output += " %s " % values
-            # raise if ip is not iterable.
-            except TypeError:
-                output += " %s " % inputVal
-
-        return output
-
-    @staticmethod
-    def joined(flagVal, inputVal):
-        """ For cases like -of , -O1 etc. where everthing after the first two
-            characters is input.
-        Args:
-            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
-            bounces.
-            inputVal: The input value for the flag.
-         """
-        output = ""
-        if inputVal is not None:
-            # The value is set to be True instead of an option.
-            if inputVal is True:
-                inputVal = ''
-            output = " -%s%s " % (flagVal, inputVal)
-        return output
-
-    @staticmethod
-    def boolean(flagVal, inputVal):
-        """If the input is just a normal toggle like -v or -h etc.
-        Args:
-            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
-            bounces.
-            inputVal: The input value for the flag.
-        """
-        output = ""
-        if inputVal is True:
-            output = "-%s " % flagVal
-        return output
-
-    @staticmethod
-    def boolDualSign(flagVal, inputVal):
-        """If the input is just a normal toggle like -v or -h etc.
-        Args:
-            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
-            bounces.
-            inputVal: The input value for the flag.
-        """
-        output = ""
-        if inputVal is True:
-            output = "+%s " % flagVal
-        elif inputVal is False:
-            output = "-%s " % flagVal
-        return output
