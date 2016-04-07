@@ -56,6 +56,35 @@ class GridBasedParameters(AdvancedRadianceParameters):
         AdvancedRadianceParameters.__init__(self)
 
         self.quality = quality
+        """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
+
+        self.ab = None
+        """ Number of ambient bounces. This is the maximum number of diffuse
+            bounces computed by the indirect calculation. A value of zero
+            implies no indirect calculation."""
+
+        self.ad = None
+        """ Number of ambient divisions. The error in the Monte Carlo calculation
+            of indirect illuminance will be inversely proportional to the square
+            root of this number. A value of zero implies no indirect calculation.
+        """
+
+        # self.as = None
+        """ Number of ambient super-samples. Super-samples are applied only to
+            the ambient divisions which show a significant change.
+        """
+
+        self.ar = None
+        """ Number of ambient resolution. This number will determine the maximum
+            density of ambient values used in interpolation. Error will start to
+            increase on surfaces spaced closer than the scene size divided by the
+            ambient resolution. The maximum ambient value density is the scene
+            size times the ambient accuracy."""
+
+        self.aa = None
+        """Number of ambient accuracy. This value will approximately equal the
+        error from indirect illuminance interpolation. A value of zero implies
+        no interpolation."""
 
     @property
     def isGridBasedRadianceParameters(self):

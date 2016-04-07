@@ -51,12 +51,52 @@ class GendaymtxParameters(AdvancedRadianceParameters):
         > -v -d -r 0 -m 1 -of
     """
 
-
     def __init__(self, verboseReport=True, removeHeader=False, onlyDirect=False,
                  onlySky=False, rotation=0, skyDensity=1, groundColor=None,
                  skyColor=None, outputFormat=None, outputType=None):
         """Init paramters."""
         AdvancedRadianceParameters.__init__(self)
+
+        # add attributes for documentation and autocomplete
+        self.verboseReport = None
+        """[-v] A boolean to indicate verbose reporting (Default: True)"""
+
+        self.removeHeader = None
+        """ [-h] A boolean to disable header (Default: False)"""
+
+        self.onlyDirect = None
+        """ [-d] A boolean to only generate sun-only matrix (Default: False)"""
+
+        self.onlySky = None
+        """ [-s] A boolean to only generate sky matrix with no direct sun
+            (Default: False)"""
+
+        self.rotation = None
+        """ [-r deg] A floating number in degrees that indicates zenith
+            rotation (Default: 0)"""
+
+        self.skyDensity = None
+        """ [-m N] An integer to indicate number of sky patches. Default
+            value of 1 generates 146 sky pacthes."""
+
+        self.groundColor = None
+        """ [-g r g b] A tuple of r, g, b values to indicate ground
+            color (Default:  0.2 0.2 0.2)"""
+
+        self.skyColor = None
+        """ [-c r g b] A tuple of r, g, b values to indicate sky color
+            (Default: 0.960, 1.004, 1.118)"""
+
+        self.outputFormat = None
+        """ [-o{f|d}] An integer to indicate binary output format.
+            0 is double output [d] and 1 is binary float numbers (f). If you're
+            running Radiance on Windows do not use this option. (Default: None)
+        """
+
+        self.outputType = None
+        """ [-O{0|1}] An integr specifies output type. 0 generates the
+            values for visible radiance whereas 1 indicates the results should
+            be total solar radiance."""
 
         # convert user input to radiance output formats
         _outputFormat = {0: 'f', 1: 'd', None: None}
@@ -84,12 +124,12 @@ class GendaymtxParameters(AdvancedRadianceParameters):
                                attributeName='skyDensity')
 
         self.addRadianceTuple('g', 'ground color', defaultValue=groundColor,
-                                     validRange=(0, 1), tupleSize=3, numType=float,
-                                     attributeName='groundColor')
+                              validRange=(0, 1), tupleSize=3, numType=float,
+                              attributeName='groundColor')
 
         self.addRadianceTuple('c', 'sky color', defaultValue=skyColor,
-                                     validRange=(0, 1), tupleSize=3, numType=float,
-                                     attributeName='skyColor')
+                              validRange=(0, 1), tupleSize=3, numType=float,
+                              attributeName='skyColor')
 
         self.addRadianceValue('o', 'output format',
                               defaultValue=_outputFormat[outputFormat],

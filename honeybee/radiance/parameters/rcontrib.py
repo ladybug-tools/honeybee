@@ -49,6 +49,11 @@ class RcontribParameters(GridBasedParameters):
     def __init__(self, modFile=None):
         """Init paramters."""
         GridBasedParameters.__init__(self)
+
+        self.modFile = None
+        """[-M file] File path to a file with a list of modifiers
+        (Default: None)"""
+
         # add parameters
         self.addRadianceValue('M', 'modifiers file', defaultValue=modFile,
                               attributeName='modFile')
