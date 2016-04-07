@@ -1,4 +1,4 @@
-"""A collection of methods for writing Radiance file."""
+"""A collection of methods for writing Radiance geometry file."""
 
 
 def __normName(name):

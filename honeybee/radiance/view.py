@@ -12,13 +12,13 @@ class View(object):
 
     # init radiance types
     viewPoint = RadianceTuple('vp', 'view point', tupleSize=3, numType=float,
-                                     defaultValue=(0, 0, 0))
+                              defaultValue=(0, 0, 0))
 
     viewDirection = RadianceTuple('vd', 'view direction', tupleSize=3,
-                                         numType=float, defaultValue=(0, 0, 1))
+                                  numType=float, defaultValue=(0, 0, 1))
 
     viewUpVector = RadianceTuple('vu', 'view up vector', tupleSize=3,
-                                        numType=float, defaultValue=(0, 1, 0))
+                                 numType=float, defaultValue=(0, 1, 0))
 
     viewHSize = RadianceNumber('vh', 'view horizontal size', numType=float)
     viewVSize = RadianceNumber('vv', 'view vertical size', numType=float)
@@ -86,17 +86,29 @@ class View(object):
             v.addForeClip(distance=100)
             print v
 
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+               0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
 
             # split the view into a view grid
             gridViews = v.calculateViewGrid(2, 2)
             for g in gridViews:
                 print g
 
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500 -vo 100.000
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500 -vo 100.000
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500 -vo 100.000
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000 0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500 -vo 100.000
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+               0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500
+               -vo 100.000
+
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+               0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500
+               -vo 100.000
+
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+               0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500
+               -vo 100.000
+
+            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+              0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500
+              -vo 100.000
         """
         self.viewPoint = viewPoint
         """Set the view point (-vp) to (x, y, z)."""

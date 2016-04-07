@@ -1,5 +1,4 @@
 """A collection of auxiliary funtions for working with radiance files and objects."""
-from material.custom import CustomMaterial
 import re
 import os
 

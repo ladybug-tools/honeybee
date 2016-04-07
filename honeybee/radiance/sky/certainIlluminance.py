@@ -1,4 +1,4 @@
-from skyBase import RadianceSky
+from _skyBase import RadianceSky
 
 
 class SkyWithCertainIlluminanceLevel(RadianceSky):

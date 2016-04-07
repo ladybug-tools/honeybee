@@ -1,3 +1,3 @@
-__all__ = ["skyBase", "certainIlluminance"]
+__all__ = ["certainIlluminance"]
 
-import skyBase, certainIlluminance
+import certainIlluminance

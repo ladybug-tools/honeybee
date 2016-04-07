@@ -1,6 +1,6 @@
 # coding=utf-8
 """RADIANCE rcontrib command."""
-from commandbase import RadianceCommand
+from _commandbase import RadianceCommand
 from ..datatype import RadiancePath
 from ..parameters.rcontrib import RcontribParameters
 

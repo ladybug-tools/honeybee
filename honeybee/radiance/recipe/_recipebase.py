@@ -1,4 +1,4 @@
-"""Radiance Analysis Recipes."""
+"""Base ckass for RADIANCE Analysis Recipes."""
 from abc import ABCMeta, abstractmethod
 from ...helper import preparedir
 

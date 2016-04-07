@@ -1,5 +1,4 @@
 """Honeybee core library."""
-__all__ = ["config", "hbzone", "hbsurface", "surfacetype",
-           "radiance", "hbpointgroup"]
+__all__ = ["config", "hbpointgroup", "hbsurface", "radiance"]
 
-import config, hbzone, hbsurface, hbpointgroup, surfacetype, radiance
+import config, hbpointgroup, hbsurface, radiance
