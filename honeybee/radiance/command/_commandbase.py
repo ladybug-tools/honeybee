@@ -71,6 +71,9 @@ class RadianceCommand(object):
             "\nCurrent command won't work: %s" \
             % (self.__class__.__name__, radString)
 
+        if self.inputFiles is None:
+            return
+
         for f in self.inputFiles:
             # this is for oconv where it has list of files which are not
             # RadiancePath
@@ -110,8 +113,13 @@ class RadianceCommand(object):
                 print __err
 
     def __checkInputFilesExist(self):
+
+        if self.inputFiles is None:
+            return
+
         assert len(self.inputFiles) != 0, \
             "You need at least one file to create an octree."
+
         for f in self.inputFiles:
             assert os.path.exists(str(f)), \
                 "Invalid Input File: %s doesn't exist" % f

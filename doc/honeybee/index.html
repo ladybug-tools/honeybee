@@ -990,16 +990,9 @@ table {
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
         <li class="mono"><a href="config.m.html">honeybee.config</a></li>
-        <li class="mono"><a href="dataoperation.m.html">honeybee.dataoperation</a></li>
-        <li class="mono"><a href="geometryoperation.m.html">honeybee.geometryoperation</a></li>
-        <li class="mono"><a href="hbobject.m.html">honeybee.hbobject</a></li>
         <li class="mono"><a href="hbpointgroup.m.html">honeybee.hbpointgroup</a></li>
         <li class="mono"><a href="hbsurface.m.html">honeybee.hbsurface</a></li>
-        <li class="mono"><a href="hbzone.m.html">honeybee.hbzone</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.helper</a></li>
         <li class="mono"><a href="radiance/index.html">honeybee.radiance</a></li>
-        <li class="mono"><a href="surfacetype.m.html">honeybee.surfacetype</a></li>
-        <li class="mono"><a href="vectormath/index.html">honeybee.vectormath</a></li>
       </ul>
     </li>
     </ul>
@@ -1019,10 +1012,9 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee', this);">Show source &equiv;</a></p>
   <div id="source-honeybee" class="source">
     <pre><code>"""Honeybee core library."""
-__all__ = ["config", "hbzone", "hbsurface", "surfacetype",
-           "radiance", "hbpointgroup"]
+__all__ = ["config", "hbpointgroup", "hbsurface", "radiance"]
 
-import config, hbzone, hbsurface, hbpointgroup, surfacetype, radiance
+import config, hbpointgroup, hbsurface, radiance
 </code></pre>
   </div>
 
@@ -1049,26 +1041,6 @@ config.radbinPath = "c:/radiance/bin"
 
       </div>
       <div class="item">
-      <p class="name"><a href="dataoperation.m.html">honeybee.dataoperation</a></p>
-      
-  
-    <div class="desc"><p>Collection of functions for data operation.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="geometryoperation.m.html">honeybee.geometryoperation</a></p>
-      
-  
-    <div class="desc"><p>Collection of methods for geometrical operations.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="hbobject.m.html">honeybee.hbobject</a></p>
-      
-  
-
-      </div>
-      <div class="item">
       <p class="name"><a href="hbpointgroup.m.html">honeybee.hbpointgroup</a></p>
       
   
@@ -1082,36 +1054,10 @@ config.radbinPath = "c:/radiance/bin"
 
       </div>
       <div class="item">
-      <p class="name"><a href="hbzone.m.html">honeybee.hbzone</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.helper</a></p>
-      
-  
-    <div class="desc"><p>A collection of auxiliary funtions for working with files and directories.</p></div>
-
-      </div>
-      <div class="item">
       <p class="name"><a href="radiance/index.html">honeybee.radiance</a></p>
       
   
     <div class="desc"><p>Honeybee Radiance libraries.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="surfacetype.m.html">honeybee.surfacetype</a></p>
-      
-  
-    <div class="desc"><p>Honeybee surface types (e.g. wall, roof, etc.).</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="vectormath/index.html">honeybee.vectormath</a></p>
-      
-  
 
       </div>
   </section>

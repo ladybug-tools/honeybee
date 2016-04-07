@@ -3,7 +3,7 @@
 Use this class to create any type of radiance materials.
 http://radsite.lbl.gov/radiance/refer/ray.html#Materials
 """
-from materialbase import RadianceMaterial
+from _materialbase import RadianceMaterial
 
 
 class CustomMaterial(RadianceMaterial):

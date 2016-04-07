@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance.command.rcollate API documentation</title>
-    <meta name="description" content="" />
+    <title>honeybee.radiance.command.rcontrib API documentation</title>
+    <meta name="description" content="RADIANCE rcontrib command." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
 
@@ -989,14 +989,16 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.radiance.command.rcollate.Rcollate">Rcollate</a></span>
+        <span class="class_name"><a href="#honeybee.radiance.command.rcontrib.Rcontrib">Rcontrib</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#honeybee.radiance.command.rcollate.Rcollate.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rcollate.Rcollate.execute">execute</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rcollate.Rcollate.inputFiles">inputFiles</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rcollate.Rcollate.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles">checkInputFiles</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.execute">execute</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.onExecution">onExecution</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.onToRadString">onToRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1014,112 +1016,110 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance.command.rcollate</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.command.rcontrib</span> module</h1>
+  <p>RADIANCE rcontrib command.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcollate', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcollate" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib" class="source">
     <pre><code># coding=utf-8
-from commandbase import RadianceCommand
+"""RADIANCE rcontrib command."""
+from _commandbase import RadianceCommand
+from ..datatype import RadiancePath
+from ..parameters.rcontrib import RcontribParameters
+
 import os
-import sys
-from ..datatype import *
-from ..datatype import RadInputStringFormatter as Rfmt
 
 
-class Rcollate(RadianceCommand):
+class Rcontrib(RadianceCommand):
     u"""
-    rcollate - resize or transpose matrix data
+    rcontrib - Compute contribution coefficients in a RADIANCE scene.
+
+    Read more at:
+    https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf
 
     Attributes:
+        outputName: An optional name for output file name. If None the name of
+            .epw file will be used.
+        rcontribParameters: Radiance parameters for rcontrib. If None Default
+            parameters will be set. You can use self.rcontribParameters to view,
+            add or remove the parameters before executing the command.
 
+    Usage:
+
+        from honeybee.radiance.command.rcontrib import Rcontrib
+
+        rcontrib = Rcontrib(outputName="test3",
+                            octreeFile=r"C:/ladybug/test3/gridbased/test3.oct",
+                            pointsFile=r"C:/ladybug/test3/gridbased/test3.pts")
+
+        # set up parameters
+        rcontrib.rcontribParameters.modFile = r"C:/ladybug/test3/sunlist.txt"
+        rcontrib.rcontribParameters.I = True
+        rcontrib.rcontribParameters.ab = 0
+        rcontrib.rcontribParameters.ad = 10000
+
+        print rcontrib.toRadString()
+        > c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M C:/ladybug/test3/gridbased/sunlist.txt -I C:/ladybug/test3/gridbased/test3.oct < C:/ladybug/test3/gridbased/test3.pts > test3.dc
+
+        # run rcontrib
+        rcontrib.execute()
     """
-    h = RadianceBoolFlag('h', 'header information',
-                         acceptedInputs=(True, 'i', 'o'))
-    w = RadianceBoolFlag('w', 'warning messages', acceptedInputs=(True,))
-    t = RadianceBoolFlag('t', 'transpose', acceptedInputs=(True,))
-    ic = RadianceNumber('ic', 'input columns', numType=int)
-    ir = RadianceNumber('ir', 'input rows', numType=int)
-    oc = RadianceNumber('ic', 'ouput columns', numType=int)
-    orX = RadianceNumber('orX', 'output rows', numType=int)
-    matrixFile = RadiancePath('matrixFile', 'matrix file', expandRelative=True,
-                              checkExists=True)
 
-    def __init__(self, h=None, w=None, t=None, ic=None, ir=None, oc=None,
-                 orX=None,
-                 f=None, matrixFile=None, outputName=None):
+    outputFile = RadiancePath("dc", "results file", extension=".dc")
+    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
+    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+
+    def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
+                 rcontribParameters=None):
+        """Init command."""
         RadianceCommand.__init__(self)
-        self.h = h
-        self.w = w
-        self.t = t
-        self.ic = ic
-        self.ir = ir
-        self.oc = oc
-        self.orX = orX
-        self.matrixFile = matrixFile
-        self.f = f
-        self.outputName = outputName
+
+        self.outputFile = outputName if outputName.lower().endswith(".dc") \
+            else outputName + ".dc"
+        """results file for coefficients (Default: untitled)"""
+
+        self.octreeFile = octreeFile
+        """Full path to input oct file."""
+
+        self.pointsFile = pointsFile
+        """Full path to input points file."""
+
+        self.rcontribParameters = rcontribParameters
+        """Radiance parameters for rcontrib. If None Default parameters will be
+        set. You can use self.rcontribParameters to view, add or remove the
+        parameters before executing the command."""
 
     @property
-    def f(self):
-        return self._f
+    def rcontribParameters(self):
+        """Get and set gendaymtxParameters."""
+        return self.__rcontribParameters
 
-    @f.setter
-    def f(self, value):
-        varName = "f (input format)"
-        assert value[0] in ('a', 'f', 'd', 'b'), "The first value for %s " \
-                                                 "should be either a,f,d or" \
-                                                 "b. %s was provided" \
-                                                 "insted" % (varName, value)
-        if len(value) > 1:
-            try:
-                dataRecords = int(value[1:])
-            except ValueError:
-                raise ValueError("The input for %s should be in the format"
-                                 "[afdb]N .e.g f3. The value provided was %s"
-                                 % (varName, value))
-        self._f = value
+    @rcontribParameters.setter
+    def rcontribParameters(self, parameters):
+        self.__rcontribParameters = parameters if parameters is not None \
+            else RcontribParameters()
+
+        assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
+            "input gendaymtxParameters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        fmtBool = Rfmt.boolean
-        fmtJoin = Rfmt.joined
-        fmtNormal = Rfmt.normal
-
-        fmtDict = {'h': ('h', fmtBool),
-                   'w': ('w', fmtBool),
-                   't': ('t', fmtBool),
-                   'ic': ('ic', fmtNormal),
-                   'ir': ('ir', fmtNormal),
-                   'oc': ('oc', fmtNormal),
-                   'orX': ('or', fmtNormal),
-                   'f': ('f', fmtJoin)}
-
-        commandInputs = ""
-        for key, value in fmtDict.items():
-            try:
-                currentValue = getattr(self, key)
-                currentFlag, currentFormatter = value
-                commandInputs += currentFormatter(currentFlag, currentValue)
-            except AttributeError:
-                pass
-
-        outputFileName = self.outputName
-        if not self.outputName:
-            outputFileName = os.path.splitext(self.inputFiles[0])[0] + '.dat'
-
-        radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, 'rcollate'),
-            commandInputs,
-            self.inputFiles[0],
-            outputFileName
+        radString = "%s %s %s < %s > %s" % (
+            os.path.join(self.radbinPath, "rcontrib"),
+            self.rcontribParameters.toRadString(),
+            self.octreeFile.toRadString(),
+            self.pointsFile.toRadString(),
+            self.outputFile.toRadString()
         )
 
+        # make sure input files are set by user
+        self.checkInputFiles(radString)
         return radString
 
+    @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.matrixFile
+        return self.octreeFile, self.pointsFile
 </code></pre>
   </div>
 
@@ -1131,107 +1131,130 @@ class Rcollate(RadianceCommand):
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.radiance.command.rcollate.Rcollate" class="name">class <span class="ident">Rcollate</span></p>
+      <p id="honeybee.radiance.command.rcontrib.Rcontrib" class="name">class <span class="ident">Rcontrib</span></p>
       
   
-    <div class="desc"><p>rcollate - resize or transpose matrix data</p>
-<p>Attributes:</p></div>
+    <div class="desc"><p>rcontrib - Compute contribution coefficients in a RADIANCE scene.</p>
+<p>Read more at:
+https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf</p>
+<p>Attributes:
+    outputName: An optional name for output file name. If None the name of
+        .epw file will be used.
+    rcontribParameters: Radiance parameters for rcontrib. If None Default
+        parameters will be set. You can use self.rcontribParameters to view,
+        add or remove the parameters before executing the command.</p>
+<p>Usage:</p>
+<pre><code>from honeybee.radiance.command.rcontrib import Rcontrib
+
+rcontrib = Rcontrib(outputName="test3",
+                    octreeFile=r"C:/ladybug/test3/gridbased/test3.oct",
+                    pointsFile=r"C:/ladybug/test3/gridbased/test3.pts")
+
+# set up parameters
+rcontrib.rcontribParameters.modFile = r"C:/ladybug/test3/sunlist.txt"
+rcontrib.rcontribParameters.I = True
+rcontrib.rcontribParameters.ab = 0
+rcontrib.rcontribParameters.ad = 10000
+
+print rcontrib.toRadString()
+&gt; c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M C:/ladybug/test3/gridbased/sunlist.txt -I C:/ladybug/test3/gridbased/test3.oct &lt; C:/ladybug/test3/gridbased/test3.pts &gt; test3.dc
+
+# run rcontrib
+rcontrib.execute()
+</code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcollate.Rcollate', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcollate.Rcollate" class="source">
-    <pre><code>class Rcollate(RadianceCommand):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib" class="source">
+    <pre><code>class Rcontrib(RadianceCommand):
     u"""
-    rcollate - resize or transpose matrix data
+    rcontrib - Compute contribution coefficients in a RADIANCE scene.
+
+    Read more at:
+    https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf
 
     Attributes:
+        outputName: An optional name for output file name. If None the name of
+            .epw file will be used.
+        rcontribParameters: Radiance parameters for rcontrib. If None Default
+            parameters will be set. You can use self.rcontribParameters to view,
+            add or remove the parameters before executing the command.
 
+    Usage:
+
+        from honeybee.radiance.command.rcontrib import Rcontrib
+
+        rcontrib = Rcontrib(outputName="test3",
+                            octreeFile=r"C:/ladybug/test3/gridbased/test3.oct",
+                            pointsFile=r"C:/ladybug/test3/gridbased/test3.pts")
+
+        # set up parameters
+        rcontrib.rcontribParameters.modFile = r"C:/ladybug/test3/sunlist.txt"
+        rcontrib.rcontribParameters.I = True
+        rcontrib.rcontribParameters.ab = 0
+        rcontrib.rcontribParameters.ad = 10000
+
+        print rcontrib.toRadString()
+        > c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M C:/ladybug/test3/gridbased/sunlist.txt -I C:/ladybug/test3/gridbased/test3.oct < C:/ladybug/test3/gridbased/test3.pts > test3.dc
+
+        # run rcontrib
+        rcontrib.execute()
     """
-    h = RadianceBoolFlag('h', 'header information',
-                         acceptedInputs=(True, 'i', 'o'))
-    w = RadianceBoolFlag('w', 'warning messages', acceptedInputs=(True,))
-    t = RadianceBoolFlag('t', 'transpose', acceptedInputs=(True,))
-    ic = RadianceNumber('ic', 'input columns', numType=int)
-    ir = RadianceNumber('ir', 'input rows', numType=int)
-    oc = RadianceNumber('ic', 'ouput columns', numType=int)
-    orX = RadianceNumber('orX', 'output rows', numType=int)
-    matrixFile = RadiancePath('matrixFile', 'matrix file', expandRelative=True,
-                              checkExists=True)
 
-    def __init__(self, h=None, w=None, t=None, ic=None, ir=None, oc=None,
-                 orX=None,
-                 f=None, matrixFile=None, outputName=None):
+    outputFile = RadiancePath("dc", "results file", extension=".dc")
+    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
+    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+
+    def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
+                 rcontribParameters=None):
+        """Init command."""
         RadianceCommand.__init__(self)
-        self.h = h
-        self.w = w
-        self.t = t
-        self.ic = ic
-        self.ir = ir
-        self.oc = oc
-        self.orX = orX
-        self.matrixFile = matrixFile
-        self.f = f
-        self.outputName = outputName
+
+        self.outputFile = outputName if outputName.lower().endswith(".dc") \
+            else outputName + ".dc"
+        """results file for coefficients (Default: untitled)"""
+
+        self.octreeFile = octreeFile
+        """Full path to input oct file."""
+
+        self.pointsFile = pointsFile
+        """Full path to input points file."""
+
+        self.rcontribParameters = rcontribParameters
+        """Radiance parameters for rcontrib. If None Default parameters will be
+        set. You can use self.rcontribParameters to view, add or remove the
+        parameters before executing the command."""
 
     @property
-    def f(self):
-        return self._f
+    def rcontribParameters(self):
+        """Get and set gendaymtxParameters."""
+        return self.__rcontribParameters
 
-    @f.setter
-    def f(self, value):
-        varName = "f (input format)"
-        assert value[0] in ('a', 'f', 'd', 'b'), "The first value for %s " \
-                                                 "should be either a,f,d or" \
-                                                 "b. %s was provided" \
-                                                 "insted" % (varName, value)
-        if len(value) > 1:
-            try:
-                dataRecords = int(value[1:])
-            except ValueError:
-                raise ValueError("The input for %s should be in the format"
-                                 "[afdb]N .e.g f3. The value provided was %s"
-                                 % (varName, value))
-        self._f = value
+    @rcontribParameters.setter
+    def rcontribParameters(self, parameters):
+        self.__rcontribParameters = parameters if parameters is not None \
+            else RcontribParameters()
+
+        assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
+            "input gendaymtxParameters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        fmtBool = Rfmt.boolean
-        fmtJoin = Rfmt.joined
-        fmtNormal = Rfmt.normal
-
-        fmtDict = {'h': ('h', fmtBool),
-                   'w': ('w', fmtBool),
-                   't': ('t', fmtBool),
-                   'ic': ('ic', fmtNormal),
-                   'ir': ('ir', fmtNormal),
-                   'oc': ('oc', fmtNormal),
-                   'orX': ('or', fmtNormal),
-                   'f': ('f', fmtJoin)}
-
-        commandInputs = ""
-        for key, value in fmtDict.items():
-            try:
-                currentValue = getattr(self, key)
-                currentFlag, currentFormatter = value
-                commandInputs += currentFormatter(currentFlag, currentValue)
-            except AttributeError:
-                pass
-
-        outputFileName = self.outputName
-        if not self.outputName:
-            outputFileName = os.path.splitext(self.inputFiles[0])[0] + '.dat'
-
-        radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, 'rcollate'),
-            commandInputs,
-            self.inputFiles[0],
-            outputFileName
+        radString = "%s %s %s < %s > %s" % (
+            os.path.join(self.radbinPath, "rcontrib"),
+            self.rcontribParameters.toRadString(),
+            self.octreeFile.toRadString(),
+            self.pointsFile.toRadString(),
+            self.outputFile.toRadString()
         )
 
+        # make sure input files are set by user
+        self.checkInputFiles(radString)
         return radString
 
+    @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.matrixFile
+        return self.octreeFile, self.pointsFile
 </code></pre>
   </div>
 </div>
@@ -1240,13 +1263,13 @@ class Rcollate(RadianceCommand):
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.radiance.command.rcollate.Rcollate">Rcollate</a></li>
-          <li>honeybee.radiance.command.commandbase.RadianceCommand</li>
+          <li><a href="#honeybee.radiance.command.rcontrib.Rcontrib">Rcontrib</a></li>
+          <li>honeybee.radiance.command._commandbase.RadianceCommand</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Class variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.h" class="name">var <span class="ident">h</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.octreeFile" class="name">var <span class="ident">octreeFile</span></p>
             
 
             
@@ -1256,7 +1279,7 @@ class Rcollate(RadianceCommand):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.ic" class="name">var <span class="ident">ic</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.outputFile" class="name">var <span class="ident">outputFile</span></p>
             
 
             
@@ -1266,57 +1289,7 @@ class Rcollate(RadianceCommand):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.ir" class="name">var <span class="ident">ir</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.matrixFile" class="name">var <span class="ident">matrixFile</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.oc" class="name">var <span class="ident">oc</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.orX" class="name">var <span class="ident">orX</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.t" class="name">var <span class="ident">t</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.w" class="name">var <span class="ident">w</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
             
 
             
@@ -1327,87 +1300,51 @@ class Rcollate(RadianceCommand):
             </div>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.f" class="name">var <span class="ident">f</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
             
 
             
   
+    <div class="desc"><p>Input files for this command.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.h" class="name">var <span class="ident">h</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.octreeFile" class="name">var <span class="ident">octreeFile</span></p>
             
 
             
   
+    <div class="desc"><p>Full path to input oct file.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.ic" class="name">var <span class="ident">ic</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.outputFile" class="name">var <span class="ident">outputFile</span></p>
             
 
             
   
+    <div class="desc"><p>results file for coefficients (Default: untitled)</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.ir" class="name">var <span class="ident">ir</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
             
 
             
   
+    <div class="desc"><p>Full path to input points file.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.matrixFile" class="name">var <span class="ident">matrixFile</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.oc" class="name">var <span class="ident">oc</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.orX" class="name">var <span class="ident">orX</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.outputName" class="name">var <span class="ident">outputName</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
             
 
             
@@ -1419,7 +1356,7 @@ class Rcollate(RadianceCommand):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.radlibPath" class="name">var <span class="ident">radlibPath</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.radlibPath" class="name">var <span class="ident">radlibPath</span></p>
             
 
             
@@ -1431,21 +1368,14 @@ class Rcollate(RadianceCommand):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.t" class="name">var <span class="ident">t</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.rcontribParameters" class="name">var <span class="ident">rcontribParameters</span></p>
             
 
             
   
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.rcollate.Rcollate.w" class="name">var <span class="ident">w</span></p>
-            
-
-            
-  
+    <div class="desc"><p>Radiance parameters for rcontrib. If None Default parameters will be
+set. You can use self.rcontribParameters to view, add or remove the
+parameters before executing the command.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1453,30 +1383,32 @@ class Rcollate(RadianceCommand):
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcollate.Rcollate.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, h=None, w=None, t=None, ic=None, ir=None, oc=None, orX=None, f=None, matrixFile=None, outputName=None)</p>
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=&#39;untitled&#39;, octreeFile=None, pointsFile=None, rcontribParameters=None)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Init command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcollate.Rcollate.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcollate.Rcollate.__init__" class="source">
-    <pre><code>def __init__(self, h=None, w=None, t=None, ic=None, ir=None, oc=None,
-             orX=None,
-             f=None, matrixFile=None, outputName=None):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.__init__" class="source">
+    <pre><code>def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
+             rcontribParameters=None):
+    """Init command."""
     RadianceCommand.__init__(self)
-    self.h = h
-    self.w = w
-    self.t = t
-    self.ic = ic
-    self.ir = ir
-    self.oc = oc
-    self.orX = orX
-    self.matrixFile = matrixFile
-    self.f = f
-    self.outputName = outputName
+    self.outputFile = outputName if outputName.lower().endswith(".dc") \
+        else outputName + ".dc"
+    """results file for coefficients (Default: untitled)"""
+    self.octreeFile = octreeFile
+    """Full path to input oct file."""
+    self.pointsFile = pointsFile
+    """Full path to input points file."""
+    self.rcontribParameters = rcontribParameters
+    """Radiance parameters for rcontrib. If None Default parameters will be
+    set. You can use self.rcontribParameters to view, add or remove the
+    parameters before executing the command."""
 </code></pre>
   </div>
 </div>
@@ -1485,26 +1417,88 @@ class Rcollate(RadianceCommand):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcollate.Rcollate.execute">
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles">
+    <p>def <span class="ident">checkInputFiles</span>(</p><p>self, radString=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Make sure input files are set to a path.</p>
+<p>This method doesn't check if the file exists since it might be created
+later during the process.</p>
+<p>Args:
+    radString: Current radString to help user better understand the
+        erorr (Default: "")</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles" class="source">
+    <pre><code>def checkInputFiles(self, radString=""):
+    """Make sure input files are set to a path.
+    This method doesn't check if the file exists since it might be created
+    later during the process.
+    Args:
+        radString: Current radString to help user better understand the
+            erorr (Default: "")
+    """
+    # make sure wea file is provided
+    _msg = "To generate a valid %s command you need to specify the path" \
+        " to inpt files:" \
+        "\nCurrent command won't work: %s" \
+        % (self.__class__.__name__, radString)
+    if self.inputFiles is None:
+        return
+    for f in self.inputFiles:
+        # this is for oconv where it has list of files which are not
+        # RadiancePath
+        if isinstance(f, str):
+            continue
+        assert hasattr(f, 'normpath'), _msg
+        assert f.normpath is not None, _msg
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.execute">
     <p>def <span class="ident">execute</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Execute the command.</p></div>
+    <div class="desc"><p>Execute the command.</p>
+<p>Returns:
+    Return fullpath to the result file if any as a string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcollate.Rcollate.execute', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcollate.Rcollate.execute" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.execute', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.execute" class="source">
     <pre><code>def execute(self):
-    """Execute the command."""
+    """Execute the command.
+    Returns:
+        Return fullpath to the result file if any as a string.
+    """
     # check if the files exist on the computer
     self.__checkFiles()
+    self.onExecution()
     p = subprocess.Popen(self.toRadString(), shell=True,
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in p.stdout.readlines():
         print line,
     p.wait()
+    try:
+        if os.path.split(self.outputFile.normpath)[0] == "":
+            # add directory to file if it's not a full path
+            return os.path.join(os.getcwd(),
+                                self.outputFile.normpath)
+        # return output file
+        return self.outputFile
+    except AttributeError:
+        # this command doesn't have an output file
+        pass
 </code></pre>
   </div>
 </div>
@@ -1513,20 +1507,27 @@ class Rcollate(RadianceCommand):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcollate.Rcollate.inputFiles">
-    <p>def <span class="ident">inputFiles</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.onExecution">
+    <p>def <span class="ident">onExecution</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Input files for this command.</p></div>
+    <div class="desc"><p>Overwrite this method to add extra specific checks for the command.</p>
+<p>For instance for rcontrib you want to make sure there is at least one
+modifier set in the command. This method will be executed right before
+running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcollate.Rcollate.inputFiles', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcollate.Rcollate.inputFiles" class="source">
-    <pre><code>def inputFiles(self):
-    """Input files for this command."""
-    return self.matrixFile
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.onExecution', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.onExecution" class="source">
+    <pre><code>def onExecution(self):
+    """Overwrite this method to add extra specific checks for the command.
+    For instance for rcontrib you want to make sure there is at least one
+    modifier set in the command. This method will be executed right before
+    running the command.
+    """
+    pass
 </code></pre>
   </div>
 </div>
@@ -1535,7 +1536,36 @@ class Rcollate(RadianceCommand):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcollate.Rcollate.toRadString">
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.onToRadString">
+    <p>def <span class="ident">onToRadString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite this method to add extra specific checks while generating rad string.</p>
+<p>For instance for rcontrib you want to make sure there is at least one
+modifier set in the command. This method will be executed right before
+running the command.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.onToRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.onToRadString" class="source">
+    <pre><code>def onToRadString(self):
+    """Overwrite this method to add extra specific checks while generating rad string.
+    For instance for rcontrib you want to make sure there is at least one
+    modifier set in the command. This method will be executed right before
+    running the command.
+    """
+    pass
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.toRadString">
     <p>def <span class="ident">toRadString</span>(</p><p>self, relativePath=False)</p>
     </div>
     
@@ -1544,38 +1574,19 @@ class Rcollate(RadianceCommand):
   
     <div class="desc"><p>Return full command as a string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcollate.Rcollate.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcollate.Rcollate.toRadString" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.toRadString" class="source">
     <pre><code>def toRadString(self, relativePath=False):
     """Return full command as a string."""
-    fmtBool = Rfmt.boolean
-    fmtJoin = Rfmt.joined
-    fmtNormal = Rfmt.normal
-    fmtDict = {'h': ('h', fmtBool),
-               'w': ('w', fmtBool),
-               't': ('t', fmtBool),
-               'ic': ('ic', fmtNormal),
-               'ir': ('ir', fmtNormal),
-               'oc': ('oc', fmtNormal),
-               'orX': ('or', fmtNormal),
-               'f': ('f', fmtJoin)}
-    commandInputs = ""
-    for key, value in fmtDict.items():
-        try:
-            currentValue = getattr(self, key)
-            currentFlag, currentFormatter = value
-            commandInputs += currentFormatter(currentFlag, currentValue)
-        except AttributeError:
-            pass
-    outputFileName = self.outputName
-    if not self.outputName:
-        outputFileName = os.path.splitext(self.inputFiles[0])[0] + '.dat'
-    radString = "%s %s %s > %s" % (
-        os.path.join(self.radbinPath, 'rcollate'),
-        commandInputs,
-        self.inputFiles[0],
-        outputFileName
+    radString = "%s %s %s < %s > %s" % (
+        os.path.join(self.radbinPath, "rcontrib"),
+        self.rcontribParameters.toRadString(),
+        self.octreeFile.toRadString(),
+        self.pointsFile.toRadString(),
+        self.outputFile.toRadString()
     )
+    # make sure input files are set by user
+    self.checkInputFiles(radString)
     return radString
 </code></pre>
   </div>

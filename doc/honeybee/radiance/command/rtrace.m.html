@@ -994,8 +994,10 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.checkInputFiles">checkInputFiles</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.execute">execute</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.inputFiles">inputFiles</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.onExecution">onExecution</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.onToRadString">onToRadString</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.toRadString">toRadString</a></li>
   </ul>
 
@@ -1020,8 +1022,9 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace" class="source">
     <pre><code>import os
-from commandbase import RadianceCommand
-from ..parameters import LowQuality
+from _commandbase import RadianceCommand
+from ..parameters.gridbased import LowQuality
+from ..datatype import RadiancePath
 
 
 class Rtrace(RadianceCommand):
@@ -1030,27 +1033,35 @@ class Rtrace(RadianceCommand):
     Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html
 
     Attributes:
-        outputName: Results file name. Usually the same as the project name
-            (Default: untitled)
-        octFiles: Sorted list of full path to input rad files (Default: [])
-        radParameters: Radiance parameters for this analysis.
-            (Default: RadianceParameters.LowQuality)
+        outputName: Name of output file (Default: untitled).
+        octFile: Full path to input oct files (Default: None)
+        pointFile: Full path to input pt files (Default: None)
+        simulationType: An integer to define type of analysis.
+            0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
+        radianceParameters: Radiance parameters for this analysis.
+            (Default: girdbased.LowQuality)
     """
 
+    outputFile = RadiancePath("res", "results file", extension=".res")
+    octFile = RadiancePath("oct", "octree file", extension=".oct")
+    pointFile = RadiancePath("points", "test point file", extension=".pts")
+
     def __init__(self, outputName="untitled", octFile=None, pointFile=None,
-                 simulationType=None, radianceParameters=None):
+                 simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
         RadianceCommand.__init__(self)
 
-        self.outputName = outputName
+        self.outputFile = outputName if outputName.lower().endswith(".res") \
+            else outputName + ".res"
         """oct file name which is usually the same as the project name (Default: untitled)"""
 
         self.octFile = octFile
-        """Full path to oct file."""
+        """Full path to input oct file."""
 
         self.pointFile = pointFile
-        """Full path to points file."""
+        """Full path to input points file."""
 
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
@@ -1059,6 +1070,13 @@ class Rtrace(RadianceCommand):
 
         self.radianceParameters = radianceParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+
+        # add -h to parameters to get no header, True is no header
+        self.radianceParameters.addRadianceBoolFlag("h", "output header switch", defaultValue=True)
+
+        # add error file as an extra parameter for rtrace.
+        # this can be added under default radiance parameters later.
+        self.radianceParameters.addRadianceValue("e", "error output file", defaultValue="error.txt")
 
     @property
     def simulationType(self):
@@ -1085,16 +1103,15 @@ class Rtrace(RadianceCommand):
 
         self.__simType = value
 
-    @property
-    def iswitch(self):
-        """Return I/i switch.
-
-        -I > Boolean switch to compute irradiance rather than radiance, with the input
-        origin and direction interpreted instead as measurement point and orientation.
-        """
-        _switch = {0: "-I", 1: "-I", 2: ""}
-
-        return _switch[self.simulationType]
+        # trun on/off I paramter
+        # -I > Boolean switch to compute irradiance rather than radiance, with
+        # the input origin and direction interpreted instead as measurement point
+        # and orientation.
+        if self.__simType in (0, 1):
+            self.radianceParameters.I = True
+        else:
+            # luminance
+            self.radianceParameters.I = False
 
     @property
     def radianceParameters(self):
@@ -1105,28 +1122,29 @@ class Rtrace(RadianceCommand):
     def radianceParameters(self, radParameters):
         if not radParameters:
             radParameters = LowQuality()
-        assert hasattr(radParameters, 'isRadianceParameters'), \
+        assert hasattr(radParameters, 'isGridBasedRadianceParameters'), \
             "%s is not a radiance parameters." % type(radParameters)
         self.__radParameters = radParameters
 
+    # TODO: Implement relative path
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        return "%s %s -h %s -e error.txt %s < %s > %s" % (
+        radString = "%s %s %s < %s > %s" % (
             os.path.join(self.radbinPath, "rtrace"),
-            self.iswitch,
-            self.radianceParameters
-                .toRadString(["xScale", "yScale", "av", "dj", "pj", "ps", "pt"]),
-            self.octFile,
-            self.pointFile,
-            self.outputName if self.outputName.lower().endswith(".res") else self.outputName + ".res")
+            self.radianceParameters.toRadString(),
+            self.octFile.toRadString(),
+            self.pointFile.toRadString(),
+            self.outputFile.toRadString()
+        )
 
+        # make sure input files are set by user
+        self.checkInputFiles(radString)
+        return radString
+
+    @property
     def inputFiles(self):
         """Input files for this command."""
         return self.octFile, self.pointFile
-
-
-if __name__ == "__main__":
-    oc = Rtrace()
 </code></pre>
   </div>
 
@@ -1144,11 +1162,14 @@ if __name__ == "__main__":
     <div class="desc"><p>Create a grid-based Radiance ray-tracer.</p>
 <p>Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html</p>
 <p>Attributes:
-    outputName: Results file name. Usually the same as the project name
-        (Default: untitled)
-    octFiles: Sorted list of full path to input rad files (Default: [])
-    radParameters: Radiance parameters for this analysis.
-        (Default: RadianceParameters.LowQuality)</p></div>
+    outputName: Name of output file (Default: untitled).
+    octFile: Full path to input oct files (Default: None)
+    pointFile: Full path to input pt files (Default: None)
+    simulationType: An integer to define type of analysis.
+        0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
+        (Default: 0)
+    radianceParameters: Radiance parameters for this analysis.
+        (Default: girdbased.LowQuality)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace" class="source">
@@ -1158,27 +1179,35 @@ if __name__ == "__main__":
     Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html
 
     Attributes:
-        outputName: Results file name. Usually the same as the project name
-            (Default: untitled)
-        octFiles: Sorted list of full path to input rad files (Default: [])
-        radParameters: Radiance parameters for this analysis.
-            (Default: RadianceParameters.LowQuality)
+        outputName: Name of output file (Default: untitled).
+        octFile: Full path to input oct files (Default: None)
+        pointFile: Full path to input pt files (Default: None)
+        simulationType: An integer to define type of analysis.
+            0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
+        radianceParameters: Radiance parameters for this analysis.
+            (Default: girdbased.LowQuality)
     """
 
+    outputFile = RadiancePath("res", "results file", extension=".res")
+    octFile = RadiancePath("oct", "octree file", extension=".oct")
+    pointFile = RadiancePath("points", "test point file", extension=".pts")
+
     def __init__(self, outputName="untitled", octFile=None, pointFile=None,
-                 simulationType=None, radianceParameters=None):
+                 simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
         RadianceCommand.__init__(self)
 
-        self.outputName = outputName
+        self.outputFile = outputName if outputName.lower().endswith(".res") \
+            else outputName + ".res"
         """oct file name which is usually the same as the project name (Default: untitled)"""
 
         self.octFile = octFile
-        """Full path to oct file."""
+        """Full path to input oct file."""
 
         self.pointFile = pointFile
-        """Full path to points file."""
+        """Full path to input points file."""
 
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
@@ -1187,6 +1216,13 @@ if __name__ == "__main__":
 
         self.radianceParameters = radianceParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+
+        # add -h to parameters to get no header, True is no header
+        self.radianceParameters.addRadianceBoolFlag("h", "output header switch", defaultValue=True)
+
+        # add error file as an extra parameter for rtrace.
+        # this can be added under default radiance parameters later.
+        self.radianceParameters.addRadianceValue("e", "error output file", defaultValue="error.txt")
 
     @property
     def simulationType(self):
@@ -1213,16 +1249,15 @@ if __name__ == "__main__":
 
         self.__simType = value
 
-    @property
-    def iswitch(self):
-        """Return I/i switch.
-
-        -I > Boolean switch to compute irradiance rather than radiance, with the input
-        origin and direction interpreted instead as measurement point and orientation.
-        """
-        _switch = {0: "-I", 1: "-I", 2: ""}
-
-        return _switch[self.simulationType]
+        # trun on/off I paramter
+        # -I > Boolean switch to compute irradiance rather than radiance, with
+        # the input origin and direction interpreted instead as measurement point
+        # and orientation.
+        if self.__simType in (0, 1):
+            self.radianceParameters.I = True
+        else:
+            # luminance
+            self.radianceParameters.I = False
 
     @property
     def radianceParameters(self):
@@ -1233,21 +1268,26 @@ if __name__ == "__main__":
     def radianceParameters(self, radParameters):
         if not radParameters:
             radParameters = LowQuality()
-        assert hasattr(radParameters, 'isRadianceParameters'), \
+        assert hasattr(radParameters, 'isGridBasedRadianceParameters'), \
             "%s is not a radiance parameters." % type(radParameters)
         self.__radParameters = radParameters
 
+    # TODO: Implement relative path
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        return "%s %s -h %s -e error.txt %s < %s > %s" % (
+        radString = "%s %s %s < %s > %s" % (
             os.path.join(self.radbinPath, "rtrace"),
-            self.iswitch,
-            self.radianceParameters
-                .toRadString(["xScale", "yScale", "av", "dj", "pj", "ps", "pt"]),
-            self.octFile,
-            self.pointFile,
-            self.outputName if self.outputName.lower().endswith(".res") else self.outputName + ".res")
+            self.radianceParameters.toRadString(),
+            self.octFile.toRadString(),
+            self.pointFile.toRadString(),
+            self.outputFile.toRadString()
+        )
 
+        # make sure input files are set by user
+        self.checkInputFiles(radString)
+        return radString
+
+    @property
     def inputFiles(self):
         """Input files for this command."""
         return self.octFile, self.pointFile
@@ -1260,19 +1300,48 @@ if __name__ == "__main__":
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
           <li><a href="#honeybee.radiance.command.rtrace.Rtrace">Rtrace</a></li>
-          <li>honeybee.radiance.command.commandbase.RadianceCommand</li>
+          <li>honeybee.radiance.command._commandbase.RadianceCommand</li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Instance variables</h3>
+          <h3>Class variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.iswitch" class="name">var <span class="ident">iswitch</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.octFile" class="name">var <span class="ident">octFile</span></p>
             
 
             
   
-    <div class="desc"><p>Return I/i switch.</p>
-<p>-I &gt; Boolean switch to compute irradiance rather than radiance, with the input
-origin and direction interpreted instead as measurement point and orientation.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.rtrace.Rtrace.outputFile" class="name">var <span class="ident">outputFile</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.rtrace.Rtrace.pointFile" class="name">var <span class="ident">pointFile</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.command.rtrace.Rtrace.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Input files for this command.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1283,13 +1352,13 @@ origin and direction interpreted instead as measurement point and orientation.</
 
             
   
-    <div class="desc"><p>Full path to oct file.</p></div>
+    <div class="desc"><p>Full path to input oct file.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.outputName" class="name">var <span class="ident">outputName</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.outputFile" class="name">var <span class="ident">outputFile</span></p>
             
 
             
@@ -1305,7 +1374,7 @@ origin and direction interpreted instead as measurement point and orientation.</
 
             
   
-    <div class="desc"><p>Full path to points file.</p></div>
+    <div class="desc"><p>Full path to input points file.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1361,7 +1430,7 @@ origin and direction interpreted instead as measurement point and orientation.</
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=&#39;untitled&#39;, octFile=None, pointFile=None, simulationType=None, radianceParameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=&#39;untitled&#39;, octFile=None, pointFile=None, simulationType=0, radianceParameters=None)</p>
     </div>
     
 
@@ -1372,22 +1441,74 @@ origin and direction interpreted instead as measurement point and orientation.</
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace.__init__" class="source">
     <pre><code>def __init__(self, outputName="untitled", octFile=None, pointFile=None,
-             simulationType=None, radianceParameters=None):
+             simulationType=0, radianceParameters=None):
     """Initialize the class."""
     # Initialize base class to make sure path to radiance is set correctly
     RadianceCommand.__init__(self)
-    self.outputName = outputName
+    self.outputFile = outputName if outputName.lower().endswith(".res") \
+        else outputName + ".res"
     """oct file name which is usually the same as the project name (Default: untitled)"""
     self.octFile = octFile
-    """Full path to oct file."""
+    """Full path to input oct file."""
     self.pointFile = pointFile
-    """Full path to points file."""
+    """Full path to input points file."""
     self.simulationType = simulationType
     """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
         (Default: 0)
     """
     self.radianceParameters = radianceParameters
     """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+    # add -h to parameters to get no header, True is no header
+    self.radianceParameters.addRadianceBoolFlag("h", "output header switch", defaultValue=True)
+    # add error file as an extra parameter for rtrace.
+    # this can be added under default radiance parameters later.
+    self.radianceParameters.addRadianceValue("e", "error output file", defaultValue="error.txt")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.checkInputFiles">
+    <p>def <span class="ident">checkInputFiles</span>(</p><p>self, radString=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Make sure input files are set to a path.</p>
+<p>This method doesn't check if the file exists since it might be created
+later during the process.</p>
+<p>Args:
+    radString: Current radString to help user better understand the
+        erorr (Default: "")</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.checkInputFiles', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rtrace.Rtrace.checkInputFiles" class="source">
+    <pre><code>def checkInputFiles(self, radString=""):
+    """Make sure input files are set to a path.
+    This method doesn't check if the file exists since it might be created
+    later during the process.
+    Args:
+        radString: Current radString to help user better understand the
+            erorr (Default: "")
+    """
+    # make sure wea file is provided
+    _msg = "To generate a valid %s command you need to specify the path" \
+        " to inpt files:" \
+        "\nCurrent command won't work: %s" \
+        % (self.__class__.__name__, radString)
+    if self.inputFiles is None:
+        return
+    for f in self.inputFiles:
+        # this is for oconv where it has list of files which are not
+        # RadiancePath
+        if isinstance(f, str):
+            continue
+        assert hasattr(f, 'normpath'), _msg
+        assert f.normpath is not None, _msg
 </code></pre>
   </div>
 </div>
@@ -1403,19 +1524,35 @@ origin and direction interpreted instead as measurement point and orientation.</
 
     
   
-    <div class="desc"><p>Execute the command.</p></div>
+    <div class="desc"><p>Execute the command.</p>
+<p>Returns:
+    Return fullpath to the result file if any as a string.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.execute', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace.execute" class="source">
     <pre><code>def execute(self):
-    """Execute the command."""
+    """Execute the command.
+    Returns:
+        Return fullpath to the result file if any as a string.
+    """
     # check if the files exist on the computer
     self.__checkFiles()
+    self.onExecution()
     p = subprocess.Popen(self.toRadString(), shell=True,
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in p.stdout.readlines():
         print line,
     p.wait()
+    try:
+        if os.path.split(self.outputFile.normpath)[0] == "":
+            # add directory to file if it's not a full path
+            return os.path.join(os.getcwd(),
+                                self.outputFile.normpath)
+        # return output file
+        return self.outputFile
+    except AttributeError:
+        # this command doesn't have an output file
+        pass
 </code></pre>
   </div>
 </div>
@@ -1424,20 +1561,56 @@ origin and direction interpreted instead as measurement point and orientation.</
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.inputFiles">
-    <p>def <span class="ident">inputFiles</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.onExecution">
+    <p>def <span class="ident">onExecution</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Input files for this command.</p></div>
+    <div class="desc"><p>Overwrite this method to add extra specific checks for the command.</p>
+<p>For instance for rcontrib you want to make sure there is at least one
+modifier set in the command. This method will be executed right before
+running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.inputFiles', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rtrace.Rtrace.inputFiles" class="source">
-    <pre><code>def inputFiles(self):
-    """Input files for this command."""
-    return self.octFile, self.pointFile
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.onExecution', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rtrace.Rtrace.onExecution" class="source">
+    <pre><code>def onExecution(self):
+    """Overwrite this method to add extra specific checks for the command.
+    For instance for rcontrib you want to make sure there is at least one
+    modifier set in the command. This method will be executed right before
+    running the command.
+    """
+    pass
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.onToRadString">
+    <p>def <span class="ident">onToRadString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite this method to add extra specific checks while generating rad string.</p>
+<p>For instance for rcontrib you want to make sure there is at least one
+modifier set in the command. This method will be executed right before
+running the command.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.onToRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rtrace.Rtrace.onToRadString" class="source">
+    <pre><code>def onToRadString(self):
+    """Overwrite this method to add extra specific checks while generating rad string.
+    For instance for rcontrib you want to make sure there is at least one
+    modifier set in the command. This method will be executed right before
+    running the command.
+    """
+    pass
 </code></pre>
   </div>
 </div>
@@ -1459,14 +1632,16 @@ origin and direction interpreted instead as measurement point and orientation.</
   <div id="source-honeybee.radiance.command.rtrace.Rtrace.toRadString" class="source">
     <pre><code>def toRadString(self, relativePath=False):
     """Return full command as a string."""
-    return "%s %s -h %s -e error.txt %s < %s > %s" % (
+    radString = "%s %s %s < %s > %s" % (
         os.path.join(self.radbinPath, "rtrace"),
-        self.iswitch,
-        self.radianceParameters
-            .toRadString(["xScale", "yScale", "av", "dj", "pj", "ps", "pt"]),
-        self.octFile,
-        self.pointFile,
-        self.outputName if self.outputName.lower().endswith(".res") else self.outputName + ".res")
+        self.radianceParameters.toRadString(),
+        self.octFile.toRadString(),
+        self.pointFile.toRadString(),
+        self.outputFile.toRadString()
+    )
+    # make sure input files are set by user
+    self.checkInputFiles(radString)
+    return radString
 </code></pre>
   </div>
 </div>

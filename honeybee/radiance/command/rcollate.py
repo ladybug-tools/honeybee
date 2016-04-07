@@ -1,5 +1,5 @@
 # coding=utf-8
-from commandbase import RadianceCommand
+from _commandbase import RadianceCommand
 import os
 import sys
 from ..datatype import *

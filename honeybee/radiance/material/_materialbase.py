@@ -1,4 +1,4 @@
-"""Radiance Materials (e.g plastic, glass, etc.).
+"""Base Radiance Material class (e.g plastic, glass, etc.).
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Materials
 """

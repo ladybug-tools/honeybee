@@ -3,7 +3,7 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 import math
-from materialbase import RadianceMaterial
+from _materialbase import RadianceMaterial
 
 
 class GlassMaterial(RadianceMaterial):

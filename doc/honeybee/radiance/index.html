@@ -989,18 +989,16 @@ table {
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
-        <li class="mono"><a href="analysis.m.html">honeybee.radiance.analysis</a></li>
-        <li class="mono"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></li>
         <li class="mono"><a href="command/index.html">honeybee.radiance.command</a></li>
         <li class="mono"><a href="datatype.m.html">honeybee.radiance.datatype</a></li>
+        <li class="mono"><a href="filemanager.m.html">honeybee.radiance.filemanager</a></li>
         <li class="mono"><a href="geometry.m.html">honeybee.radiance.geometry</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.radiance.helper</a></li>
         <li class="mono"><a href="material/index.html">honeybee.radiance.material</a></li>
-        <li class="mono"><a href="parameters.m.html">honeybee.radiance.parameters</a></li>
+        <li class="mono"><a href="parameters/index.html">honeybee.radiance.parameters</a></li>
         <li class="mono"><a href="postprocess/index.html">honeybee.radiance.postprocess</a></li>
         <li class="mono"><a href="properties.m.html">honeybee.radiance.properties</a></li>
         <li class="mono"><a href="recipe/index.html">honeybee.radiance.recipe</a></li>
-        <li class="mono"><a href="sky/index.html">honeybee.radiance.sky</a></li>
+        <li class="mono"><a href="runmanager.m.html">honeybee.radiance.runmanager</a></li>
         <li class="mono"><a href="view.m.html">honeybee.radiance.view</a></li>
       </ul>
     </li>
@@ -1021,9 +1019,13 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance" class="source">
     <pre><code>"""Honeybee Radiance libraries."""
-__all__ = ["properties", "recipe", "material", "parameters", "sky", "helper", "analysis", "geometry"]
 
-import properties, recipe, material, parameters, sky, helper, analysis, geometry
+__all__ = ["command", "datatype", "filemanager", "geometry", "material",
+           "parameters", "postprocess", "properties", "recipe", "runmanager",
+           "view"]
+
+import command, datatype, filemanager, geometry, material, parameters, \
+    postprocess, properties, recipe, runmanager, view
 </code></pre>
   </div>
 
@@ -1035,20 +1037,6 @@ import properties, recipe, material, parameters, sky, helper, analysis, geometry
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p class="name"><a href="analysis.m.html">honeybee.radiance.analysis</a></p>
-      
-  
-    <div class="desc"><p>Radiance Analysis workflows.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="analysisrecipe.m.html">honeybee.radiance.analysisrecipe</a></p>
-      
-  
-    <div class="desc"><p>Radiance Analysis Recipes.</p></div>
-
-      </div>
-      <div class="item">
       <p class="name"><a href="command/index.html">honeybee.radiance.command</a></p>
       
   
@@ -1058,21 +1046,21 @@ import properties, recipe, material, parameters, sky, helper, analysis, geometry
       <p class="name"><a href="datatype.m.html">honeybee.radiance.datatype</a></p>
       
   
-    <div class="desc"><p>Descriptors, factory classes etc for the Radiance library</p></div>
+    <div class="desc"><p>Descriptors, factory classes etc for the Radiance library.</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="filemanager.m.html">honeybee.radiance.filemanager</a></p>
+      
+  
+    <div class="desc"><p>A collection of auxiliary funtions for working with radiance files and objects.</p></div>
 
       </div>
       <div class="item">
       <p class="name"><a href="geometry.m.html">honeybee.radiance.geometry</a></p>
       
   
-    <div class="desc"><p>A collection of methods for writing Radiance file.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.radiance.helper</a></p>
-      
-  
-    <div class="desc"><p>A collection of auxiliary funtions for working with radiance files and objects.</p></div>
+    <div class="desc"><p>A collection of methods for writing Radiance geometry file.</p></div>
 
       </div>
       <div class="item">
@@ -1082,10 +1070,9 @@ import properties, recipe, material, parameters, sky, helper, analysis, geometry
 
       </div>
       <div class="item">
-      <p class="name"><a href="parameters.m.html">honeybee.radiance.parameters</a></p>
+      <p class="name"><a href="parameters/index.html">honeybee.radiance.parameters</a></p>
       
   
-    <div class="desc"><p>Radiance raytracing Parameters.</p></div>
 
       </div>
       <div class="item">
@@ -1108,9 +1095,10 @@ import properties, recipe, material, parameters, sky, helper, analysis, geometry
 
       </div>
       <div class="item">
-      <p class="name"><a href="sky/index.html">honeybee.radiance.sky</a></p>
+      <p class="name"><a href="runmanager.m.html">honeybee.radiance.runmanager</a></p>
       
   
+    <div class="desc"><p>Radiance Analysis workflows.</p></div>
 
       </div>
       <div class="item">

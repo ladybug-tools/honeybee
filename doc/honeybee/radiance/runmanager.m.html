@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.geometryoperation API documentation</title>
-    <meta name="description" content="Collection of methods for geometrical operations." />
+    <title>honeybee.radiance.runmanager API documentation</title>
+    <meta name="description" content="Radiance Analysis workflows." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
 
@@ -985,16 +985,23 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.runmanager.AnalysisBase">AnalysisBase</a></span>
+        
+          
   <ul>
-    <li class="mono"><a href="#honeybee.geometryoperation.calculateCenterPointFromPoints">calculateCenterPointFromPoints</a></li>
-    <li class="mono"><a href="#honeybee.geometryoperation.calculateNormalFromPoints">calculateNormalFromPoints</a></li>
-    <li class="mono"><a href="#honeybee.geometryoperation.calculateVectorAngleToZAxis">calculateVectorAngleToZAxis</a></li>
+    <li class="mono"><a href="#honeybee.radiance.runmanager.AnalysisBase.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.runmanager.AnalysisBase.results">results</a></li>
+    <li class="mono"><a href="#honeybee.radiance.runmanager.AnalysisBase.run">run</a></li>
+    <li class="mono"><a href="#honeybee.radiance.runmanager.AnalysisBase.write">write</a></li>
   </ul>
 
+        </li>
+      </ul>
     </li>
-
 
     </ul>
   </div>
@@ -1007,70 +1014,119 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.geometryoperation</span> module</h1>
-  <p>Collection of methods for geometrical operations.</p>
+  <h1 class="title"><span class="name">honeybee.radiance.runmanager</span> module</h1>
+  <p>Radiance Analysis workflows.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.geometryoperation" class="source">
-    <pre><code>"""Collection of methods for geometrical operations."""
-from vectormath.euclid import math, Vector3
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.runmanager', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.runmanager" class="source">
+    <pre><code>"""Radiance Analysis workflows."""
+from subprocess import Popen
+import time
+import os
 
 
-def calculateNormalFromPoints(pts):
-    """Calculate normal vector for a list of points.
+# TODO: (@sariths) Should we add electrical lighting as an input in rad files.
+class AnalysisBase(object):
+    """Base analysis class for Radiance analysis."""
 
-    This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
-    assuming the points are representing a planar surface
-    """
-    # vector between first point and the second point on the list
-    v1 = Vector3(pts[1][0] - pts[0][0],
-                 pts[1][1] - pts[0][1],
-                 pts[1][2] - pts[0][2])
+    def __init__(self, HBObjects, analysisRecipe, otherRADFiles=None):
+        """Create an analysis by HBSky and HBObjects.
 
-    # vector between first point and the last point in the list
-    v2 = Vector3(pts[-1][0] - pts[0][0],
-                 pts[-1][1] - pts[0][1],
-                 pts[-1][2] - pts[0][2])
+        Args:
+            HBSky: A honeybee.radiance.sky
+            analysisRecipe: A honeybee.radiance.analysisRecipe
+            HBObjects: A list of Honeybee surfaces or zones
+            otherRADFiles: An ordered list of additional radiance file to be
+                added to the analysis.
+        """
+        self.__isExecuted = False
+        self.__done = False
 
-    return tuple(v1.cross(v2).normalize())
+    @property
+    def isRunning(self):
+        """Return is analysis is still running."""
+        if not self.__isExecuted:
+            return False
+        return not self.__done
 
+    @property
+    def isOver(self):
+        """Return if analysis is done."""
+        return self.__done
 
-def calculateCenterPointFromPoints(pts):
-    """Calculate center point.
+    @property
+    def progress(self):
+        """Return progress value between 0-100."""
+        raise NotImplementedError
 
-    This method finds the center point by averging x, y and z values.
-    """
-    x, y, z = 0, 0, 0
+    def write(self):
+        """Write analysis files."""
+        raise NotImplementedError
 
-    try:
-        ptCount = float(len(pts))
-        for pt in pts:
-            x += pt[0]
-            y += pt[1]
-            z += pt[2]
-    except IndexError:
-        raise IndexError("Each point should be a list or a tuple with 3 values.")
-    except TypeError:
-        raise TypeError("Pts should be a list or a tuple of points.")
+    def run(self, minimize=False):
+        """Run analysis."""
+        self.__isExecuted = True
+        self.__executeBatchFiles(minimize=minimize)
 
-    return x / ptCount, y / ptCount, z / ptCount
+    def results(self):
+        """Get analysis results."""
+        pass
 
+    def __executeBatchFiles(self, batchFiles, maxPRuns=None, minimize=False,
+                            waitingTime=0.5):
+        """Run a list of batch files in parallel.
 
-def calculateVectorAngleToZAxis(vector):
-    """Calculate angle between vectoe and (0, 0, 1) in degrees."""
-    zAxis = Vector3(0, 0, 1)
-    try:
-        return math.degrees(zAxis.angle(Vector3(*vector)))
-    except TypeError:
-        # Vectors from Dynamo are not iterable!
-        return math.degrees(zAxis.angle(Vector3(vector.X, vector.Y, vector.Z)))
+        Args:
+            batchFiles: List of batch files.
+            maxPRuns: Max number of files to be ran in parallel (default: 1).
+            minimize: Set to True if you want NOT to see the cmd window.
+        """
+        if not maxPRuns:
+            maxPRuns = 1
+        maxPRuns = int(maxPRuns)
+        total = len(batchFiles)
 
-if __name__ == "__main__":
-    pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))
-    srfVector = calculateNormalFromPoints(pts)
+        if maxPRuns < 1:
+            maxPRuns = 1
+        if maxPRuns > total:
+            maxPRuns = total
 
-    print calculateVectorAngleToZAxis(srfVector)
-    print calculateCenterPointFromPoints(pts)
+        running = 0
+        self.__done = False
+        jobs = []
+        pid = 0
+
+        try:
+            while not self.__done:
+                if running < maxPRuns and pid < total:
+                    # execute the files
+                    jobs.append(Popen(os.path.normpath(batchFiles[pid]), shell=minimize))
+                    pid += 1
+                    time.sleep(waitingTime)
+
+                # count how many jobs are running and how many are done
+                running = 0
+                finished = 0
+                for job in jobs:
+                    if job.poll() is None:
+                        # one job is still running
+                        running += 1
+                    else:
+                        finished += 1
+
+                if running == maxPRuns:
+                    # wait for half a second
+                    time.sleep(waitingTime)
+
+                if finished == total:
+                    self.__done = True
+
+        except Exception, e:
+            print "Failed to execute batch files: %s" % str(e)
+
+    def __repr__(self):
+        """Represent Analysis class."""
+        return "honeybee.Analysis.%s" % self.__class__.__name__
 </code></pre>
   </div>
 
@@ -1078,112 +1134,269 @@ if __name__ == "__main__":
 
   <section id="section-items">
 
-    <h2 class="section-title" id="header-functions">Functions</h2>
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
       
+      <div class="item">
+      <p id="honeybee.radiance.runmanager.AnalysisBase" class="name">class <span class="ident">AnalysisBase</span></p>
+      
+  
+    <div class="desc"><p>Base analysis class for Radiance analysis.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.runmanager.AnalysisBase', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.runmanager.AnalysisBase" class="source">
+    <pre><code>class AnalysisBase(object):
+    """Base analysis class for Radiance analysis."""
+
+    def __init__(self, HBObjects, analysisRecipe, otherRADFiles=None):
+        """Create an analysis by HBSky and HBObjects.
+
+        Args:
+            HBSky: A honeybee.radiance.sky
+            analysisRecipe: A honeybee.radiance.analysisRecipe
+            HBObjects: A list of Honeybee surfaces or zones
+            otherRADFiles: An ordered list of additional radiance file to be
+                added to the analysis.
+        """
+        self.__isExecuted = False
+        self.__done = False
+
+    @property
+    def isRunning(self):
+        """Return is analysis is still running."""
+        if not self.__isExecuted:
+            return False
+        return not self.__done
+
+    @property
+    def isOver(self):
+        """Return if analysis is done."""
+        return self.__done
+
+    @property
+    def progress(self):
+        """Return progress value between 0-100."""
+        raise NotImplementedError
+
+    def write(self):
+        """Write analysis files."""
+        raise NotImplementedError
+
+    def run(self, minimize=False):
+        """Run analysis."""
+        self.__isExecuted = True
+        self.__executeBatchFiles(minimize=minimize)
+
+    def results(self):
+        """Get analysis results."""
+        pass
+
+    def __executeBatchFiles(self, batchFiles, maxPRuns=None, minimize=False,
+                            waitingTime=0.5):
+        """Run a list of batch files in parallel.
+
+        Args:
+            batchFiles: List of batch files.
+            maxPRuns: Max number of files to be ran in parallel (default: 1).
+            minimize: Set to True if you want NOT to see the cmd window.
+        """
+        if not maxPRuns:
+            maxPRuns = 1
+        maxPRuns = int(maxPRuns)
+        total = len(batchFiles)
+
+        if maxPRuns < 1:
+            maxPRuns = 1
+        if maxPRuns > total:
+            maxPRuns = total
+
+        running = 0
+        self.__done = False
+        jobs = []
+        pid = 0
+
+        try:
+            while not self.__done:
+                if running < maxPRuns and pid < total:
+                    # execute the files
+                    jobs.append(Popen(os.path.normpath(batchFiles[pid]), shell=minimize))
+                    pid += 1
+                    time.sleep(waitingTime)
+
+                # count how many jobs are running and how many are done
+                running = 0
+                finished = 0
+                for job in jobs:
+                    if job.poll() is None:
+                        # one job is still running
+                        running += 1
+                    else:
+                        finished += 1
+
+                if running == maxPRuns:
+                    # wait for half a second
+                    time.sleep(waitingTime)
+
+                if finished == total:
+                    self.__done = True
+
+        except Exception, e:
+            print "Failed to execute batch files: %s" % str(e)
+
+    def __repr__(self):
+        """Represent Analysis class."""
+        return "honeybee.Analysis.%s" % self.__class__.__name__
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.runmanager.AnalysisBase">AnalysisBase</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.runmanager.AnalysisBase.isOver" class="name">var <span class="ident">isOver</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return if analysis is done.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.runmanager.AnalysisBase.isRunning" class="name">var <span class="ident">isRunning</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return is analysis is still running.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.runmanager.AnalysisBase.progress" class="name">var <span class="ident">progress</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return progress value between 0-100.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
   <div class="item">
-    <div class="name def" id="honeybee.geometryoperation.calculateCenterPointFromPoints">
-    <p>def <span class="ident">calculateCenterPointFromPoints</span>(</p><p>pts)</p>
+    <div class="name def" id="honeybee.radiance.runmanager.AnalysisBase.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, HBObjects, analysisRecipe, otherRADFiles=None)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Calculate center point.</p>
-<p>This method finds the center point by averging x, y and z values.</p></div>
+    <div class="desc"><p>Create an analysis by HBSky and HBObjects.</p>
+<p>Args:
+    HBSky: A honeybee.radiance.sky
+    analysisRecipe: A honeybee.radiance.analysisRecipe
+    HBObjects: A list of Honeybee surfaces or zones
+    otherRADFiles: An ordered list of additional radiance file to be
+        added to the analysis.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation.calculateCenterPointFromPoints', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.geometryoperation.calculateCenterPointFromPoints" class="source">
-    <pre><code>def calculateCenterPointFromPoints(pts):
-    """Calculate center point.
-
-    This method finds the center point by averging x, y and z values.
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.runmanager.AnalysisBase.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.runmanager.AnalysisBase.__init__" class="source">
+    <pre><code>def __init__(self, HBObjects, analysisRecipe, otherRADFiles=None):
+    """Create an analysis by HBSky and HBObjects.
+    Args:
+        HBSky: A honeybee.radiance.sky
+        analysisRecipe: A honeybee.radiance.analysisRecipe
+        HBObjects: A list of Honeybee surfaces or zones
+        otherRADFiles: An ordered list of additional radiance file to be
+            added to the analysis.
     """
-    x, y, z = 0, 0, 0
-
-    try:
-        ptCount = float(len(pts))
-        for pt in pts:
-            x += pt[0]
-            y += pt[1]
-            z += pt[2]
-    except IndexError:
-        raise IndexError("Each point should be a list or a tuple with 3 values.")
-    except TypeError:
-        raise TypeError("Pts should be a list or a tuple of points.")
-
-    return x / ptCount, y / ptCount, z / ptCount
+    self.__isExecuted = False
+    self.__done = False
 </code></pre>
   </div>
 </div>
 
   </div>
   
-      
+            
   <div class="item">
-    <div class="name def" id="honeybee.geometryoperation.calculateNormalFromPoints">
-    <p>def <span class="ident">calculateNormalFromPoints</span>(</p><p>pts)</p>
+    <div class="name def" id="honeybee.radiance.runmanager.AnalysisBase.results">
+    <p>def <span class="ident">results</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Calculate normal vector for a list of points.</p>
-<p>This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
-assuming the points are representing a planar surface</p></div>
+    <div class="desc"><p>Get analysis results.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation.calculateNormalFromPoints', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.geometryoperation.calculateNormalFromPoints" class="source">
-    <pre><code>def calculateNormalFromPoints(pts):
-    """Calculate normal vector for a list of points.
-
-    This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
-    assuming the points are representing a planar surface
-    """
-    # vector between first point and the second point on the list
-    v1 = Vector3(pts[1][0] - pts[0][0],
-                 pts[1][1] - pts[0][1],
-                 pts[1][2] - pts[0][2])
-
-    # vector between first point and the last point in the list
-    v2 = Vector3(pts[-1][0] - pts[0][0],
-                 pts[-1][1] - pts[0][1],
-                 pts[-1][2] - pts[0][2])
-
-    return tuple(v1.cross(v2).normalize())
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.runmanager.AnalysisBase.results', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.runmanager.AnalysisBase.results" class="source">
+    <pre><code>def results(self):
+    """Get analysis results."""
+    pass
 </code></pre>
   </div>
 </div>
 
   </div>
   
-      
+            
   <div class="item">
-    <div class="name def" id="honeybee.geometryoperation.calculateVectorAngleToZAxis">
-    <p>def <span class="ident">calculateVectorAngleToZAxis</span>(</p><p>vector)</p>
+    <div class="name def" id="honeybee.radiance.runmanager.AnalysisBase.run">
+    <p>def <span class="ident">run</span>(</p><p>self, minimize=False)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Calculate angle between vectoe and (0, 0, 1) in degrees.</p></div>
+    <div class="desc"><p>Run analysis.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.geometryoperation.calculateVectorAngleToZAxis', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.geometryoperation.calculateVectorAngleToZAxis" class="source">
-    <pre><code>def calculateVectorAngleToZAxis(vector):
-    """Calculate angle between vectoe and (0, 0, 1) in degrees."""
-    zAxis = Vector3(0, 0, 1)
-    try:
-        return math.degrees(zAxis.angle(Vector3(*vector)))
-    except TypeError:
-        # Vectors from Dynamo are not iterable!
-        return math.degrees(zAxis.angle(Vector3(vector.X, vector.Y, vector.Z)))
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.runmanager.AnalysisBase.run', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.runmanager.AnalysisBase.run" class="source">
+    <pre><code>def run(self, minimize=False):
+    """Run analysis."""
+    self.__isExecuted = True
+    self.__executeBatchFiles(minimize=minimize)
 </code></pre>
   </div>
 </div>
 
   </div>
   
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.runmanager.AnalysisBase.write">
+    <p>def <span class="ident">write</span>(</p><p>self)</p>
+    </div>
+    
 
+    
+  
+    <div class="desc"><p>Write analysis files.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.runmanager.AnalysisBase.write', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.runmanager.AnalysisBase.write" class="source">
+    <pre><code>def write(self):
+    """Write analysis files."""
+    raise NotImplementedError
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
 
   </section>
 
