@@ -55,6 +55,38 @@ class OconvParameters(AdvancedRadianceParameters):
         """Init paramters."""
         AdvancedRadianceParameters.__init__(self)
 
+        self.freeze = None
+        """
+        [-f] A Boolean to produce "a frozen octree containing all the scene
+        information. Normally, only a reference to the scene files is stored
+        in the octree, and changes to those files may invalidate the result.
+        The freeze option is useful when the octree file's integrity and
+        loading speed is more important than its size, or when the octree is
+        to be relocated to another directory, and is especially useful for
+        creating library objects for the "instance" primitive type. If the
+        input octree is frozen, the output will be also. (default: True)
+        """
+
+        self.resolution = None
+        """
+        [-r] An integer that "specifies the maximum octree resolution.
+        This should be greater than or equal to the ratio of the largest and
+        smallest dimensions in the scene (ie. surface size or distance between
+        surfaces)" (default:16384)
+        """
+
+        self.maxSetSize = None
+        """
+        [-n] An integer that "specifies the maximum surface set size
+        for each voxel. Larger numbers result in quicker octree generation,
+        but potentially slower rendering. Smaller values may or may not
+        produce faster renderings, since the default number (6) is close to
+        optimal for most scenes (Default: 6).
+        """
+
+        self.turnOffWarns = None
+        """[-w] A Boolean to suppress warnings (Default: False)."""
+
         # add parameters
         self.addRadianceBoolFlag('f', 'freeze octree', defaultValue=freeze,
                                  attributeName='freeze')
