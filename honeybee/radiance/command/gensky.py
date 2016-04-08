@@ -1,7 +1,7 @@
 # coding=utf-8
 # coding=utf-8
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath,RadianceTuple
+from ..datatype import RadiancePath, RadianceTuple
 from ..parameters.gensky import GenSkyParameters
 
 import os
@@ -16,9 +16,8 @@ class GenSky(RadianceCommand):
     naming purposes only.
 
     Attributes:
-        monthDayHour: A tuple containing inputs for month,day and hour.
-        outputName: An optional name for output file name. If None the name of
-            .epw file will be used.
+        outputName: An optional name for output file name (Default: 'untitled').
+        monthDayHour: A tuple containing inputs for month, day and hour.
         genskyParameters: Radiance parameters for gensky. If None Default
             parameters will be set. You can use self.genskyParameters to view,
             add or remove the parameters before executing the command.
@@ -34,44 +33,98 @@ class GenSky(RadianceCommand):
         gnskyParam.sunnySkyNoSun = True
 
         # create the gensky Command.
-        gnsky = GenSky(monthDayHour=(1,1,11),genskyParameters=gnskyParam,
-        outputName = r'd:\sky.rad' )
+        gnsky = GenSky(monthDayHour=(1,1,11), genskyParameters=gnskyParam,
+        outputName = r'd:\sunnyWSun_010111.sky' )
 
         # run gensky
         gnsky.execute()
 
         >
     """
-    monthDayHour = RadianceTuple('monthDayHour','month day hour',tupleSize=3,
+
+    monthDayHour = RadianceTuple('monthDayHour', 'month day hour', tupleSize=3,
                                  testType=False)
 
-    outputName = RadiancePath('outputFile', descriptiveName='output sky file',
+    outputFile = RadiancePath('outputFile', descriptiveName='output sky file',
                               relativePath=None, checkExists=False)
 
-    def __init__(self, monthDayHour=None, genskyParameters=None,outputName=None):
+    def __init__(self, outputName='untitled', monthDayHour=None,
+                 genskyParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
+
+        self.outputFile = outputName if outputName.lower().endswith(".sky") \
+            else outputName + ".sky"
+        """results file for sky (Default: untitled)"""
+
         self.monthDayHour = monthDayHour
+
         self.genskyParameters = genskyParameters
-        self.outputName = outputName
 
-    @property
-    def monthDayHour(self):
-        if self._monthDayHour:
-            return " ".join(map(str,self._monthDayHour))
-        else:
-            return ''
+    @classmethod
+    def fromSkyType(cls, outputName='untitled', monthDayHour=(1, 21, 12),
+                    skyType=0, latitude=None, longitude=None, meridian=None):
+        """Create a sky by sky type.
 
-    @monthDayHour.setter
-    def monthDayHour(self,value):
+        Args:
+            outputName: An optional name for output file name (Default: 'untitled').
+            monthDayHour: A tuple containing inputs for month, day and hour.
+            skyType: An intger between 0-5 for CIE sky type.
+                0: [+s] Sunny with sun, 1: [-s] Sunny without sun,
+                2: [+i] Intermediate with sun, 3: [-i] Intermediate with no sun,
+                4: [-c] Cloudy overcast sky, 5: [-u] Uniform cloudy sky
+            latitude: [-a] A float number to indicate site altitude. Negative
+                angle indicates south latitude.
+            longitude: [-o] A float number to indicate site latitude. Negative
+                angle indicates east longitude.
+            meridian: [-m] A float number to indicate site meridian west of
+                Greenwich.
+        """
+        _skyParameters = GenSkyParameters(latitude=latitude, longitude=longitude,
+                                          meridian=meridian)
+
+        # modify parameters based on sky type
         try:
-            value = value.split()
-        except AttributeError:
-            pass
+            skyType = int(skyType)
+        except TypeError:
+            "skyType should be an integer between 0-5."
 
-        assert len(value)==3,"The input for monthDayHour should be a tuple with" \
-                             " three inputs for month day and hour."
-        self._monthDayHour = value
+        assert 0 <= skyType <= 5, "Sky type should be an integer between 0-5."
+
+        if skyType == 0:
+            _skyParameters.sunnySky = True
+        elif skyType == 1:
+            _skyParameters.sunnySky = False
+        elif skyType == 2:
+            _skyParameters.intermSky = True
+        elif skyType == 3:
+            _skyParameters.intermSky = False
+        elif skyType == 4:
+            _skyParameters.cloudySky = True
+        elif skyType == 5:
+            _skyParameters.uniformCloudySky = True
+
+        return cls(outputName=outputName, monthDayHour=monthDayHour,
+                   genskyParameters=_skyParameters)
+
+    @classmethod
+    def createUniformSkyfromIlluminanceValue(cls, outputName="untitled",
+                                             illuminanceValue=10000):
+        """Uniform CIE sky based on illuminance value.
+
+        Attributes:
+            outputName: An optional name for output file name (Default: 'untitled').
+            illuminanceValue: Desired illuminance value in lux
+        """
+        assert float(illuminanceValue) >= 0, "Illuminace value can't be negative."
+        _skyParameters = GenSkyParameters(zenithBrightHorzDiff=illuminanceValue / 179.0)
+
+        return cls(outputName=outputName, genskyParameters=_skyParameters)
+
+    @classmethod
+    def fromRadiationValues(cls):
+        """Create a sky based on sky radiation values."""
+        raise NotImplementedError()
 
     @property
     def genskyParameters(self):
@@ -89,15 +142,12 @@ class GenSky(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         # generate the name from self.weaFile
-        outputFile = self.outputName
-        monthDayHour = self.monthDayHour if self.monthDayHour else ''
         radString = "%s %s %s > %s" % (
             os.path.join(self.radbinPath, 'gensky'),
-            self.monthDayHour,
+            self.monthDayHour.toRadString().replace("-monthDayHour ", ""),
             self.genskyParameters.toRadString(),
-            outputFile
+            self.outputFile.toRadString()
         )
-
 
         return radString
 
