@@ -68,16 +68,74 @@ class GenSkyParameters(AdvancedRadianceParameters):
                  longitude=None,meridian=None):
         AdvancedRadianceParameters.__init__(self)
 
+        self.altitudeAzimuth = None
+        """[-ang] A tuple corresponding to altitude and azimuth
+            angle.This input can be used instead of specifying the monthDayTime."""
+
+        self.sunnySkyNoSun = None
+        """[-s] A boolean value to generate sunny sky without sun"""
+
+        self.sunnySkyWithSun=None
+        """[+s] A boolean value to generate sunny sky with sun."""
+
+        self.cloudySky = None
+        """[-c] A boolean value to generate cloudy sky"""
+
+        self.intermSkyNoSun = None
+        """[-i] A boolean value to generate intermediate sky without sun."""
+
+        self.intermSkyWithSun = None
+        """[+i] A boolean value to generate Intermediate sky with sun."""
+
+        self.uniformCloudySky = None
+        """[-u] A boolean value to generate Uniform cloudy sky."""
+
+        self.groundReflect = None
+        """[-g rfl] A float number to indicate ground reflectance """
+
+        self.zenithBright =  None
+        """ [-b brt] A float number to indicate zenith brightness in
+         watts/steradian/meter-sq."""
+
+        self.zenithBrightHorzDiff = None
+        """[-B irrad] A float number to indicate zenith  brightness from
+        horizontal diffuse irradiance in watts/meter-sq."""
+
+        self.solarRad = None
+        """[-r rad] A float number to indicate solar radiance in
+        watts/steradians/meter-sq."""
+
+        self.solarRadHorzDiff = None
+        """ [-R irrad] A float number to indicate solar radiance from horizontal
+        direct irradiance in watts/meter-sq."""
+
+        self.turbidity = None
+        """ [-t trb] A float number to indicate turbidity."""
+
+        self.latitude = None
+        """[-a lat] A float number to indicate site altitude. Negative angle
+        indicates south latitude."""
+
+        self.longitude = None
+        """[-o lon] A float number to indicate site latitude. Negative angle
+        indicates east longitude."""
+
+        self.meridian = None
+        """[-m mer] A float number to indicate site meridian west of
+        Greenwich. """
+
+
         self.addRadianceTuple('ang','altitude azimuth',tupleSize=2,
                                      numType=float,attributeName='altitudeAzimuth',
                               defaultValue=altitudeAzimuth)
+
+
         self.addRadianceBoolFlag('s','sunny sky with no sun',
                                  defaultValue=sunnySkyNoSun,
                                  attributeName='sunnySkyNoSun')
         self.addRadianceBoolFlag('s','sunny sky with sun',
                                  defaultValue=sunnySkyWithSun,
-                                 attributeName='sunnySkyWithSun',
-                                 isDualSign=True)
+                                 attributeName='sunnySkyWithSun')
         self.addRadianceBoolFlag('c','cloudy sky',defaultValue=cloudySky,
                                  attributeName='cloudySky')
         self.addRadianceBoolFlag('i','intermediate sky with sun',
