@@ -1,7 +1,7 @@
 # coding=utf-8
 # coding=utf-8
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath
+from ..datatype import RadiancePath,RadianceTuple
 from ..parameters.gensky import GenSkyParameters
 
 import os
@@ -42,8 +42,8 @@ class GenSky(RadianceCommand):
 
         >
     """
-    # monthDayHour = RadianceTuple('monthDayHour','month day hour',tupleSize=3,
-    #                              testType=False)
+    monthDayHour = RadianceTuple('monthDayHour','month day hour',tupleSize=3,
+                                 testType=False)
 
     outputName = RadiancePath('outputFile', descriptiveName='output sky file',
                               relativePath=None, checkExists=False)
