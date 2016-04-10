@@ -1,35 +1,28 @@
+from honeybee.hbsurface import HBSurface
+from honeybee.hbfensurface import HBFenSurface
+from honeybee.hbzone import HBZone
 
-from honeybee.radiance.parameters.oconv import OconvParameters
-from honeybee.radiance.command.oconv import Oconv
+# create a surface
+pts = [(0, 0, 0), (10, 0, 0), (0, 0, 10)]
+hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True)
 
-# sky = radSky(1000)
-# rp = HBGridBasedAnalysisRecipe(sky, pointGroups=[0, 0, 0])
+glzpts = [(1, 0, 1), (8, 0, 1), (1, 0, 8)]
+glzsrf = HBFenSurface("glz_001", glzpts)
+
+# print hbsrf.toRadString(includeMaterials=True)
+# print glzsrf.toRadString(includeMaterials=False)
+
+# add fenestration surface to hb surface
+hbsrf.addFenestrationSurface(glzsrf)
+
+# get full definiion of the surface including the fenestration
+# print hbsrf.toRadString(includeMaterials=True,
+#                         includeChildrenSurfaces=True)
 #
-# print rp.radianceParameters
-# rp.writeToFile("c:\\ladybug", "test3")
-# rp.run(debug=False)
-# print
-# print rp.results(flattenResults=True)
+# # save the definiion to a .rad file
+# hbsrf.radStringToFile(r"c:\ladybug\triangle.rad", True, True)
 
-# generate oconv parameters
-rcp = OconvParameters()
-
-# trun off turn off warnings
-rcp.turnOffWarns = True
-#
-# create an oconv command
-oconv = Oconv(outputName="test3",
-              sceneFiles=((r"C:\ladybug\test3\gridbased\Uniform_CIE_1000.sky",
-                           r"C:\ladybug\test3\gridbased\test3.mat",
-                           r"c:\ladybug\test3\gridbased\test3.rad")),
-              oconvParameters=rcp
-              )
-
-# print command line to check
-print oconv.toRadString()
-
-# execute the command
-outputFilePath = oconv.execute()
-
-print outputFilePath
-
+hbzone = HBZone("zone_001")
+hbzone.addSurface(hbsrf)
+hbzone.radStringToFile(r"c:\ladybug\triangle_2.rad", includeMaterials=True,
+                       includeChildrenSurfaces=True)
