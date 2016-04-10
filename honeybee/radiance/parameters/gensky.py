@@ -2,7 +2,7 @@
 from _advancedparametersbase import AdvancedRadianceParameters
 
 
-class GenSkyParameters(AdvancedRadianceParameters):
+class GenskyParameters(AdvancedRadianceParameters):
     """Radiance Parameters for grid based analysis.
 
     Read more:
