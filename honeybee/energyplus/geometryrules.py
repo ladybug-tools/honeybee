@@ -8,6 +8,6 @@ class GlobalGeometryRules(object):
                  direction="CounterClockWise",
                  system="Absolute"):
         """Init Global Geometry."""
-        self.startingCorner = "LowerLeftCorner"
-        self.direction = "CounterClockWise"
-        self.system = "Absolute"
+        self.startingCorner = startingCorner
+        self.direction = direction
+        self.system = system

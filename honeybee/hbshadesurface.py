@@ -1,8 +1,8 @@
 from _hbanalysissurface import HBAnalysisSurface
 
 
-class HBFenSurface(HBAnalysisSurface):
-    """Honeybee fenestration surface.
+class HBShadingSurface(HBAnalysisSurface):
+    """Honeybee shading surface.
 
     Args:
         name: A unique string for surface name
@@ -17,34 +17,13 @@ class HBFenSurface(HBAnalysisSurface):
             RADProperties will be assigned to surface by Honeybee.
         epProperties: EnergyPlus properties for this surface. If empty default
             epProperties will be assigned to surface by Honeybee.
-
-    Usage:
-
-        from honeybee.hbsurface import HBSurface
-        from honeybee.hbfensurface import HBFenSurface
-
-        # create a surface
-        pts = [(0, 0, 0), (10, 0, 0), (0, 0, 10)]
-        hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True)
-
-        glzpts = [(1, 0, 1), (8, 0, 1), (1, 0, 8)]
-        glzsrf = HBFenSurface("glz_001", glzpts)
-
-        # add fenestration surface to hb surface
-        hbsrf.addFenestrationSurface(glzsrf)
-
-        # get full definiion of the surface including the fenestration
-        print hbsrf.toRadString(includeMaterials=True,
-                                includeChildrenSurfaces=True)
-
-        # save the definiion to a .rad file
-        hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", True, True)
     """
 
+    # TODO: Separate Zone:Detailed:Sahding
     def __init__(self, name, sortedPoints=[], isNameSetByUser=False,
                  radProperties=None, epProperties=None):
         """Init honeybee surface."""
-        _surfaceType = 5
+        _surfaceType = 6
         _isTypeSetByUser = True
 
         HBAnalysisSurface.__init__(self, name, sortedPoints=sortedPoints,
@@ -59,20 +38,32 @@ class HBFenSurface(HBAnalysisSurface):
     # TODO: Parse EnergyPlus properties
     @classmethod
     def fromEPString(cls, EPString):
-        """Init Honeybee fenestration surface from an EPString.
+        """Init Honeybee shading from an EPString.
+
+        Supported types are Shading:Site:Detailed, Shading:Building:Detailed,
+        Shading:Zone:Detailed
 
         Args:
-            EPString: The full EPString for an EnergyPlus fenestration.
+            EPString: The full EPString for an EnergyPlus shading object.
         """
         # clean input EPString - split based on comma
         _segments = EPString.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
+        _type = _segments[0].lower()
         name = _segments[1]
-        _pts = range((len(_segments) - 11) / 3)
+
+        if _type in ('shading:site:detailed', 'shading:building:detailed'):
+            startItem = 4
+        elif _type == "shading:zone:detailed":
+            startItem = 5
+        else:
+            raise ValueError("%s is an invalid shading type." % _type)
+
+        _pts = range((len(_segments) - startItem) / 3)
 
         # create points
-        for count, i in enumerate(xrange(11, len(_segments), 3)):
+        for count, i in enumerate(xrange(startItem, len(_segments), 3)):
             try:
                 _pts[count] = [float(c) for c in _segments[i: i + 3]]
             except ValueError:
@@ -84,7 +75,7 @@ class HBFenSurface(HBAnalysisSurface):
         return cls(name, sortedPoints=_pts, isNameSetByUser=True)
 
     @property
-    def isHBFenSurface(self):
+    def isHBShadingSurface(self):
         """Return True for HBFenSurface."""
         return True
 
@@ -103,4 +94,4 @@ class HBFenSurface(HBAnalysisSurface):
         """Set parent zone."""
         if hasattr(parent, 'isHBSurface'):
             self.__parent = parent
-            parent.addFenestrationSurface(self)
+            # parent.addFenestrationSurface(self)

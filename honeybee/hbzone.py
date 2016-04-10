@@ -9,7 +9,7 @@ import os
 class HBZone(HBObject):
     """Honeybee base class."""
 
-    def __init__(self, name, origin=(0, 0, 0), geometryrules=None,
+    def __init__(self, name, origin=(0, 0, 0), geometryRules=None,
                  buildingProgram=None, zoneProgram=None, isConditioned=True):
         """Init Honeybee Zone."""
         self.name = name
@@ -18,7 +18,35 @@ class HBZone(HBObject):
         self.origin = origin
         """origin of the zone."""
 
+        self.geometryRules = geometryRules
+
         self.__surfaces = []
+
+    @classmethod
+    def fromEPString(cls, EPString, geometryRules=None, buildingProgram=None,
+                     zoneProgram=None, isConditioned=True):
+        """Init Honeybee zone from an EPString.
+
+        Args:
+            EPString: The full EPString for an EnergyPlus Zone.
+        """
+        # clean input EPString - split based on comma
+        _segments = EPString.replace("\t", "") \
+            .replace(" ", "").replace(";", "").split(",")
+
+        name = _segments[1]
+        try:
+            north, x, y, z = _segments[2:6]
+        except:
+            x, y, z = 0, 0, 0
+
+        try:
+            origin = map(float, (x, y, z))
+        except ValueError:
+            origin = 0, 0, 0
+
+        return cls(name, origin, geometryRules, buildingProgram, zoneProgram,
+                   isConditioned)
 
     @property
     def isHBZone(self):
@@ -38,6 +66,27 @@ class HBZone(HBObject):
             raise Exception("Failed to set zone origin.")
 
     @property
+    def geometryRules(self):
+        """Get and set global geometry rules for this zone."""
+        return self.__geometryRules
+
+    @geometryRules.setter
+    def geometryRules(self, geometryRules):
+        if not geometryRules:
+            geometryRules = GlobalGeometryRules()
+
+        self.__geometryRules = geometryRules
+
+    @property
+    def isRelativeSystem(self):
+        """Return True if coordinate system is relative.
+
+        To find the absolute coordinate values in a relative system you should
+        add surface coordinates to zone origin.
+        """
+        return self.geometryRules.system.lower() == "relative"
+
+    @property
     def surfaces(self):
         """Get list of HBSurfaces for this zone."""
         return self.__surfaces
@@ -47,14 +96,17 @@ class HBZone(HBObject):
         assert hasattr(HBSurface, "isHBSurface"), \
             "%s input is not a Honeybee surface." % str(HBSurface)
         self.__surfaces.append(HBSurface)
-        HBSurface.parent = self
+        # update parent if it's not the same as the current zone
+        if HBSurface.parent != self:
+            HBSurface.parent = self
 
     @property
     def radianceMaterials(self):
         """Get list of Radiance materials for zone including fenestration."""
         return set([srf.radianceMaterials for srf in self.surfaces])
 
-    def toRadString(self, includeMaterials=False, includeChildrenSurfaces=True):
+    def toRadString(self, includeMaterials=False, includeChildrenSurfaces=True,
+                    joinOutput=True):
         """Return geometries and materials as a tuple of multiline string.
 
         Returns:
@@ -90,10 +142,14 @@ class HBZone(HBObject):
 
             # remove duplicated materials
             _materials = set([mat.toRadString() for mat in _materials])
-            _matStr = "\n".join(_materials)
 
-            # joing geometries
-            _geoStr = "\n".join(_geos)
+            if joinOutput:
+                _matStr = "\n".join(_materials)
+                # joing geometries
+                _geoStr = "\n".join(_geos)
+            else:
+                _matStr = _materials
+                _geoStr = _geos
         else:
             print "Warning: Found no Honeybee objects."
 
@@ -124,3 +180,6 @@ class HBZone(HBObject):
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)
                 return False
+
+    def __repr__(self):
+        return "HBZone: %s @ %s" % (self.name, self.origin)

@@ -80,6 +80,22 @@ class HBAnalysisSurface(HBObject):
         pass
 
     @property
+    def isRelativeSystem(self):
+        """Return True if coordinate system is relative."""
+        if self.parent is None:
+            return False
+        else:
+            return self.parent.isRelativeSystem
+
+    @property
+    def origin(self):
+        """Get origin of the coordinate system for this surface.
+
+        For Absolute system the value is always (0, 0, 0).
+        """
+        return self.parent.origin
+
+    @property
     def name(self):
         """Retuen surface name."""
         return self.__name
@@ -121,6 +137,17 @@ class HBAnalysisSurface(HBObject):
         If name is set by user the surface will never be renamed automatically.
         """
         return self.__isNameSetByUser
+
+    @property
+    def surfaceTypes(self):
+        """Return Honeybee valid surface types."""
+        _surfaceTypes = {0.0: 'Wall', 0.5: 'UndergroundWall', 1.0: 'Roof',
+                         1.5: 'UndergroundCeiling', 2.0: 'Floor',
+                         2.25: 'UndergroundSlab', 2.5: 'SlabOnGrade',
+                         2.75: 'ExposedFloor', 3.0: 'Ceiling', 4.0: 'AirWall',
+                         6.0: 'Context'}
+
+        return _surfaceTypes
 
     @property
     def surfaceType(self):
@@ -165,6 +192,26 @@ class HBAnalysisSurface(HBObject):
     def points(self):
         """Get/set points."""
         return self.__pts
+
+    @property
+    def absolutePoints(self):
+        """Return absolute coordinates of points.
+
+        If coordinate system is absolute, self.absolutePoints will be the same
+        as self.points.
+        """
+        if self.isRelativeSystem:
+            _ptgroups = range(len(self.points))
+            for count, ptGroup in enumerate(self.points):
+                _ptgroups[count] = [
+                    (pt[0] + self.origin[0],
+                     pt[1] + self.origin[1],
+                     pt[2] + self.origin[2])
+                    for pt in ptGroup
+                ]
+            return _ptgroups
+        else:
+            return self.points
 
     @points.setter
     def points(self, pts):
@@ -289,20 +336,23 @@ class HBAnalysisSurface(HBObject):
     def radianceMaterial(self, value):
         self.radProperties.radianceMaterial = value
 
-    def toRadString(self, includeMaterials=False):
+    def toRadString(self, includeMaterials=False, joinOutput=True):
         """Return Radiance definition for this surface as a string."""
         # prepare points for surface.
         if self.isChildSurface or not self.hasChildSurfaces:
-            __pts = self.points
+            __pts = self.absolutePoints
         else:
             if len(self.childrenSurfaces) > 1:
                 print "Honeybee currently supports one fenestration for each face."
 
             # get points for first glass face
-            __glassPoints = self.childrenSurfaces[0].points[0]
+            __glassPoints = self.childrenSurfaces[0].absolutePoints[0]
+
             # make a closed loop for each polyline
             __glassPoints = tuple(__glassPoints) + (__glassPoints[0],)
-            __facePoints = tuple(self.points[0]) + (self.points[0][0],)
+
+            __facePoints = tuple(self.absolutePoints[0]) + \
+                (self.absolutePoints[0][0],)
 
             __pts = __facePoints + __glassPoints
 
@@ -322,9 +372,14 @@ class HBAnalysisSurface(HBObject):
                 name=_name, materialName=self.radianceMaterial.name, pts=pts
             )
 
-        return "%s\n%s" % (self.radianceMaterial, "\n".join(__pgStrings)) \
-            if includeMaterials \
-            else "\n".join(__pgStrings)
+        if joinOutput:
+            return "%s\n%s" % (self.radianceMaterial, "\n".join(__pgStrings)) \
+                if includeMaterials \
+                else "\n".join(__pgStrings)
+        else:
+            return self.radianceMaterial.toRadString(), __pgStrings \
+                if includeMaterials \
+                else __pgStrings
 
     def radStringToFile(self, filePath, includeMaterials=False):
         """Write Radiance definition for this surface to a file.

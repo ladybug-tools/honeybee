@@ -50,9 +50,6 @@ class HBSurface(HBAnalysisSurface):
         > 0 10 10
     """
 
-    __parent = None
-    __childSurfaces = []
-
     def __init__(self, name, sortedPoints=[], surfaceType=None,
                  isNameSetByUser=False, isTypeSetByUser=False,
                  radProperties=None, epProperties=None):
@@ -63,6 +60,39 @@ class HBSurface(HBAnalysisSurface):
                                    isTypeSetByUser=isTypeSetByUser,
                                    radProperties=radProperties,
                                    epProperties=epProperties)
+        self.__parent = None
+        self.__childSurfaces = []
+
+    # TODO: Parse EnergyPlus properties
+    @classmethod
+    def fromEPString(cls, EPString):
+        """Init Honeybee surface from an EPString.
+
+        Args:
+            EPString: The full EPString for an EnergyPlus surface.
+        """
+        _types = {'Wall': 0, 'Roof': 1, 'Floor': 2, 'Ceiling': 3}
+
+        # clean input EPString - split based on comma
+        _segments = EPString.replace("\t", "") \
+            .replace(" ", "").replace(";", "").split(",")
+
+        name = _segments[1]
+        _type = _types[_segments[2].capitalize()]
+        _pts = range((len(_segments) - 11) / 3)
+
+        # create points
+        for count, i in enumerate(xrange(11, len(_segments), 3)):
+            try:
+                _pts[count] = [float(c) for c in _segments[i: i + 3]]
+            except ValueError:
+                raise ValueError(
+                    "%s is an invalid value for points." % _segments[i: i + 3]
+                )
+
+        # create the surfaceString
+        return cls(name, sortedPoints=_pts, surfaceType=_type,
+                   isNameSetByUser=True, isTypeSetByUser=True)
 
     @property
     def isHBSurface(self):
@@ -89,6 +119,7 @@ class HBSurface(HBAnalysisSurface):
         """Set parent zone."""
         if hasattr(parent, 'isHBZone'):
             self.__parent = parent
+            self.parent.addSurface(self)
 
     @property
     def childrenSurfaces(self):
@@ -99,10 +130,16 @@ class HBSurface(HBAnalysisSurface):
         """Add a fenestration surface to HB surface."""
         assert hasattr(fenestrationSurface, 'isHBFenSurface'), \
             '{} is not a HBFenSurfaces'.format(type(fenestrationSurface))
+
         self.__childSurfaces.append(fenestrationSurface)
 
+        # set up parent object if it's not set
+        if fenestrationSurface.parent != self:
+            fenestrationSurface.parent = self
+
+    # TODO: Add joinOutput argument
     def toRadString(self, includeMaterials=False,
-                    includeChildrenSurfaces=True):
+                    includeChildrenSurfaces=True, joinOutput=True):
         """Return Radiance definition for this surface as a string."""
         surfaceString = [
             super(HBSurface, self).toRadString(includeMaterials)

@@ -16,13 +16,16 @@ def getEnergyPlusObjectsFromString(epFileString):
     _epObjects = {"zone": {}, "buildingsurface:detailed": {},
                   "fenestrationsurface:detailed": {}, "material": {},
                   "windowmaterial": {}, "construction": {}, "schedule": {},
-                  "scheduletypelimits": {}, "globalgeometryrules": {}}
+                  "scheduletypelimits": {}, "globalgeometryrules": {},
+                  "shading:site:detailed": {}, "shading:building:detailed": {},
+                  "shading:zone:detailed": {}}
 
     rawEPObjects = re.findall(r'.[^;]*;.*[^$]', "\n" + epFileString + "\n", re.MULTILINE)
 
     for obj in rawEPObjects:
         # seperate each segment of EnergyPlus object
         segments = [seg.split("!")[0] for seg in re.findall(r'.+[,|;]', obj, re.MULTILINE)]
+
         # clean the objects and join them into a single comma separated string
         segments = "".join(segments).replace("\t", "").replace(" ", "")[:-1].split(",")
 
@@ -68,7 +71,7 @@ if __name__ == "__main__":
     # to X, Y, Z of zone origin
     print objects['globalgeometryrules'].values()
     for z in objects['zone']:
-        print "zone:", z
+        print "zone:", objects['zone'][z]
     for s in objects['buildingsurface:detailed']:
         print "buildingsurface:", s
     for w in objects['fenestrationsurface:detailed']:
