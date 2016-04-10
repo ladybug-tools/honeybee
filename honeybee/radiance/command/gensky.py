@@ -2,12 +2,12 @@
 # coding=utf-8
 from _commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceTuple
-from ..parameters.gensky import GenSkyParameters
+from ..parameters.gensky import GenskyParameters
 
 import os
 
 
-class GenSky(RadianceCommand):
+class Gensky(RadianceCommand):
     u"""
     gensky - Generate an annual Perez sky matrix from a weather tape.
 
@@ -80,7 +80,7 @@ class GenSky(RadianceCommand):
             meridian: [-m] A float number to indicate site meridian west of
                 Greenwich.
         """
-        _skyParameters = GenSkyParameters(latitude=latitude, longitude=longitude,
+        _skyParameters = GenskyParameters(latitude=latitude, longitude=longitude,
                                           meridian=meridian)
 
         # modify parameters based on sky type
@@ -117,7 +117,7 @@ class GenSky(RadianceCommand):
             illuminanceValue: Desired illuminance value in lux
         """
         assert float(illuminanceValue) >= 0, "Illuminace value can't be negative."
-        _skyParameters = GenSkyParameters(zenithBrightHorzDiff=illuminanceValue / 179.0)
+        _skyParameters = GenskyParameters(zenithBrightHorzDiff=illuminanceValue / 179.0)
 
         return cls(outputName=outputName, genskyParameters=_skyParameters)
 
@@ -134,7 +134,7 @@ class GenSky(RadianceCommand):
     @genskyParameters.setter
     def genskyParameters(self, genskyParam):
         self.__genskyParameters = genskyParam if genskyParam is not None \
-            else GenSkyParameters()
+            else GenskyParameters()
 
         assert hasattr(self.genskyParameters, "isRadianceParameters"), \
             "input genskyParameters is not a valid parameters type."
