@@ -7,6 +7,7 @@ import geometryoperation as go
 
 import os
 import types
+import math
 
 
 class HBAnalysisSurface(HBObject):
@@ -342,19 +343,14 @@ class HBAnalysisSurface(HBObject):
         if self.isChildSurface or not self.hasChildSurfaces:
             __pts = self.absolutePoints
         else:
-            if len(self.childrenSurfaces) > 1:
-                print "Honeybee currently supports one fenestration for each face."
 
             # get points for first glass face
-            __glassPoints = self.childrenSurfaces[0].absolutePoints[0]
+            __glassPoints = [childSrf.absolutePoints[0]
+                             for childSrf in self.childrenSurfaces]
 
-            # make a closed loop for each polyline
-            __glassPoints = tuple(__glassPoints) + (__glassPoints[0],)
+            __facePoints = self.absolutePoints[0]
 
-            __facePoints = tuple(self.absolutePoints[0]) + \
-                (self.absolutePoints[0][0],)
-
-            __pts = __facePoints + __glassPoints
+            __pts = AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
 
             __pts = [__pts]
 
@@ -432,3 +428,70 @@ class HBAnalysisSurface(HBObject):
     def __repr__(self):
         """Represnt Honeybee surface."""
         return "HBSurface: %s" % self.name
+
+
+class AnalsysiSurfacePolyline(object):
+    """Calculate AnalysisSurfacePolyline for surface with fenestrations."""
+
+    __slots__ = ('startIndex', '_ptListA', '_ptListB')
+
+    def __init__(self, surfacePoints, fenPoints):
+        """Init class."""
+        self.startIndex = 0
+        self._ptListA = []
+        self._ptListB = []
+        self.__calculatePolyline(surfacePoints, fenPoints)
+
+    @property
+    def polyline(self):
+        """Return a list of points for the single polyline.
+
+        This list of points includes based surface and fenestrations.
+        """
+        return self._ptListB[:-1] + list(reversed(self._ptListA))
+
+    @staticmethod
+    def distance(pt1, pt2):
+        """calculate distance between two points."""
+        return math.sqrt((pt2[0] - pt1[0])**2 +
+                         (pt2[1] - pt1[1])**2 +
+                         (pt2[2] - pt1[2])**2)
+
+    def __shortestDistance(self, ptList1, ptList2):
+        dist = float('inf')
+        xi = None
+        yi = None
+        for xCount, xpt in enumerate(ptList1):
+            for yCount, ypt in enumerate(ptList2):
+                d = self.distance(xpt, ypt)
+                if d < dist:
+                    dist, xi, yi = d, xCount, yCount
+
+        return dist, xi, yi
+
+    def __addPoints(self, source, target):
+        d, si, ti = self.__shortestDistance(source, target)
+        if self.startIndex < si:
+            start = self.startIndex
+            end = si
+            self._ptListA.extend(source[start: end + 1])
+            self._ptListB.extend(reversed(source[end:] + source[:start + 1]))
+        else:
+            start = si
+            end = self.startIndex
+            self._ptListA.extend(reversed(source[start: end + 1]))
+            self._ptListB.extend(source[end:] + source[:start + 1])
+
+        self.startIndex = ti
+
+    def __calculatePolyline(self, source, targets):
+        """calculate single polyline for HBSurface with Fenestration."""
+        # sort point groups
+        sortedTargets = sorted(targets, key=lambda target: self.__shortestDistance(source, target)[0])
+
+        self.__addPoints(source, sortedTargets[0])
+
+        if len(sortedTargets) > 1:
+            self.__calculatePolyline(sortedTargets[0], sortedTargets[1:])
+        else:
+            self.__addPoints(sortedTargets[0], sortedTargets[0])
