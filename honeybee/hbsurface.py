@@ -145,14 +145,6 @@ class HBSurface(HBAnalysisSurface):
             super(HBSurface, self).toRadString(includeMaterials)
         ]
 
-        if len(self.childrenSurfaces) > 1:
-            print "Honeybee currently supports one fenestration for each face."
-
-        if includeChildrenSurfaces and self.hasChildSurfaces:
-            surfaceString.append(
-                self.childrenSurfaces[0].toRadString(includeMaterials)
-            )
-
         return "\n".join(surfaceString)
 
     def radStringToFile(self, filePath, includeMaterials=False,

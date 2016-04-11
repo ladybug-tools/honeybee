@@ -74,8 +74,8 @@ if __name__ == "__main__":
     epFolder = r"C:\\EnergyPlusV8-3-0\\ExampleFiles\\"
     targetFolder = r"c:\\ladybug\\idfFiles\\"
 
-    epFiles = [f for f in os.listdir(epFolder) if f.lower().endswith(".idf")]
-    # epFiles = ["HospitalLowEnergy.idf"]
+    # epFiles = [f for f in os.listdir(epFolder) if f.lower().endswith(".idf")]
+    epFiles = ["GeometryTest.idf"]
 
     for f in epFiles:
         fullpath = os.path.join(epFolder, f)
