@@ -79,7 +79,7 @@ class RadianceCommand(object):
             # RadiancePath
             if isinstance(f, str):
                 continue
-            assert hasattr(f, 'normpath'), _msg
+            assert hasattr(f, 'normpath'), "%s is missing!\n" % f + _msg
             assert f.normpath is not None, _msg
 
     def __checkExecutable(self, radbinPath=None, raiseException=False):

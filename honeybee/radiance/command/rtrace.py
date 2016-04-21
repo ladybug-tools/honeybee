@@ -11,7 +11,7 @@ class Rtrace(RadianceCommand):
 
     Attributes:
         outputName: Name of output file (Default: untitled).
-        octFile: Full path to input oct files (Default: None)
+        octreeFile: Full path to input oct files (Default: None)
         pointFile: Full path to input pt files (Default: None)
         simulationType: An integer to define type of analysis.
             0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
@@ -21,10 +21,10 @@ class Rtrace(RadianceCommand):
     """
 
     outputFile = RadiancePath("res", "results file", extension=".res")
-    octFile = RadiancePath("oct", "octree file", extension=".oct")
+    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
     pointFile = RadiancePath("points", "test point file", extension=".pts")
 
-    def __init__(self, outputName="untitled", octFile=None, pointFile=None,
+    def __init__(self, outputName="untitled", octreeFile=None, pointFile=None,
                  simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
@@ -34,7 +34,7 @@ class Rtrace(RadianceCommand):
             else outputName + ".res"
         """oct file name which is usually the same as the project name (Default: untitled)"""
 
-        self.octFile = octFile
+        self.octreeFile = octreeFile
         """Full path to input oct file."""
 
         self.pointFile = pointFile
@@ -109,7 +109,7 @@ class Rtrace(RadianceCommand):
         radString = "%s %s %s < %s > %s" % (
             os.path.join(self.radbinPath, "rtrace"),
             self.radianceParameters.toRadString(),
-            self.octFile.toRadString(),
+            self.octreeFile.toRadString(),
             self.pointFile.toRadString(),
             self.outputFile.toRadString()
         )
@@ -121,4 +121,4 @@ class Rtrace(RadianceCommand):
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.octFile, self.pointFile
+        return self.octreeFile, self.pointFile

@@ -10,29 +10,14 @@ class HBDaylightAnalysisRecipe(object):
     """Analysis Recipe Base class.
 
     Attributes:
-        sky: A honeybee sky for the analysis.
-        simulationType: 0: Illuminance(lux), 1: Radiation(kWh), 2: Luminance(Candela)
-            (Default: 0)
-        radParameters: Radiance parameters for this analysis.
-            (Default: RadianceParameters.LowQuality)
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Sub-folder for this analysis recipe. (e.g. "gridbased")
     """
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, sky, simulationType=None, hbObjects=None, subFolder=""):
+    def __init__(self, hbObjects=None, subFolder=""):
         """Create Analysis recipe."""
-        self.sky = sky
-        """A honeybee sky for the analysis."""
-
-        self.simulationType = simulationType
-        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
-        """
-
-        self.simulationType = simulationType
-
         self.hbObjects = hbObjects
         """An optional list of Honeybee surfaces or zones. (Default: None)"""
 
@@ -48,31 +33,6 @@ class HBDaylightAnalysisRecipe(object):
         return True
 
     @property
-    def simulationType(self):
-        """Get/set simulation Type.
-
-        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
-        """
-        return self.__simType
-
-    @simulationType.setter
-    def simulationType(self, value):
-        try:
-            value = int(value)
-        except:
-            value = 0
-
-        assert 0 <= value <= 2, \
-            "Simulation type should be between 0-2. Current value: {}".format(value)
-
-        # If this is a radiation analysis make sure the sky is climate-based
-        if value == 1:
-            assert self.sky.isClimateBased, \
-                "The sky for radition analysis should be climate-based."
-
-        self.__simType = value
-
-    @property
     def hbObjects(self):
         """Get and set Honeybee objects for this recipe."""
         return self.__hbObjs
@@ -86,16 +46,6 @@ class HBDaylightAnalysisRecipe(object):
             _dif = len(hbObjects) - len(self.__hbObjs)
             if _dif:
                 print "%d non Honeybee objects are found and removed." % _dif
-
-    @property
-    def sky(self):
-        """Get and set sky definition."""
-        return self.__sky
-
-    @sky.setter
-    def sky(self, newSky):
-        assert hasattr(newSky, "isRadianceSky"), "%s is not a valid Honeybee sky." % type(newSky)
-        self.__sky = newSky
 
     @property
     def subFolder(self):
@@ -157,18 +107,6 @@ class HBDaylightAnalysisRecipe(object):
         """Radiance representation of the recipe."""
         pass
 
-    @abstractmethod
-    def writeToFile(self, targetFolder):
-        """Write files for the analysis recipe to file.
-
-        Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
-
-        Returns:
-            True in case of success. False in case of failure.
-        """
-        pass
-
     # TODO: Check for white space in names. I need to test some cases to make
     # sure what will and what will not fail for Radiance before implementing this.
     @staticmethod
@@ -195,3 +133,25 @@ class HBDaylightAnalysisRecipe(object):
             except Exception as e:
                 print "Failed to write points to file:\n%s" % e
                 return False
+
+    @abstractmethod
+    def writeToFile(self, targetFolder):
+        """Write files for the analysis recipe to file.
+
+        Args:
+            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+
+        Returns:
+            True in case of success. False in case of failure.
+        """
+        pass
+
+    @abstractmethod
+    def run(self):
+        """Run the analysis."""
+        pass
+
+    @abstractmethod
+    def results(self):
+        """Return results for this analysis."""
+        pass
