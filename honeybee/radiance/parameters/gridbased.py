@@ -86,6 +86,9 @@ class GridBasedParameters(AdvancedRadianceParameters):
         error from indirect illuminance interpolation. A value of zero implies
         no interpolation."""
 
+        self.I = None
+        """Irradiance switch (Default: False)."""
+
     @property
     def isGridBasedRadianceParameters(self):
         """Return True to indicate this object is a RadianceParameters."""
