@@ -1,9 +1,11 @@
 # coding=utf-8
 """Radiance oconv Parameters."""
 from ._advancedparametersbase import AdvancedRadianceParameters
+from _frozen import frozen
 
 
 # TODO: Implement -i and -b
+@frozen
 class OconvParameters(AdvancedRadianceParameters):
     u"""Radiance Parameters for rcontrib command including rtrace parameters.
 
@@ -11,7 +13,7 @@ class OconvParameters(AdvancedRadianceParameters):
     https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/oconv.pdf
 
     Attributes:
-        freeze: [-f] A Boolean to produce "a frozen octree containing all the scene
+        frozen: [-f] A Boolean to produce "a frozen octree containing all the scene
             information. Normally, only a reference to the scene files is stored
             in the octree, and changes to those files may invalidate the result.
             The freeze option is useful when the octree file's integrity and
@@ -50,14 +52,14 @@ class OconvParameters(AdvancedRadianceParameters):
         > -f -w
     """
 
-    def __init__(self, freeze=True, resolution=None, maxSetSize=None,
+    def __init__(self, frozen=True, resolution=None, maxSetSize=None,
                  turnOffWarns=None):
         """Init paramters."""
         AdvancedRadianceParameters.__init__(self)
 
         # add parameters
-        self.addRadianceBoolFlag('f', 'freeze octree', attributeName='freeze')
-        self.freeze = freeze
+        self.addRadianceBoolFlag('f', 'freeze octree', attributeName='frozen')
+        self.frozen = frozen
         """
         [-f] A Boolean to produce "a frozen octree containing all the scene
         information. Normally, only a reference to the scene files is stored

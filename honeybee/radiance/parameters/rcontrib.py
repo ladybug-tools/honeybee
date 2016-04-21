@@ -1,9 +1,11 @@
 # coding=utf-8
 """Radiance rcontrib Parameters."""
 from gridbased import GridBasedParameters
+from _frozen import frozen
 
 
 # TODO: Implement the rest of rcontrib options
+@frozen
 class RcontribParameters(GridBasedParameters):
     """Radiance Parameters for rcontrib command including rtrace parameters.
 

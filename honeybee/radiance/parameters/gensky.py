@@ -1,7 +1,9 @@
 # coding=utf-8
 from _advancedparametersbase import AdvancedRadianceParameters
+from _frozen import frozen
 
 
+@frozen
 class GenskyParameters(AdvancedRadianceParameters):
     """Radiance Parameters for grid based analysis.
 
@@ -154,7 +156,7 @@ class GenskyParameters(AdvancedRadianceParameters):
         """[-o lon] A float number to indicate site latitude. Negative angle
         indicates east longitude."""
 
-        self.addRadianceNumber('m', 'meredian', attributeName='meredian',
+        self.addRadianceNumber('m', 'meridian', attributeName='meridian',
                                numType=float)
         self.meridian = meridian
         """[-m mer] A float number to indicate site meridian west of

@@ -1,8 +1,10 @@
 """Radiance raytracing Parameters."""
 from _advancedparametersbase import AdvancedRadianceParameters
+from _frozen import frozen
 
 
 # TODO: Add a check to make sure user can't set both -s and -d to True.
+@frozen
 class GendaymtxParameters(AdvancedRadianceParameters):
     """Radiance Parameters for grid based analysis.
 

@@ -1,5 +1,6 @@
 import unittest
 from honeybee.radiance.parameters._advancedparametersbase import AdvancedRadianceParameters
+from honeybee.radiance.parameters._frozen import frozen
 
 
 class AdvancedParametersTestCase(unittest.TestCase):
@@ -8,6 +9,7 @@ class AdvancedParametersTestCase(unittest.TestCase):
     # preparing to test
     def setUp(self):
         """Set up the test case by initiating the class."""
+        @frozen
         class CustomParameters(AdvancedRadianceParameters):
             pass
 
