@@ -109,13 +109,11 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
             # add all numeric parameters
             for name, data in rtrace_number_parameters.iteritems():
-                self.addRadianceNumber(name, data['dscrip'],
-                                       defaultValue=None)
+                self.addRadianceNumber(name, data['dscrip'])
 
             # add boolean parameters
             for name, data in rtrace_boolean_parameters.iteritems():
-                self.addRadianceBoolFlag(name, data['dscrip'],
-                                         defaultValue=None)
+                self.addRadianceBoolFlag(name, data['dscrip'])
         else:
             assert (0 <= int(value) <= 2), \
                 "Quality can only be 0:low, 1: medium or 2: high quality"
@@ -125,13 +123,13 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
             # add all numeric parameters
             for name, data in rtrace_number_parameters.iteritems():
-                self.addRadianceNumber(name, data['dscrip'],
-                                       defaultValue=data['values'][self.quality])
+                self.addRadianceNumber(name, data['dscrip'], numType=data['type'])
+                setattr(self, name, data['values'][self.quality])
 
             # add boolean parameters
             for name, data in rtrace_boolean_parameters.iteritems():
-                self.addRadianceBoolFlag(name, data['dscrip'],
-                                         defaultValue=data['values'][self.quality])
+                self.addRadianceBoolFlag(name, data['dscrip'])
+                setattr(self, name, data['values'][self.quality])
 
     def getParameterDefaultValueBasedOnQuality(self, parameter):
         """Get parameter value based on quality.

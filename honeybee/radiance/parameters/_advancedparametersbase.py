@@ -21,13 +21,16 @@ class AdvancedRadianceParameters(RadianceParameters):
             pass
 
         rp = CustomParameters()
-        rp.addRadianceNumber('ab', 'ambient bounces', defaultValue=20)
-        rp.addRadianceValue('o', 'o f', defaultValue='f', isJoined=True)
-        rp.addRadianceTuple('c', 'color', defaultValue=(0, 0, 254), numType=int)
-        rp.addRadianceBoolFlag('I', 'irradiance switch', defaultValue=True, isDualSign=True)
+        rp.addRadianceNumber('ab', 'ambient bounces')
+        rp.ab = 20
+        rp.addRadianceValue('o', 'o f', isJoined=True)
+        rp.o = f
+        rp.addRadianceTuple('c', 'color', numType=int)
+        rp.c = (0, 0, 254)
+        rp.addRadianceBoolFlag('I', 'irradiance switch', isDualSign=True)
+        rp.I = True
 
         print rp.toRadString()
-
         > -ab 20 -of -c 0 0 254 +I
     """
 
@@ -37,7 +40,7 @@ class AdvancedRadianceParameters(RadianceParameters):
 
     def addRadianceNumber(self, name, descriptiveName=None, validRange=None,
                           acceptedInputs=None, numType=None, checkPositive=False,
-                          defaultValue=None, attributeName=None):
+                          attributeName=None):
         """Add a radiance number to parameters.
 
         Attributes:
@@ -75,11 +78,6 @@ class AdvancedRadianceParameters(RadianceParameters):
                 Also, if the number changes (for example from 4.212 to 4 due to int
                 being specified as _type_), then a warning will be issued.
 
-            defaultValue: Optional. The value to be assigned in case no value is
-                assigned by the user. If the default value is not specified then
-                the attribute won't be considered int the creation of the
-                toRadString string representation of the component.
-
             attributeName: Optional. A string the will be used as the attribute
                 name that will be added to parameters class. If None name will be
                 used insted.
@@ -89,14 +87,14 @@ class AdvancedRadianceParameters(RadianceParameters):
         setattr(self.__class__,
                 _attrname,
                 RadianceNumber(name, descriptiveName, validRange, acceptedInputs,
-                               numType, checkPositive, defaultValue)
+                               numType, checkPositive)
                 )
 
         # add name of the attribute to default parameters
         self.addDefaultParameterName(_attrname, name)
 
     def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
-                         defaultValue=None, isJoined=False, attributeName=None):
+                         isJoined=False, attributeName=None):
         """
         Add a radiance string value.
 
@@ -121,11 +119,6 @@ class AdvancedRadianceParameters(RadianceParameters):
                 the user-specified input doesn't exist in _acceptedInputs then a
                 value error will be raised.
 
-            defaultValue: Optional. The value to be assigned in case no value is
-                assigned by the user. If the default value is not specified then
-                the attribute won't be considered int the creation of the
-                toRadString string representation of the component.
-
             isJoined: Set to True if the Boolean should be returned as a joined
                 output (i.e. -of, -od) (Default: False)
 
@@ -137,8 +130,8 @@ class AdvancedRadianceParameters(RadianceParameters):
         _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
                 _attrname,
-                RadianceValue(name, descriptiveName, acceptedInputs,
-                              defaultValue, isJoined)
+                RadianceValue(name, descriptiveName, acceptedInputs, None,
+                              isJoined)
                 )
 
         # add name of the attribute to default parameters
@@ -187,8 +180,8 @@ class AdvancedRadianceParameters(RadianceParameters):
         # add name of the attribute to default parameters
         self.addDefaultParameterName(_attrname, name)
 
-    def addRadianceBoolFlag(self, name, descriptiveName=None, defaultValue=None,
-                            isDualSign=False, attributeName=None):
+    def addRadianceBoolFlag(self, name, descriptiveName=None, isDualSign=False,
+                            attributeName=None):
         """Add a boolean value to parameters.
 
         Attributes:
@@ -205,11 +198,6 @@ class AdvancedRadianceParameters(RadianceParameters):
                 debugging and readability, it is strongly suggested that this input
                 be specified for all instances.
 
-            defaultValue: Optional. The value to be assigned in case no value is
-                assigned by the user. If the default value is not specified then
-                the attribute won't be considered int the creation of the
-                toRadString string representation of the component.
-
             isDualSign: Set to True if the Boolean should return +/- value.
                 (i.e. +I/-I) (Default: False)
 
@@ -221,7 +209,7 @@ class AdvancedRadianceParameters(RadianceParameters):
         _attrname = attributeName if attributeName is not None else name
         setattr(self.__class__,
                 _attrname,
-                RadianceBoolFlag(name, descriptiveName, defaultValue, isDualSign)
+                RadianceBoolFlag(name, descriptiveName, None, isDualSign)
                 )
 
         # add name of the attribute to default parameters
@@ -229,7 +217,7 @@ class AdvancedRadianceParameters(RadianceParameters):
 
     def addRadianceTuple(self, name, descriptiveName=None, validRange=None,
                          acceptedInputs=None, tupleSize=None, numType=None,
-                         defaultValue=None, attributeName=None):
+                         attributeName=None):
         """Add a radiance numeric tuple e.g (0.5,0.3,0.2).
 
         Attributes:
@@ -258,15 +246,11 @@ class AdvancedRadianceParameters(RadianceParameters):
                 parameters with similar valid ranges. If _validRange is specified,
                 a warning will be issued in case the provided input is not within
                 that range.
+
             tupleSize: Optional. Specify the number of inputs that are expected.
 
             numType: Optional. Acceptable inputs are float or int. If specified, the
                 __set__ method will ensure that the value is stored in that type.
-
-            defaultValue: Optional. The value to be assigned in case no value is
-                assigned by the user. If the default value is not specified then
-                the attribute won't be considered int the creation of the
-                toRadString string representation of the component.
 
             attributeName: Optional. A string the will be used as the attribute
                 name that will be added to parameters class. If None name will be
@@ -277,7 +261,7 @@ class AdvancedRadianceParameters(RadianceParameters):
         setattr(self.__class__,
                 _attrname,
                 RadianceTuple(name, descriptiveName, validRange, acceptedInputs,
-                              tupleSize, numType, defaultValue)
+                              tupleSize, numType)
                 )
 
         # add name of the attribute to default parameters

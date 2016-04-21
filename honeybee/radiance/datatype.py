@@ -397,11 +397,11 @@ class RadianceTuple(RadianceDefault):
             toRadString string representation of the component.
     """
 
-    __slots__ = ('_tupleSize', '_type','_testType')
+    __slots__ = ('_tupleSize', '_type', '_testType')
 
     def __init__(self, name, descriptiveName=None, validRange=None,
                  acceptedInputs=None, tupleSize=None, numType=None,
-                 defaultValue=None,testType=True):
+                 defaultValue=None, testType=True):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange, defaultValue)

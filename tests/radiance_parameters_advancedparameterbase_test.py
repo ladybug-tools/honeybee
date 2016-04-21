@@ -14,10 +14,14 @@ class AdvancedParametersTestCase(unittest.TestCase):
         self.rp = CustomParameters()
 
         # add parameters
-        self.rp.addRadianceNumber('ab', 'ambient bounces', defaultValue=20)
-        self.rp.addRadianceValue('o', 'o f', defaultValue='f', isJoined=True)
-        self.rp.addRadianceTuple('c', 'color', defaultValue=(0, 0, 254), numType=int)
-        self.rp.addRadianceBoolFlag('I', 'irradiance switch', defaultValue=True, isDualSign=True)
+        self.rp.addRadianceNumber('ab', 'ambient bounces')
+        self.rp.ab = 20
+        self.rp.addRadianceValue('o', 'o f', isJoined=True)
+        self.rp.o = 'f'
+        self.rp.addRadianceTuple('c', 'color', numType=int)
+        self.rp.c = (0, 0, 254)
+        self.rp.addRadianceBoolFlag('I', 'irradiance switch', isDualSign=True)
+        self.rp.I = True
         self.rp.addRadiancePath('wea', 'wea file')
         self.rp.wea = 'c:\\ladybug\\test.wea'
 

@@ -55,7 +55,9 @@ class OconvParameters(AdvancedRadianceParameters):
         """Init paramters."""
         AdvancedRadianceParameters.__init__(self)
 
-        self.freeze = None
+        # add parameters
+        self.addRadianceBoolFlag('f', 'freeze octree', attributeName='freeze')
+        self.freeze = freeze
         """
         [-f] A Boolean to produce "a frozen octree containing all the scene
         information. Normally, only a reference to the scene files is stored
@@ -67,7 +69,9 @@ class OconvParameters(AdvancedRadianceParameters):
         input octree is frozen, the output will be also. (default: True)
         """
 
-        self.resolution = None
+        self.addRadianceNumber('r', 'maximum octree resolution',
+                               checkPositive=True, attributeName='resolution')
+        self.resolution = resolution
         """
         [-r] An integer that "specifies the maximum octree resolution.
         This should be greater than or equal to the ratio of the largest and
@@ -75,7 +79,9 @@ class OconvParameters(AdvancedRadianceParameters):
         surfaces)" (default:16384)
         """
 
-        self.maxSetSize = None
+        self.addRadianceNumber('n', 'maximum surface set size for each voxel',
+                               checkPositive=True, attributeName='maxSetSize')
+        self.maxSetSize = maxSetSize
         """
         [-n] An integer that "specifies the maximum surface set size
         for each voxel. Larger numbers result in quicker octree generation,
@@ -84,18 +90,7 @@ class OconvParameters(AdvancedRadianceParameters):
         optimal for most scenes (Default: 6).
         """
 
-        self.turnOffWarns = None
-        """[-w] A Boolean to suppress warnings (Default: False)."""
-
-        # add parameters
-        self.addRadianceBoolFlag('f', 'freeze octree', defaultValue=freeze,
-                                 attributeName='freeze')
-        self.addRadianceNumber('r', 'maximum octree resolution',
-                               defaultValue=resolution, checkPositive=True,
-                               attributeName='resolution')
-        self.addRadianceNumber('n', 'maximum surface set size for each voxel',
-                               defaultValue=maxSetSize, checkPositive=True,
-                               attributeName='maxSetSize')
         self.addRadianceBoolFlag('w', 'suppress warnings',
-                                 defaultValue=turnOffWarns,
                                  attributeName='turnOffWarns')
+        self.turnOffWarns = turnOffWarns
+        """[-w] A Boolean to suppress warnings (Default: False)."""
