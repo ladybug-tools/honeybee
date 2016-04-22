@@ -1,5 +1,6 @@
 import unittest
 from honeybee.radiance.parameters._parametersbase import RadianceParameters
+from honeybee.radiance.parameters._frozen import frozen
 from honeybee.radiance.datatype import RadianceNumber, RadianceValue
 
 
@@ -9,6 +10,7 @@ class ParametersTestCase(unittest.TestCase):
     # preparing to test
     def setUp(self):
         """Set up the test case by initiating the class."""
+        @frozen
         class CustomRP(RadianceParameters):
             ambientBounces = RadianceNumber('ab', 'ambient bounces', defaultValue=15)
             ambientDivisions = RadianceValue('ad', 'ambient divisions')

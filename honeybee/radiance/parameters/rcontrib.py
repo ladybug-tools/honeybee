@@ -1,9 +1,11 @@
 # coding=utf-8
 """Radiance rcontrib Parameters."""
 from gridbased import GridBasedParameters
+from _frozen import frozen
 
 
 # TODO: Implement the rest of rcontrib options
+@frozen
 class RcontribParameters(GridBasedParameters):
     """Radiance Parameters for rcontrib command including rtrace parameters.
 
@@ -50,10 +52,8 @@ class RcontribParameters(GridBasedParameters):
         """Init paramters."""
         GridBasedParameters.__init__(self)
 
-        self.modFile = None
+        # add parameters
+        self.addRadianceValue('M', 'modifiers file', attributeName='modFile')
+        self.modFile = modFile
         """[-M file] File path to a file with a list of modifiers
         (Default: None)"""
-
-        # add parameters
-        self.addRadianceValue('M', 'modifiers file', defaultValue=modFile,
-                              attributeName='modFile')
