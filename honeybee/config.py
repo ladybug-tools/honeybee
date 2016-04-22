@@ -30,6 +30,7 @@ class Folders(object):
     __userPath = {
         "pathToRadianceFolder": r" ",
         "pathToEnergyPlusFolder": r" ",
+        "pathToOpenStudioFolder": r"C:\Program Files\OpenStudio 1.11.0",
     }
 
     def __init__(self, mute=False):
@@ -43,6 +44,11 @@ class Folders(object):
         if self.__userPath["pathToRadianceFolder"].strip() is not "":
             self.radbinPath = os.path.join(
                 self.__userPath["pathToRadianceFolder"], "bin")
+        elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+            self.radbinPath = os.path.join(openStudioPath,
+                                           r"share\openStudio\Radiance\bin")
+            self.perlExePath = openStudioPath
         else:
             if sys.platform == 'win32' or sys.platform == 'cli':
                 __radbin, __radFile = self.__which("rad.exe")
@@ -128,6 +134,28 @@ class Folders(object):
             self.__radlib = None
 
     @property
+    def perlExePath(self):
+        """Path to the folder containing Perl binary files."""
+        return self.__perlExePath
+
+    @perlExePath.setter
+    def perlExePath(self,openStudioPath):
+        """Search for the distributed perl binary files with open studio and
+         assign them to a variable after path based testing."""
+
+        #Search for folders with 'perl' in their names. Hopefully only one exists!
+        possiblePerLocations = [pathVal for pathVal in os.listdir(openStudioPath)
+                                if 'perl' in pathVal.lower()]
+
+        possiblePerLocations = [os.path.join(openStudioPath,pathVal,'perl\\bin')
+                                for pathVal in possiblePerLocations]
+        self.__perlExePath = None
+        for binDir in possiblePerLocations:
+            if 'perl.exe' in os.listdir(binDir):
+                self.__perlExePath = os.path.join(binDir,'perl.exe')
+                break
+
+    @property
     def epFolder(self):
         """Path to EnergyPlus folder."""
         raise NotImplementedError
@@ -143,3 +171,6 @@ radbinPath = f.radbinPath
 # NotImplemented yet
 epPath = None
 """Path to EnergyPlus folder."""
+
+perlExePath = f.perlExePath
+"""Path to the perl executable needed for some othe Radiance Scripts."""
