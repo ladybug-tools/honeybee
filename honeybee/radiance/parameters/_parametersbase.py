@@ -66,6 +66,15 @@ class RadianceParameters(object):
         """Return list of current values."""
         return [getattr(self, key) for key in self.parameters]
 
+    def tryToUnfreeze(self):
+        """Try to unfreeze subclass to add a new attribute."""
+        try:
+            self.unfreeze()
+        except AttributeError:
+            raise Exception(
+                "Sub-classes from RadianceParameters should be @frozen"
+            )
+
     def addDefaultParameterName(self, alias, parameter):
         """Add a single parameter name to the list of default parameters.
 
@@ -143,10 +152,13 @@ class RadianceParameters(object):
             )
 
         try:
+            self.tryToUnfreeze()
             setattr(self, name, str(value))
             self.__additionalParameters.append(name)
         except TypeError:
             raise ValueError("Value should be a string or convertable to a string.")
+        else:
+            self.freeze()
 
     def importParameterValuesFromString(self, parametersString):
         """Import Radiance parameters from string.
@@ -206,7 +218,14 @@ class RadianceParameters(object):
                     # case for parameters with no input values -u, -i
                     if key.strip() == "":
                         continue
-                    value = ""
+                    elif value.strip() == "":
+                        value = ""
+                    else:
+                        # case for tuples
+                        try:
+                            value = value.strip().split(" ")
+                        except:
+                            value = ""
 
             radPar[key.strip()] = value
 
@@ -222,7 +241,7 @@ class RadianceParameters(object):
 
         _additionalParameters = [
             "-%s %s" % (key, getattr(self, key))
-            if getattr(self, key).strip() != ""
+            if str(getattr(self, key)).strip() != ""
             else "-%s" % key
             for key in self.additionalParameters
         ]
