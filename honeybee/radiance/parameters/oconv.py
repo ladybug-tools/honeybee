@@ -1,7 +1,7 @@
 # coding=utf-8
 """Radiance oconv Parameters."""
 from ._advancedparametersbase import AdvancedRadianceParameters
-from _frozen import frozen
+from ._frozen import frozen
 
 
 # TODO: Implement -i and -b

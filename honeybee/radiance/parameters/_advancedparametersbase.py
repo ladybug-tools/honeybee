@@ -1,5 +1,5 @@
 """Radiance Parameters Base class with methods to add descriptor type parameters."""
-from _parametersbase import RadianceParameters
+from ._parametersbase import RadianceParameters
 from ..datatype import RadiancePath, RadianceNumber, RadianceBoolFlag, \
     RadianceTuple, RadianceValue
 
