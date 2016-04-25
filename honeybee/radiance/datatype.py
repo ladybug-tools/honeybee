@@ -68,7 +68,6 @@ class RadianceDefault(object):
         self._acceptedInputs = acceptedInputs
         self._defaultValue = defaultValue
         self._isJoined = isJoined
-
         # check if the valid range is a 2-number tuple. Sort it if it isn't
         # sorted already.
         if validRange:
@@ -84,6 +83,11 @@ class RadianceDefault(object):
         self._nameString = "%s (%s)" % (name, descriptiveName) \
             if descriptiveName \
             else name
+
+    @property
+    def isRadianceDataType(self):
+        """Check if object is a RadinaceDataType."""
+        return True
 
     def __get__(self, instance, owner):
         """Return value.
@@ -121,9 +125,9 @@ class RadianceDefault(object):
                                      " following: %s. The provided value was %s"
                                      % (self._nameString,
                                         ",".join(map(str, inputs)), value))
-
-            setattr(instance, self._name,
-                    RadianceDataType(self._name, value, self._isJoined))
+            if instance:
+                setattr(instance, self._name,
+                        RadianceDataType(self._name, value, self._isJoined))
 
 
 class RadianceValue(RadianceDefault):
@@ -162,6 +166,7 @@ class RadianceValue(RadianceDefault):
         o = RadianceValue('o', 'output format', defaultValue='f',
                           acceptedInputs=('f', 'd'))
     """
+
     __slots__ = ()
 
     def __init__(self, name, descriptiveName=None, acceptedInputs=None,
@@ -222,7 +227,7 @@ class RadianceBoolFlag(RadianceDefault):
             value = getattr(instance, self._name)
         except AttributeError:
             if self._defaultValue is not None:
-                value = RadianceBoolType(self._name, bool(self._defaultValue),
+                value = RadianceBoolType(self._name, self._defaultValue,
                                          self._isDualSign)
             else:
                 value = RadianceBoolType(self._name, None,
@@ -239,8 +244,9 @@ class RadianceBoolFlag(RadianceDefault):
                                      " following: %s. The provided value was %s"
                                      % (self._nameString,
                                         ",".join(map(str, inputs)), value))
-            setattr(instance, self._name, RadianceBoolType(self._name, bool(value),
-                    self._isDualSign))
+
+            setattr(instance, self._name,
+                    RadianceBoolType(self._name, bool(value), self._isDualSign))
 
 
 class RadianceNumber(RadianceDefault):
@@ -296,6 +302,7 @@ class RadianceNumber(RadianceDefault):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange, defaultValue)
+
         self._checkPositive = checkPositive
         self._type = int if numType is None else numType
 
@@ -305,7 +312,6 @@ class RadianceNumber(RadianceDefault):
         values.
         """
         if value is not None:
-            RadianceDefault.__set__(self, instance, value)
             varName = self._nameString
 
             if value is None:
@@ -316,14 +322,14 @@ class RadianceNumber(RadianceDefault):
                     if self._type:
                         finalValue = self._type(value)
                     else:
-                        if isinstance(value, str):
+                        if not isinstance(value, int):
                             finalValue = float(value)
                         else:
                             finalValue = value
                     if self._checkPositive:
                         msg = "The value for %s should be greater than 0." \
                               " The value specified was %s" % (varName, value)
-                        assert value >= 0, msg
+                        assert int(value) >= 0, msg
                 # Value error will be raised if the input was anything else
                 # other than a number.
                 except ValueError:
@@ -334,6 +340,10 @@ class RadianceNumber(RadianceDefault):
                     msg = "The type of input for %s should a float or int. " \
                           "%s was specified instead" % (varName, value)
                     raise TypeError(msg)
+                except AttributeError:
+                    msg = "The type of input for %s should a float or int. " \
+                          "%s was specified instead" % (varName, value)
+                    raise AttributeError(msg)
 
             # Raise a warning if the number got modified.
             if hash(finalValue) != hash(value) and self._type:

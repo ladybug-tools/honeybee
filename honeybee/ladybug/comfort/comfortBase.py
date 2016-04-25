@@ -1,5 +1,4 @@
 """Comfort model object."""
-from abc import abstractmethod
 
 
 class ComfortModel(object):

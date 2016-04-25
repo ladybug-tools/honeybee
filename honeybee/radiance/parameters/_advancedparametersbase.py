@@ -38,6 +38,25 @@ class AdvancedRadianceParameters(RadianceParameters):
         """Init parameters."""
         RadianceParameters.__init__(self)
 
+    def __setattribute(self, name, value, attributeName=None):
+        _attrname = attributeName if attributeName is not None else name
+
+        # unfreeze the class so the new attribute can be added
+        self.tryToUnfreeze()
+        try:
+            setattr(self.__class__, _attrname, value)
+            # add name of the attribute to default parameters
+            self.addDefaultParameterName(_attrname, name)
+        except Exception as e:
+            if hasattr(self.__class__, _attrname):
+                    self.addDefaultParameterName(_attrname, name)
+            # this is useful for cases that the environment caches the classes
+            # Grasshopper and Dynamo included
+            else:
+                raise Exception(e)
+        finally:
+            self.freeze()
+
     def addRadianceNumber(self, name, descriptiveName=None, validRange=None,
                           acceptedInputs=None, numType=None, checkPositive=False,
                           attributeName=None):
@@ -83,16 +102,12 @@ class AdvancedRadianceParameters(RadianceParameters):
                 used insted.
         """
         # set the new attribute based on inputs
-        self.tryToUnfreeze()
-        _attrname = attributeName if attributeName is not None else name
-        setattr(self.__class__,
-                _attrname,
-                RadianceNumber(name, descriptiveName, validRange, acceptedInputs,
-                               numType, checkPositive)
-                )
-        self.freeze()
-        # add name of the attribute to default parameters
-        self.addDefaultParameterName(_attrname, name)
+        self.__setattribute(name,
+                            RadianceNumber(name, descriptiveName, validRange,
+                                           acceptedInputs, numType,
+                                           checkPositive),
+                            attributeName
+                            )
 
     def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
                          isJoined=False, attributeName=None):
@@ -128,17 +143,11 @@ class AdvancedRadianceParameters(RadianceParameters):
                 used insted.
         """
         # set the new attribute based on inputs
-        self.tryToUnfreeze()
-        _attrname = attributeName if attributeName is not None else name
-        setattr(self.__class__,
-                _attrname,
-                RadianceValue(name, descriptiveName, acceptedInputs, None,
-                              isJoined)
-                )
-
-        # add name of the attribute to default parameters
-        self.addDefaultParameterName(_attrname, name)
-        self.freeze()
+        self.__setattribute(name,
+                            RadianceValue(name, descriptiveName, acceptedInputs,
+                                          None, isJoined),
+                            attributeName
+                            )
 
     def addRadiancePath(self, name, descriptiveName=None, relativePath=None,
                         checkExists=False, extension=None, attributeName=None):
@@ -173,17 +182,11 @@ class AdvancedRadianceParameters(RadianceParameters):
                 used insted.
         """
         # set the new attribute based on inputs
-        self.tryToUnfreeze()
-        _attrname = attributeName if attributeName is not None else name
-        setattr(self.__class__,
-                _attrname,
-                RadiancePath(name, descriptiveName, relativePath,
-                             checkExists, extension)
-                )
-
-        # add name of the attribute to default parameters
-        self.addDefaultParameterName(_attrname, name)
-        self.freeze()
+        self.__setattribute(name,
+                            RadiancePath(name, descriptiveName, relativePath,
+                                         checkExists, extension),
+                            attributeName
+                            )
 
     def addRadianceBoolFlag(self, name, descriptiveName=None, isDualSign=False,
                             attributeName=None):
@@ -211,16 +214,11 @@ class AdvancedRadianceParameters(RadianceParameters):
                 used insted.
         """
         # set the new attribute based on inputs
-        self.tryToUnfreeze()
-        _attrname = attributeName if attributeName is not None else name
-        setattr(self.__class__,
-                _attrname,
-                RadianceBoolFlag(name, descriptiveName, None, isDualSign)
-                )
-
-        # add name of the attribute to default parameters
-        self.addDefaultParameterName(_attrname, name)
-        self.freeze()
+        self.__setattribute(name,
+                            RadianceBoolFlag(name, descriptiveName, None,
+                                             isDualSign),
+                            attributeName
+                            )
 
     def addRadianceTuple(self, name, descriptiveName=None, validRange=None,
                          acceptedInputs=None, tupleSize=None, numType=None,
@@ -264,14 +262,8 @@ class AdvancedRadianceParameters(RadianceParameters):
                 used insted.
         """
         # set the new attribute based on inputs
-        self.tryToUnfreeze()
-        _attrname = attributeName if attributeName is not None else name
-        setattr(self.__class__,
-                _attrname,
-                RadianceTuple(name, descriptiveName, validRange, acceptedInputs,
-                              tupleSize, numType)
-                )
-
-        # add name of the attribute to default parameters
-        self.addDefaultParameterName(_attrname, name)
-        self.freeze()
+        self.__setattribute(name,
+                            RadianceTuple(name, descriptiveName, validRange,
+                                          acceptedInputs, tupleSize, numType),
+                            attributeName
+                            )

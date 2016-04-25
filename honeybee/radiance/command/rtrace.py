@@ -40,20 +40,23 @@ class Rtrace(RadianceCommand):
         self.pointFile = pointFile
         """Full path to input points file."""
 
-        self.simulationType = simulationType
-        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
-        """
-
         self.radianceParameters = radianceParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
 
         # add -h to parameters to get no header, True is no header
-        self.radianceParameters.addRadianceBoolFlag("h", "output header switch", defaultValue=True)
+        self.radianceParameters.addRadianceBoolFlag("h", "output header switch")
+        self.radianceParameters.h = True
 
         # add error file as an extra parameter for rtrace.
         # this can be added under default radiance parameters later.
-        self.radianceParameters.addRadianceValue("e", "error output file", defaultValue="error.txt")
+        self.radianceParameters.addRadianceValue("e", "error output file")
+        self.radianceParameters.e = "error.txt"
+        """Error log file."""
+
+        self.simulationType = simulationType
+        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
+        """
 
     @property
     def simulationType(self):

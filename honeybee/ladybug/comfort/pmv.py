@@ -1,3 +1,4 @@
+# coding=utf-8
 """PMV Comfort object."""
 import math
 from comfortBase import ComfortModel
@@ -10,8 +11,7 @@ from ..epw import EPW
 
 
 class PMV(ComfortModel):
-    """
-    PMV Comfort Object
+    """PMV Comfort Object.
 
     Usage:
         from ladybug.comfort.pmv import PMV
@@ -27,17 +27,15 @@ class PMV(ComfortModel):
         pmv = myPmvComf.pmv
 
         # Compute PMV for all hours of an EPW file.
-        epwFileAddress = "C:\ladybug\New_York_J_F_Kennedy_IntL_Ar_NY_USA\New_York_J_F_Kennedy_IntL_Ar_NY_USA.epw"
+        epwFileAddress = "C:/ladybug/New_York_J_F_Kennedy_IntL_Ar_NY_USA/New_York_J_F_Kennedy_IntL_Ar_NY_USA.epw"
         myPmvComf = PMV.fromEPWFile(epwFileAddress, 1.4, 1.0)
         pmv = myPmvComf.pmv
 
     """
 
-    def __init__(self, airTemperature=[], radTemperature=[], windSpeed=[], relHumidity=[], metRate=[], cloValue=[], externalWork=[]):
-        """
-        Initialize a PMV comfort object from lists of PMV inputs.
-        """
-
+    def __init__(self, airTemperature=[], radTemperature=[], windSpeed=[],
+                 relHumidity=[], metRate=[], cloValue=[], externalWork=[]):
+        """Initialize a PMV comfort object from lists of PMV inputs."""
         # Assign all of the input values to the PMV comfort model object.
         # And assign defaults if nothing has been connected.
         if airTemperature != []:
@@ -94,7 +92,9 @@ class PMV(ComfortModel):
         self.__coolingEffect = []
 
     @classmethod
-    def fromIndividualValues(cls, airTemperature=20.0, radTemperature=None, windSpeed=0.0, relHumidity=50.0, metRate=1.1, cloValue=0.85, externalWork=0.0):
+    def fromIndividualValues(cls, airTemperature=20.0, radTemperature=None,
+                             windSpeed=0.0, relHumidity=50.0, metRate=1.1,
+                             cloValue=0.85, externalWork=0.0):
         """
         Creates a PMV comfort object from individual values instead of listis of values.
         """

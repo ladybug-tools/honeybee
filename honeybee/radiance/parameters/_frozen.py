@@ -39,10 +39,10 @@ def frozen(cls):
           Use one of the add*** methods to add a new parameter.
         > 24
     """
-    cls.__frozen = False
+    cls._frozen = False
 
     def frozensetattr(self, key, value):
-        if self.__frozen and not hasattr(self, key) and not key.startswith("_"):
+        if self._frozen and not hasattr(self, key) and not key.startswith("_"):
             raise AttributeError(
                 "{1} is not a valid parameter for {0}. Failed to set {1} to {2}."
                 "\nUse `.parameters` method to see the list of available parameters."
@@ -53,17 +53,18 @@ def frozen(cls):
             object.__setattr__(self, key, value)
 
     def init_decorator(func):
+
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             func(self, *args, **kwargs)
-            self.__frozen = True
+            self.__frozen = True  # set __frozen to True for the original class
         return wrapper
 
     def freeze(self):
-        self.__frozen = True
+        self._frozen = True
 
     def unfreeze(self):
-        self.__frozen = False
+        self._frozen = False
 
     cls.__setattr__ = frozensetattr
     cls.__init__ = init_decorator(cls.__init__)

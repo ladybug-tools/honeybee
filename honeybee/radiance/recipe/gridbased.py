@@ -187,12 +187,13 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
         # # 4.1.prepare oconv
         oc = Oconv(projectName)
-        oc.inputFiles = [skyFile, matFile, geoFile]
+        oc.sceneFiles = [skyFile, matFile, geoFile]
 
         # # 4.2.prepare rtrace
         rt = Rtrace(projectName,
                     simulationType=self.simulationType,
                     radianceParameters=self.radianceParameters)
+        rt.radianceParameters.h = True
         rt.octreeFile = os.path.join(_path, projectName + ".oct")
         rt.pointFile = pointsFile
 

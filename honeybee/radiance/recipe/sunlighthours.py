@@ -164,7 +164,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     @sunVectors.setter
     def sunVectors(self, vectors):
         try:
-            self.__sunVectors = [Vector3(*v).flipped() for v in vectors if v[2] < 0]
+            self.__sunVectors = [Vector3(*v).flipped() for v in vectors
+                                 if v[2] < 0]
+        except TypeError:
+            self.__sunVectors = [Vector3(v.X, v.Y, v.Z).flipped()
+                                 for v in vectors if v.Z < 0]
         except IndexError:
             raise ValueError("Failed to create a sun vector from %s" % str(v))
 
