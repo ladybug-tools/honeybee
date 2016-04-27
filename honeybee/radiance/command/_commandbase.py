@@ -14,9 +14,9 @@ class RadianceCommand(object):
 
     def __init__(self,executableName=None):
         """Initialize Radiance command."""
+        self.executableName = executableName
         self.radbinPath = config.radbinPath
         self.radlibPath = config.radlibPath
-        self.executableName = executableName
         """Specifiy the name of the executable directly like gensky.exe or
            genskyvec.pl etc."""
 
@@ -104,9 +104,9 @@ class RadianceCommand(object):
         # the naming conventions inside Mac and Linux are assumed to work the
         # same.
         if os.name == 'nt':
-            if not self.executableName:
+            if self.executableName:
                 __executable = os.path.normpath(os.path.join(str(radbinPath)),
-                                                self.executableName)
+                                                self.executableName.lower())
             else:
                 __executable = os.path.normpath(
                     os.path.join(str(radbinPath),
