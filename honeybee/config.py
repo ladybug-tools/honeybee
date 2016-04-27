@@ -30,7 +30,7 @@ class Folders(object):
     __userPath = {
         "pathToRadianceFolder": r" ",
         "pathToEnergyPlusFolder": r" ",
-        "pathToOpenStudioFolder": r"C:\Program Files\OpenStudio 1.11.0",
+        "pathToOpenStudioFolder": r'C:\Program Files\OpenStudio 1.11.0',
     }
 
     def __init__(self, mute=False):
