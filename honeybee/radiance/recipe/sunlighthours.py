@@ -1,6 +1,7 @@
 from ._gridbasedbase import HBGenericGridBasedAnalysisRecipe
 from ..postprocess.sunlighthourresults import LoadSunlighthoursResults
 from ..parameters.rcontrib import RcontribParameters
+from ..command._commandbase import RadianceCommand
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
 from ...helper import preparedir
@@ -277,7 +278,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         sunsList, sunsMat, sunsGeo = self.writeSunsToFile(_path, projectName)
 
         # 1.1.add sun list to modifiers
-        self.__radianceParameters.modFile = sunsList
+        self.__radianceParameters.modFile = RadianceCommand.normspace(sunsList)
 
         # 2.write points
         pointsFile = self.writePointsToFile(_path, projectName)

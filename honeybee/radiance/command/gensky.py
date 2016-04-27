@@ -1,5 +1,4 @@
 # coding=utf-8
-# coding=utf-8
 from _commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceTuple
 from ..parameters.gensky import GenskyParameters
@@ -34,7 +33,7 @@ class Gensky(RadianceCommand):
 
         # create the gensky Command.
         gnsky = GenSky(monthDayHour=(1,1,11), genskyParameters=gnskyParam,
-        outputName = r'd:\sunnyWSun_010111.sky' )
+        outputName = r'd:/sunnyWSun_010111.sky' )
 
         # run gensky
         gnsky.execute()
@@ -143,10 +142,10 @@ class Gensky(RadianceCommand):
         """Return full command as a string."""
         # generate the name from self.weaFile
         radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, 'gensky'),
+            self.normspace(os.path.join(self.radbinPath, 'gensky')),
             self.monthDayHour.toRadString().replace("-monthDayHour ", ""),
             self.genskyParameters.toRadString(),
-            self.outputFile.toRadString()
+            self.normspace(self.outputFile.toRadString())
         )
 
         return radString

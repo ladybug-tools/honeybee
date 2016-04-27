@@ -82,11 +82,11 @@ class Rcontrib(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         radString = "%s %s %s < %s > %s" % (
-            os.path.join(self.radbinPath, "rcontrib"),
+            self.normspace(os.path.join(self.radbinPath, "rcontrib")),
             self.rcontribParameters.toRadString(),
-            self.octreeFile.toRadString(),
-            self.pointsFile.toRadString(),
-            self.outputFile.toRadString()
+            self.normspace(self.octreeFile.toRadString()),
+            self.normspace(self.pointsFile.toRadString()),
+            self.normspace(self.outputFile.toRadString())
         )
 
         # make sure input files are set by user

@@ -96,10 +96,10 @@ class Gendaymtx(RadianceCommand):
             else self.outputName
 
         radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, 'gendaymtx'),
+            self.normspace(os.path.join(self.radbinPath, 'gendaymtx')),
             self.gendaymtxParameters.toRadString(),
-            self.weaFile,
-            outputFile
+            self.normspace(self.weaFile),
+            self.normspace(outputFile)
         )
 
         # make sure input files are set by user

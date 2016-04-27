@@ -45,6 +45,17 @@ class RadianceCommand(object):
         # change the path in config so user need to set it up once in a single script
         config.radlibPath = path
 
+    @staticmethod
+    def normspace(path):
+        """Norm white spaces in path.
+
+        Return path with quotation marks if there is whitespace in path.
+        """
+        if path.strip().find(" ") != -1:
+            return "{0}{1}{0}".format(config.wrapper, path)
+        else:
+            return path
+
     @abstractmethod
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
