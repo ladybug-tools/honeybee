@@ -1,6 +1,7 @@
 from ._gridbasedbase import HBGenericGridBasedAnalysisRecipe
 from ..postprocess.sunlighthourresults import LoadSunlighthoursResults
 from ..parameters.rcontrib import RcontribParameters
+from ..command._commandbase import RadianceCommand
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
 from ...helper import preparedir
@@ -164,7 +165,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     @sunVectors.setter
     def sunVectors(self, vectors):
         try:
-            self.__sunVectors = [Vector3(*v).flipped() for v in vectors if v[2] < 0]
+            self.__sunVectors = [Vector3(*v).flipped() for v in vectors
+                                 if v[2] < 0]
+        except TypeError:
+            self.__sunVectors = [Vector3(v.X, v.Y, v.Z).flipped()
+                                 for v in vectors if v.Z < 0]
         except IndexError:
             raise ValueError("Failed to create a sun vector from %s" % str(v))
 
@@ -273,7 +278,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         sunsList, sunsMat, sunsGeo = self.writeSunsToFile(_path, projectName)
 
         # 1.1.add sun list to modifiers
-        self.__radianceParameters.modFile = sunsList
+        self.__radianceParameters.modFile = RadianceCommand.normspace(sunsList)
 
         # 2.write points
         pointsFile = self.writePointsToFile(_path, projectName)

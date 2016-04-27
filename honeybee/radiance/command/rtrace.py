@@ -40,20 +40,23 @@ class Rtrace(RadianceCommand):
         self.pointFile = pointFile
         """Full path to input points file."""
 
-        self.simulationType = simulationType
-        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
-        """
-
         self.radianceParameters = radianceParameters
         """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
 
         # add -h to parameters to get no header, True is no header
-        self.radianceParameters.addRadianceBoolFlag("h", "output header switch", defaultValue=True)
+        self.radianceParameters.addRadianceBoolFlag("h", "output header switch")
+        self.radianceParameters.h = True
 
         # add error file as an extra parameter for rtrace.
         # this can be added under default radiance parameters later.
-        self.radianceParameters.addRadianceValue("e", "error output file", defaultValue="error.txt")
+        self.radianceParameters.addRadianceValue("e", "error output file")
+        self.radianceParameters.e = "error.txt"
+        """Error log file."""
+
+        self.simulationType = simulationType
+        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
+        """
 
     @property
     def simulationType(self):
@@ -107,11 +110,11 @@ class Rtrace(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         radString = "%s %s %s < %s > %s" % (
-            os.path.join(self.radbinPath, "rtrace"),
+            os.normpath(os.path.join(self.radbinPath, "rtrace")),
             self.radianceParameters.toRadString(),
-            self.octreeFile.toRadString(),
-            self.pointFile.toRadString(),
-            self.outputFile.toRadString()
+            os.normpath(self.octreeFile.toRadString()),
+            os.normpath(self.pointFile.toRadString()),
+            os.normpath(self.outputFile.toRadString())
         )
 
         # make sure input files are set by user

@@ -103,10 +103,10 @@ class Oconv(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, "oconv"),
+            self.normspace(os.path.join(self.radbinPath, "oconv")),
             self.oconvParameters.toRadString(),
-            " ".join(self.sceneFiles),
-            self.outputFile.toRadString()
+            " ".join([self.normspace(f) for f in self.sceneFiles]),
+            self.normspace(self.outputFile.toRadString())
         )
 
         # make sure input files are set by user
