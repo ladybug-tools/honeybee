@@ -6,6 +6,7 @@ rtrace_number_parameters = {
     'as': {'dscrip': 'ambient super-samples', 'type': int, 'defaultValue': 128, 'values': [128, 2048, 4096]},
     'ar': {'dscrip': 'ambient resolution', 'type': int, 'defaultValue': 16, 'values': [16, 64, 128]},
     'aa': {'dscrip': 'ambient accuracy', 'type': float, 'defaultValue': .25, 'values': [.25, .2, .1]},
+    'dj': {'dscrip': 'source jitter', 'type': float, 'defaultValue': 0, 'values': [0, .5, 1]},
     'ds': {'dscrip': 'source substructuring', 'type': float, 'defaultValue': .5, 'values': [.5, .25, .05]},
     'dt': {'dscrip': 'direct thresholding', 'type': float, 'defaultValue': .5, 'values': [.5, .25, .15]},
     'dc': {'dscrip': 'direct certainty', 'type': float, 'defaultValue': .25, 'values': [.25, .5, .75]},
