@@ -33,7 +33,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             1 such that one sun vector is generated for each hour (Default: 1).
         ambientDivisions: Numbe of ambient divisions for raytracing analysis.
             This value will set [-ad] value for radiance rtrace command
-            (Default: 10000).
+            (Default: 65536).
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
 
@@ -59,7 +59,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     # ad =
 
     def __init__(self, sunVectors, pointGroups, vectorGroups=[],
-                 timestep=1, ambientDivisions=1000, hbObjects=None,
+                 timestep=1, ambientDivisions=65536, hbObjects=None,
                  subFolder="sunlighthour"):
         """Create sunlighthours recipe."""
         HBGenericGridBasedAnalysisRecipe.__init__(
@@ -71,8 +71,10 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
         self.__radianceParameters = RcontribParameters()
         self.__radianceParameters.ab = 0
-        self.__radianceParameters.u = True
         self.__radianceParameters.dc = 1
+        self.__radianceParameters.dt = 0
+        self.__radianceParameters.dj = 0
+        self.__radianceParameters.lw = 1.52e-5
         self.__radianceParameters.I = True
         self.ambientDivisions = ambientDivisions
 
