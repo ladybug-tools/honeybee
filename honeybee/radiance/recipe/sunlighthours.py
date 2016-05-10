@@ -31,9 +31,6 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         timestep: The number of timesteps per hour for sun vectors. This number
             should be smaller than 60 and divisible by 60. The default is set to
             1 such that one sun vector is generated for each hour (Default: 1).
-        ambientDivisions: Numbe of ambient divisions for raytracing analysis.
-            This value will set [-ad] value for radiance rtrace command
-            (Default: 65536).
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
 
@@ -59,8 +56,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     # ad =
 
     def __init__(self, sunVectors, pointGroups, vectorGroups=[],
-                 timestep=1, ambientDivisions=65536, hbObjects=None,
-                 subFolder="sunlighthour"):
+                 timestep=1, hbObjects=None, subFolder="sunlighthour"):
         """Create sunlighthours recipe."""
         HBGenericGridBasedAnalysisRecipe.__init__(
             self, pointGroups, vectorGroups, hbObjects, subFolder
@@ -70,13 +66,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         self.timestep = timestep
 
         self.__radianceParameters = RcontribParameters()
+        self.__radianceParameters.I = True
         self.__radianceParameters.ab = 0
         self.__radianceParameters.dc = 1
         self.__radianceParameters.dt = 0
         self.__radianceParameters.dj = 0
-        self.__radianceParameters.lw = 1.52e-5
-        self.__radianceParameters.I = True
-        self.ambientDivisions = ambientDivisions
 
         self.__batchFile = None
         self.resultsFile = []
@@ -85,8 +79,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     @classmethod
     def fromLBSuns(cls, suns, pointGroups, vectorGroups=[], timestep=1,
-                   ambientDivisions=1000, hbObjects=None,
-                   subFolder="sunlighthour"):
+                   hbObjects=None, subFolder="sunlighthour"):
         """Create sunlighthours recipe from LB sun objects.
 
         Attributes:
@@ -101,9 +94,6 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             timestep: The number of timesteps per hour for sun vectors. This number
                 should be smaller than 60 and divisible by 60. The default is set to
                 1 such that one sun vector is generated for each hour (Default: 1).
-            ambientDivisions: Numbe of ambient divisions for raytracing analysis.
-                This value will set [-ad] value for radiance rtrace command
-                (Default: 10000).
             hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
             subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
         """
@@ -113,12 +103,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             raise ValueError("%s is not a valid LBSun" % s)
 
         return cls(sunVectors, pointGroups, vectorGroups, timestep,
-                   ambientDivisions, hbObjects, subFolder)
+                   hbObjects, subFolder)
 
     @classmethod
     def fromLocationAndHoys(cls, location, HOYs, pointGroups, vectorGroups=[],
-                            timestep=1, ambientDivisions=1000, hbObjects=None,
-                            subFolder="sunlighthour"):
+                            timestep=1, hbObjects=None, subFolder="sunlighthour"):
         """Create sunlighthours recipe from Location and hours of year."""
         sp = LBSunpath.fromLocation(location)
 
@@ -127,12 +116,12 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         sunVectors = [s.sunVector for s in suns if s.isDuringDay]
 
         return cls(sunVectors, pointGroups, vectorGroups, timestep,
-                   ambientDivisions, hbObjects, subFolder)
+                   hbObjects, subFolder)
 
     @classmethod
     def fromLocationAndAnalysisPeriod(
         cls, location, analysisPeriod, pointGroups, vectorGroups=[],
-        ambientDivisions=1000, hbObjects=None, subFolder="sunlighthour"
+        hbObjects=None, subFolder="sunlighthour"
     ):
         """Create sunlighthours recipe from Location and analysis period."""
         sp = LBSunpath.fromLocation(location)
@@ -142,22 +131,8 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         sunVectors = [s.sunVector for s in suns if s.isDuringDay]
 
         return cls(sunVectors, pointGroups, vectorGroups,
-                   analysisPeriod.timestep, ambientDivisions, hbObjects,
+                   analysisPeriod.timestep, hbObjects,
                    subFolder)
-
-    @property
-    def ambientDivisions(self):
-        """Numbe of ambient divisions for raytracing analysis.
-
-        This value will set [-ad] value for radiance rtrace command
-        (Default: 10000).
-        """
-        return self.__radianceParameters.ad
-
-    @ambientDivisions.setter
-    def ambientDivisions(self, ad):
-        """Numbe of ambient divisions for raytracing analysis."""
-        self.__radianceParameters.ad = ad
 
     @property
     def sunVectors(self):
