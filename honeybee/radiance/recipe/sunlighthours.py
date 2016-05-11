@@ -200,11 +200,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
                     count, v.X, v.Y, v.Z)
 
         _sunsf = self.write(os.path.join(targetDir, projectName + ".sun"),
-                            "\n".join(_suns), mkdir)
+                            "\n".join(_suns) + "\n", mkdir)
         _matf = self.write(os.path.join(targetDir, projectName + "_suns.mat"),
-                           "\n".join(_mat), mkdir)
+                           "\n".join(_mat) + "\n", mkdir)
         _geof = self.write(os.path.join(targetDir, projectName + "_suns.rad"),
-                           "\n".join(_geo), mkdir)
+                           "\n".join(_geo) + "\n", mkdir)
 
         if _sunsf and _matf and _geof:
             return _sunsf, _matf, _geof
