@@ -30,7 +30,7 @@ rpict_number_parameters = {
     'ps': {'dscrip': 'pixel sampling rate', 'type': int, 'defaultValue': 8, 'values': [8, 4, 2]},
     'pt': {'dscrip': 'sampling threshold', 'type': float, 'defaultValue': .15, 'values': [.15, .10, .05]},
     'pj': {'dscrip': 'anti-aliasing jitter', 'type': float, 'defaultValue': .6, 'values': [.6, .9, .9]},
-    'dj': {'dscrip': 'source jitter', 'type': float, 'defaultValue': 0, 'values': [0, .5, .7]},
+    'dj': {'dscrip': 'source jitter', 'type': float, 'defaultValue': 0, 'values': [0, .5, 1]},
     'ds': {'dscrip': 'source substructuring', 'type': float, 'defaultValue': .5, 'values': [.5, .25, .05]},
     'dt': {'dscrip': 'direct thresholding', 'type': float, 'defaultValue': .5, 'values': [.5, .25, .15]},
     'dc': {'dscrip': 'direct certainty', 'type': float, 'defaultValue': .25, 'values': [.25, .5, .75]},
