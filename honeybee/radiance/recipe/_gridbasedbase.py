@@ -189,7 +189,7 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         projectName += ".pts"
 
         _pts = self.write(os.path.join(targetDir, projectName),
-                          self.toRadString(points=True).points, mkdir)
+                          self.toRadString(points=True).points + "\n", mkdir)
 
         if _pts:
             return _pts
@@ -215,10 +215,10 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         _matStr, _geoStr = self.hbObjectsToRadString()
 
         _mat = self.write(os.path.join(targetDir, projectName + ".mat"),
-                          _matStr, mkdir) if writeMaterial else " "
+                          _matStr + "\n", mkdir) if writeMaterial else " "
 
         _geo = self.write(os.path.join(targetDir, projectName + ".rad"),
-                          _geoStr, mkdir) if writeMaterial else " "
+                          _geoStr + "\n", mkdir) if writeMaterial else " "
 
         if _mat and _geo:
             return _mat, _geo
