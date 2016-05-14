@@ -198,3 +198,38 @@ class Rfluxmtx(RadianceCommand):
     receiverFile = RadiancePath('receiver','receiver file')
     octreeFile = RadiancePath('octree','octree file')
     radFiles = RadiancePath('radFiles','system rad files')
+
+    def __init__(self,senderFile=None,receiverFile=None,octreeFile=None,
+                 radFiles=None):
+
+        RadianceCommand.__init__(self)
+
+        self.senderFile = senderFile
+        """Sender file will be either a rad file containing rfluxmtx variables
+         or just a - """
+
+        self.receiverFile = receiverFile
+        """Receiver file will usually be the sky file containing rfluxmtx
+        variables"""
+
+        self.octreeFile = octreeFile
+        """Octree file containing the other rad file in the scene."""
+
+        self.radFiles = radFiles
+        """Rad files other than the sender and receiver that are a part of the
+          scene."""
+
+    @property
+    def rfluxmtxParameters(self):
+        return self.__rfluxmtxParameters
+
+    @rfluxmtxParameters.setter
+    def rfluxmtxParameters(self,parameters):
+        self.__rfluxmtxParameters = parameters if parameters is not None\
+            else RfluxmtxParameters()
+
+        assert hasattr(self.rfluxmtxParameters, "isRadianceParameters"), \
+            "input rfluxmtxParameters is not a valid parameters type."
+
+    def toRadString(self, relativePath=False):
+        pass
