@@ -101,7 +101,8 @@ class Rfluxmtx(RadianceCommand):
                         kf for klems full.
                         kh for klems half.
                         kq for klems quarter.
-                        rN for Reinhart - Tregenza type skies. N stands for subdivisions and defaults to 1.
+                        rN for Reinhart - Tregenza type skies. N stands for
+                            subdivisions and defaults to 1.
                         scN for shirley-chiu subdivisions.
                     The value entered was %s
                     """ % (value)
@@ -130,31 +131,39 @@ class Rfluxmtx(RadianceCommand):
                                                 self.hemisphereUpDirection,
                                                 outputFileSpec)
 
-    class defaultSkyGround(object):
-        def __init__(self, skyType=None):
-            """
+    @classmethod
+    def defaultSkyGround(cls,fileName,skyType=None):
+        """
 
-            Args:
-                skyType: The acceptable inputs for hemisphere type are:
+        Args:
+            fileName:This should be the name of the file to which the sky defintion
+                should be written to.
+
+            skyType:The acceptable inputs for hemisphere type are:
                     u for uniform.(Usually applicable for ground).\n
                     kf for klems full.\n
                     kh for klems half.\n
                     kq for klems quarter.\n
-                    rN for Reinhart - Tregenza type skies. N stands for subdivisions and defaults to 1.\n
-                    scN for shirley-chiu subdivisions."""
+                    rN for Reinhart - Tregenza type skies. N stands for
+                        subdivisions and defaults to 1.\n
+                    scN for shirley-chiu subdivisions.
 
-            self.skyType = skyType
+        Returns:
+            fileName: Passes back the same fileName that was provided as input.
+        """
 
-        def __str__(self):
-            skyParam = Rfluxmtx.ControlParameters(hemiType=self.skyType or 'r')
-            groundParam = Rfluxmtx.ControlParameters(hemiType='u')
-            groundString = Rfluxmtx.addControlParameters(Rfluxmtx.groundString,
-                                                         {
-                                                             'ground_glow': groundParam})
-            skyString = Rfluxmtx.addControlParameters(Rfluxmtx.skyString,
-                                                      {'sky_glow': skyParam})
+        skyParam = Rfluxmtx.ControlParameters(hemiType=skyType or 'r')
+        groundParam = Rfluxmtx.ControlParameters(hemiType='u')
+        groundString = Rfluxmtx.addControlParameters(Rfluxmtx.groundString,
+                                                     {
+                                                         'ground_glow': groundParam})
+        skyString = Rfluxmtx.addControlParameters(Rfluxmtx.skyString,
+                                                  {'sky_glow': skyParam})
 
-            return groundString + '\n' + skyString
+        with open(fileName,'w')as skyFile:
+            skyFile.write(groundString + '\n' + skyString)
+
+        return fileName
 
     @classmethod
     def addControlParameters(cls, inputString, modifierDict):
@@ -194,17 +203,19 @@ class Rfluxmtx(RadianceCommand):
             "The file %s does not have any rfluxmtx control parameters."
         return True
 
-    senderFile = RadiancePath('sender','sender file')
+    # sender = RadiancePath('sender','sender file')
     receiverFile = RadiancePath('receiver','receiver file')
-    octreeFile = RadiancePath('octree','octree file')
+    octreeFile = RadiancePath('octree','octree file',extension='.oct')
     radFiles = RadiancePath('radFiles','system rad files')
+    pointsFile = RadiancePath('pointsFile','calculation points file')
+    outputMatrix = RadiancePath('outputMatrix', 'output Matrix File')
 
-    def __init__(self,senderFile=None,receiverFile=None,octreeFile=None,
-                 radFiles=None):
+    def __init__(self,sender=None,receiverFile=None,octreeFile=None,
+                 radFiles=None,pointsFile=None,outputMatrix=None):
 
         RadianceCommand.__init__(self)
 
-        self.senderFile = senderFile
+        self.sender = sender
         """Sender file will be either a rad file containing rfluxmtx variables
          or just a - """
 
@@ -218,6 +229,13 @@ class Rfluxmtx(RadianceCommand):
         self.radFiles = radFiles
         """Rad files other than the sender and receiver that are a part of the
           scene."""
+        
+        self.pointsFile = pointsFile
+        """The points file or input vwrays for which the illuminance/luminance
+        value are to be calculated."""
+
+        self.outputMatrix = outputMatrix
+        """The flux matrix file that will be created by rfluxmtx."""
 
     @property
     def rfluxmtxParameters(self):
@@ -232,4 +250,20 @@ class Rfluxmtx(RadianceCommand):
             "input rfluxmtxParameters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):
-        pass
+        octree = self.octreeFile.toRadString()
+        octree = '-i %s'%self.normspace(octree) if octree else ''
+
+        radString = '{0} {1} {2} {3} {4} {5} < {6} > {7}'.format(
+            self.normspace(os.path.join(self.radbinPath,'rfluxmtx')),
+            self.rfluxmtxParameters.toRadString(),
+            self.sender if self.sender else '',
+            self.normspace(self.receiverFile.toRadString()),
+            self.normspace(self.radFiles.toRadString()),
+            octree,
+            self.normspace(self.pointsFile.toRadString()),
+            self.normspace(self.outputMatrix.toRadString()))
+        return radString
+
+    @property
+    def inputFiles(self):
+        return self.receiverFile,self.pointsFile
