@@ -90,6 +90,42 @@ class GridBasedParameters(AdvancedRadianceParameters):
         self.I = None
         """Irradiance switch (Default: False)."""
 
+        self.lw = None
+        """
+        -lw frac
+
+        Limit the weight of each ray to a minimum of frac. During ray-tracing,
+        a record is kept of the estimated contribution (weight) a ray would have
+        in the image. If this weight is less than the specified minimum and the
+        -lr setting (above) is positive, the ray is not traced. Otherwise,
+        Russian roulette is used to continue rays with a probability equal to
+        the ray weight divided by the given frac.
+        """
+
+        self.lr = None
+        """
+        -lr N
+        Limit reflections to a maximum of N, if N is a positive integer. If N
+        is zero, then Russian roulette is used for ray termination, and the
+        -lw setting (below) must be positive. If N is a negative integer, then
+        this sets the upper limit of reflections past which Russian roulette
+        will be used. In scenes with dielectrics and total internal reflection,
+        a setting of 0 (no limit) may cause a stack overflow.
+        """
+
+        self.ss = None
+        """
+        -ss samp
+
+        Set the specular sampling to samp. For values less than 1, this is the
+        degree to which the highlights are sampled for rough specular materials.
+        A value greater than one causes multiple ray samples to be sent to reduce
+        noise at a commmesurate cost. A value of zero means that no jittering
+        will take place, and all reflections will appear sharp even when they
+        should be diffuse. This may be desirable when used in combination with
+        image sampling to obtain faster renderings.
+        """
+
     @property
     def isGridBasedRadianceParameters(self):
         """Return True to indicate this object is a RadianceParameters."""

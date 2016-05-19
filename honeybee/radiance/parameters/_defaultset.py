@@ -14,7 +14,8 @@ rtrace_number_parameters = {
     'dp': {'dscrip': 'direct pretest density', 'type': int, 'defaultValue': 64, 'values': [64, 256, 512]},
     'st': {'dscrip': 'specular threshold', 'type': float, 'defaultValue': .85, 'values': [.85, .5, .15]},
     'lr': {'dscrip': 'limit reflection', 'type': int, 'defaultValue': 4, 'values': [4, 6, 8]},
-    'lw': {'dscrip': 'limit weight', 'type': float, 'defaultValue': .05, 'values': [.05, .01, .005]}}
+    'lw': {'dscrip': 'limit weight', 'type': float, 'defaultValue': .05, 'values': [.05, .01, .005]},
+    'ss': {'dscrip': 'specular sampling', 'type': float, 'defaultValue': 0, 'values': [0, .7, 1]}}
 
 rtrace_boolean_parameters = {
     'I': {'dscrip': 'irradiance switch', 'type': bool, 'defaultValue': False, 'values': [False, False, False]},

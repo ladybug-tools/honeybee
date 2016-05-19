@@ -5,7 +5,7 @@ import os
 from collections import Iterable
 
 __all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
-           'RadianceTuple', 'RadianceValue']
+           'RadianceTuple', 'RadianceValue','RadianceReadOnly']
 
 
 class RadianceDefault(object):
@@ -778,3 +778,23 @@ class RadianceNumberType(RadianceDataType):
 
     def __rpow__(self, other):
         return other**self._value
+
+
+class RadianceReadOnly(object):
+    """A descriptor for creating Readonly values."""
+    def __init__(self,name):
+        self._name = '_'+str(name)
+
+    def __get__(self, instance, owner):
+        return getattr(instance,self._name)
+
+    def __set__(self,instance,value):
+
+        #Let the value be set first time through constructor.
+        # Block all other attempts.
+        try:
+            value = getattr(instance, self._name)
+            raise Exception("The attribute %s is read only. "
+                            "It's default value is %s"%(self._name[1:],value))
+        except AttributeError:
+            setattr(instance,self._name,value)

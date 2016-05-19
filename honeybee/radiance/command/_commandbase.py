@@ -145,8 +145,14 @@ class RadianceCommand(object):
         if self.inputFiles is None:
             return
 
+        # In case there is only a single file and it wasn't specified as a tuple
+        # or list.
+        if isinstance(self.inputFiles,basestring)and \
+            os.path.exists(self.inputFiles):
+            return
+
         assert len(self.inputFiles) != 0, \
-            "You need at least one file to create an octree."
+            "You have not specified any input files!."
 
         for f in self.inputFiles:
             assert os.path.exists(str(f)), \

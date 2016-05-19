@@ -77,7 +77,7 @@ class Rcontrib(RadianceCommand):
             else RcontribParameters()
 
         assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
-            "input gendaymtxParameters is not a valid parameters type."
+            "input rcontribParamters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""

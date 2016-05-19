@@ -5,7 +5,7 @@ from ._frozen import frozen
 
 @frozen
 class GenskyParameters(AdvancedRadianceParameters):
-    """Radiance Parameters for grid based analysis.
+    """
 
     Read more:
     http://radsite.lbl.gov/radiance/man_html/gensky.1.html
