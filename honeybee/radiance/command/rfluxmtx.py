@@ -206,7 +206,6 @@ class Rfluxmtx(RadianceCommand):
     # sender = RadiancePath('sender','sender file')
     receiverFile = RadiancePath('receiver','receiver file')
     octreeFile = RadiancePath('octree','octree file',extension='.oct')
-    radFiles = RadiancePath('radFiles','system rad files')
     pointsFile = RadiancePath('pointsFile','calculation points file')
     outputMatrix = RadiancePath('outputMatrix', 'output Matrix File')
 
@@ -238,6 +237,16 @@ class Rfluxmtx(RadianceCommand):
         """The flux matrix file that will be created by rfluxmtx."""
 
     @property
+    def radFiles(self):
+        """Get and set scene files."""
+        return self.__radFiles
+
+    @radFiles.setter
+    def radFiles(self, files):
+        if files:
+            self.__radFiles = [os.path.normpath(f) for f in files]
+
+    @property
     def rfluxmtxParameters(self):
         return self.__rfluxmtxParameters
 
@@ -258,7 +267,7 @@ class Rfluxmtx(RadianceCommand):
             self.rfluxmtxParameters.toRadString(),
             self.sender if self.sender else '',
             self.normspace(self.receiverFile.toRadString()),
-            self.normspace(self.radFiles.toRadString()),
+            " ".join(self.radFiles),
             octree,
             self.normspace(self.pointsFile.toRadString()),
             self.normspace(self.outputMatrix.toRadString()))
@@ -266,4 +275,4 @@ class Rfluxmtx(RadianceCommand):
 
     @property
     def inputFiles(self):
-        return self.receiverFile,self.pointsFile
+        return [self.receiverFile,self.pointsFile]+self.radFiles

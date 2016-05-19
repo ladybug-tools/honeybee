@@ -13,16 +13,15 @@ class Rmtxop(RadianceCommand):
     rmtxop [ -v ][ -f[afdc] ][ -t ][ -s sf .. ][ -c ce .. ] m1 [ + ] ..
     """
 
-    matrices = RadianceValue('matrices', 'matrix configurations')
 
     outputFile = RadiancePath('outputFile',
                               descriptiveName='output matrix file',
                               relativePath=None, checkExists=False)
 
-    def __init__(self, matrices=None, outputFile=None, rmtxopParameters=None):
+    def __init__(self, matrixFiles=None, outputFile=None, rmtxopParameters=None):
         RadianceCommand.__init__(self)
 
-        self.matrices = matrices
+        self.matrixFiles = matrixFiles
 
         self.outputFile = outputFile
 
@@ -41,13 +40,23 @@ class Rmtxop(RadianceCommand):
         assert hasattr(self.rmtxopParameters, "isRadianceParameters"), \
             "input rmtxopParameters is not a valid parameters type."
 
+    @property
+    def matrixFiles(self):
+        """Get and set scene files."""
+        return self.__matrixFiles
+
+    @matrixFiles.setter
+    def matrixFiles(self, files):
+        if files:
+            self.__matrixFiles = [os.path.normpath(f) for f in files]
+
     def toRadString(self, relativePath=False):
         """Return full command as string."""
 
         radString = "%s %s %s > %s" % (
             self.normspace(os.path.join(self.radbinPath, 'rmtxop')),
             self.rmtxopParameters.toRadString(),
-            self.matrices.toRadString().replace("matrices",""),
+            " ".join(self.matrixFiles),
             self.normspace(self.outputFile.toRadString())
         )
 
@@ -56,4 +65,4 @@ class Rmtxop(RadianceCommand):
     def inputFiles(self):
         """Input files for this command are actually None as the files are
         specified as inputs using the matrices input"""
-        return None
+        return self.matrixFiles

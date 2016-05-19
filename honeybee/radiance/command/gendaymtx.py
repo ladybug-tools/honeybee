@@ -63,10 +63,6 @@ class Gendaymtx(RadianceCommand):
         >
     """
 
-    weaFile = RadiancePath('weaFile', descriptiveName='weather file path',
-                           relativePath=None, checkExists=False,
-                           extension='.wea')
-
     def __init__(self, outputName=None, weaFile=None, gendaymtxParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
@@ -109,4 +105,4 @@ class Gendaymtx(RadianceCommand):
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return (self.weaFile,)
+        return self.weaFile,
