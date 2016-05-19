@@ -206,7 +206,6 @@ class Rfluxmtx(RadianceCommand):
     # sender = RadiancePath('sender','sender file')
     receiverFile = RadiancePath('receiver','receiver file')
     octreeFile = RadiancePath('octree','octree file',extension='.oct')
-    pointsFile = RadiancePath('pointsFile','calculation points file')
     outputMatrix = RadiancePath('outputMatrix', 'output Matrix File')
 
     def __init__(self,sender=None,receiverFile=None,octreeFile=None,
@@ -236,6 +235,20 @@ class Rfluxmtx(RadianceCommand):
         self.outputMatrix = outputMatrix
         """The flux matrix file that will be created by rfluxmtx."""
 
+        self.pointsFileData = ''
+
+    @property
+    def pointsFile(self):
+        return self._pointsFile
+
+    @pointsFile.setter
+    def pointsFile(self,value):
+        if value:
+            if os.path.exists(value):
+                with open(value)as pointsFile:
+                    numberOfPoints = len(pointsFile.read().split())/6
+                    self.pointsFileData += '-y %s'%numberOfPoints
+                self._pointsFile = value
     @property
     def radFiles(self):
         """Get and set scene files."""
@@ -262,15 +275,16 @@ class Rfluxmtx(RadianceCommand):
         octree = self.octreeFile.toRadString()
         octree = '-i %s'%self.normspace(octree) if octree else ''
 
-        radString = '{0} {1} {2} {3} {4} {5} < {6} > {7}'.format(
+        radString = '{0} {8} {1} {2} {3} {4} {5} < {6} > {7}'.format(
             self.normspace(os.path.join(self.radbinPath,'rfluxmtx')),
             self.rfluxmtxParameters.toRadString(),
             self.sender if self.sender else '',
             self.normspace(self.receiverFile.toRadString()),
             " ".join(self.radFiles),
             octree,
-            self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputMatrix.toRadString()))
+            self.normspace(self.pointsFile),
+            self.normspace(self.outputMatrix.toRadString()),
+            self.pointsFileData)
         return radString
 
     @property
