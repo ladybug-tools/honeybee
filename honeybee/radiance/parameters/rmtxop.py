@@ -59,6 +59,7 @@ class RmtxopParameters(AdvancedRadianceParameters):
         """Specify the output format. Output formats correspond to a for ASCII,
         d for binary doubles, f for floats and c for RGBE colors."""
 
-        self.addRadianceTuple('c','combine values',
-                              attributeName='combineValues',tupleSize=3)
+        self.addRadianceTuple('c', 'combine values',
+                              attributeName='combineValues', tupleSize=3)
+
         self.combineValues = combineValues

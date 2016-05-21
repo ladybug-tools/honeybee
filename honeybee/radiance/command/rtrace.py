@@ -110,11 +110,11 @@ class Rtrace(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         radString = "%s %s %s < %s > %s" % (
-            os.normpath(os.path.join(self.radbinPath, "rtrace")),
+            self.normspace(os.path.join(self.radbinPath, "rtrace")),
             self.radianceParameters.toRadString(),
-            os.normpath(self.octreeFile.toRadString()),
-            os.normpath(self.pointFile.toRadString()),
-            os.normpath(self.outputFile.toRadString())
+            self.normspace(self.octreeFile.toRadString()),
+            self.normspace(self.pointFile.toRadString()),
+            self.normspace(self.outputFile.toRadString())
         )
 
         # make sure input files are set by user
