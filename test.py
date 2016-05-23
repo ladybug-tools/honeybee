@@ -18,6 +18,7 @@ genday.execute()
 #
 # Step2: Generate daylight coefficients using rfluxmtx.
 rfluxPara = RfluxmtxParameters()
+rfluxPara.I = True
 rfluxPara.aa = 0.1
 rfluxPara.ad = 4096
 rfluxPara.ab = 12
