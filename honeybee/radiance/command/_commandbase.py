@@ -194,6 +194,10 @@ class RadianceCommand(object):
 
         self.onExecution()
 
+        if os.name == 'nt':
+            os.environ['PATH'] += ';%s' % self.normspace(config.radbinPath)
+            os.environ['RAYPATH'] += ';%s' % self.normspace(config.radlibPath)
+
         p = subprocess.Popen(self.toRadString(), shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
