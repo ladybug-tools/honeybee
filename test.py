@@ -19,12 +19,12 @@ genday.execute()
 # Step2: Generate daylight coefficients using rfluxmtx.
 rfluxPara = RfluxmtxParameters()
 rfluxPara.aa = 0.1
-rfluxPara.ad = 2048
-rfluxPara.ab = 5
-
+rfluxPara.ad = 4096
+rfluxPara.ab = 12
+rfluxPara.lw = 0.0000001
 rflux = Rfluxmtx()
 rflux.sender = '-'
-skyFile = rflux.defaultSkyGround(r'temp\rfluxSky.rad')
+skyFile = rflux.defaultSkyGround(r'temp\rfluxSky.rad',skyType='r')
 rflux.receiverFile = skyFile
 rflux.rfluxmtxParameters = rfluxPara
 rflux.radFiles = [r"room.mat",
@@ -32,6 +32,8 @@ rflux.radFiles = [r"room.mat",
 
 rflux.pointsFile = r"indoor_points.pts"
 rflux.outputMatrix = r"temp\dayCoeff.dc"
+print(rflux.toRadString())
+
 rflux.execute()
 
 

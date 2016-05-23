@@ -146,7 +146,7 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
             # add all numeric parameters
             for name, data in rtrace_number_parameters.iteritems():
-                self.addRadianceNumber(name, data['dscrip'])
+                self.addRadianceNumber(name, data['dscrip'],numType=data['type'])
 
             # add boolean parameters
             for name, data in rtrace_boolean_parameters.iteritems():
