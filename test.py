@@ -2,7 +2,7 @@
 from honeybee.radiance.parameters.rfluxmtx import RfluxmtxParameters
 from honeybee.radiance.command.rfluxmtx import Rfluxmtx
 from honeybee.radiance.command.epw2wea import Epw2wea
-from honeybee.radiance.command.gendaymtx import Gendaymtx
+from honeybee.radiance.command.gendaymtx import Gendaymtx,GendaymtxParameters
 from honeybee.radiance.command.rmtxop import Rmtxop, RmtxopParameters
 
 
@@ -13,7 +13,11 @@ os.chdir(r'tests\room')
 weaFile = Epw2wea(epwFile='test.epw', outputWeaFile=r'temp\test.wea')
 weaFile.execute()
 
+gendayParam = GendaymtxParameters()
+gendayParam.skyDensity = 4
+
 genday = Gendaymtx(weaFile=r'temp\test.wea', outputName=r'temp\day.smx')
+genday.gendaymtxParameters = gendayParam
 genday.execute()
 #
 # Step2: Generate daylight coefficients using rfluxmtx.
@@ -25,7 +29,7 @@ rfluxPara.ab = 12
 rfluxPara.lw = 0.0000001
 rflux = Rfluxmtx()
 rflux.sender = '-'
-skyFile = rflux.defaultSkyGround(r'temp\rfluxSky.rad',skyType='r')
+skyFile = rflux.defaultSkyGround(r'temp\rfluxSky.rad',skyType='r4')
 rflux.receiverFile = skyFile
 rflux.rfluxmtxParameters = rfluxPara
 rflux.radFiles = [r"room.mat",
