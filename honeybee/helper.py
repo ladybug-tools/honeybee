@@ -1,5 +1,27 @@
 """A collection of auxiliary funtions for working with files and directories."""
 import os
+import config
+
+
+def normspace(path):
+    """Norm white spaces in path.
+
+    Return path with quotation marks if there is whitespace in path.
+    """
+    if str(path).strip().find(" ") != -1:
+        return "{0}{1}{0}".format(config.wrapper, path)
+    else:
+        return path
+
+
+def getRadiancePathLines():
+    """Return path to radiance folders."""
+    if os.name == 'nt':
+        return "SET RAYPATH=.;{}\nPATH={};$PATH".format(
+            normspace(config.radlibPath),
+            normspace(config.radbinPath))
+    else:
+        return ""
 
 
 def preparedir(targetDir):

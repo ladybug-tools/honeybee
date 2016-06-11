@@ -54,7 +54,7 @@ class RadianceCommand(object):
 
         Return path with quotation marks if there is whitespace in path.
         """
-        if path.strip().find(" ") != -1:
+        if str(path).strip().find(" ") != -1:
             return "{0}{1}{0}".format(config.wrapper, path)
         else:
             return path
@@ -147,8 +147,8 @@ class RadianceCommand(object):
 
         # In case there is only a single file and it wasn't specified as a tuple
         # or list.
-        if isinstance(self.inputFiles,basestring)and \
-            os.path.exists(self.inputFiles):
+        if isinstance(self.inputFiles, basestring)and \
+                os.path.exists(self.inputFiles):
             return
 
         assert len(self.inputFiles) != 0, \
