@@ -48,11 +48,10 @@ class Rmtxop(RadianceCommand):
     @matrixFiles.setter
     def matrixFiles(self, files):
         if files:
-            self.__matrixFiles = [os.path.normpath(f) for f in files]
+            self.__matrixFiles = [os.path.normpath(str(f)) for f in files]
 
     def toRadString(self, relativePath=False):
         """Return full command as string."""
-
         radString = "%s %s %s > %s" % (
             self.normspace(os.path.join(self.radbinPath, 'rmtxop')),
             self.rmtxopParameters.toRadString(),
@@ -61,8 +60,12 @@ class Rmtxop(RadianceCommand):
         )
 
         return radString
+
     @property
     def inputFiles(self):
-        """Input files for this command are actually None as the files are
-        specified as inputs using the matrices input"""
+        """Input files.
+
+        For this command are actually None as the files are
+        specified as inputs using the matrices input
+        """
         return self.matrixFiles
