@@ -8,18 +8,33 @@ def calculateNormalFromPoints(pts):
     This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
     assuming the points are representing a planar surface
     """
-    # vector between first point and the second point on the list
-    v1 = Vector3(pts[1][0] - pts[0][0],
-                 pts[1][1] - pts[0][1],
-                 pts[1][2] - pts[0][2])
+    try:
+        # vector between first point and the second point on the list
+        v1 = Vector3(pts[1].X - pts[0].X,
+                     pts[1].Y - pts[0].Y,
+                     pts[1].Z - pts[0].Z)
 
-    # vector between first point and the last point in the list
-    v2 = Vector3(pts[-1][0] - pts[0][0],
-                 pts[-1][1] - pts[0][1],
-                 pts[-1][2] - pts[0][2])
+        # vector between first point and the last point in the list
+        v2 = Vector3(pts[-1].X - pts[0].X,
+                     pts[-1].Y - pts[0].Y,
+                     pts[-1].Z - pts[0].Z)
+    except AttributeError:
+        # vector between first point and the second point on the list
+        v1 = Vector3(pts[1][0] - pts[0][0],
+                     pts[1][1] - pts[0][1],
+                     pts[1][2] - pts[0][2])
 
-    return tuple(v1.cross(v2).normalize())
+        # vector between first point and the last point in the list
+        v2 = Vector3(pts[-1][0] - pts[0][0],
+                     pts[-1][1] - pts[0][1],
+                     pts[-1][2] - pts[0][2])
+        return tuple(v1.cross(v2).normalize())
 
+    except IndexError:
+        raise ValueError('Length of input points should be 3!')
+
+    else:
+        return tuple(v1.cross(v2).normalize())
 
 def calculateCenterPointFromPoints(pts):
     """Calculate center point.

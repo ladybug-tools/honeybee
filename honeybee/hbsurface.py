@@ -119,7 +119,8 @@ class HBSurface(HBAnalysisSurface):
         """Set parent zone."""
         if hasattr(parent, 'isHBZone'):
             self.__parent = parent
-            self.parent.addSurface(self)
+            # this duplicates the surface
+            # self.parent.addSurface(self)
 
     @property
     def childrenSurfaces(self):
@@ -134,18 +135,27 @@ class HBSurface(HBAnalysisSurface):
         self.__childSurfaces.append(fenestrationSurface)
 
         # set up parent object if it's not set
-        if fenestrationSurface.parent != self:
-            fenestrationSurface.parent = self
+        fenestrationSurface.parent = self
 
     # TODO: Add joinOutput argument
     def toRadString(self, includeMaterials=False,
-                    includeChildrenSurfaces=True, joinOutput=True):
+                    includeChildrenSurfaces=True):
         """Return Radiance definition for this surface as a string."""
-        surfaceString = [
-            super(HBSurface, self).toRadString(includeMaterials)
-        ]
+        joinOutput=True
 
-        return "\n".join(surfaceString)
+        surfaceString = super(HBSurface, self).toRadString(includeMaterials,
+                                                           joinOutput)
+
+        if includeChildrenSurfaces and self.hasChildSurfaces:
+            childrenSurfacesString = [
+                childSurface.toRadString(includeMaterials, joinOutput)
+                for childSurface in self.childrenSurfaces
+            ]
+            return "%s\n%s" % (surfaceString,
+                                "\n".join(childrenSurfacesString))
+        else:
+
+            return surfaceString
 
     def radStringToFile(self, filePath, includeMaterials=False,
                         includeChildrenSurfaces=True):

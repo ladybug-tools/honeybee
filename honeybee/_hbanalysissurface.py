@@ -181,8 +181,9 @@ class HBAnalysisSurface(HBObject):
         self.__isTypeSetByUser = __isTypeSetByUser
 
     def __surfaceTypeFromPoints(self):
-        __angleToZAxis = go.calculateVectorAngleToZAxis(self.normal)
-        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis, self.points[0])
+        normal = go.calculateNormalFromPoints(self.points[0])
+        __angleToZAxis = go.calculateVectorAngleToZAxis(normal)
+        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis, self.points[0])()
 
     @property
     def isTypeSetByUser(self):
@@ -230,17 +231,6 @@ class HBAnalysisSurface(HBObject):
         self.__pts = []
         self.addPointList(pts, True)
 
-        # calculate normal of the surface by surface points
-        self.normal = go.calculateNormalFromPoints(self.points[0])
-
-        try:
-            if not self.isTypeSetByUser:
-                # re-evalute type based on points if it's not set by user
-                self.__surfaceType = self.__surfaceTypeFromPoints()
-        except AttributeError:
-            # Initiating the object.
-            pass
-
     def addPointList(self, pts, removeCurrentPoints=False):
         """Add new list of points to surface points.
 
@@ -258,7 +248,10 @@ class HBAnalysisSurface(HBObject):
         if removeCurrentPoints:
             self.__pts = []
         # append the new point list
-        self.__pts.append(pts)
+        if hasattr(pts[0], '__iter__'):
+            self.__pts.append(pts)
+        else:
+            self.__pts.append(tuple((pt.X, pt.Y, pt.Z) for pt in pts))
 
     def addPoint(self, pt, subsurfaceNumber=-1):
         """Add a single point to current surface points.
@@ -336,6 +329,20 @@ class HBAnalysisSurface(HBObject):
     @radianceMaterial.setter
     def radianceMaterial(self, value):
         self.radProperties.radianceMaterial = value
+
+    def duplicateVertices(self):
+        """Duplicate surface vertices."""
+        if self.isChildSurface or not self.hasChildSurfaces:
+            return self.absolutePoints
+        else:
+            # get points for first glass face
+            __glassPoints = [childSrf.absolutePoints[0]
+                             for childSrf in self.childrenSurfaces]
+
+            __facePoints = self.absolutePoints[0]
+
+            return AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
+
 
     def toRadString(self, includeMaterials=False, joinOutput=True):
         """Return Radiance definition for this surface as a string."""
@@ -425,6 +432,10 @@ class HBAnalysisSurface(HBObject):
         """Return EnergyPlus definition for this surface."""
         raise NotImplementedError
 
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
+
     def __repr__(self):
         """Represnt Honeybee surface."""
         return "HBSurface: %s" % self.name
@@ -487,7 +498,8 @@ class AnalsysiSurfacePolyline(object):
     def __calculatePolyline(self, source, targets):
         """calculate single polyline for HBSurface with Fenestration."""
         # sort point groups
-        sortedTargets = sorted(targets, key=lambda target: self.__shortestDistance(source, target)[0])
+        sortedTargets = sorted(targets,
+                               key=lambda target: self.__shortestDistance(source, target)[0])
 
         self.__addPoints(source, sortedTargets[0])
 
