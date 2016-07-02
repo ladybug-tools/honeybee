@@ -166,9 +166,12 @@ class HBAnalysisSurface(HBObject):
             if isinstance(__surfaceType, surfacetype.surfaceTypeBase):
                 self.__surfaceType = __surfaceType
             else:
-                # it should be a key value
-                self.__surfaceType = \
-                    surfacetype.SurfaceTypes.getTypeByKey(__surfaceType)
+                try:
+                    # it should be a key value
+                    self.__surfaceType = \
+                        surfacetype.SurfaceTypes.getTypeByKey(__surfaceType)()
+                except:
+                    raise ValueError('%s is not a valid surface type.' % __surfaceType)
         else:
             # try to figure it out based on points
             if self.points == []:
@@ -230,6 +233,9 @@ class HBAnalysisSurface(HBObject):
         # to write the surface to Radiance or EnergyPlus
         self.__pts = []
         self.addPointList(pts, True)
+        if hasattr(self, 'isTypeSetByUser') and not self.isTypeSetByUser:
+            # re-evaluate the type if it hasn't been set by user
+            self.__surfaceType = self.__surfaceTypeFromPoints()
 
     def addPointList(self, pts, removeCurrentPoints=False):
         """Add new list of points to surface points.
@@ -247,11 +253,26 @@ class HBAnalysisSurface(HBObject):
             return
         if removeCurrentPoints:
             self.__pts = []
-        # append the new point list
-        if hasattr(pts[0], '__iter__'):
-            self.__pts.append(pts)
-        else:
+
+        if hasattr(pts[0], 'X'):
+            # a single list of points from Dynamo
             self.__pts.append(tuple((pt.X, pt.Y, pt.Z) for pt in pts))
+
+        elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], 'X'):
+            # list of points list in Dynamo
+            self.__pts.extend(tuple(tuple((pt.X, pt.Y, pt.Z) for pt in ptGroup)
+                               for ptGroup in pts))
+
+        elif hasattr(pts[0], '__iter__') and not hasattr(pts[0][0], '__iter__'):
+            # a list of tuples as x, y, z
+            self.__pts.append(pts)
+
+        elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], '__iter__'):
+            # a list of list of tuples
+            self.__pts.extend(pts)
+
+        else:
+            raise ValueError('Invalid structure for input points: {}'.format(pts))
 
     def addPoint(self, pt, subsurfaceNumber=-1):
         """Add a single point to current surface points.
@@ -438,7 +459,8 @@ class HBAnalysisSurface(HBObject):
 
     def __repr__(self):
         """Represnt Honeybee surface."""
-        return "HBSurface: %s" % self.name
+        return ("HBSurface :: %s :: %s" % (self.name, self.surfaceType)) \
+            .replace('Surface Type: ', '')
 
 
 class AnalsysiSurfacePolyline(object):

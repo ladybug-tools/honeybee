@@ -119,7 +119,8 @@ class HBZone(HBObject):
     @property
     def radianceMaterials(self):
         """Get list of Radiance materials for zone including fenestration."""
-        return set([srf.radianceMaterials for srf in self.surfaces])
+        return set(tuple(material for srf in self.surfaces
+                   for material in srf.radianceMaterials))
 
     def toRadString(self, includeMaterials=False, includeChildrenSurfaces=True,
                     joinOutput=True):
@@ -170,9 +171,15 @@ class HBZone(HBObject):
             print "Warning: Found no Honeybee objects."
 
         if includeMaterials:
-            return _radDefinition(_matStr, _geoStr)
+            if joinOutput:
+                return "\n".join(_radDefinition(_matStr, _geoStr))
+            else:
+                return _radDefinition(_matStr, _geoStr)
         else:
-            return _radDefinition("", _geoStr)
+            if joinOutput:
+                return "\n".join(_radDefinition("", _geoStr))
+            else:
+                return _radDefinition("", _geoStr)
 
     def radStringToFile(self, filePath, includeMaterials=False,
                         includeChildrenSurfaces=True):

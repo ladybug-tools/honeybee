@@ -1,6 +1,16 @@
 """Collection of methods for geometrical operations."""
 from vectormath.euclid import math, Vector3
 
+def stripPointList(pts):
+    if not hasattr(pts[0], '__iter__') or hasattr(pts[0], 'X'):
+        return pts
+    elif hasattr(pts[0][0], '__iter__') and \
+        not hasattr(pts[0][0][0], '__iter__'):
+        # base face has multiple faces and this is one of them
+        return pts[0]
+    else:
+        # pts are nested than what it should be, just strip them onece more
+        return stripPointList(pts[0])
 
 def calculateNormalFromPoints(pts):
     """Calculate normal vector for a list of points.
@@ -8,6 +18,8 @@ def calculateNormalFromPoints(pts):
     This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
     assuming the points are representing a planar surface
     """
+    # pts = stripPointList(pts)
+
     try:
         # vector between first point and the second point on the list
         v1 = Vector3(pts[1].X - pts[0].X,
@@ -29,7 +41,6 @@ def calculateNormalFromPoints(pts):
                      pts[-1][1] - pts[0][1],
                      pts[-1][2] - pts[0][2])
         return tuple(v1.cross(v2).normalize())
-
     except IndexError:
         raise ValueError('Length of input points should be 3!')
 

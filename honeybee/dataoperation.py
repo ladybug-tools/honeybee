@@ -19,3 +19,20 @@ def flattenTupleList(inputList):
                 yield sub
         else:
             yield el
+
+def unflatten(guide, falttenedInput):
+    """Unflatten a falttened generator.
+
+    Args:
+        guide: A guide list to follow the structure
+        falttenedInput: A flattened iterator object
+
+    Usage:
+
+        guide = iter([["a"], ["b","c","d"], [["e"]], ["f"]])
+        inputList = [0, 1, 2, 3, 4, 5, 6, 7]
+        unflatten(guide, iter(inputList))
+        >> [[0], [1, 2, 3], [[4]], [5]]
+    """
+    return tuple(unflatten(subList, falttenedInput) if isinstance(subList, list)
+                 else next(falttenedInput) for subList in guide)
