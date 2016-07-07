@@ -103,6 +103,21 @@ class HBZone(HBObject):
         return self.geometryRules.system.lower() == "relative"
 
     @property
+    def floors(self):
+        """Get floor surfaces."""
+        return tuple(srf for srf in self.surfaces if srf.isFloor)
+
+    @property
+    def walls(self):
+        """Get wall surfaces."""
+        return tuple(srf for srf in self.surfaces if srf.isWall)
+
+    @property
+    def ceilings(self):
+        """Get ceilings surfaces."""
+        return tuple(srf for srf in self.surfaces if srf.isCeiling)
+
+    @property
     def surfaces(self):
         """Get list of HBSurfaces for this zone."""
         return self.__surfaces

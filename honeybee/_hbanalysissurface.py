@@ -4,7 +4,7 @@ from radiance.properties import RadianceProperties
 from radiance.geometry import polygon
 import surfacetype
 import geometryoperation as go
-
+from surfacetype import Floor, Wall, Window, Ceiling
 import os
 import types
 import math
@@ -192,6 +192,26 @@ class HBAnalysisSurface(HBObject):
     def isTypeSetByUser(self):
         """Check if the type for surface is set by user."""
         return self.__isTypeSetByUser
+
+    @property
+    def isFloor(self):
+        """Check if surface is a Floor."""
+        return isinstance(self.surfaceType, Floor)
+
+    @property
+    def isWall(self):
+        """Check if surface is a Wall."""
+        return isinstance(self.surfaceType, Wall)
+
+    @property
+    def isCeiling(self):
+        """Check if surface is a Ceiling."""
+        return isinstance(self.surfaceType, Ceiling)
+
+    @property
+    def isWindow(self):
+        """Check if surface is a Window."""
+        return isinstance(self.surfaceType, Window)
 
     @property
     def points(self):
