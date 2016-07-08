@@ -15,6 +15,10 @@ class surfaceTypeBase(object):
     energyPlusConstruction = None
     """Default EnergyPlus Construction."""
 
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
+
     def __repr__(self):
         """Return class name."""
         return "Surface Type: %s" % (self.__class__.__name__)

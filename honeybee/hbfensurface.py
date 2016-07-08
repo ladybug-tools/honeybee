@@ -103,4 +103,3 @@ class HBFenSurface(HBAnalysisSurface):
         """Set parent zone."""
         if hasattr(parent, 'isHBSurface'):
             self.__parent = parent
-            parent.addFenestrationSurface(self)

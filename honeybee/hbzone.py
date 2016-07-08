@@ -7,7 +7,19 @@ import os
 
 
 class HBZone(HBObject):
-    """Honeybee base class."""
+    """Honeybee base class.
+
+    Args:
+        name: Unique name for this zone.
+        origin: Zone origin point (default: 0, 0, 0)
+        geometryRules: EnergyPlus geometryRules. (default: "LowerLeftCorner";
+            "CounterClockWise"; "Absolute")
+        buildingProgram: HBZone building program.
+        zoneProgram: Specific program for this zone from the available building
+            programs.
+        isConditioned: A boolean that indicates if the zone is conditioned.
+            (default: True)
+    """
 
     def __init__(self, name, origin=(0, 0, 0), geometryRules=None,
                  buildingProgram=None, zoneProgram=None, isConditioned=True):
@@ -19,6 +31,10 @@ class HBZone(HBObject):
         """origin of the zone."""
 
         self.geometryRules = geometryRules
+
+        self.buildingProgram = buildingProgram
+
+        self.zoneProgram = zoneProgram
 
         self.__surfaces = []
 
@@ -87,6 +103,21 @@ class HBZone(HBObject):
         return self.geometryRules.system.lower() == "relative"
 
     @property
+    def floors(self):
+        """Get floor surfaces."""
+        return tuple(srf for srf in self.surfaces if srf.isFloor)
+
+    @property
+    def walls(self):
+        """Get wall surfaces."""
+        return tuple(srf for srf in self.surfaces if srf.isWall)
+
+    @property
+    def ceilings(self):
+        """Get ceilings surfaces."""
+        return tuple(srf for srf in self.surfaces if srf.isCeiling)
+
+    @property
     def surfaces(self):
         """Get list of HBSurfaces for this zone."""
         return self.__surfaces
@@ -95,15 +126,16 @@ class HBZone(HBObject):
         """Add a surface to Honeybee zone."""
         assert hasattr(HBSurface, "isHBSurface"), \
             "%s input is not a Honeybee surface." % str(HBSurface)
+
         self.__surfaces.append(HBSurface)
-        # update parent if it's not the same as the current zone
-        if HBSurface.parent != self:
-            HBSurface.parent = self
+        # update surface parent
+        HBSurface.parent = self
 
     @property
     def radianceMaterials(self):
         """Get list of Radiance materials for zone including fenestration."""
-        return set([srf.radianceMaterials for srf in self.surfaces])
+        return set(tuple(material for srf in self.surfaces
+                   for material in srf.radianceMaterials))
 
     def toRadString(self, includeMaterials=False, includeChildrenSurfaces=True,
                     joinOutput=True):
@@ -144,9 +176,9 @@ class HBZone(HBObject):
             _materials = set([mat.toRadString() for mat in _materials])
 
             if joinOutput:
-                _matStr = "\n".join(_materials)
+                _matStr = "\n".join(_materials) + "\n"
                 # joing geometries
-                _geoStr = "\n".join(_geos)
+                _geoStr = "\n".join(_geos) + "\n"
             else:
                 _matStr = _materials
                 _geoStr = _geos
@@ -154,9 +186,15 @@ class HBZone(HBObject):
             print "Warning: Found no Honeybee objects."
 
         if includeMaterials:
-            return _radDefinition(_matStr, _geoStr)
+            if joinOutput:
+                return "\n".join(_radDefinition(_matStr, _geoStr))
+            else:
+                return _radDefinition(_matStr, _geoStr)
         else:
-            return _radDefinition("", _geoStr)
+            if joinOutput:
+                return "\n".join(_radDefinition("", _geoStr))
+            else:
+                return _radDefinition("", _geoStr)
 
     def radStringToFile(self, filePath, includeMaterials=False,
                         includeChildrenSurfaces=True):
@@ -181,5 +219,14 @@ class HBZone(HBObject):
                 print "Failed to write %s to file:\n%s" % (self.name, e)
                 return False
 
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
+
     def __repr__(self):
-        return "HBZone: %s @ %s" % (self.name, self.origin)
+        """Zone representation."""
+        if self.zoneProgram and self.buildingProgram:
+            return "HBZone %s %s:%s" % (self.name, self.zoneProgram,
+                                        self.buildingProgram)
+        else:
+            return "HBZone: %s" % self.name

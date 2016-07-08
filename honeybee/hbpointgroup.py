@@ -55,7 +55,6 @@ class PointGroup(object):
     def __init__(self, points):
         """Initialize a PointGroup."""
         self.__pointsCount = 0
-
         self.points = points
         """A list of points as x, y, z."""
 
@@ -184,6 +183,10 @@ class AnalysisPointGroup(PointGroup):
             __aps.append(ap.toRadString())
 
         return "\n".join(__aps)
+
+    def ToString(self):
+        """Overwrite ToString .NET method."""
+        return self.__repr__(self)
 
     def __repr__(self):
         """Return analysis points and directions."""

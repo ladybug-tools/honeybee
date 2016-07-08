@@ -4,7 +4,7 @@ from radiance.properties import RadianceProperties
 from radiance.geometry import polygon
 import surfacetype
 import geometryoperation as go
-
+from surfacetype import Floor, Wall, Window, Ceiling
 import os
 import types
 import math
@@ -166,9 +166,12 @@ class HBAnalysisSurface(HBObject):
             if isinstance(__surfaceType, surfacetype.surfaceTypeBase):
                 self.__surfaceType = __surfaceType
             else:
-                # it should be a key value
-                self.__surfaceType = \
-                    surfacetype.SurfaceTypes.getTypeByKey(__surfaceType)
+                try:
+                    # it should be a key value
+                    self.__surfaceType = \
+                        surfacetype.SurfaceTypes.getTypeByKey(__surfaceType)()
+                except:
+                    raise ValueError('%s is not a valid surface type.' % __surfaceType)
         else:
             # try to figure it out based on points
             if self.points == []:
@@ -181,13 +184,34 @@ class HBAnalysisSurface(HBObject):
         self.__isTypeSetByUser = __isTypeSetByUser
 
     def __surfaceTypeFromPoints(self):
-        __angleToZAxis = go.calculateVectorAngleToZAxis(self.normal)
-        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis, self.points[0])
+        normal = go.calculateNormalFromPoints(self.points[0])
+        __angleToZAxis = go.calculateVectorAngleToZAxis(normal)
+        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis, self.points[0])()
 
     @property
     def isTypeSetByUser(self):
         """Check if the type for surface is set by user."""
         return self.__isTypeSetByUser
+
+    @property
+    def isFloor(self):
+        """Check if surface is a Floor."""
+        return isinstance(self.surfaceType, Floor)
+
+    @property
+    def isWall(self):
+        """Check if surface is a Wall."""
+        return isinstance(self.surfaceType, Wall)
+
+    @property
+    def isCeiling(self):
+        """Check if surface is a Ceiling."""
+        return isinstance(self.surfaceType, Ceiling)
+
+    @property
+    def isWindow(self):
+        """Check if surface is a Window."""
+        return isinstance(self.surfaceType, Window)
 
     @property
     def points(self):
@@ -229,17 +253,9 @@ class HBAnalysisSurface(HBObject):
         # to write the surface to Radiance or EnergyPlus
         self.__pts = []
         self.addPointList(pts, True)
-
-        # calculate normal of the surface by surface points
-        self.normal = go.calculateNormalFromPoints(self.points[0])
-
-        try:
-            if not self.isTypeSetByUser:
-                # re-evalute type based on points if it's not set by user
-                self.__surfaceType = self.__surfaceTypeFromPoints()
-        except AttributeError:
-            # Initiating the object.
-            pass
+        if hasattr(self, 'isTypeSetByUser') and not self.isTypeSetByUser:
+            # re-evaluate the type if it hasn't been set by user
+            self.__surfaceType = self.__surfaceTypeFromPoints()
 
     def addPointList(self, pts, removeCurrentPoints=False):
         """Add new list of points to surface points.
@@ -257,8 +273,26 @@ class HBAnalysisSurface(HBObject):
             return
         if removeCurrentPoints:
             self.__pts = []
-        # append the new point list
-        self.__pts.append(pts)
+
+        if hasattr(pts[0], 'X'):
+            # a single list of points from Dynamo
+            self.__pts.append(tuple((pt.X, pt.Y, pt.Z) for pt in pts))
+
+        elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], 'X'):
+            # list of points list in Dynamo
+            self.__pts.extend(tuple(tuple((pt.X, pt.Y, pt.Z) for pt in ptGroup)
+                               for ptGroup in pts))
+
+        elif hasattr(pts[0], '__iter__') and not hasattr(pts[0][0], '__iter__'):
+            # a list of tuples as x, y, z
+            self.__pts.append(pts)
+
+        elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], '__iter__'):
+            # a list of list of tuples
+            self.__pts.extend(pts)
+
+        else:
+            raise ValueError('Invalid structure for input points: {}'.format(pts))
 
     def addPoint(self, pt, subsurfaceNumber=-1):
         """Add a single point to current surface points.
@@ -336,6 +370,20 @@ class HBAnalysisSurface(HBObject):
     @radianceMaterial.setter
     def radianceMaterial(self, value):
         self.radProperties.radianceMaterial = value
+
+    def duplicateVertices(self):
+        """Duplicate surface vertices."""
+        if self.isChildSurface or not self.hasChildSurfaces:
+            return self.absolutePoints
+        else:
+            # get points for first glass face
+            __glassPoints = [childSrf.absolutePoints[0]
+                             for childSrf in self.childrenSurfaces]
+
+            __facePoints = self.absolutePoints[0]
+
+            return AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
+
 
     def toRadString(self, includeMaterials=False, joinOutput=True):
         """Return Radiance definition for this surface as a string."""
@@ -425,9 +473,14 @@ class HBAnalysisSurface(HBObject):
         """Return EnergyPlus definition for this surface."""
         raise NotImplementedError
 
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
+
     def __repr__(self):
         """Represnt Honeybee surface."""
-        return "HBSurface: %s" % self.name
+        return ("HBSurface :: %s :: %s" % (self.name, self.surfaceType)) \
+            .replace('Surface Type: ', '')
 
 
 class AnalsysiSurfacePolyline(object):
@@ -487,7 +540,8 @@ class AnalsysiSurfacePolyline(object):
     def __calculatePolyline(self, source, targets):
         """calculate single polyline for HBSurface with Fenestration."""
         # sort point groups
-        sortedTargets = sorted(targets, key=lambda target: self.__shortestDistance(source, target)[0])
+        sortedTargets = sorted(targets,
+                               key=lambda target: self.__shortestDistance(source, target)[0])
 
         self.__addPoints(source, sortedTargets[0])
 
