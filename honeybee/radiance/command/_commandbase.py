@@ -21,6 +21,21 @@ class RadianceCommand(object):
            genskyvec.pl etc."""
 
     @property
+    def perlExePath(self):
+        """Get and set path to radiance binaries.
+
+        If you set a new value the value will be changed globally.
+        """
+        return config.perlExePath
+
+    #TODO: Check what is the best way to search/check for the perl executable
+    @perlExePath.setter
+    def perlExePath(self, path):
+        # self.__checkExecutable(radbinPath=path, raiseException=True)
+        # change the path in config so user need to set it up once in a single script
+        config.perlExePath = path
+
+    @property
     def radbinPath(self):
         """Get and set path to radiance binaries.
 
@@ -105,8 +120,8 @@ class RadianceCommand(object):
         # same.
         if os.name == 'nt':
             if self.executableName:
-                __executable = os.path.normpath(os.path.join(str(radbinPath)),
-                                                self.executableName.lower())
+                __executable = os.path.normpath(os.path.join(str(radbinPath),
+                                                self.executableName.lower()))
             else:
                 __executable = os.path.normpath(
                     os.path.join(str(radbinPath),

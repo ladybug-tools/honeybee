@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath, RadianceValue
+from ..datatype import RadiancePath, RadianceValue,RadianceNumber
 from ..parameters.rfluxmtx import RfluxmtxParameters
 
 import os
@@ -118,7 +118,8 @@ class Rfluxmtx(RadianceCommand):
             'Z', 'x', 'y', 'z', '-X', '-Y','-Z', '-x', '-y','-z'"""
             if value:
                 allowedValues = ('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
-                                 '-Z', '-x', '-y', '-z')
+                                 '-Z', '-x', '-y', '-z',"+X","+Y","+Z",
+                                 '+x',"+y","+z")
                 assert value in allowedValues, "The value for hemisphereUpDirection" \
                                                "should be one of the following: %s" \
                                                % (','.join(allowedValues))
@@ -207,7 +208,7 @@ class Rfluxmtx(RadianceCommand):
     receiverFile = RadiancePath('receiver','receiver file')
     octreeFile = RadiancePath('octree','octree file',extension='.oct')
     outputMatrix = RadiancePath('outputMatrix', 'output Matrix File')
-
+    samplingRaysCount = RadianceNumber('c','number of sampling rays',numType=int)
     def __init__(self, sender=None, receiverFile=None, octreeFile=None,
                  radFiles=None, pointsFile=None, outputMatrix=None):
 
@@ -249,7 +250,8 @@ class Rfluxmtx(RadianceCommand):
                     numberOfPoints = len(pointsFile.read().split())/6
                     self.pointsFileData += '-y %s' % numberOfPoints
                 self._pointsFile = value
-
+        else:
+            self._pointsFile = ''
     @property
     def radFiles(self):
         """Get and set scene files."""
@@ -259,6 +261,8 @@ class Rfluxmtx(RadianceCommand):
     def radFiles(self, files):
         if files:
             self.__radFiles = [os.path.normpath(f) for f in files]
+        else:
+            self.__radFiles = []
 
     @property
     def rfluxmtxParameters(self):
@@ -275,19 +279,22 @@ class Rfluxmtx(RadianceCommand):
     def toRadString(self, relativePath=False):
         octree = self.octreeFile.toRadString()
         octree = '-i %s'%self.normspace(octree) if octree else ''
-
-        radString = '{0} {8} {1} {2} {3} {4} {5} < {6} > {7}'.format(
+        samplingCount = self.samplingRaysCount.toRadString()
+        pointsFile = self.normspace(self.pointsFile)
+        pointsFile = '< %s'%pointsFile if pointsFile else ''
+        radString = '{0} {8} {9} {1} {2} {3} {4} {5} {6} > {7}'.format(
             self.normspace(os.path.join(self.radbinPath, 'rfluxmtx')),
             self.rfluxmtxParameters.toRadString(),
             self.sender if self.sender else '',
             self.normspace(self.receiverFile.toRadString()),
             " ".join(self.radFiles),
             octree,
-            self.normspace(self.pointsFile),
+            pointsFile,
             self.normspace(self.outputMatrix.toRadString()),
-            self.pointsFileData)
+            self.pointsFileData,
+            samplingCount)
         return radString
 
     @property
     def inputFiles(self):
-        return [self.receiverFile, self.pointsFile] + self.radFiles
+        return [self.receiverFile] + self.radFiles
