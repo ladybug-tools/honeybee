@@ -1,11 +1,13 @@
 from _hbanalysissurface import HBAnalysisSurface
+from hbfensurface import HBFenSurface
+from vectormath.euclid import Vector3, Point3
 import os
 
 
 class HBSurface(HBAnalysisSurface):
     """Base class for Honeybee surface.
 
-    Args:
+    Attributes:
         name: A unique string for surface name
         sortedPoints: A list of 3 points or more as tuple or list with three items
             (x, y, z). Points should be sorted. This class won't sort the points.
@@ -119,13 +121,53 @@ class HBSurface(HBAnalysisSurface):
         """Set parent zone."""
         if hasattr(parent, 'isHBZone'):
             self.__parent = parent
-            # this duplicates the surface
-            # self.parent.addSurface(self)
 
     @property
     def childrenSurfaces(self):
         """Get children surfaces."""
         return self.__childSurfaces
+
+    def addFenestrationSurfaceBySize(self, name, width, height, sillHeight=1,
+                                     radianceMaterial=None):
+        """Add rectangular fenestration surface to surface.
+
+        Args:
+            width: Opening width. Opening will be centered in HBSurface.
+            height: Opening height.
+            sillHeight: Sill height (default: 1).
+            radianceMaterial: Optional radiance material for this fenestration.
+        """
+        for pts in self.points:
+            assert len(pts) == 4, 'Length of points should be 4.'
+            pt0 = Point3(*pts[0])
+            pt1 = Point3(*pts[1])
+            pt3 = Point3(*pts[-1])
+            xAxis = Vector3(*(pt1 - pt0)).normalized()
+            yAxis = Vector3(*(pt3 - pt0)).normalized()
+            srfWidth = pt0.distance(pt1)
+            srfHeight = pt0.distance(pt3)
+
+            assert srfWidth > width, \
+                'Opening width [{}] should be smaller than ' \
+                'HBSurface width [{}].'.format(srfWidth, width)
+
+            assert srfHeight > height + sillHeight, \
+                'Opening height plus sill height [{}] should be smaller than ' \
+                'HBSurface height [{}].'.format(srfHeight + sillHeight, height)
+
+            # create fenestration surface
+            xGap = (srfWidth - width) / 2.0
+            glzPt0 = pt0 + (xGap * xAxis) + (sillHeight * yAxis)
+            glzPt1 = pt0 + ((xGap + width) * xAxis) + (sillHeight * yAxis)
+            glzPt2 = pt0 + ((xGap + width) * xAxis) + ((sillHeight + height) * yAxis)
+            glzPt3 = pt0 + (xGap * xAxis) + ((sillHeight + height) * yAxis)
+
+            glzsrf = HBFenSurface(name, [glzPt0, glzPt1, glzPt2, glzPt3])
+
+            if radianceMaterial:
+                glzsrf.radianceMaterial = radianceMaterial
+
+            self.addFenestrationSurface(glzsrf)
 
     def addFenestrationSurface(self, fenestrationSurface):
         """Add a fenestration surface to HB surface."""
@@ -141,7 +183,7 @@ class HBSurface(HBAnalysisSurface):
     def toRadString(self, includeMaterials=False,
                     includeChildrenSurfaces=True):
         """Return Radiance definition for this surface as a string."""
-        joinOutput=True
+        joinOutput = True
 
         surfaceString = super(HBSurface, self).toRadString(includeMaterials,
                                                            joinOutput)
@@ -152,7 +194,7 @@ class HBSurface(HBAnalysisSurface):
                 for childSurface in self.childrenSurfaces
             ]
             return "%s\n%s" % (surfaceString,
-                                "\n".join(childrenSurfacesString))
+                               "\n".join(childrenSurfacesString))
         else:
 
             return surfaceString

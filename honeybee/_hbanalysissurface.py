@@ -281,7 +281,7 @@ class HBAnalysisSurface(HBObject):
         elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], 'X'):
             # list of points list in Dynamo
             self.__pts.extend(tuple(tuple((pt.X, pt.Y, pt.Z) for pt in ptGroup)
-                               for ptGroup in pts))
+                              for ptGroup in pts))
 
         elif hasattr(pts[0], '__iter__') and not hasattr(pts[0][0], '__iter__'):
             # a list of tuples as x, y, z
@@ -383,7 +383,6 @@ class HBAnalysisSurface(HBObject):
             __facePoints = self.absolutePoints[0]
 
             return AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
-
 
     def toRadString(self, includeMaterials=False, joinOutput=True):
         """Return Radiance definition for this surface as a string."""
