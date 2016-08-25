@@ -8,7 +8,79 @@ from copy import deepcopy
 # TODO: Add a method to add paramters from string.
 # I want to make sure that this won't be duplicated by parameters class
 class View(object):
-    u"""A radiance view."""
+    u"""A radiance view.
+
+    Attributes:
+        viewPoint: Set the view point (-vp) to (x, y, z). This is the focal
+            point of a perspective view or the center of a parallel projection.
+            Default: (0, 0, 0)
+        viewDirection: Set the view direction (-vd) vector to (x, y, z). The
+            length of this vector indicates the focal distance as needed by
+            the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
+        upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).
+            Default: (0, 1, 0)
+        viewType: Set view type (-vt) to one of the choices below.
+                0: Perspective (v)
+                1: Hemispherical fisheye (h)
+                2: Parallel (l)
+                3: Cylindrical panorma (c)
+                4: Angular fisheye (a)
+                5: Planisphere [stereographic] projection (s)
+            For more detailed description about view types check rpict manual
+            page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
+        viewHSize: Set the view horizontal size (-vs). For a perspective
+            projection (including fisheye views), val is the horizontal field
+            of view (in degrees). For a parallel projection, val is the view
+            width in world coordinates.
+        viewVSize: Set the view vertical size (-vv). For a perspective
+            projection (including fisheye views), val is the horizontal field
+            of view (in degrees). For a parallel projection, val is the view
+            width in world coordinates.
+        xRes: Set the maximum x resolution (-x) to an integer.
+        yRes: Set the maximum y resolution (-y) to an integer.
+        viewShift: Set the view shift (-vs). This is the amount the actual
+            image will be shifted to the right of the specified view. This
+            option is useful for generating skewed perspectives or rendering
+            an image a piece at a time. A value of 1 means that the rendered
+            image starts just to the right of the normal view. A value of −1
+            would be to the left. Larger or fractional values are permitted
+            as well.
+        viewLift: Set the view lift (-vl) to a value. This is the amount the
+            actual image will be lifted up from the specified view.
+
+    Usage:
+
+        v = View()
+        # set x and y resolution
+        v.xRes = v.yRes = 600
+        # add a fore clip
+        v.addForeClip(distance=100)
+        print v
+
+        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+           0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
+
+        # split the view into a view grid
+        gridViews = v.calculateViewGrid(2, 2)
+        for g in gridViews:
+            print g
+
+        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500
+           -vo 100.000
+
+        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500
+           -vo 100.000
+
+        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500
+           -vo 100.000
+
+        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
+          0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500
+          -vo 100.000
+    """
 
     # init radiance types
     viewPoint = RadianceTuple('vp', 'view point', tupleSize=3, numType=float,
@@ -37,79 +109,7 @@ class View(object):
     def __init__(self, viewPoint=None, viewDirection=None, viewUpVector=None,
                  viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
                  viewShift=0, viewLift=0):
-        u"""Init view.
-
-        Args:
-            viewPoint: Set the view point (-vp) to (x, y, z). This is the focal
-                point of a perspective view or the center of a parallel projection.
-                Default: (0, 0, 0)
-            viewDirection: Set the view direction (-vd) vector to (x, y, z). The
-                length of this vector indicates the focal distance as needed by
-                the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
-            upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).
-                Default: (0, 1, 0)
-            viewType: Set view type (-vt) to one of the choices below.
-                    0: Perspective (v)
-                    1: Hemispherical fisheye (h)
-                    2: Parallel (l)
-                    3: Cylindrical panorma (c)
-                    4: Angular fisheye (a)
-                    5: Planisphere [stereographic] projection (s)
-                For more detailed description about view types check rpict manual
-                page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-            viewHSize: Set the view horizontal size (-vs). For a perspective
-                projection (including fisheye views), val is the horizontal field
-                of view (in degrees). For a parallel projection, val is the view
-                width in world coordinates.
-            viewVSize: Set the view vertical size (-vv). For a perspective
-                projection (including fisheye views), val is the horizontal field
-                of view (in degrees). For a parallel projection, val is the view
-                width in world coordinates.
-            xRes: Set the maximum x resolution (-x) to an integer.
-            yRes: Set the maximum y resolution (-y) to an integer.
-            viewShift: Set the view shift (-vs). This is the amount the actual
-                image will be shifted to the right of the specified view. This
-                option is useful for generating skewed perspectives or rendering
-                an image a piece at a time. A value of 1 means that the rendered
-                image starts just to the right of the normal view. A value of −1
-                would be to the left. Larger or fractional values are permitted
-                as well.
-            viewLift: Set the view lift (-vl) to a value. This is the amount the
-                actual image will be lifted up from the specified view.
-
-        Usage:
-
-            v = View()
-            # set x and y resolution
-            v.xRes = v.yRes = 600
-            # add a fore clip
-            v.addForeClip(distance=100)
-            print v
-
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-               0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
-
-            # split the view into a view grid
-            gridViews = v.calculateViewGrid(2, 2)
-            for g in gridViews:
-                print g
-
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-               0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500
-               -vo 100.000
-
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-               0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500
-               -vo 100.000
-
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-               0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500
-               -vo 100.000
-
-            > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-              0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500
-              -vo 100.000
-        """
+        u"""Init view."""
         self.viewPoint = viewPoint
         """Set the view point (-vp) to (x, y, z)."""
 
@@ -268,7 +268,7 @@ class View(object):
         """Return full Radiance definition."""
         # create base information of view
         _view = "-%s -vp %.3f %.3f %.3f -vd %.3f %.3f %.3f -vu %.3f %.3f %.3f" % (
-            self._viewTypes[self.viewType],
+            self._viewTypes[int(self.viewType)],
             self.viewPoint[0], self.viewPoint[1], self.viewPoint[2],
             self.viewDirection[0], self.viewDirection[1], self.viewDirection[2],
             self.viewUpVector[0], self.viewUpVector[1], self.viewUpVector[2]
@@ -288,7 +288,10 @@ class View(object):
             )
 
         if self.__viewForeClip:
-            __viewComponents.append("-vo %.3f" % self.__viewForeClip)
+            try:
+                __viewComponents.append("-vo %.3f" % self.__viewForeClip)
+            except TypeError:
+                pass
 
         return " ".join(__viewComponents)
 

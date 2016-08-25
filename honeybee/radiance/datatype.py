@@ -5,7 +5,7 @@ import os
 from collections import Iterable
 
 __all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
-           'RadianceTuple', 'RadianceValue','RadianceReadOnly']
+           'RadianceTuple', 'RadianceValue', 'RadianceReadOnly']
 
 
 class RadianceDefault(object):
@@ -128,6 +128,10 @@ class RadianceDefault(object):
             if instance:
                 setattr(instance, self._name,
                         RadianceDataType(self._name, value, self._isJoined))
+
+    def __repr__(self):
+        """Value representation."""
+        return str(self._defaultValue)
 
 
 class RadianceValue(RadianceDefault):
@@ -421,8 +425,9 @@ class RadianceTuple(RadianceDefault):
 
     def __set__(self, instance, value):
         """
-        Check for tuple size and valid range if specified. Parse from strings
-        if input is specified as a string instead of a number.
+        Check for tuple size and valid range if specified.
+
+        Parse from strings if input is specified as a string instead of a number.
         """
         if value is not None:
 
@@ -469,6 +474,10 @@ class RadianceTuple(RadianceDefault):
 
             setattr(instance, self._name,
                     RadianceDataType(self._name, tuple(finalValue)))
+
+    def __getitem__(self, i):
+        """Get item i from tuple."""
+        return self._defaultValue[i]
 
 
 class RadiancePath(RadianceDefault):
@@ -577,6 +586,12 @@ class RadianceDataType(object):
 
     def __ne__(self, other):
         return self._value != other
+
+    def __getitem__(self, i):
+        try:
+            return self._value[i]
+        except Exception as e:
+            raise Exception(e)
 
 
 class RadianceBoolType(RadianceDataType):
@@ -782,19 +797,19 @@ class RadianceNumberType(RadianceDataType):
 
 class RadianceReadOnly(object):
     """A descriptor for creating Readonly values."""
-    def __init__(self,name):
-        self._name = '_'+str(name)
+
+    def __init__(self, name):
+        self._name = '_' + str(name)
 
     def __get__(self, instance, owner):
-        return getattr(instance,self._name)
+        return getattr(instance, self._name)
 
-    def __set__(self,instance,value):
-
-        #Let the value be set first time through constructor.
+    def __set__(self, instance, value):
+        # Let the value be set first time through constructor.
         # Block all other attempts.
         try:
             value = getattr(instance, self._name)
             raise Exception("The attribute %s is read only. "
-                            "It's default value is %s"%(self._name[1:],value))
+                            "It's default value is %s" % (self._name[1:], value))
         except AttributeError:
-            setattr(instance,self._name,value)
+            setattr(instance, self._name, value)
