@@ -169,31 +169,33 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
 
 
-    #Step5: Generate results
+    # Step5: Generate results
     dct = Dctimestep()
     dct.tmatrixFile = tMatrix
     dct.vmatrixSpec = r'temp/%03d.hdr'
     dct.dmatrixFile = dMatrix
     dct.skyVectorFile = skyVector
-    dct.outputFileName = hdrResultsFileName or  r'temp/results.hdr'
+    dct.outputFileName = hdrResultsFileName or r'temp/results.hdr'
     dct.execute()
 
     return 'temp/results.txt'
 
-phases={'v':False,'t':True,'d':False,'s':False}
-tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
-epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
-            'epws/USA_KY_London-Corbin-Magee.Field.724243_TMY3.epw',
-            'epws/USA_MA_Boston-City.WSO_TMY.epw',
-            'epws/USA_NC_Charlotte-Douglas.Intl.AP.723140_TMY3.epw',
-            'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
-            'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
-for idx,matrix in enumerate(tmatrices):
-    resultsFile= run3phase(calculationType='single',tmatrixFile=matrix,
-                           phasesToCalculate=phases,epwFile=epwFiles[1],
-                           hdrResultsFileName=r'temp/results%s.hdr'%idx)
+if __name__ == '__main__':
+    phases = {'v': False, 't': True, 'd': False, 's': False}
+    tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
-    # with open(resultsFile) as results:
-    #     for lines in results:
-    #         print(lines)
+    epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
+                'epws/USA_KY_London-Corbin-Magee.Field.724243_TMY3.epw',
+                'epws/USA_MA_Boston-City.WSO_TMY.epw',
+                'epws/USA_NC_Charlotte-Douglas.Intl.AP.723140_TMY3.epw',
+                'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
+                'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
+    for idx, matrix in enumerate(tmatrices):
+        resultsFile = run3phase(calculationType='single', tmatrixFile=matrix,
+                               phasesToCalculate=phases, epwFile=epwFiles[1],
+                               hdrResultsFileName=r'temp/results%s.hdr' % idx)
+
+        # with open(resultsFile) as results:
+        #     for lines in results:
+        #         print(lines)
