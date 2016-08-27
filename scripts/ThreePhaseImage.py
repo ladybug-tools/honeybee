@@ -22,12 +22,12 @@ import os
 
 
 
-os.chdir(r'..\tests\room')
+os.chdir(r'../tests/room')
 
 
 def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
               calculationType='annual',epwFile=None,tmatrixFile=None,
-              hdrResultsFileName=None):
+              hdrResultsFileName=None,numProcessors=1):
 
 
     if phasesToCalculate['v']:
@@ -40,10 +40,10 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
         rfluxPara.ad = 65536
         # using this for a quicker run
-        rfluxPara.ad = 1000
+        # rfluxPara.ad = 1000
 
         rfluxPara.lw = 1E-5
-        rfluxPara.lw = 1E-2
+        # rfluxPara.lw = 1E-2
 
 
         #step 1.1 Invert glazing surface with xform so that it faces inwards
@@ -72,7 +72,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         vwrParaSamp.xResolution = 800
         vwrParaSamp.yResolution = 800
         vwrParaSamp.samplingRaysCount = 9
-        vwrParaSamp.samplingRaysCount = 3
+        # vwrParaSamp.samplingRaysCount = 3
         vwrParaSamp.jitter = 0.7
 
 
@@ -102,6 +102,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
         rflux.samplingRaysCount = 3
+        rflux.numProcessors = numProcessors
         rflux.execute()
 
     vMatrix = r'temp/vmatrix.vmx'
@@ -122,7 +123,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         rflux2 = Rfluxmtx()
         rflux2.samplingRaysCount = 1000
         rflux2.sender = 'glazingI.rad_m'
-        skyFile = rflux2.defaultSkyGround(r'temp\rfluxSky.rad',skyType='r4')
+        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r4')
         rflux2.receiverFile = skyFile
         rflux2.rfluxmtxParameters = rfluxPara
         rflux2.radFiles = [r"room.mat",
@@ -140,13 +141,13 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
     # Step s: Creating the sky matrix
     if phasesToCalculate['s']:
         if calculationType == 'annual':
-            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp\test.wea')
+            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp/test.wea')
             weaFile.execute()
 
             gendayParam = GendaymtxParameters()
             gendayParam.skyDensity = 4
 
-            genday = Gendaymtx(weaFile=r'temp\test.wea', outputName=r'temp\day.smx')
+            genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
             genday.gendaymtxParameters = gendayParam
             genday.execute()
 
@@ -182,7 +183,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
 
 if __name__ == '__main__':
-    phases = {'v': False, 't': True, 'd': False, 's': False}
+    phases = {'v': True, 't': True, 'd': False, 's': False}
     tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
     epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
@@ -194,7 +195,8 @@ if __name__ == '__main__':
     for idx, matrix in enumerate(tmatrices):
         resultsFile = run3phase(calculationType='single', tmatrixFile=matrix,
                                phasesToCalculate=phases, epwFile=epwFiles[1],
-                               hdrResultsFileName=r'temp/results%s.hdr' % idx)
+                               hdrResultsFileName=r'temp/results%s.hdr' % idx,
+                                numProcessors=40)
 
         # with open(resultsFile) as results:
         #     for lines in results:
