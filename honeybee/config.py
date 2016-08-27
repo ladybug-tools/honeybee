@@ -11,6 +11,7 @@ Usage:
     config.radbinPath = "c:/radiance/bin"
 """
 import os
+import sys
 
 
 class Folders(object):
@@ -180,6 +181,9 @@ class Folders(object):
         raise NotImplementedError
         # return self.__eplus
 
+    @property
+    def pythonExePath(self):
+        return sys.executable
 f = Folders(mute=True)
 radlibPath = f.radlibPath
 """Path to Radinace libraries folder."""
@@ -193,6 +197,10 @@ epPath = None
 
 perlExePath = f.perlExePath
 """Path to the perl executable needed for some othe Radiance Scripts."""
+
+pythonExePath = f.pythonExePath
+"""Path to python executable needed for some Radiance scripts from the PyRad
+library"""
 
 wrapper = "\"" if os.name == 'nt' else "'"
 """Wrapper for path with white space."""

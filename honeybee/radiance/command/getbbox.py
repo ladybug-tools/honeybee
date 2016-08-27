@@ -43,9 +43,7 @@ class Getbbox(RadianceCommand):
         radFiles = " ".join(self.normspace(f) for f in self.radFiles)
         cmdPath = self.normspace(os.path.join(self.radbinPath,'getbbox'))
         outputFilePath = self.outputFile.toRadString()
-        print(outputFilePath,'saritha')
         outputFile = ">%s"%outputFilePath if outputFilePath else ''
-        print(outputFile,'sar')
         radString = "{0} {1} {2} {3} {4}".format(cmdPath,header,warning,radFiles,
                                              outputFile)
         self.checkInputFiles(radString)

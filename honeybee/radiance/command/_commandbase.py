@@ -21,6 +21,10 @@ class RadianceCommand(object):
            genskyvec.pl etc."""
 
     @property
+    def pythonExePath(self):
+        return config.pythonExePath
+
+    @property
     def perlExePath(self):
         """Get and set path to radiance binaries.
 
