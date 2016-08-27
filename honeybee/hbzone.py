@@ -122,6 +122,14 @@ class HBZone(HBObject):
         """Get list of HBSurfaces for this zone."""
         return self.__surfaces
 
+    @property
+    def childrenSurfaces(self):
+        """Get list of children Surfaces for this zone."""
+        return tuple(childrenSurfaces
+                     for srf in self.surfaces
+                     for childrenSurfaces in srf.childrenSurfaces
+                     )
+
     def addSurface(self, HBSurface):
         """Add a surface to Honeybee zone."""
         assert hasattr(HBSurface, "isHBSurface"), \
@@ -142,8 +150,8 @@ class HBZone(HBObject):
         """Return geometries and materials as a tuple of multiline string.
 
         Returns:
-            if includeMaterials = False:
-                A namedTuple of multiline data. Keys are: materials geometries
+            if includeMaterials == False:
+                A namedTuple of multiline data. Keys are: materials, geometries
             else:
                 A multiline string for geometries
 
@@ -212,8 +220,8 @@ class HBZone(HBObject):
         with open(filePath, "w") as outf:
             try:
                 # The output of toRadString for a zone is a tuple
-                outf.write("\n".join(self.toRadString(includeMaterials,
-                                                      includeChildrenSurfaces)))
+                outf.write(self.toRadString(includeMaterials,
+                                            includeChildrenSurfaces))
                 return True
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)

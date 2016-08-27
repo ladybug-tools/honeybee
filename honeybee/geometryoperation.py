@@ -1,16 +1,18 @@
 """Collection of methods for geometrical operations."""
 from vectormath.euclid import math, Vector3
 
+
 def stripPointList(pts):
+    """Flatten a list of list of points."""
     if not hasattr(pts[0], '__iter__') or hasattr(pts[0], 'X'):
         return pts
-    elif hasattr(pts[0][0], '__iter__') and \
-        not hasattr(pts[0][0][0], '__iter__'):
+    elif hasattr(pts[0][0], '__iter__') and not hasattr(pts[0][0][0], '__iter__'):
         # base face has multiple faces and this is one of them
         return pts[0]
     else:
         # pts are nested than what it should be, just strip them onece more
         return stripPointList(pts[0])
+
 
 def calculateNormalFromPoints(pts):
     """Calculate normal vector for a list of points.
@@ -46,6 +48,7 @@ def calculateNormalFromPoints(pts):
 
     else:
         return tuple(v1.cross(v2).normalize())
+
 
 def calculateCenterPointFromPoints(pts):
     """Calculate center point.
