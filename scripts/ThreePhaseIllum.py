@@ -22,7 +22,7 @@ import os
 
 
 
-os.chdir(r'..\tests\room')
+os.chdir(r'../tests/room')
 
 
 def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
@@ -79,7 +79,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         rflux2 = Rfluxmtx()
         rflux2.samplingRaysCount = 1000
         rflux2.sender = 'glazingI.rad_m'
-        skyFile = rflux2.defaultSkyGround(r'temp\rfluxSky.rad',skyType='r4')
+        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r4')
         rflux2.receiverFile = skyFile
         rflux2.rfluxmtxParameters = rfluxPara
         rflux2.radFiles = [r"room.mat",
@@ -97,13 +97,13 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
     # Step s: Creating the sky matrix
     if phasesToCalculate['s']:
         if calculationType == 'annual':
-            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp\test.wea')
+            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp/test.wea')
             weaFile.execute()
 
             gendayParam = GendaymtxParameters()
             gendayParam.skyDensity = 4
 
-            genday = Gendaymtx(weaFile=r'temp\test.wea', outputName=r'temp\day.smx')
+            genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
             genday.gendaymtxParameters = gendayParam
             genday.execute()
 
@@ -137,7 +137,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
     return 'temp/results.txt'
 
-phases={'v':True,'t':True,'d':True,'s':False}
+phases={'v':True,'t':True,'d':True,'s':True}
 tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
 epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',

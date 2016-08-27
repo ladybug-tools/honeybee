@@ -11,7 +11,7 @@ Keywords: Radiance, Objview, Previews
 from honeybee.radiance.command.objview import Objview
 import os
 
-os.chdir(r'..\tests\room')
+os.chdir(r'../tests/room')
 
 objv = Objview()
 objv.sceneFiles = [r"room.mat", "room.rad"]

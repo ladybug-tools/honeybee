@@ -37,8 +37,9 @@ class Genskyvec(RadianceCommand):
     def toRadString(self, relativePath=False):
         # TODO: This only works for Windows for now.
         # Need to make the path lookup thing x-platform.
-        perlPath = self.normspace(self.perlExePath)
-        cmdPath = self.normspace(os.path.join(self.radbinPath,'genskyvec.pl'))
+        perlPath = self.normspace(self.perlExePath) if os.name == 'nt' else ''
+        exeName = 'genskyvec.pl' if os.name == 'nt' else 'genskyvec'
+        cmdPath = self.normspace(os.path.join(self.radbinPath,exeName))
 
         headerSuppress = self.headerSuppress.toRadString()
         skySubDiv = self.skySubdivision.toRadString()

@@ -31,7 +31,7 @@ class Folders(object):
     __userPath = {
         "pathToRadianceFolder": r" ",
         "pathToEnergyPlusFolder": r" ",
-        "pathToOpenStudioFolder": r'C:\Program Files\OpenStudio 1.11.0',
+        "pathToOpenStudioFolder": r'',
     }
 
     def __init__(self, mute=False):
@@ -64,9 +64,14 @@ class Folders(object):
                 self.perlExePath = __perlFile
 
             # TODO: @sariths we need a method to search and find the executables
-            else:
-                pass
+            elif os.name == 'posix':
+                __radbin, __radFile = self.__which("mkillum")
+                self.radbinPath = __radbin
+
+                __perlpath, __perlFile = self.__which("perl")
+                self.perlExePath = __perlpath
                 # raise NotImplementedError
+
 
     def __which(self, program):
         """Find executable programs.
@@ -81,9 +86,12 @@ class Folders(object):
         def is_exe(fpath):
             # Make sure it's not part of Dive installation as DIVA doesn't
             # follow the standard structure folder for Daysim and Radiance
-            if fpath.upper().find("DIVA"):
+            # Note: (@mostaphaRoudsari, DIVA check is only required for...
+            #...Windows.
+            if fpath.upper().find("DIVA") and os.name == 'nt':
                 return False
             # Return true if file exists and is executable
+
             return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
         # check for the file in all path in environment
@@ -161,6 +169,9 @@ class Folders(object):
         # Search for folders with 'perl' in their names. Hopefully only one exists!
         self.__perlExePath = None
 
+        if os.name == 'posix':
+            return
+
         if not openStudioPath:
             return
 
@@ -197,6 +208,7 @@ epPath = None
 
 perlExePath = f.perlExePath
 """Path to the perl executable needed for some othe Radiance Scripts."""
+
 
 pythonExePath = f.pythonExePath
 """Path to python executable needed for some Radiance scripts from the PyRad
