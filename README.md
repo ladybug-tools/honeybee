@@ -3,7 +3,7 @@
 #### [API Documentation](http://ladybug-analysis-tools.github.io/honeybee/doc/)
 
 ```python
-# here is an example that shows how to put a grid-based analsys together using honeybee
+# here is an example that shows how to put a grid-based analysis together using honeybee
 
 from honeybee.room import Room
 from honeybee.radiance.material.glass import GlassMaterial
