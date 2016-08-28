@@ -21,7 +21,10 @@ def polygon(name, materialName, pts, minimal=False):
     assert len(pts) >= 3, \
         "Insufficient number of points for %s: %d" % (name, len(pts))
 
-    ptCoordinates = "\n".join([" ".join(map(str, pt)) for pt in pts])
+    try:
+        ptCoordinates = "\n".join([" ".join(map(str, (pt.X, pt.Y, pt.Z))) for pt in pts])
+    except AttributeError:
+        ptCoordinates = "\n".join([" ".join(map(str, pt)) for pt in pts])
 
     definition = __baseString % (
         __normName(materialName),

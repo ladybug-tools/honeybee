@@ -79,14 +79,8 @@ class HBDaylightAnalysisRecipe(object):
             _materials = []
             _geos = []
             for hbo in self.hbObjects:
-                try:
-                    # hbzone or HBSurface with child surface returns a list of materials
-                    _materials.extend(hbo.radianceMaterial)
-                except:
-                    # hb surface with no child surface
-                    _materials.append(hbo.radianceMaterial)
-
-                _geos.append(hbo.toRadString())
+                _materials.extend([material for material in hbo.radianceMaterials])
+                _geos.append(hbo.toRadString(includeMaterials=False, joinOutput=True))
 
             # remove duplicated materials
             _materials = set([mat.toRadString() for mat in _materials])

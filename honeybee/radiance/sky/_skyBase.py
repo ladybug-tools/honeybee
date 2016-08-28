@@ -45,22 +45,9 @@ class RadianceSky:
         """Return True if the sky is created based on values from weather file."""
         pass
 
-    @property
+    @abstractproperty
     def main(self):
         """Radiance sky line."""
-        return self.__main
-
-    @main.setter
-    def main(self, newString):
-        self.__main = newString
-
-    @abstractmethod
-    def genRadianceSkyLine(self):
-        """Generate Radiance's line for each sky.
-
-        The value should be assigned to self.main
-        self.main = "!gensky 12 6 12:00 -u -B %.3f" % (self.illuminanceValue / 179)
-        """
         pass
 
     def toRadString(self):

@@ -34,11 +34,18 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     def __init__(self, pointGroups, vectorGroups=[], hbObjects=None,
                  subFolder="gridbased"):
         """Create grid-based recipe."""
+        # keep track of original points for re-structuring them later on
         HBDaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
                                           subFolder=subFolder)
+        self.__originalPoints = pointGroups
 
         # create analysisi point groups
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
+
+    @property
+    def originalPoints(self):
+        """Get original test points."""
+        return self.__originalPoints
 
     @property
     def pointGroups(self):
@@ -237,6 +244,10 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     def results(self):
         """Return results for this analysis."""
         pass
+
+    def ToString(self):
+        """Overwriet .NET ToString method."""
+        return self.__repr__()
 
     def __repr__(self):
         """Represent grid based recipe."""

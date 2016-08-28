@@ -74,6 +74,10 @@ class RadianceProperties(object):
         """Check if material is set by user."""
         return self.__isMaterialSetByUser
 
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
+
     def __repr__(self):
         """Represnt Radiance properties."""
         if not self.radianceMaterial:

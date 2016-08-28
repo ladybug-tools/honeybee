@@ -128,7 +128,7 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         self.__radianceParameters = radParameters
 
     # TODO: Add path to PATH and use relative path in batch files
-    def writeToFile(self, targetFolder, projectName, radFiles=None,
+    def writeToFile(self, targetFolder, projectName='untitled', radFiles=None,
                     useRelativePath=False):
         """Write analysis files to target folder.
 
@@ -155,6 +155,13 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         """
         # 0.prepare target folder
         # create main folder targetFolder\projectName
+        if not targetFolder:
+            targetFolder = os.path.join(os.environ['USERPROFILE'], 'honeybee')
+            if not os.path.isdir(targetFolder):
+                os.mkdir(targetFolder)
+
+        projectName = 'untitled' if not projectName else str(projectName)
+
         _basePath = os.path.join(targetFolder, projectName)
         _ispath = preparedir(_basePath)
         assert _ispath, "Failed to create %s. Try a different path!" % _basePath
@@ -236,6 +243,10 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         self.loader.simulationType = self.simulationType
         self.loader.resultFiles = self.resultsFile
         return self.loader.results
+
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
 
     def __repr__(self):
         """Represent grid based recipe."""

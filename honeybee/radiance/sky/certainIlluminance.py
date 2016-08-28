@@ -37,12 +37,16 @@ class SkyWithCertainIlluminanceLevel(RadianceSky):
     def illuminanceValue(self, value):
         assert float(value) >= 0, "Illuminace value can't be negative."
         self.__illum = float(value)
-        self.genRadianceSkyLine()
 
-    def genRadianceSkyLine(self):
+    @property
+    def main(self):
         """Generate Radiance's line for sky with certain illuminance value."""
-        self.main = "# horizontal sky illuminance: %.3f lux\n" % self.illuminanceValue + \
+        return "# horizontal sky illuminance: %.3f lux\n" % self.illuminanceValue + \
             "!gensky 12 6 12:00 -u -B %.3f \n" % (self.illuminanceValue / 179)
+
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
 
     def __repr__(self):
         """Sky representation."""
