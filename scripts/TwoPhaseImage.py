@@ -20,8 +20,10 @@ import os
 
 
 
-os.chdir(r'..\tests\room')
+os.chdir(r'../tests/room')
 
+if not os.path.exists('temp'):
+    os.mkdir('temp')
 
 def runDc(phasesToCalculate={'dc':True, 's':True},
           calculationType='annual', epwFile=None,
@@ -79,8 +81,9 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         rflux.sender = '-'
 
         #Klems full basis sampling and the window faces +Y
-        recCtrlPar = rflux.ControlParameters(hemiType='kf',hemiUpDirection='+Z')
-        rflux.receiverFile = rflux.defaultSkyGround(r'temp\rfluxSky.rad',skyType='r')
+        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r',
+                                                    groundFileFormat=r'temp/grd%03d.hdr',
+                                                    skyFileFormat=r'temp/sky%03d.hdr')
 
         rflux.outputDataFormat = 'fc'
         rflux.verbose = True
@@ -89,10 +92,11 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         rflux.viewInfoFile = r'temp/viewSouthDimensions.txt'
         rflux.viewRaysFile = r'temp/viewSouthRays.txt'
         rflux.radFiles = ['room.mat','room.rad','glazing.rad']
-        rflux.outputFilenameFormat = r'temp/%03d.hdr'
+        # rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
         rflux.samplingRaysCount = 3
         rflux.execute()
+
 
 
     #Step4a: Create the sky vector.
@@ -101,13 +105,13 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
     # Step s: Creating the sky matrix
     if phasesToCalculate['s']:
         if calculationType == 'annual':
-            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp\test.wea')
+            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp/test.wea')
             weaFile.execute()
 
             gendayParam = GendaymtxParameters()
             gendayParam.skyDensity = 1
 
-            genday = Gendaymtx(weaFile=r'temp\test.wea', outputName=r'temp\day.smx')
+            genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
             genday.gendaymtxParameters = gendayParam
             genday.execute()
 
@@ -132,12 +136,12 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
 
     #Step5: Generate results
     dct = Dctimestep()
-    dct.daylightCoeffSpec= r'temp/%03d.hdr'
+    dct.daylightCoeffSpec= r'temp/sky%03d.hdr'
     dct.skyVectorFile = skyVector
     dct.outputFileName = hdrResultsFileName or  r'temp/results.hdr'
     dct.execute()
 
-    return 'temp/results.txt'
+    return 'temp/results.hdr'
 
 phases={'dc':False,'s':True}
 tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
@@ -149,7 +153,7 @@ epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
             'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
             'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
 
-timeStamps = [(11,11,idx) for idx in range(8,18)]
+timeStamps = [(11,11,idx) for idx in range(11,18)]
 for idx,timeStamp in enumerate(timeStamps):
     resultsFile= runDc(calculationType='single',
                        phasesToCalculate=phases, epwFile=epwFiles[1],

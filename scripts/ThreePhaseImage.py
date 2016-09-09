@@ -24,6 +24,9 @@ import os
 
 os.chdir(r'../tests/room')
 
+if not os.path.exists('temp'):
+    os.mkdir('temp')
+
 
 def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
               calculationType='annual',epwFile=None,tmatrixFile=None,
