@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 Date: 08/24/2016
 By: Sarith Subramaniam (@sariths)
@@ -22,8 +21,6 @@ import os
 
 os.chdir(r'../tests/room')
 
-if not os.path.exists('temp'):
-    os.mkdir('temp')
 
 def runDc(phasesToCalculate={'dc':True, 's':True},
           calculationType='annual', epwFile=None,
@@ -81,9 +78,8 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         rflux.sender = '-'
 
         #Klems full basis sampling and the window faces +Y
-        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r',
-                                                    groundFileFormat=r'temp/grd%03d.hdr',
-                                                    skyFileFormat=r'temp/sky%03d.hdr')
+        recCtrlPar = rflux.ControlParameters(hemiType='kf',hemiUpDirection='+Z')
+        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r2')
 
         rflux.outputDataFormat = 'fc'
         rflux.verbose = True
@@ -92,11 +88,11 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         rflux.viewInfoFile = r'temp/viewSouthDimensions.txt'
         rflux.viewRaysFile = r'temp/viewSouthRays.txt'
         rflux.radFiles = ['room.mat','room.rad','glazing.rad']
-        # rflux.outputFilenameFormat = r'temp/%03d.hdr'
+        rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
         rflux.samplingRaysCount = 3
+        print(rflux.toRadString())
         rflux.execute()
-
 
 
     #Step4a: Create the sky vector.
@@ -126,7 +122,7 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
             genskv = Genskyvec()
             genskv.inputSkyFile = r'temp/sky.rad'
             genskv.outputFile = r'temp/sky.vec'
-            genskv.skySubdivision =1
+            genskv.skySubdivision =2
             genskv.execute()
             skyVector = r'temp/sky.vec'
     else:
@@ -136,12 +132,12 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
 
     #Step5: Generate results
     dct = Dctimestep()
-    dct.daylightCoeffSpec= r'temp/sky%03d.hdr'
+    dct.daylightCoeffSpec= r'temp/%03d.hdr'
     dct.skyVectorFile = skyVector
     dct.outputFileName = hdrResultsFileName or  r'temp/results.hdr'
     dct.execute()
 
-    return 'temp/results.hdr'
+    return 'temp/results.txt'
 
 phases={'dc':False,'s':True}
 tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
@@ -153,9 +149,10 @@ epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
             'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
             'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
 
-timeStamps = [(11,11,idx) for idx in range(11,18)]
+timeStamps = [(11,11,idx) for idx in range(8,18)]
 for idx,timeStamp in enumerate(timeStamps):
+
     resultsFile= runDc(calculationType='single',
                        phasesToCalculate=phases, epwFile=epwFiles[1],
                        hdrResultsFileName=r'temp/%shrs.hdr'%timeStamp[-1],
-                       timeStamp=timeStamp)
+timeStamp=timeStamp)
