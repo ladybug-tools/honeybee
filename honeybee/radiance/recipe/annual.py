@@ -66,13 +66,13 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
         # set RfluxmtxParameters as default radiance parameter for annual analysis
         self.__radianceParameters = RfluxmtxParameters()
-        self.__radianceParameters.I = True
+        self.__radianceParameters.irradianceCalc = True
 
         # @sarith do we want to set these values as default?
-        self.__radianceParameters.aa = 0.1
-        self.__radianceParameters.ad = 4096
-        self.__radianceParameters.ab = 6
-        self.__radianceParameters.lw = 0.001
+        self.__radianceParameters.ambientAccuracy = 0.1
+        self.__radianceParameters.ambientDivisions = 4096
+        self.__radianceParameters.ambientBounces = 6
+        self.__radianceParameters.limitWeight = 0.001
 
         self.__batchFile = None
         self.resultsFile = []

@@ -88,10 +88,10 @@ class Rtrace(RadianceCommand):
         # the input origin and direction interpreted instead as measurement point
         # and orientation.
         if self.__simType in (0, 1):
-            self.radianceParameters.I = True
+            self.radianceParameters.irradianceCalc = True
         else:
             # luminance
-            self.radianceParameters.I = False
+            self.radianceParameters.irradianceCalc = False
 
     @property
     def radianceParameters(self):

@@ -30,17 +30,17 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
     if phasesToCalculate['dc']:
         # Step1: Create the view matrix.
         rfluxPara = RfluxmtxParameters()
-        rfluxPara.aa = 0.1
-        rfluxPara.ab = 10
+        rfluxPara.ambientAccuracy = 0.1
+        rfluxPara.ambientBounces = 10
         #using this for a quicker run
-        rfluxPara.ab = 5
+        rfluxPara.ambientBounces = 5
 
-        rfluxPara.ad = 65536
+        rfluxPara.ambientDivisions = 65536
         # using this for a quicker run
-        rfluxPara.ad = 2000
+        rfluxPara.ambientDivisions = 2000
 
-        rfluxPara.lw = 1E-5
-        rfluxPara.lw = 1E-2
+        rfluxPara.limitWeight = 1E-5
+        rfluxPara.limitWeight = 1E-2
 
 
 
@@ -91,7 +91,7 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
         rflux.samplingRaysCount = 3
-        print(rflux.toRadString())
+
         rflux.execute()
 
 
@@ -139,7 +139,7 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
 
     return 'temp/results.txt'
 
-phases={'dc':False,'s':True}
+phases={'dc':True,'s':True}
 tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
 epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
