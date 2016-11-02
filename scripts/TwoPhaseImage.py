@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 Date: 08/24/2016
 By: Sarith Subramaniam (@sariths)
@@ -20,7 +19,7 @@ import os
 
 
 
-os.chdir(r'..\tests\room')
+os.chdir(r'../tests/room')
 
 
 def runDc(phasesToCalculate={'dc':True, 's':True},
@@ -31,17 +30,17 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
     if phasesToCalculate['dc']:
         # Step1: Create the view matrix.
         rfluxPara = RfluxmtxParameters()
-        rfluxPara.aa = 0.1
-        rfluxPara.ab = 10
+        rfluxPara.ambientAccuracy = 0.1
+        rfluxPara.ambientBounces = 10
         #using this for a quicker run
-        rfluxPara.ab = 5
+        rfluxPara.ambientBounces = 5
 
-        rfluxPara.ad = 65536
+        rfluxPara.ambientDivisions = 65536
         # using this for a quicker run
-        rfluxPara.ad = 2000
+        rfluxPara.ambientDivisions = 2000
 
-        rfluxPara.lw = 1E-5
-        rfluxPara.lw = 1E-2
+        rfluxPara.limitWeight = 1E-5
+        rfluxPara.limitWeight = 1E-2
 
 
 
@@ -80,7 +79,7 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
 
         #Klems full basis sampling and the window faces +Y
         recCtrlPar = rflux.ControlParameters(hemiType='kf',hemiUpDirection='+Z')
-        rflux.receiverFile = rflux.defaultSkyGround(r'temp\rfluxSky.rad',skyType='r')
+        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r2')
 
         rflux.outputDataFormat = 'fc'
         rflux.verbose = True
@@ -92,6 +91,7 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
         rflux.samplingRaysCount = 3
+
         rflux.execute()
 
 
@@ -101,13 +101,13 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
     # Step s: Creating the sky matrix
     if phasesToCalculate['s']:
         if calculationType == 'annual':
-            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp\test.wea')
+            weaFile = Epw2wea(epwFile=epwFile or 'test.epw', outputWeaFile=r'temp/test.wea')
             weaFile.execute()
 
             gendayParam = GendaymtxParameters()
             gendayParam.skyDensity = 1
 
-            genday = Gendaymtx(weaFile=r'temp\test.wea', outputName=r'temp\day.smx')
+            genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
             genday.gendaymtxParameters = gendayParam
             genday.execute()
 
@@ -122,7 +122,7 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
             genskv = Genskyvec()
             genskv.inputSkyFile = r'temp/sky.rad'
             genskv.outputFile = r'temp/sky.vec'
-            genskv.skySubdivision =1
+            genskv.skySubdivision =2
             genskv.execute()
             skyVector = r'temp/sky.vec'
     else:
@@ -139,7 +139,7 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
 
     return 'temp/results.txt'
 
-phases={'dc':False,'s':True}
+phases={'dc':True,'s':True}
 tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
 epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
@@ -151,7 +151,8 @@ epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
 
 timeStamps = [(11,11,idx) for idx in range(8,18)]
 for idx,timeStamp in enumerate(timeStamps):
+
     resultsFile= runDc(calculationType='single',
                        phasesToCalculate=phases, epwFile=epwFiles[1],
                        hdrResultsFileName=r'temp/%shrs.hdr'%timeStamp[-1],
-                       timeStamp=timeStamp)
+timeStamp=timeStamp)

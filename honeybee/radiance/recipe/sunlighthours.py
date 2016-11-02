@@ -66,11 +66,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         self.timestep = timestep
 
         self.__radianceParameters = RcontribParameters()
-        self.__radianceParameters.I = True
-        self.__radianceParameters.ab = 0
-        self.__radianceParameters.dc = 1
-        self.__radianceParameters.dt = 0
-        self.__radianceParameters.dj = 0
+        self.__radianceParameters.irradianceCalc = True
+        self.__radianceParameters.ambientBounces = 0
+        self.__radianceParameters.directCertainty = 1
+        self.__radianceParameters.directThreshold = 0
+        self.__radianceParameters.directJitter = 0
 
         self.__batchFile = None
         self.resultsFile = []

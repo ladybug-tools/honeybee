@@ -21,6 +21,9 @@ import os
 os.chdir(r'../tests/room')
 # Step1: Create annual daylight vectors through epw2wea and gendaymtx.
 
+if not os.path.exists('temp'):
+    os.mkdir('temp')
+
 def run2Phase(calculationType='annual'):
     if calculationType == 'annual':
         weaFile = Epw2wea(epwFile='test.epw', outputWeaFile=r'temp/test.wea')
@@ -48,11 +51,12 @@ def run2Phase(calculationType='annual'):
     #
     # Step2: Generate daylight coefficients using rfluxmtx.
     rfluxPara = RfluxmtxParameters()
-    rfluxPara.I = True
-    rfluxPara.aa = 0.1
-    rfluxPara.ad = 4096
-    rfluxPara.ab = 12
-    rfluxPara.lw = 0.0000001
+    rfluxPara.irradianceCalc = False
+    rfluxPara.ambientAccuracy = 0.1
+    rfluxPara.ambientDivisions = 4096
+    rfluxPara.ambientBounces = 12
+    rfluxPara.limitWeight = 0.0000001
+    rfluxPara.quality = 0
     rflux = Rfluxmtx()
     rflux.sender = '-'
     skyFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r4')
@@ -69,6 +73,7 @@ def run2Phase(calculationType='annual'):
     mtx1 = Rmtxop(matrixFiles=(os.path.abspath(r'temp/dayCoeff.dc'),
                                os.path.abspath(skyVector)),
                   outputFile=r'temp/illuminance.tmp')
+
     mtx1.execute()
 
 
@@ -89,4 +94,4 @@ def run2Phase(calculationType='annual'):
 
 #Change the calculationType to 'annual' to run an annual calculation. Any other
 # input will result in a point in type calcualtion using genskyvec.
-run2Phase(calculationType='single')
+run2Phase(calculationType='annual')

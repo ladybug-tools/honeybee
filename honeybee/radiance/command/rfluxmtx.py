@@ -134,7 +134,8 @@ class Rfluxmtx(RadianceCommand):
                                                 outputFileSpec)
 
     @classmethod
-    def defaultSkyGround(cls, fileName, skyType=None):
+    def defaultSkyGround(cls, fileName, skyType=None, skyFileFormat=None,
+                         groundFileFormat=None):
         """
 
         Args:
@@ -154,11 +155,14 @@ class Rfluxmtx(RadianceCommand):
             fileName: Passes back the same fileName that was provided as input.
         """
 
-        skyParam = Rfluxmtx.ControlParameters(hemiType=skyType or 'r')
-        groundParam = Rfluxmtx.ControlParameters(hemiType='u')
+        skyParam = Rfluxmtx.ControlParameters(hemiType=skyType or 'r',
+                                              outputFile=skyFileFormat)
+
+        groundParam = Rfluxmtx.ControlParameters(hemiType='u',
+                                                 outputFile=groundFileFormat)
+
         groundString = Rfluxmtx.addControlParameters(Rfluxmtx.groundString,
-                                                     {
-                                                         'ground_glow': groundParam})
+                                                     {'ground_glow': groundParam})
         skyString = Rfluxmtx.addControlParameters(Rfluxmtx.skyString,
                                                   {'sky_glow': skyParam})
 

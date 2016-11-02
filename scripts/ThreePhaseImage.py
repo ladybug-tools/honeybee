@@ -22,27 +22,30 @@ import os
 
 
 
-os.chdir(r'../tests/room')
+os.chdir(r'tests/room')
+
+if not os.path.exists('temp'):
+    os.mkdir('temp')
 
 
 def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
               calculationType='annual',epwFile=None,tmatrixFile=None,
-              hdrResultsFileName=None,numProcessors=1):
+              hdrResultsFileName=None,numProcessors=1,timeStamp=None):
 
 
     if phasesToCalculate['v']:
         # Step1: Create the view matrix.
         rfluxPara = RfluxmtxParameters()
-        rfluxPara.aa = 0.1
-        rfluxPara.ab = 10
+        rfluxPara.ambientAccuracy = 0.1
+        rfluxPara.ambientBounces = 10
         #using this for a quicker run
-        rfluxPara.ab = 5
+        rfluxPara.ambientBounces = 5
 
-        rfluxPara.ad = 65536
+        rfluxPara.ambientDivisions = 65536
         # using this for a quicker run
         # rfluxPara.ad = 1000
 
-        rfluxPara.lw = 1E-5
+        rfluxPara.limitWeight = 1E-5
         # rfluxPara.lw = 1E-2
 
 
@@ -94,14 +97,13 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
                                                         {'Exterior_Window':recCtrlPar})
         rflux.outputDataFormat = 'fc'
         rflux.verbose = True
-        rflux.numProcessors = 8
         rflux.rfluxmtxParameters = rfluxPara
         rflux.viewInfoFile = r'temp/viewSouthDimensions.txt'
         rflux.viewRaysFile = r'temp/viewSouthRays.txt'
         rflux.radFiles = ['room.mat','room.rad','glazing.rad']
         rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
-        rflux.samplingRaysCount = 3
+        # rflux.samplingRaysCount = 3
         rflux.numProcessors = numProcessors
         rflux.execute()
 
@@ -115,12 +117,13 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
     if phasesToCalculate['d']:
         #Step3: Create D matrix.
         rfluxPara = RfluxmtxParameters()
-        rfluxPara.aa = 0.1
-        rfluxPara.ad = 1024
-        rfluxPara.ab = 2
-        rfluxPara.lw = 0.0000001
+        rfluxPara.ambientAccuracy = 0.1
+        rfluxPara.ambientDivisions = 1024
+        rfluxPara.ambientBounces = 2
+        rfluxPara.limitWeight = 0.0000001
 
         rflux2 = Rfluxmtx()
+        rflux2.numProcessors = numProcessors
         rflux2.samplingRaysCount = 1000
         rflux2.sender = 'glazingI.rad_m'
         skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r4')
@@ -155,7 +158,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         else:
             genskPar = GenskyParameters()
             gensk = Gensky()
-            gensk.monthDayHour = (11,11,11)
+            gensk.monthDayHour = timeStamp or (11,11,11)
             gensk.outputFile = 'temp/sky.rad'
             gensk.execute()
 
@@ -183,7 +186,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
 
 if __name__ == '__main__':
-    phases = {'v': True, 't': True, 'd': False, 's': False}
+    phases = {'v': True, 't': True, 'd': True, 's': False}
     tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
     epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
@@ -192,11 +195,18 @@ if __name__ == '__main__':
                 'epws/USA_NC_Charlotte-Douglas.Intl.AP.723140_TMY3.epw',
                 'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
                 'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
-    for idx, matrix in enumerate(tmatrices):
-        resultsFile = run3phase(calculationType='single', tmatrixFile=matrix,
+
+    timeStamps = [(11, 11, idx) for idx in range(8, 18)]
+
+
+    for idx, timeStamp in enumerate(timeStamps):
+        if idx:
+            phases = {'v': False, 't': True, 'd': False, 's': True}
+
+        resultsFile = run3phase(calculationType='single', tmatrixFile=tmatrices[0],
                                phasesToCalculate=phases, epwFile=epwFiles[1],
                                hdrResultsFileName=r'temp/results%s.hdr' % idx,
-                                numProcessors=40)
+                                numProcessors=32,timeStamp=timeStamp)
 
         # with open(resultsFile) as results:
         #     for lines in results:

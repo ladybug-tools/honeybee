@@ -24,6 +24,8 @@ import os
 
 os.chdir(r'../tests/room')
 
+if not os.path.exists('temp'):
+    os.mkdir('temp')
 
 def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
               calculationType='annual',epwFile=None,tmatrixFile=None):
@@ -32,11 +34,11 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
     if phasesToCalculate['v']:
         # Step1: Create the view matrix.
         rfluxPara = RfluxmtxParameters()
-        rfluxPara.I = True
-        rfluxPara.aa = 0.1
-        rfluxPara.ab = 10
-        rfluxPara.ad = 65536
-        rfluxPara.lw = 1E-5
+        rfluxPara.irradianceCalc = True
+        rfluxPara.ambientAccuracy = 0.1
+        rfluxPara.ambientBounces = 10
+        rfluxPara.ambientDivisions = 65536
+        rfluxPara.limitWeight = 1E-5
 
         #step 1.1 Invert glazing surface with xform so that it faces inwards
         xfrPara = XformParameters()
@@ -71,10 +73,10 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
     if phasesToCalculate['d']:
         #Step3: Create D matrix.
         rfluxPara = RfluxmtxParameters()
-        rfluxPara.aa = 0.1
-        rfluxPara.ad = 1024
-        rfluxPara.ab = 2
-        rfluxPara.lw = 0.0000001
+        rfluxPara.ambientAccuracy = 0.1
+        rfluxPara.ambientDivisions = 1024
+        rfluxPara.ambientBounces = 2
+        rfluxPara.limitWeight = 0.0000001
 
         rflux2 = Rfluxmtx()
         rflux2.samplingRaysCount = 1000
