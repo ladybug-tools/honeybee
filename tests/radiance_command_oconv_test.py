@@ -29,9 +29,13 @@ class OconvTestCase(unittest.TestCase):
     def test_default_values(self):
         """Test the command runs correctly."""
         self.outputFile = self.oconv.execute()
-        self.assertEqual(self.outputFile.normpath, 'tests\\room\\testrun\\room.oct')
+        self.assertEqual(self.outputFile.normpath, 'tests/room/testrun/room.oct')
         # more tests here
 
 if __name__ == '__main__':
     # You can run the test module from the root folder by running runtestunits.py
+
+    #Update: Nov 3 2016, We need to be one level up if running this script as __main__
+    os.chdir(os.pardir)
+
     unittest.main()
