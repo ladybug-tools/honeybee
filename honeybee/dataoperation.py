@@ -20,6 +20,7 @@ def flattenTupleList(inputList):
         else:
             yield el
 
+
 def unflatten(guide, falttenedInput):
     """Unflatten a falttened generator.
 
@@ -36,3 +37,96 @@ def unflatten(guide, falttenedInput):
     """
     return tuple(unflatten(subList, falttenedInput) if isinstance(subList, list)
                  else next(falttenedInput) for subList in guide)
+
+
+# Match list of points and vectors for Radiance grid-based analysis
+def matchPointsAndVectors(ptsT, vecT):
+    """Convert a Dynamo list fo data to list.
+
+    Args:
+        ptsT: List of lists of test points.
+        vecT: List of lists of vectors.
+
+    Returns:
+        pts: Nested list of points
+        vectors: Nested list of vectors
+    """
+    pts = range(len(ptsT))
+    vec = range(len(ptsT))
+
+    for i, p in enumerate(ptsT):
+        try:
+            v = vecT[i]
+        except:
+            v = []
+
+        tempPts, tempVectors = __matchData(
+            list(flatten(p)), list(flatten(v))
+        )
+
+        if len(tempPts) > 0:
+            pts[i] = tempPts
+            vec[i] = tempVectors
+        else:
+            # empty branch
+            pts.remove(i)
+            vec.remove(i)
+
+    return pts, vec
+
+
+# TODO: move this method to list operation library
+def __matchData(guide, follower, noneValue=(0, 0, 1)):
+    """Match data between two lists.
+
+    Args:
+        guide: Long list.
+        follower: Short list.
+        noneValue: Place holder for default value if shortlist is an empty lists.
+    """
+    tempPts = range(len(guide))
+    tempVectors = range(len(guide))
+
+    for c, dp in enumerate(guide):
+        if dp is not None:
+            tempPts[c] = dp
+            # match vector in vector list
+            try:
+                # check if there is a vector with the same index
+                dv = follower[c]
+            except IndexError:
+                try:
+                    # try to get the last item provided (longest list match)
+                    dv = follower[-1]
+                except IndexError:
+                    # use default value
+                    dv = noneValue
+            finally:
+                if dv is None:
+                    # use default value
+                    dv = noneValue
+
+                tempVectors[c] = dv
+        else:
+            # empty list
+            tempPts.remove(c)
+            tempVectors(c)
+
+    return tempPts, tempVectors
+
+
+def flatten(inputList):
+    """Return a flattened genertor from an input list.
+
+    Usage:
+
+        inputList = [['a'], ['b', 'c', 'd'], [['e']], ['f']]
+        list(flatten(inputList))
+        >> ['a', 'b', 'c', 'd', 'e', 'f']
+    """
+    for el in inputList:
+        if isinstance(el, collections.Iterable) and not isinstance(el, basestring):
+            for sub in flatten(el):
+                yield sub
+        else:
+            yield el
