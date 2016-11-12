@@ -248,6 +248,10 @@ class RadianceParameters(object):
 
         return " ".join(_defaultParameters + _additionalParameters)
 
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
+
     def __repr__(self):
         """Return radiance string."""
         return self.toRadString()

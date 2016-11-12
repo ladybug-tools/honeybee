@@ -104,9 +104,10 @@ class Room(HBZone):
 
         z = float(height) / self.height
 
-        for v in vValues:
-            for u in uValues:
-                yield self.getLocation(u, v, z)
+        return tuple(self.getLocation(u, v, z)
+                     for v in vValues
+                     for u in uValues
+                     )
 
     def getLocation(self, u=0.5, v=0.5, z=0.5):
         """Get location as a point based on u, v, z.

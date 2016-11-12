@@ -76,6 +76,10 @@ class RadianceMaterial(object):
         """
         raise NotImplementedError
 
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
+
     def __repr__(self):
         """Return material definition."""
         return self.toRadString()
