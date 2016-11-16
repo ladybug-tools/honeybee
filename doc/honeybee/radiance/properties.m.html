@@ -994,6 +994,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.properties.RadianceProperties.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.properties.RadianceProperties.ToString">ToString</a></li>
   </ul>
 
         </li>
@@ -1091,6 +1092,10 @@ class RadianceProperties(object):
     def isMaterialSetByUser(self):
         """Check if material is set by user."""
         return self.__isMaterialSetByUser
+
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
 
     def __repr__(self):
         """Represnt Radiance properties."""
@@ -1196,6 +1201,10 @@ if __name__ == "__main__":
         """Check if material is set by user."""
         return self.__isMaterialSetByUser
 
+    def ToString(self):
+        """Overwrite .NET ToString method."""
+        return self.__repr__()
+
     def __repr__(self):
         """Represnt Radiance properties."""
         if not self.radianceMaterial:
@@ -1263,6 +1272,28 @@ if __name__ == "__main__":
     <pre><code>def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
     """Create radiance properties for surface."""
     self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.properties.RadianceProperties.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.properties.RadianceProperties.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.properties.RadianceProperties.ToString" class="source">
+    <pre><code>def ToString(self):
+    """Overwrite .NET ToString method."""
+    return self.__repr__()
 </code></pre>
   </div>
 </div>

@@ -993,6 +993,7 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.normspace">normspace</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.checkInputFiles">checkInputFiles</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.execute">execute</a></li>
@@ -1055,7 +1056,7 @@ class Gendaymtx(RadianceCommand):
 
         # create gendaymtx
         dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                         gendaymtxParameters=dmtxpar)
+                         gendaymtxParameters=gmtx)
 
         # run gendaymtx
         dmtx.execute()
@@ -1086,10 +1087,6 @@ class Gendaymtx(RadianceCommand):
         >
     """
 
-    weaFile = RadiancePath('weaFile', descriptiveName='weather file path',
-                           relativePath=None, checkExists=False,
-                           extension='.wea')
-
     def __init__(self, outputName=None, weaFile=None, gendaymtxParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
@@ -1111,18 +1108,21 @@ class Gendaymtx(RadianceCommand):
         assert hasattr(self.gendaymtxParameters, "isRadianceParameters"), \
             "input gendaymtxParameters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        # generate the name from self.weaFile
-        outputFile = os.path.splitext(str(self.weaFile))[0] + ".mtx" \
+    @property
+    def outputFile(self):
+        """Output file address."""
+        return os.path.splitext(str(self.weaFile))[0] + ".mtx" \
             if self.outputName is None and self.weaFile.normpath is not None \
             else self.outputName
 
+    def toRadString(self, relativePath=False):
+        """Return full command as a string."""
+        # generate the name from self.weaFile
         radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, 'gendaymtx'),
+            self.normspace(os.path.join(self.radbinPath, 'gendaymtx')),
             self.gendaymtxParameters.toRadString(),
-            self.weaFile,
-            outputFile
+            self.normspace(self.weaFile),
+            self.normspace(self.outputFile)
         )
 
         # make sure input files are set by user
@@ -1132,7 +1132,7 @@ class Gendaymtx(RadianceCommand):
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return (self.weaFile,)
+        return self.weaFile,
 </code></pre>
   </div>
 
@@ -1168,7 +1168,7 @@ gmtx.onlyDirect = True
 
 # create gendaymtx
 dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                 gendaymtxParameters=dmtxpar)
+                 gendaymtxParameters=gmtx)
 
 # run gendaymtx
 dmtx.execute()
@@ -1227,7 +1227,7 @@ dmtx.execute()
 
         # create gendaymtx
         dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                         gendaymtxParameters=dmtxpar)
+                         gendaymtxParameters=gmtx)
 
         # run gendaymtx
         dmtx.execute()
@@ -1258,10 +1258,6 @@ dmtx.execute()
         >
     """
 
-    weaFile = RadiancePath('weaFile', descriptiveName='weather file path',
-                           relativePath=None, checkExists=False,
-                           extension='.wea')
-
     def __init__(self, outputName=None, weaFile=None, gendaymtxParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
@@ -1283,18 +1279,21 @@ dmtx.execute()
         assert hasattr(self.gendaymtxParameters, "isRadianceParameters"), \
             "input gendaymtxParameters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        # generate the name from self.weaFile
-        outputFile = os.path.splitext(str(self.weaFile))[0] + ".mtx" \
+    @property
+    def outputFile(self):
+        """Output file address."""
+        return os.path.splitext(str(self.weaFile))[0] + ".mtx" \
             if self.outputName is None and self.weaFile.normpath is not None \
             else self.outputName
 
+    def toRadString(self, relativePath=False):
+        """Return full command as a string."""
+        # generate the name from self.weaFile
         radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, 'gendaymtx'),
+            self.normspace(os.path.join(self.radbinPath, 'gendaymtx')),
             self.gendaymtxParameters.toRadString(),
-            self.weaFile,
-            outputFile
+            self.normspace(self.weaFile),
+            self.normspace(self.outputFile)
         )
 
         # make sure input files are set by user
@@ -1304,7 +1303,7 @@ dmtx.execute()
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return (self.weaFile,)
+        return self.weaFile,
 </code></pre>
   </div>
 </div>
@@ -1317,17 +1316,36 @@ dmtx.execute()
           <li>honeybee.radiance.command._commandbase.RadianceCommand</li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Class variables</h3>
-            <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.weaFile" class="name">var <span class="ident">weaFile</span></p>
+          <h3>Static methods</h3>
             
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.normspace">
+    <p>def <span class="ident">normspace</span>(</p><p>path)</p>
+    </div>
+    
 
-            
+    
   
+    <div class="desc"><p>Norm white spaces in path.</p>
+<p>Return path with quotation marks if there is whitespace in path.</p></div>
   <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.normspace', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.normspace" class="source">
+    <pre><code>@staticmethod
+def normspace(path):
+    """Norm white spaces in path.
+    Return path with quotation marks if there is whitespace in path.
+    """
+    if str(path).strip().find(" ") != -1:
+        return "{0}{1}{0}".format(config.wrapper, path)
+    else:
+        return path
+</code></pre>
+  </div>
 </div>
 
-            </div>
+  </div>
+  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.gendaymtxParameters" class="name">var <span class="ident">gendaymtxParameters</span></p>
@@ -1351,7 +1369,40 @@ dmtx.execute()
 
             </div>
             <div class="item">
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.outputFile" class="name">var <span class="ident">outputFile</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Output file address.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.outputName" class="name">var <span class="ident">outputName</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.perlExePath" class="name">var <span class="ident">perlExePath</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get and set path to radiance binaries.</p>
+<p>If you set a new value the value will be changed globally.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.pythonExePath" class="name">var <span class="ident">pythonExePath</span></p>
             
 
             
@@ -1458,7 +1509,7 @@ later during the process.</p>
         # RadiancePath
         if isinstance(f, str):
             continue
-        assert hasattr(f, 'normpath'), _msg
+        assert hasattr(f, 'normpath'), "%s is missing!\n" % f + _msg
         assert f.normpath is not None, _msg
 </code></pre>
   </div>
@@ -1489,6 +1540,9 @@ later during the process.</p>
     # check if the files exist on the computer
     self.__checkFiles()
     self.onExecution()
+    if os.name == 'nt':
+        os.environ['PATH'] += ';%s' % self.normspace(config.radbinPath)
+        os.environ['RAYPATH'] += ';%s' % self.normspace(config.radlibPath)
     p = subprocess.Popen(self.toRadString(), shell=True,
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in p.stdout.readlines():
@@ -1584,14 +1638,11 @@ running the command.</p></div>
     <pre><code>def toRadString(self, relativePath=False):
     """Return full command as a string."""
     # generate the name from self.weaFile
-    outputFile = os.path.splitext(str(self.weaFile))[0] + ".mtx" \
-        if self.outputName is None and self.weaFile.normpath is not None \
-        else self.outputName
     radString = "%s %s %s > %s" % (
-        os.path.join(self.radbinPath, 'gendaymtx'),
+        self.normspace(os.path.join(self.radbinPath, 'gendaymtx')),
         self.gendaymtxParameters.toRadString(),
-        self.weaFile,
-        outputFile
+        self.normspace(self.weaFile),
+        self.normspace(self.outputFile)
     )
     # make sure input files are set by user
     self.checkInputFiles(radString)

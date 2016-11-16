@@ -996,6 +996,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.material.custom.CustomMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.custom.CustomMaterial.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.material.custom.CustomMaterial.modifyValues">modifyValues</a></li>
     <li class="mono"><a href="#honeybee.radiance.material.custom.CustomMaterial.toRadString">toRadString</a></li>
   </ul>
@@ -1255,6 +1256,28 @@ class CustomMaterial(RadianceMaterial):
     """ A dictionary of material data. key is line number and item is the list of values
           {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
     """
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.custom.CustomMaterial.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.custom.CustomMaterial.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.custom.CustomMaterial.ToString" class="source">
+    <pre><code>def ToString(self):
+    """Overwrite .NET ToString."""
+    return self.__repr__()
 </code></pre>
   </div>
 </div>

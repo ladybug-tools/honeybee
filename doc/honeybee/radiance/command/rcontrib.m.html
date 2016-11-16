@@ -993,6 +993,7 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.normspace">normspace</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles">checkInputFiles</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.execute">execute</a></li>
@@ -1100,16 +1101,16 @@ class Rcontrib(RadianceCommand):
             else RcontribParameters()
 
         assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
-            "input gendaymtxParameters is not a valid parameters type."
+            "input rcontribParamters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         radString = "%s %s %s < %s > %s" % (
-            os.path.join(self.radbinPath, "rcontrib"),
+            self.normspace(os.path.join(self.radbinPath, "rcontrib")),
             self.rcontribParameters.toRadString(),
-            self.octreeFile.toRadString(),
-            self.pointsFile.toRadString(),
-            self.outputFile.toRadString()
+            self.normspace(self.octreeFile.toRadString()),
+            self.normspace(self.pointsFile.toRadString()),
+            self.normspace(self.outputFile.toRadString())
         )
 
         # make sure input files are set by user
@@ -1235,16 +1236,16 @@ rcontrib.execute()
             else RcontribParameters()
 
         assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
-            "input gendaymtxParameters is not a valid parameters type."
+            "input rcontribParamters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         radString = "%s %s %s < %s > %s" % (
-            os.path.join(self.radbinPath, "rcontrib"),
+            self.normspace(os.path.join(self.radbinPath, "rcontrib")),
             self.rcontribParameters.toRadString(),
-            self.octreeFile.toRadString(),
-            self.pointsFile.toRadString(),
-            self.outputFile.toRadString()
+            self.normspace(self.octreeFile.toRadString()),
+            self.normspace(self.pointsFile.toRadString()),
+            self.normspace(self.outputFile.toRadString())
         )
 
         # make sure input files are set by user
@@ -1298,6 +1299,36 @@ rcontrib.execute()
 </div>
 
             </div>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.normspace">
+    <p>def <span class="ident">normspace</span>(</p><p>path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Norm white spaces in path.</p>
+<p>Return path with quotation marks if there is whitespace in path.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.normspace', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.normspace" class="source">
+    <pre><code>@staticmethod
+def normspace(path):
+    """Norm white spaces in path.
+    Return path with quotation marks if there is whitespace in path.
+    """
+    if str(path).strip().find(" ") != -1:
+        return "{0}{1}{0}".format(config.wrapper, path)
+    else:
+        return path
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="honeybee.radiance.command.rcontrib.Rcontrib.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
@@ -1333,12 +1364,34 @@ rcontrib.execute()
 
             </div>
             <div class="item">
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.perlExePath" class="name">var <span class="ident">perlExePath</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get and set path to radiance binaries.</p>
+<p>If you set a new value the value will be changed globally.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.command.rcontrib.Rcontrib.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
             
 
             
   
     <div class="desc"><p>Full path to input points file.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.pythonExePath" class="name">var <span class="ident">pythonExePath</span></p>
+            
+
+            
+  
   <div class="source_cont">
 </div>
 
@@ -1453,7 +1506,7 @@ later during the process.</p>
         # RadiancePath
         if isinstance(f, str):
             continue
-        assert hasattr(f, 'normpath'), _msg
+        assert hasattr(f, 'normpath'), "%s is missing!\n" % f + _msg
         assert f.normpath is not None, _msg
 </code></pre>
   </div>
@@ -1484,6 +1537,9 @@ later during the process.</p>
     # check if the files exist on the computer
     self.__checkFiles()
     self.onExecution()
+    if os.name == 'nt':
+        os.environ['PATH'] += ';%s' % self.normspace(config.radbinPath)
+        os.environ['RAYPATH'] += ';%s' % self.normspace(config.radlibPath)
     p = subprocess.Popen(self.toRadString(), shell=True,
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in p.stdout.readlines():
@@ -1579,11 +1635,11 @@ running the command.</p></div>
     <pre><code>def toRadString(self, relativePath=False):
     """Return full command as a string."""
     radString = "%s %s %s < %s > %s" % (
-        os.path.join(self.radbinPath, "rcontrib"),
+        self.normspace(os.path.join(self.radbinPath, "rcontrib")),
         self.rcontribParameters.toRadString(),
-        self.octreeFile.toRadString(),
-        self.pointsFile.toRadString(),
-        self.outputFile.toRadString()
+        self.normspace(self.octreeFile.toRadString()),
+        self.normspace(self.pointsFile.toRadString()),
+        self.normspace(self.outputFile.toRadString())
     )
     # make sure input files are set by user
     self.checkInputFiles(radString)

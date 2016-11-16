@@ -991,8 +991,11 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.config.epPath">epPath</a></li>
     <li class="mono"><a href="#honeybee.config.f">f</a></li>
+    <li class="mono"><a href="#honeybee.config.perlExePath">perlExePath</a></li>
+    <li class="mono"><a href="#honeybee.config.pythonExePath">pythonExePath</a></li>
     <li class="mono"><a href="#honeybee.config.radbinPath">radbinPath</a></li>
     <li class="mono"><a href="#honeybee.config.radlibPath">radlibPath</a></li>
+    <li class="mono"><a href="#honeybee.config.wrapper">wrapper</a></li>
   </ul>
 
     </li>
@@ -1056,7 +1059,8 @@ class Folders(object):
     """Honeybee folders.
 
     Attributes:
-        mute: Set to True if you don't want the class to print the report (Default: False)
+        mute: Set to True if you don't want the class to print the report
+            (Default: False)
 
     Usage:
 
@@ -1068,6 +1072,7 @@ class Folders(object):
     __userPath = {
         "pathToRadianceFolder": r" ",
         "pathToEnergyPlusFolder": r" ",
+        "pathToOpenStudioFolder": r'',
     }
 
     def __init__(self, mute=False):
@@ -1078,17 +1083,36 @@ class Folders(object):
             Default path to EnergyPlus folders.
         """
         self.mute = mute
+        # check user inputs
+        for key, value in self.__userPath.iteritems():
+            if value.strip() is not "":
+                if not os.path.isdir(value):
+                    self.__userPath[key] = r""
+
         if self.__userPath["pathToRadianceFolder"].strip() is not "":
             self.radbinPath = os.path.join(
                 self.__userPath["pathToRadianceFolder"], "bin")
+        elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+            self.radbinPath = os.path.join(openStudioPath,
+                                           r"share\openStudio\Radiance\bin")
+            self.perlExePath = openStudioPath
         else:
-            if sys.platform == 'win32' or sys.platform == 'cli':
+            if os.name == 'nt':
                 __radbin, __radFile = self.__which("rad.exe")
                 self.radbinPath = __radbin
+                __perlpath, __perlFile = self.__which("perl.exe")
+                self.perlExePath = __perlFile
 
             # TODO: @sariths we need a method to search and find the executables
-            elif sys.platform == 'linux2':
-                raise NotImplementedError
+            elif os.name == 'posix':
+                __radbin, __radFile = self.__which("mkillum")
+                self.radbinPath = __radbin
+
+                __perlpath, __perlFile = self.__which("perl")
+                self.perlExePath = __perlpath
+                # raise NotImplementedError
+
 
     def __which(self, program):
         """Find executable programs.
@@ -1103,9 +1127,12 @@ class Folders(object):
         def is_exe(fpath):
             # Make sure it's not part of Dive installation as DIVA doesn't
             # follow the standard structure folder for Daysim and Radiance
-            if fpath.upper().find("DIVA"):
+            # Note: (@mostaphaRoudsari, DIVA check is only required for...
+            #...Windows.
+            if fpath.upper().find("DIVA") and os.name == 'nt':
                 return False
             # Return true if file exists and is executable
+
             return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
         # check for the file in all path in environment
@@ -1125,19 +1152,21 @@ class Folders(object):
 
     @radbinPath.setter
     def radbinPath(self, path):
-        if path is None and (sys.platform == 'win32' or sys.platform == 'cli'):
+        if path is None and os.name == 'nt':
             # finding by path failed. Let's check typical folders on Windows
             if os.path.isfile(r"c:\radiance\bin\rad.exe"):
                 path = r"c:\radiance\bin"
             elif os.path.isfile(r"c:\program files\radiance\bin\rad.exe"):
                 path = r"c:\program files\radiance\bin"
-        elif path is None and sys.platform == 'linux2':
-            raise NotImplementedError
+        elif path is None and os.name == 'linux2':
+            pass
+            # raise NotImplementedError
 
         if not path or not os.path.isdir(path):
             if not self.mute:
-                print "Warning: Radiance bin folder not found on your machine.\n" + \
-                    "Use currentSettings.radbinPath = 'pathToFolder' to set it up manually."
+                    print "Warning: Radiance bin folder not found on your " \
+                        "machine.\nUse currentSettings.radbinPath = " \
+                        "'pathToFolder' to set it up manually."
             self.__radbin = None
             self.radlibPath = None
         else:
@@ -1158,12 +1187,45 @@ class Folders(object):
             self.__radlib = os.path.normpath(path)
             if not self.mute:
                 if not os.path.isdir(self.__radlib):
-                    print "Warning: Radiance lib folder not found on your machine.\n" + \
-                        "Use currentSettings.radlibPath = 'pathToFolder' to set it up manually."
+                    print "Warning: Radiance lib folder not found on your " \
+                        "machine.\nUse currentSettings.radlibPath = " \
+                        "'pathToFolder' to set it up manually."
                 else:
                     print "Path to radiance libraries is set to: %s" % self.__radlib
         else:
             self.__radlib = None
+
+    @property
+    def perlExePath(self):
+        """Path to the folder containing Perl binary files."""
+        return self.__perlExePath
+
+    @perlExePath.setter
+    def perlExePath(self, openStudioPath):
+        """Return path to perl exe file.
+
+        Search for the distributed perl binary files with open studio and
+        assign them to a variable after path based testing.
+        """
+        # Search for folders with 'perl' in their names. Hopefully only one exists!
+        self.__perlExePath = None
+
+        if os.name == 'posix':
+            return
+
+        if not openStudioPath:
+            return
+
+        possiblePerLocations = [pathVal for pathVal in os.listdir(openStudioPath)
+                                if 'perl' in pathVal.lower()]
+
+        possiblePerLocations = [os.path.join(openStudioPath, pathVal, 'perl\\bin')
+                                for pathVal in possiblePerLocations]
+
+        for binDir in possiblePerLocations:
+            if 'perl.exe' in os.listdir(binDir):
+                self.__perlExePath = os.path.join(binDir, 'perl.exe')
+                break
 
     @property
     def epFolder(self):
@@ -1171,6 +1233,9 @@ class Folders(object):
         raise NotImplementedError
         # return self.__eplus
 
+    @property
+    def pythonExePath(self):
+        return sys.executable
 f = Folders(mute=True)
 radlibPath = f.radlibPath
 """Path to Radinace libraries folder."""
@@ -1181,6 +1246,17 @@ radbinPath = f.radbinPath
 # NotImplemented yet
 epPath = None
 """Path to EnergyPlus folder."""
+
+perlExePath = f.perlExePath
+"""Path to the perl executable needed for some othe Radiance Scripts."""
+
+
+pythonExePath = f.pythonExePath
+"""Path to python executable needed for some Radiance scripts from the PyRad
+library"""
+
+wrapper = "\"" if os.name == 'nt' else "'"
+"""Wrapper for path with white space."""
 </code></pre>
   </div>
 
@@ -1206,6 +1282,25 @@ epPath = None
 
       </div>
       <div class="item">
+      <p id="honeybee.config.perlExePath" class="name">var <span class="ident">perlExePath</span></p>
+      
+  
+    <div class="desc"><p>Path to the perl executable needed for some othe Radiance Scripts.</p></div>
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="honeybee.config.pythonExePath" class="name">var <span class="ident">pythonExePath</span></p>
+      
+  
+    <div class="desc"><p>Path to python executable needed for some Radiance scripts from the PyRad
+library</p></div>
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
       <p id="honeybee.config.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
       
   
@@ -1223,6 +1318,15 @@ epPath = None
 </div>
 
       </div>
+      <div class="item">
+      <p id="honeybee.config.wrapper" class="name">var <span class="ident">wrapper</span></p>
+      
+  
+    <div class="desc"><p>Wrapper for path with white space.</p></div>
+  <div class="source_cont">
+</div>
+
+      </div>
 
 
     <h2 class="section-title" id="header-classes">Classes</h2>
@@ -1233,7 +1337,8 @@ epPath = None
   
     <div class="desc"><p>Honeybee folders.</p>
 <p>Attributes:
-    mute: Set to True if you don't want the class to print the report (Default: False)</p>
+    mute: Set to True if you don't want the class to print the report
+        (Default: False)</p>
 <p>Usage:</p>
 <pre><code>folders = Folders(mute=False)
 print folders.radbinPath
@@ -1245,7 +1350,8 @@ print folders.radbinPath
     """Honeybee folders.
 
     Attributes:
-        mute: Set to True if you don't want the class to print the report (Default: False)
+        mute: Set to True if you don't want the class to print the report
+            (Default: False)
 
     Usage:
 
@@ -1257,6 +1363,7 @@ print folders.radbinPath
     __userPath = {
         "pathToRadianceFolder": r" ",
         "pathToEnergyPlusFolder": r" ",
+        "pathToOpenStudioFolder": r'',
     }
 
     def __init__(self, mute=False):
@@ -1267,17 +1374,36 @@ print folders.radbinPath
             Default path to EnergyPlus folders.
         """
         self.mute = mute
+        # check user inputs
+        for key, value in self.__userPath.iteritems():
+            if value.strip() is not "":
+                if not os.path.isdir(value):
+                    self.__userPath[key] = r""
+
         if self.__userPath["pathToRadianceFolder"].strip() is not "":
             self.radbinPath = os.path.join(
                 self.__userPath["pathToRadianceFolder"], "bin")
+        elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+            self.radbinPath = os.path.join(openStudioPath,
+                                           r"share\openStudio\Radiance\bin")
+            self.perlExePath = openStudioPath
         else:
-            if sys.platform == 'win32' or sys.platform == 'cli':
+            if os.name == 'nt':
                 __radbin, __radFile = self.__which("rad.exe")
                 self.radbinPath = __radbin
+                __perlpath, __perlFile = self.__which("perl.exe")
+                self.perlExePath = __perlFile
 
             # TODO: @sariths we need a method to search and find the executables
-            elif sys.platform == 'linux2':
-                raise NotImplementedError
+            elif os.name == 'posix':
+                __radbin, __radFile = self.__which("mkillum")
+                self.radbinPath = __radbin
+
+                __perlpath, __perlFile = self.__which("perl")
+                self.perlExePath = __perlpath
+                # raise NotImplementedError
+
 
     def __which(self, program):
         """Find executable programs.
@@ -1292,9 +1418,12 @@ print folders.radbinPath
         def is_exe(fpath):
             # Make sure it's not part of Dive installation as DIVA doesn't
             # follow the standard structure folder for Daysim and Radiance
-            if fpath.upper().find("DIVA"):
+            # Note: (@mostaphaRoudsari, DIVA check is only required for...
+            #...Windows.
+            if fpath.upper().find("DIVA") and os.name == 'nt':
                 return False
             # Return true if file exists and is executable
+
             return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
         # check for the file in all path in environment
@@ -1314,19 +1443,21 @@ print folders.radbinPath
 
     @radbinPath.setter
     def radbinPath(self, path):
-        if path is None and (sys.platform == 'win32' or sys.platform == 'cli'):
+        if path is None and os.name == 'nt':
             # finding by path failed. Let's check typical folders on Windows
             if os.path.isfile(r"c:\radiance\bin\rad.exe"):
                 path = r"c:\radiance\bin"
             elif os.path.isfile(r"c:\program files\radiance\bin\rad.exe"):
                 path = r"c:\program files\radiance\bin"
-        elif path is None and sys.platform == 'linux2':
-            raise NotImplementedError
+        elif path is None and os.name == 'linux2':
+            pass
+            # raise NotImplementedError
 
         if not path or not os.path.isdir(path):
             if not self.mute:
-                print "Warning: Radiance bin folder not found on your machine.\n" + \
-                    "Use currentSettings.radbinPath = 'pathToFolder' to set it up manually."
+                    print "Warning: Radiance bin folder not found on your " \
+                        "machine.\nUse currentSettings.radbinPath = " \
+                        "'pathToFolder' to set it up manually."
             self.__radbin = None
             self.radlibPath = None
         else:
@@ -1347,17 +1478,55 @@ print folders.radbinPath
             self.__radlib = os.path.normpath(path)
             if not self.mute:
                 if not os.path.isdir(self.__radlib):
-                    print "Warning: Radiance lib folder not found on your machine.\n" + \
-                        "Use currentSettings.radlibPath = 'pathToFolder' to set it up manually."
+                    print "Warning: Radiance lib folder not found on your " \
+                        "machine.\nUse currentSettings.radlibPath = " \
+                        "'pathToFolder' to set it up manually."
                 else:
                     print "Path to radiance libraries is set to: %s" % self.__radlib
         else:
             self.__radlib = None
 
     @property
+    def perlExePath(self):
+        """Path to the folder containing Perl binary files."""
+        return self.__perlExePath
+
+    @perlExePath.setter
+    def perlExePath(self, openStudioPath):
+        """Return path to perl exe file.
+
+        Search for the distributed perl binary files with open studio and
+        assign them to a variable after path based testing.
+        """
+        # Search for folders with 'perl' in their names. Hopefully only one exists!
+        self.__perlExePath = None
+
+        if os.name == 'posix':
+            return
+
+        if not openStudioPath:
+            return
+
+        possiblePerLocations = [pathVal for pathVal in os.listdir(openStudioPath)
+                                if 'perl' in pathVal.lower()]
+
+        possiblePerLocations = [os.path.join(openStudioPath, pathVal, 'perl\\bin')
+                                for pathVal in possiblePerLocations]
+
+        for binDir in possiblePerLocations:
+            if 'perl.exe' in os.listdir(binDir):
+                self.__perlExePath = os.path.join(binDir, 'perl.exe')
+                break
+
+    @property
     def epFolder(self):
         """Path to EnergyPlus folder."""
         raise NotImplementedError
+        # return self.__eplus
+
+    @property
+    def pythonExePath(self):
+        return sys.executable
 </code></pre>
   </div>
 </div>
@@ -1383,6 +1552,27 @@ print folders.radbinPath
             </div>
             <div class="item">
             <p id="honeybee.config.Folders.mute" class="name">var <span class="ident">mute</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.config.Folders.perlExePath" class="name">var <span class="ident">perlExePath</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Path to the folder containing Perl binary files.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.config.Folders.pythonExePath" class="name">var <span class="ident">pythonExePath</span></p>
             
 
             
@@ -1437,16 +1627,31 @@ print folders.radbinPath
         Default path to EnergyPlus folders.
     """
     self.mute = mute
+    # check user inputs
+    for key, value in self.__userPath.iteritems():
+        if value.strip() is not "":
+            if not os.path.isdir(value):
+                self.__userPath[key] = r""
     if self.__userPath["pathToRadianceFolder"].strip() is not "":
         self.radbinPath = os.path.join(
             self.__userPath["pathToRadianceFolder"], "bin")
+    elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+        openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+        self.radbinPath = os.path.join(openStudioPath,
+                                       r"share\openStudio\Radiance\bin")
+        self.perlExePath = openStudioPath
     else:
-        if sys.platform == 'win32' or sys.platform == 'cli':
+        if os.name == 'nt':
             __radbin, __radFile = self.__which("rad.exe")
             self.radbinPath = __radbin
+            __perlpath, __perlFile = self.__which("perl.exe")
+            self.perlExePath = __perlFile
         # TODO: @sariths we need a method to search and find the executables
-        elif sys.platform == 'linux2':
-            raise NotImplementedError
+        elif os.name == 'posix':
+            __radbin, __radFile = self.__which("mkillum")
+            self.radbinPath = __radbin
+            __perlpath, __perlFile = self.__which("perl")
+            self.perlExePath = __perlpath
 </code></pre>
   </div>
 </div>

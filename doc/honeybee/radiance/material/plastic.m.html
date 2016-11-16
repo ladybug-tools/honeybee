@@ -996,6 +996,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue">bySingleReflectValue</a></li>
     <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.toRadString">toRadString</a></li>
   </ul>
@@ -1516,6 +1517,28 @@ realistic (Default: 0).</p></div>
     """Roughness is specified as the rms slope of surface facets. A value of 0
        corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
        surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.ToString" class="source">
+    <pre><code>def ToString(self):
+    """Overwrite .NET ToString."""
+    return self.__repr__()
 </code></pre>
   </div>
 </div>

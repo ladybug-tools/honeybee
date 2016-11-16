@@ -994,6 +994,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addAdditionalParameterByNameAndValue">addAdditionalParameterByNameAndValue</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addDefaultParameterName">addDefaultParameterName</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceBoolFlag">addRadianceBoolFlag</a></li>
@@ -1001,10 +1002,13 @@ table {
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadiancePath">addRadiancePath</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceTuple">addRadianceTuple</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceValue">addRadianceValue</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.freeze">freeze</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.importParameterValuesFromString">importParameterValuesFromString</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.removeParameter">removeParameter</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.removeParameters">removeParameters</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.tryToUnfreeze">tryToUnfreeze</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.unfreeze">unfreeze</a></li>
   </ul>
 
         </li>
@@ -1028,10 +1032,12 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.parameters.gendaymtx" class="source">
     <pre><code>"""Radiance raytracing Parameters."""
-from _advancedparametersbase import AdvancedRadianceParameters
+from ._advancedparametersbase import AdvancedRadianceParameters
+from ._frozen import frozen
 
 
 # TODO: Add a check to make sure user can't set both -s and -d to True.
+@frozen
 class GendaymtxParameters(AdvancedRadianceParameters):
     """Radiance Parameters for grid based analysis.
 
@@ -1080,7 +1086,6 @@ class GendaymtxParameters(AdvancedRadianceParameters):
         > -v -d -r 0 -m 1 -of
     """
 
-
     def __init__(self, verboseReport=True, removeHeader=False, onlyDirect=False,
                  onlySky=False, rotation=0, skyDensity=1, groundColor=None,
                  skyColor=None, outputFormat=None, outputType=None):
@@ -1092,42 +1097,67 @@ class GendaymtxParameters(AdvancedRadianceParameters):
 
         # add parameters
         self.addRadianceBoolFlag('v', 'verbose reporting',
-                                 defaultValue=verboseReport,
                                  attributeName='verboseReport')
+        self.verboseReport = verboseReport
+        """[-v] A boolean to indicate verbose reporting (Default: True)"""
 
         self.addRadianceBoolFlag('h', 'disable header',
-                                 defaultValue=removeHeader,
                                  attributeName='removeHeader')
+        self.removeHeader = removeHeader
+        """[-h] A boolean to disable header (Default: False)"""
 
-        self.addRadianceBoolFlag('d', 'sun mtx only', defaultValue=onlyDirect,
+        self.addRadianceBoolFlag('d', 'sun mtx only',
                                  attributeName='onlyDirect')
+        self.onlyDirect = onlyDirect
+        """[-d] A boolean to only generate sun-only matrix (Default: False)"""
 
-        self.addRadianceBoolFlag('s', 'sky mtx only', defaultValue=onlySky,
-                                 attributeName='onlySky')
+        self.addRadianceBoolFlag('s', 'sky mtx only', attributeName='onlySky')
+        self.onlySky = onlySky
+        """[-s] A boolean to only generate sky matrix with no direct sun
+           (Default: False)"""
 
-        self.addRadianceNumber('r', 'zenith rotation', defaultValue=rotation,
-                               numType=float, attributeName='rotation')
+        self.addRadianceNumber('r', 'zenith rotation', numType=float,
+                               attributeName='rotation')
+        self.rotation = rotation
+        """[-r deg] A floating number in degrees that indicates zenith
+           rotation (Default: 0)"""
 
-        self.addRadianceNumber('m', 'sky patches', defaultValue=skyDensity,
-                               numType=int, checkPositive=True,
+        self.addRadianceNumber('m', 'sky patches', numType=int,
+                               checkPositive=True,
                                attributeName='skyDensity')
+        self.skyDensity = skyDensity
+        """ [-m N] An integer to indicate number of sky patches. Default
+            value of 1 generates 146 sky pacthes."""
 
-        self.addRadianceTuple('g', 'ground color', defaultValue=groundColor,
-                                     validRange=(0, 1), tupleSize=3, numType=float,
-                                     attributeName='groundColor')
+        self.addRadianceTuple('g', 'ground color', validRange=(0, 1),
+                              tupleSize=3, numType=float,
+                              attributeName='groundColor')
+        self.groundColor = groundColor
+        """ [-g r g b] A tuple of r, g, b values to indicate ground
+            color (Default:  0.2 0.2 0.2)"""
 
-        self.addRadianceTuple('c', 'sky color', defaultValue=skyColor,
-                                     validRange=(0, 1), tupleSize=3, numType=float,
-                                     attributeName='skyColor')
+        self.addRadianceTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
+                              numType=float, attributeName='skyColor')
+        self.skyColor = skyColor
+        """ [-c r g b] A tuple of r, g, b values to indicate sky color
+            (Default: 0.960, 1.004, 1.118)"""
 
         self.addRadianceValue('o', 'output format',
-                              defaultValue=_outputFormat[outputFormat],
                               acceptedInputs=('f', 'd'), isJoined=True,
                               attributeName='outputFormat')
+        self.outputFormat = _outputFormat[outputFormat]
+        """ [-o{f|d}] An integer to indicate binary output format.
+            0 is double output [d] and 1 is binary float numbers (f). If you're
+            running Radiance on Windows do not use this option. (Default: None)
+        """
 
-        self.addRadianceValue('O', 'radiation type', defaultValue=outputType,
+        self.addRadianceValue('O', 'radiation type',
                               acceptedInputs=(0, 1, '0', '1'), isJoined=True,
                               attributeName='outputType')
+        self.outputType = outputType
+        """ [-O{0|1}] An integr specifies output type. 0 generates the
+            values for visible radiance whereas 1 indicates the results should
+            be total solar radiance."""
 
         assert self.onlyDirect * self.onlySky == 0, \
             "You can only set one of the onlyDirect and onlySky to True."
@@ -1237,7 +1267,6 @@ print gmtx.toRadString()
         > -v -d -r 0 -m 1 -of
     """
 
-
     def __init__(self, verboseReport=True, removeHeader=False, onlyDirect=False,
                  onlySky=False, rotation=0, skyDensity=1, groundColor=None,
                  skyColor=None, outputFormat=None, outputType=None):
@@ -1249,42 +1278,67 @@ print gmtx.toRadString()
 
         # add parameters
         self.addRadianceBoolFlag('v', 'verbose reporting',
-                                 defaultValue=verboseReport,
                                  attributeName='verboseReport')
+        self.verboseReport = verboseReport
+        """[-v] A boolean to indicate verbose reporting (Default: True)"""
 
         self.addRadianceBoolFlag('h', 'disable header',
-                                 defaultValue=removeHeader,
                                  attributeName='removeHeader')
+        self.removeHeader = removeHeader
+        """[-h] A boolean to disable header (Default: False)"""
 
-        self.addRadianceBoolFlag('d', 'sun mtx only', defaultValue=onlyDirect,
+        self.addRadianceBoolFlag('d', 'sun mtx only',
                                  attributeName='onlyDirect')
+        self.onlyDirect = onlyDirect
+        """[-d] A boolean to only generate sun-only matrix (Default: False)"""
 
-        self.addRadianceBoolFlag('s', 'sky mtx only', defaultValue=onlySky,
-                                 attributeName='onlySky')
+        self.addRadianceBoolFlag('s', 'sky mtx only', attributeName='onlySky')
+        self.onlySky = onlySky
+        """[-s] A boolean to only generate sky matrix with no direct sun
+           (Default: False)"""
 
-        self.addRadianceNumber('r', 'zenith rotation', defaultValue=rotation,
-                               numType=float, attributeName='rotation')
+        self.addRadianceNumber('r', 'zenith rotation', numType=float,
+                               attributeName='rotation')
+        self.rotation = rotation
+        """[-r deg] A floating number in degrees that indicates zenith
+           rotation (Default: 0)"""
 
-        self.addRadianceNumber('m', 'sky patches', defaultValue=skyDensity,
-                               numType=int, checkPositive=True,
+        self.addRadianceNumber('m', 'sky patches', numType=int,
+                               checkPositive=True,
                                attributeName='skyDensity')
+        self.skyDensity = skyDensity
+        """ [-m N] An integer to indicate number of sky patches. Default
+            value of 1 generates 146 sky pacthes."""
 
-        self.addRadianceTuple('g', 'ground color', defaultValue=groundColor,
-                                     validRange=(0, 1), tupleSize=3, numType=float,
-                                     attributeName='groundColor')
+        self.addRadianceTuple('g', 'ground color', validRange=(0, 1),
+                              tupleSize=3, numType=float,
+                              attributeName='groundColor')
+        self.groundColor = groundColor
+        """ [-g r g b] A tuple of r, g, b values to indicate ground
+            color (Default:  0.2 0.2 0.2)"""
 
-        self.addRadianceTuple('c', 'sky color', defaultValue=skyColor,
-                                     validRange=(0, 1), tupleSize=3, numType=float,
-                                     attributeName='skyColor')
+        self.addRadianceTuple('c', 'sky color', validRange=(0, 1), tupleSize=3,
+                              numType=float, attributeName='skyColor')
+        self.skyColor = skyColor
+        """ [-c r g b] A tuple of r, g, b values to indicate sky color
+            (Default: 0.960, 1.004, 1.118)"""
 
         self.addRadianceValue('o', 'output format',
-                              defaultValue=_outputFormat[outputFormat],
                               acceptedInputs=('f', 'd'), isJoined=True,
                               attributeName='outputFormat')
+        self.outputFormat = _outputFormat[outputFormat]
+        """ [-o{f|d}] An integer to indicate binary output format.
+            0 is double output [d] and 1 is binary float numbers (f). If you're
+            running Radiance on Windows do not use this option. (Default: None)
+        """
 
-        self.addRadianceValue('O', 'radiation type', defaultValue=outputType,
+        self.addRadianceValue('O', 'radiation type',
                               acceptedInputs=(0, 1, '0', '1'), isJoined=True,
                               attributeName='outputType')
+        self.outputType = outputType
+        """ [-O{0|1}] An integr specifies output type. 0 generates the
+            values for visible radiance whereas 1 indicates the results should
+            be total solar radiance."""
 
         assert self.onlyDirect * self.onlySky == 0, \
             "You can only set one of the onlyDirect and onlySky to True."
@@ -1325,12 +1379,73 @@ print gmtx.toRadString()
 
             </div>
             <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.groundColor" class="name">var <span class="ident">groundColor</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-g r g b] A tuple of r, g, b values to indicate ground
+color (Default:  0.2 0.2 0.2)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.isRadianceParameters" class="name">var <span class="ident">isRadianceParameters</span></p>
             
 
             
   
     <div class="desc"><p>Return True to indicate this object is a RadianceParameters.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.onlyDirect" class="name">var <span class="ident">onlyDirect</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-d] A boolean to only generate sun-only matrix (Default: False)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.onlySky" class="name">var <span class="ident">onlySky</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-s] A boolean to only generate sky matrix with no direct sun
+(Default: False)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.outputFormat" class="name">var <span class="ident">outputFormat</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-o{f|d}] An integer to indicate binary output format.
+0 is double output [d] and 1 is binary float numbers (f). If you're
+running Radiance on Windows do not use this option. (Default: None)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.outputType" class="name">var <span class="ident">outputType</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-O{0|1}] An integr specifies output type. 0 generates the
+values for visible radiance whereas 1 indicates the results should
+be total solar radiance.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1347,6 +1462,53 @@ print gmtx.toRadString()
 
             </div>
             <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.removeHeader" class="name">var <span class="ident">removeHeader</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-h] A boolean to disable header (Default: False)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.rotation" class="name">var <span class="ident">rotation</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-r deg] A floating number in degrees that indicates zenith
+rotation (Default: 0)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.skyColor" class="name">var <span class="ident">skyColor</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-c r g b] A tuple of r, g, b values to indicate sky color
+(Default: 0.960, 1.004, 1.118)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.skyDensity" class="name">var <span class="ident">skyDensity</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-m N] An integer to indicate number of sky patches. Default
+value of 1 generates 146 sky pacthes.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.values" class="name">var <span class="ident">values</span></p>
             
 
@@ -1357,11 +1519,22 @@ print gmtx.toRadString()
 </div>
 
             </div>
+            <div class="item">
+            <p id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.verboseReport" class="name">var <span class="ident">verboseReport</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-v] A boolean to indicate verbose reporting (Default: True)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, verboseReport=True, removeHeader=False, onlyDirect=False, onlySky=False, rotation=0, skyDensity=1, groundColor=None, skyColor=None, outputFormat=None, outputType=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
@@ -1371,44 +1544,32 @@ print gmtx.toRadString()
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.__init__" class="source">
-    <pre><code>def __init__(self, verboseReport=True, removeHeader=False, onlyDirect=False,
-             onlySky=False, rotation=0, skyDensity=1, groundColor=None,
-             skyColor=None, outputFormat=None, outputType=None):
-    """Init paramters."""
-    AdvancedRadianceParameters.__init__(self)
-    # convert user input to radiance output formats
-    _outputFormat = {0: 'f', 1: 'd', None: None}
-    # add parameters
-    self.addRadianceBoolFlag('v', 'verbose reporting',
-                             defaultValue=verboseReport,
-                             attributeName='verboseReport')
-    self.addRadianceBoolFlag('h', 'disable header',
-                             defaultValue=removeHeader,
-                             attributeName='removeHeader')
-    self.addRadianceBoolFlag('d', 'sun mtx only', defaultValue=onlyDirect,
-                             attributeName='onlyDirect')
-    self.addRadianceBoolFlag('s', 'sky mtx only', defaultValue=onlySky,
-                             attributeName='onlySky')
-    self.addRadianceNumber('r', 'zenith rotation', defaultValue=rotation,
-                           numType=float, attributeName='rotation')
-    self.addRadianceNumber('m', 'sky patches', defaultValue=skyDensity,
-                           numType=int, checkPositive=True,
-                           attributeName='skyDensity')
-    self.addRadianceTuple('g', 'ground color', defaultValue=groundColor,
-                                 validRange=(0, 1), tupleSize=3, numType=float,
-                                 attributeName='groundColor')
-    self.addRadianceTuple('c', 'sky color', defaultValue=skyColor,
-                                 validRange=(0, 1), tupleSize=3, numType=float,
-                                 attributeName='skyColor')
-    self.addRadianceValue('o', 'output format',
-                          defaultValue=_outputFormat[outputFormat],
-                          acceptedInputs=('f', 'd'), isJoined=True,
-                          attributeName='outputFormat')
-    self.addRadianceValue('O', 'radiation type', defaultValue=outputType,
-                          acceptedInputs=(0, 1, '0', '1'), isJoined=True,
-                          attributeName='outputType')
-    assert self.onlyDirect * self.onlySky == 0, \
-        "You can only set one of the onlyDirect and onlySky to True."
+    <pre><code>@wraps(func)
+def wrapper(self, *args, **kwargs):
+    func(self, *args, **kwargs)
+    self.__frozen = True  # set __frozen to True for the original class
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.ToString" class="source">
+    <pre><code>def ToString(self):
+    """Overwrite .NET ToString method."""
+    return self.__repr__()
 </code></pre>
   </div>
 </div>
@@ -1466,10 +1627,13 @@ print gmtx.toRadString()
             "'{0}' is already set as a parameter. Use 'self.{0}' to change the value".format(name)
         )
     try:
+        self.tryToUnfreeze()
         setattr(self, name, str(value))
         self.__additionalParameters.append(name)
     except TypeError:
         raise ValueError("Value should be a string or convertable to a string.")
+    else:
+        self.freeze()
 </code></pre>
   </div>
 </div>
@@ -1516,7 +1680,7 @@ used otherwise.</p>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceBoolFlag">
-    <p>def <span class="ident">addRadianceBoolFlag</span>(</p><p>self, name, descriptiveName=None, defaultValue=None, isDualSign=False, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceBoolFlag</span>(</p><p>self, name, descriptiveName=None, isDualSign=False, attributeName=None)</p>
     </div>
     
 
@@ -1536,11 +1700,6 @@ used otherwise.</p>
     debugging and readability, it is strongly suggested that this input
     be specified for all instances.
 
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
-
 isDualSign: Set to True if the Boolean should return +/- value.
     (i.e. +I/-I) (Default: False)
 
@@ -1551,8 +1710,8 @@ attributeName: Optional. A string the will be used as the attribute
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceBoolFlag', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceBoolFlag" class="source">
-    <pre><code>def addRadianceBoolFlag(self, name, descriptiveName=None, defaultValue=None,
-                        isDualSign=False, attributeName=None):
+    <pre><code>def addRadianceBoolFlag(self, name, descriptiveName=None, isDualSign=False,
+                        attributeName=None):
     """Add a boolean value to parameters.
     Attributes:
         name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
@@ -1566,10 +1725,6 @@ attributeName: Optional. A string the will be used as the attribute
             Radiance. Although this is an optional input, for the purposes of
             debugging and readability, it is strongly suggested that this input
             be specified for all instances.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         isDualSign: Set to True if the Boolean should return +/- value.
             (i.e. +I/-I) (Default: False)
         attributeName: Optional. A string the will be used as the attribute
@@ -1577,13 +1732,11 @@ attributeName: Optional. A string the will be used as the attribute
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceBoolFlag(name, descriptiveName, defaultValue, isDualSign)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceBoolFlag(name, descriptiveName, None,
+                                         isDualSign),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1593,7 +1746,7 @@ attributeName: Optional. A string the will be used as the attribute
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceNumber">
-    <p>def <span class="ident">addRadianceNumber</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, numType=None, checkPositive=False, defaultValue=None, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceNumber</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, numType=None, checkPositive=False, attributeName=None)</p>
     </div>
     
 
@@ -1634,11 +1787,6 @@ numType: Optional. Acceptable inputs are float or int. If specified, the
     Also, if the number changes (for example from 4.212 to 4 due to int
     being specified as _type_), then a warning will be issued.
 
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
-
 attributeName: Optional. A string the will be used as the attribute
     name that will be added to parameters class. If None name will be
     used insted.
@@ -1648,7 +1796,7 @@ attributeName: Optional. A string the will be used as the attribute
   <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceNumber" class="source">
     <pre><code>def addRadianceNumber(self, name, descriptiveName=None, validRange=None,
                       acceptedInputs=None, numType=None, checkPositive=False,
-                      defaultValue=None, attributeName=None):
+                      attributeName=None):
     """Add a radiance number to parameters.
     Attributes:
         name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
@@ -1679,23 +1827,17 @@ attributeName: Optional. A string the will be used as the attribute
             __set__ method will ensure that the value is stored in that type.
             Also, if the number changes (for example from 4.212 to 4 due to int
             being specified as _type_), then a warning will be issued.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         attributeName: Optional. A string the will be used as the attribute
             name that will be added to parameters class. If None name will be
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceNumber(name, descriptiveName, validRange, acceptedInputs,
-                           numType, checkPositive, defaultValue)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceNumber(name, descriptiveName, validRange,
+                                       acceptedInputs, numType,
+                                       checkPositive),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1768,14 +1910,11 @@ attributeName: Optional. A string the will be used as the attribute
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadiancePath(name, descriptiveName, relativePath,
-                         checkExists, extension)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadiancePath(name, descriptiveName, relativePath,
+                                     checkExists, extension),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1785,7 +1924,7 @@ attributeName: Optional. A string the will be used as the attribute
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceTuple">
-    <p>def <span class="ident">addRadianceTuple</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None, defaultValue=None, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceTuple</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None, attributeName=None)</p>
     </div>
     
 
@@ -1817,15 +1956,11 @@ validRange: Optional. The valid range for several prominent radiance
     parameters with similar valid ranges. If _validRange is specified,
     a warning will be issued in case the provided input is not within
     that range.
+
 tupleSize: Optional. Specify the number of inputs that are expected.
 
 numType: Optional. Acceptable inputs are float or int. If specified, the
     __set__ method will ensure that the value is stored in that type.
-
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
 
 attributeName: Optional. A string the will be used as the attribute
     name that will be added to parameters class. If None name will be
@@ -1836,7 +1971,7 @@ attributeName: Optional. A string the will be used as the attribute
   <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceTuple" class="source">
     <pre><code>def addRadianceTuple(self, name, descriptiveName=None, validRange=None,
                      acceptedInputs=None, tupleSize=None, numType=None,
-                     defaultValue=None, attributeName=None):
+                     attributeName=None):
     """Add a radiance numeric tuple e.g (0.5,0.3,0.2).
     Attributes:
         name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
@@ -1864,23 +1999,16 @@ attributeName: Optional. A string the will be used as the attribute
         tupleSize: Optional. Specify the number of inputs that are expected.
         numType: Optional. Acceptable inputs are float or int. If specified, the
             __set__ method will ensure that the value is stored in that type.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         attributeName: Optional. A string the will be used as the attribute
             name that will be added to parameters class. If None name will be
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceTuple(name, descriptiveName, validRange, acceptedInputs,
-                          tupleSize, numType, defaultValue)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceTuple(name, descriptiveName, validRange,
+                                      acceptedInputs, tupleSize, numType),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1890,7 +2018,7 @@ attributeName: Optional. A string the will be used as the attribute
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceValue">
-    <p>def <span class="ident">addRadianceValue</span>(</p><p>self, name, descriptiveName=None, acceptedInputs=None, defaultValue=None, isJoined=False, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceValue</span>(</p><p>self, name, descriptiveName=None, acceptedInputs=None, isJoined=False, attributeName=None)</p>
     </div>
     
 
@@ -1917,11 +2045,6 @@ acceptedInputs:Optional. List of inputs that are permissible for a
     the user-specified input doesn't exist in _acceptedInputs then a
     value error will be raised.
 
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
-
 isJoined: Set to True if the Boolean should be returned as a joined
     output (i.e. -of, -od) (Default: False)
 
@@ -1933,7 +2056,7 @@ attributeName: Optional. A string the will be used as the attribute
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceValue', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.addRadianceValue" class="source">
     <pre><code>def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
-                     defaultValue=None, isJoined=False, attributeName=None):
+                     isJoined=False, attributeName=None):
     """
     Add a radiance string value.
     Attributes:
@@ -1954,10 +2077,6 @@ attributeName: Optional. A string the will be used as the attribute
             inputs are known it is recommended that this input be specified.If
             the user-specified input doesn't exist in _acceptedInputs then a
             value error will be raised.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         isJoined: Set to True if the Boolean should be returned as a joined
             output (i.e. -of, -od) (Default: False)
         attributeName: Optional. A string the will be used as the attribute
@@ -1965,14 +2084,31 @@ attributeName: Optional. A string the will be used as the attribute
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceValue(name, descriptiveName, acceptedInputs,
-                          defaultValue, isJoined)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceValue(name, descriptiveName, acceptedInputs,
+                                      None, isJoined),
+                        attributeName
+                        )
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.freeze">
+    <p>def <span class="ident">freeze</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.freeze', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.freeze" class="source">
+    <pre><code>def freeze(self):
+    self._frozen = True
 </code></pre>
   </div>
 </div>
@@ -2107,11 +2243,58 @@ attributeName: Optional. A string the will be used as the attribute
     ]
     _additionalParameters = [
         "-%s %s" % (key, getattr(self, key))
-        if getattr(self, key).strip() != ""
+        if str(getattr(self, key)).strip() != ""
         else "-%s" % key
         for key in self.additionalParameters
     ]
     return " ".join(_defaultParameters + _additionalParameters)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.tryToUnfreeze">
+    <p>def <span class="ident">tryToUnfreeze</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Try to unfreeze subclass to add a new attribute.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.tryToUnfreeze', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.tryToUnfreeze" class="source">
+    <pre><code>def tryToUnfreeze(self):
+    """Try to unfreeze subclass to add a new attribute."""
+    try:
+        self.unfreeze()
+    except AttributeError:
+        raise Exception(
+            "Sub-classes from RadianceParameters should be @frozen"
+        )
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.unfreeze">
+    <p>def <span class="ident">unfreeze</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.unfreeze', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.gendaymtx.GendaymtxParameters.unfreeze" class="source">
+    <pre><code>def unfreeze(self):
+    self._frozen = False
 </code></pre>
   </div>
 </div>
