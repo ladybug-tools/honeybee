@@ -59,6 +59,8 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             self, pointGroups, vectorGroups, hbObjects, subFolder
         )
 
+        assert epwFile.lower().endswith('.epw'), \
+            ValueError('{} is not a an EnergyPlus weather file.'.format(epwFile))
         self.epwFile = epwFile
 
         # TODO: @sarith sky density needs to have check for input values

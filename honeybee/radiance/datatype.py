@@ -453,10 +453,10 @@ class RadianceTuple(RadianceDefault):
                 raise ValueError(msg)
 
             if self._tupleSize:
-                assert len(finalValue) is self._tupleSize, \
+                assert len(finalValue) == self._tupleSize, \
                     "The number of inputs required for %s are %s. " \
                     "The provided input was %s" % \
-                    (self._nameString, self._tupleSize, value)
+                    (self._nameString, self._tupleSize, finalValue)
 
             if self._validRange:
                 minVal, maxVal = self._validRange

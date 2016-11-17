@@ -374,23 +374,24 @@ class LBHeader:
 
 
 # TODO: write classes for latitude, longitude, etc
-class Location:
+class Location(object):
     """Ladybug Location class."""
 
     def __init__(self, city='', country='', latitude='0.00',
-                 longitude='0.00', timeZone='0.00', elevation='0.00',
+                 longitude='0.00', timezone='0.00', elevation='0.00',
                  source='', stationId=''):
         """Create a Ladybug location."""
         self.city = str(city)
         self.country = str(country)
         self.latitude = float(latitude)
         self.longitude = float(longitude)
-        self.timeZone = float(timeZone)
+        self.timezone = float(timezone)
         self.elevation = float(elevation)
         self.source = str(source)
         self.stationId = str(stationId)
 
-    def createFromEPString(self, EPString):
+    @classmethod
+    def fromEPString(cls, EPString):
         """Create a Ladybug location from an EnergyPlus location string.
 
         Args:
@@ -403,17 +404,20 @@ class Location:
             print "LAT:%s, LON:%s"%(l.latitude, l.longitude)
         """
         try:
-            self.city, self.latitude, self.longitude, self.timeZone, \
-                self.elevation = re.findall(
+            city, latitude, longitude, timezone, elevation = \
+                re.findall(
                     r'\r*\n*([a-zA-Z0-9.:_-]*)[,|;]', EPString, re.DOTALL
                 )[1:]
-
-            self.latitude = float(self.latitude)
-            self.longitude = float(self.longitude)
-            self.timeZone = float(self.timeZone)
-            self.elevation = float(self.elevation)
         except Exception, e:
             raise Exception("Failed to import EP string! %s" % str(e))
+        else:
+            return cls(city=city, latitude=latitude, longitude=longitude,
+                       timezone=timezone, elevation=elevation)
+
+    @property
+    def isLocation(self):
+        """Return Ture for locations."""
+        return True
 
     def duplicate(self):
         """Duplicate location."""
@@ -426,7 +430,7 @@ class Location:
             self.city + ',\n' + \
             str(self.latitude) + ',      !Latitude\n' + \
             str(self.longitude) + ',     !Longitude\n' + \
-            str(self.timeZone) + ',     !Time Zone\n' + \
+            str(self.timezone) + ',     !Time Zone\n' + \
             str(self.elevation) + ';       !Elevation'
 
     def __repr__(self):
