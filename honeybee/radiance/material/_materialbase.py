@@ -15,8 +15,8 @@ class RadianceMaterial(object):
     """
 
     # list of Radiance material types
-    __types = ["plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
-               "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF"]
+    __types = ("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
+               "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF")
 
     def __init__(self, name, materialType, modifier="void"):
         """Create material base."""
@@ -31,6 +31,15 @@ class RadianceMaterial(object):
     def isRadianceMaterial(self):
         """Indicate that this object is a Radiance Material."""
         return True
+
+    @property
+    def isGlassMaterial(self):
+        """Indicate if this object has glass Material.
+
+        This property will be used to separate the glass surfaces in a separate
+        file than the opaque surfaces.
+        """
+        return False
 
     @property
     def name(self):

@@ -5,7 +5,7 @@ sunlighthours recipe and annual analysis recipe.
 """
 
 from abc import ABCMeta, abstractmethod
-from ...hbpointgroup import AnalysisPointGroup
+from ..analysisgrid import AnalysisGrid
 from ._recipebase import HBDaylightAnalysisRecipe
 
 import os
@@ -19,9 +19,9 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     sunlighthours recipe and annual analysis recipe.
 
     Attributes:
-        pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test points.
-            Each list of test points will be converted to a TestPointGroup. If testPts
-            is a single flattened list only one TestPointGroup will be created.
+        pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
+            test points. Each list of test points will be converted to a TestPointGroup.
+            If testPts is a single flattened list only one TestPointGroup will be created.
         vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
             of corresponding point in testPts. If the vector is not provided (0, 0, 1)
             will be assigned.
@@ -41,6 +41,11 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
         # create analysisi point groups
         self.createAnalysisPointGroups(pointGroups, vectorGroups)
+
+    @classmethod
+    def fromAnalysisPointGroups(pointGroups):
+        """Create the recipe from analysisGrid."""
+        pass
 
     @property
     def originalPoints(self):
@@ -75,7 +80,7 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     @property
     def points(self):
         """Return nested list of points."""
-        return [ap.points for ap in self.analysisPointsGroups]
+        return tuple(ap.points for ap in self.analysisPointsGroups)
 
     @property
     def numOfPointGroups(self):
@@ -90,7 +95,7 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     @property
     def vectors(self):
         """Nested list of vectors."""
-        return [ap.vectors for ap in self.analysisPointsGroups]
+        return tuple(ap.vectors for ap in self.analysisPointsGroups)
 
     @property
     def analysisPointsGroups(self):
@@ -130,7 +135,7 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
                 if not isinstance(vectors[0], Iterable) and not hasattr(vectors[0], 'X'):
                     vectors = [vectors]
 
-                self.__analysisPointGroups.append(AnalysisPointGroup(pts, vectors))
+                self.__analysisPointGroups.append(AnalysisGrid(pts, vectors))
 
     def flatten(self, inputList):
         """Return a flattened genertor from an input list.

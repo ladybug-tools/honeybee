@@ -79,7 +79,7 @@ class LoadGridBasedDLAnalysisResults(object):
         """Get results of the analysis as a list."""
         if not self.__isLoaded:
             self.__loadResults()
-
+            self.__isLoaded = True
         return self.__results
 
     def __loadResults(self):
@@ -122,7 +122,7 @@ class LoadGridBasedDLAnalysisResults(object):
         try:
             with open(resultFile, "r") as resFile:
                 for line in resFile:
-                    r, g, b = [float(v) for v in line.split('	')[:3]]
+                    r, g, b = tuple(float(v) for v in line.split('	')[:3])
                     yield 179 * (.265 * r + .67 * g + .065 * b)
         except Exception as e:
             "Failed to load the results from {}: {}".format(resultFile, e)
@@ -143,7 +143,7 @@ class LoadGridBasedDLAnalysisResults(object):
         try:
             with open(resultFile, "r") as resFile:
                 for line in resFile:
-                    r, g, b = [float(v) for v in line.split('	')[:3]]
+                    r, g, b = tuple(float(v) for v in line.split('	')[:3])
                     res = 17900 * (.265 * r + .67 * g + .065 * b) / 1000
                     res = 100 if res > 100 else res
                     yield res
