@@ -1016,6 +1016,15 @@ table {
 
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.datatype.RadianceReadOnly">RadianceReadOnly</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.datatype.RadianceReadOnly.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#honeybee.radiance.datatype.RadianceTuple">RadianceTuple</a></span>
         
           
@@ -1059,7 +1068,7 @@ import os
 from collections import Iterable
 
 __all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
-           'RadianceTuple', 'RadianceValue']
+           'RadianceTuple', 'RadianceValue', 'RadianceReadOnly']
 
 
 class RadianceDefault(object):
@@ -1122,7 +1131,6 @@ class RadianceDefault(object):
         self._acceptedInputs = acceptedInputs
         self._defaultValue = defaultValue
         self._isJoined = isJoined
-
         # check if the valid range is a 2-number tuple. Sort it if it isn't
         # sorted already.
         if validRange:
@@ -1138,6 +1146,11 @@ class RadianceDefault(object):
         self._nameString = "%s (%s)" % (name, descriptiveName) \
             if descriptiveName \
             else name
+
+    @property
+    def isRadianceDataType(self):
+        """Check if object is a RadinaceDataType."""
+        return True
 
     def __get__(self, instance, owner):
         """Return value.
@@ -1175,9 +1188,13 @@ class RadianceDefault(object):
                                      " following: %s. The provided value was %s"
                                      % (self._nameString,
                                         ",".join(map(str, inputs)), value))
+            if instance:
+                setattr(instance, self._name,
+                        RadianceDataType(self._name, value, self._isJoined))
 
-            setattr(instance, self._name,
-                    RadianceDataType(self._name, value, self._isJoined))
+    def __repr__(self):
+        """Value representation."""
+        return str(self._defaultValue)
 
 
 class RadianceValue(RadianceDefault):
@@ -1216,6 +1233,7 @@ class RadianceValue(RadianceDefault):
         o = RadianceValue('o', 'output format', defaultValue='f',
                           acceptedInputs=('f', 'd'))
     """
+
     __slots__ = ()
 
     def __init__(self, name, descriptiveName=None, acceptedInputs=None,
@@ -1276,7 +1294,7 @@ class RadianceBoolFlag(RadianceDefault):
             value = getattr(instance, self._name)
         except AttributeError:
             if self._defaultValue is not None:
-                value = RadianceBoolType(self._name, bool(self._defaultValue),
+                value = RadianceBoolType(self._name, self._defaultValue,
                                          self._isDualSign)
             else:
                 value = RadianceBoolType(self._name, None,
@@ -1293,8 +1311,9 @@ class RadianceBoolFlag(RadianceDefault):
                                      " following: %s. The provided value was %s"
                                      % (self._nameString,
                                         ",".join(map(str, inputs)), value))
-            setattr(instance, self._name, RadianceBoolType(self._name, bool(value),
-                    self._isDualSign))
+
+            setattr(instance, self._name,
+                    RadianceBoolType(self._name, bool(value), self._isDualSign))
 
 
 class RadianceNumber(RadianceDefault):
@@ -1350,6 +1369,7 @@ class RadianceNumber(RadianceDefault):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange, defaultValue)
+
         self._checkPositive = checkPositive
         self._type = int if numType is None else numType
 
@@ -1359,7 +1379,6 @@ class RadianceNumber(RadianceDefault):
         values.
         """
         if value is not None:
-            RadianceDefault.__set__(self, instance, value)
             varName = self._nameString
 
             if value is None:
@@ -1370,14 +1389,14 @@ class RadianceNumber(RadianceDefault):
                     if self._type:
                         finalValue = self._type(value)
                     else:
-                        if isinstance(value, str):
+                        if not isinstance(value, int):
                             finalValue = float(value)
                         else:
                             finalValue = value
                     if self._checkPositive:
                         msg = "The value for %s should be greater than 0." \
                               " The value specified was %s" % (varName, value)
-                        assert value >= 0, msg
+                        assert int(value) >= 0, msg
                 # Value error will be raised if the input was anything else
                 # other than a number.
                 except ValueError:
@@ -1388,6 +1407,10 @@ class RadianceNumber(RadianceDefault):
                     msg = "The type of input for %s should a float or int. " \
                           "%s was specified instead" % (varName, value)
                     raise TypeError(msg)
+                except AttributeError:
+                    msg = "The type of input for %s should a float or int. " \
+                          "%s was specified instead" % (varName, value)
+                    raise AttributeError(msg)
 
             # Raise a warning if the number got modified.
             if hash(finalValue) != hash(value) and self._type:
@@ -1451,27 +1474,31 @@ class RadianceTuple(RadianceDefault):
             toRadString string representation of the component.
     """
 
-    __slots__ = ('_tupleSize', '_type')
+    __slots__ = ('_tupleSize', '_type', '_testType')
 
     def __init__(self, name, descriptiveName=None, validRange=None,
                  acceptedInputs=None, tupleSize=None, numType=None,
-                 defaultValue=None):
+                 defaultValue=None, testType=True):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange, defaultValue)
         self._tupleSize = tupleSize
         self._type = numType
+        self._testType = testType
 
     def __set__(self, instance, value):
         """
-        Check for tuple size and valid range if specified. Parse from strings
-        if input is specified as a string instead of a number.
+        Check for tuple size and valid range if specified.
+
+        Parse from strings if input is specified as a string instead of a number.
         """
         if value is not None:
-            if self._type:
-                numType = self._type
-            else:
-                numType = float
+
+            if self._testType:
+                if self._type:
+                    numType = self._type
+                else:
+                    numType = float
 
             try:
                 finalValue = value.replace(',', ' ').split()
@@ -1479,7 +1506,8 @@ class RadianceTuple(RadianceDefault):
                 finalValue = value
 
             try:
-                finalValue = map(numType, finalValue)
+                if self._testType:
+                    finalValue = map(numType, finalValue)
             except TypeError:
                 msg = "The specified input for %s is %s. " \
                       "The value should be a list or a tuple." \
@@ -1509,6 +1537,10 @@ class RadianceTuple(RadianceDefault):
 
             setattr(instance, self._name,
                     RadianceDataType(self._name, tuple(finalValue)))
+
+    def __getitem__(self, i):
+        """Get item i from tuple."""
+        return self._defaultValue[i]
 
 
 class RadiancePath(RadianceDefault):
@@ -1618,6 +1650,12 @@ class RadianceDataType(object):
     def __ne__(self, other):
         return self._value != other
 
+    def __getitem__(self, i):
+        try:
+            return self._value[i]
+        except Exception as e:
+            raise Exception(e)
+
 
 class RadianceBoolType(RadianceDataType):
     """Radiance boolean."""
@@ -1709,6 +1747,7 @@ class RadianceBoolType(RadianceDataType):
 
     def __rpow__(self, other):
         return other**self._value
+
 
 class RadiancePathType(RadianceDataType):
     """Radiance path."""
@@ -1819,81 +1858,24 @@ class RadianceNumberType(RadianceDataType):
         return other**self._value
 
 
-class RadInputStringFormatter:
-    """This class implements a bunch of static methods for formatting Radiance
-    input flags. I am encapsulating them within this one class for the sake of
-    clarity. The methods are static because self in this case doesn't have
-    anything to do with the operation of methods in this class.
-    """
+class RadianceReadOnly(object):
+    """A descriptor for creating Readonly values."""
 
-    @staticmethod
-    def normal(flagVal, inputVal):
-        """The normal format is something like -ab 5 , -ad 100, -g 0.5 0.2 0.3
-           Args:
-               flagVal:The alphabet(s) denoting the flag. Like ab for ambient
-                bounces.
+    def __init__(self, name):
+        self._name = '_' + str(name)
 
-               inputVal: The input value for the flag.
-        """
-        output = " -%s" % flagVal
+    def __get__(self, instance, owner):
+        return getattr(instance, self._name)
 
+    def __set__(self, instance, value):
+        # Let the value be set first time through constructor.
+        # Block all other attempts.
         try:
-            output += inputVal
-        # raise if ip is not a str.
-        except TypeError:
-            try:
-                for values in inputVal:
-                    output += " %s " % values
-            # raise if ip is not iterable.
-            except TypeError:
-                output += " %s " % inputVal
-
-        return output
-
-    @staticmethod
-    def joined(flagVal, inputVal):
-        """ For cases like -of , -O1 etc. where everthing after the first two
-            characters is input.
-        Args:
-            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
-            bounces.
-            inputVal: The input value for the flag.
-         """
-        output = ""
-        if inputVal is not None:
-            # The value is set to be True instead of an option.
-            if inputVal is True:
-                inputVal = ''
-            output = " -%s%s " % (flagVal, inputVal)
-        return output
-
-    @staticmethod
-    def boolean(flagVal, inputVal):
-        """If the input is just a normal toggle like -v or -h etc.
-        Args:
-            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
-            bounces.
-            inputVal: The input value for the flag.
-        """
-        output = ""
-        if inputVal is True:
-            output = "-%s " % flagVal
-        return output
-
-    @staticmethod
-    def boolDualSign(flagVal, inputVal):
-        """If the input is just a normal toggle like -v or -h etc.
-        Args:
-            flagVal: The alphabet(s) denoting the flag. Like ab for ambient
-            bounces.
-            inputVal: The input value for the flag.
-        """
-        output = ""
-        if inputVal is True:
-            output = "+%s " % flagVal
-        elif inputVal is False:
-            output = "-%s " % flagVal
-        return output
+            value = getattr(instance, self._name)
+            raise Exception("The attribute %s is read only. "
+                            "It's default value is %s" % (self._name[1:], value))
+        except AttributeError:
+            setattr(instance, self._name, value)
 </code></pre>
   </div>
 
@@ -1983,7 +1965,7 @@ isDualSign: Set to True if the Boolean should return +/- value.
             value = getattr(instance, self._name)
         except AttributeError:
             if self._defaultValue is not None:
-                value = RadianceBoolType(self._name, bool(self._defaultValue),
+                value = RadianceBoolType(self._name, self._defaultValue,
                                          self._isDualSign)
             else:
                 value = RadianceBoolType(self._name, None,
@@ -2000,8 +1982,9 @@ isDualSign: Set to True if the Boolean should return +/- value.
                                      " following: %s. The provided value was %s"
                                      % (self._nameString,
                                         ",".join(map(str, inputs)), value))
-            setattr(instance, self._name, RadianceBoolType(self._name, bool(value),
-                    self._isDualSign))
+
+            setattr(instance, self._name,
+                    RadianceBoolType(self._name, bool(value), self._isDualSign))
 </code></pre>
   </div>
 </div>
@@ -2014,6 +1997,18 @@ isDualSign: Set to True if the Boolean should return +/- value.
           <li>honeybee.radiance.datatype.RadianceDefault</li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.datatype.RadianceBoolFlag.isRadianceDataType" class="name">var <span class="ident">isRadianceDataType</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Check if object is a RadinaceDataType.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
@@ -2145,6 +2140,7 @@ defaultValue: Optional. The value to be assigned in case no value is
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange, defaultValue)
+
         self._checkPositive = checkPositive
         self._type = int if numType is None else numType
 
@@ -2154,7 +2150,6 @@ defaultValue: Optional. The value to be assigned in case no value is
         values.
         """
         if value is not None:
-            RadianceDefault.__set__(self, instance, value)
             varName = self._nameString
 
             if value is None:
@@ -2165,14 +2160,14 @@ defaultValue: Optional. The value to be assigned in case no value is
                     if self._type:
                         finalValue = self._type(value)
                     else:
-                        if isinstance(value, str):
+                        if not isinstance(value, int):
                             finalValue = float(value)
                         else:
                             finalValue = value
                     if self._checkPositive:
                         msg = "The value for %s should be greater than 0." \
                               " The value specified was %s" % (varName, value)
-                        assert value >= 0, msg
+                        assert int(value) >= 0, msg
                 # Value error will be raised if the input was anything else
                 # other than a number.
                 except ValueError:
@@ -2183,6 +2178,10 @@ defaultValue: Optional. The value to be assigned in case no value is
                     msg = "The type of input for %s should a float or int. " \
                           "%s was specified instead" % (varName, value)
                     raise TypeError(msg)
+                except AttributeError:
+                    msg = "The type of input for %s should a float or int. " \
+                          "%s was specified instead" % (varName, value)
+                    raise AttributeError(msg)
 
             # Raise a warning if the number got modified.
             if hash(finalValue) != hash(value) and self._type:
@@ -2214,6 +2213,18 @@ defaultValue: Optional. The value to be assigned in case no value is
           <li>honeybee.radiance.datatype.RadianceDefault</li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.datatype.RadianceNumber.isRadianceDataType" class="name">var <span class="ident">isRadianceDataType</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Check if object is a RadinaceDataType.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
@@ -2348,6 +2359,18 @@ extension: Optional. Test the extension of the file.
           <li>honeybee.radiance.datatype.RadianceDefault</li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.datatype.RadiancePath.isRadianceDataType" class="name">var <span class="ident">isRadianceDataType</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Check if object is a RadinaceDataType.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
@@ -2369,6 +2392,67 @@ extension: Optional. Test the extension of the file.
     self._relativePath = relativePath
     self._checkExists = checkExists
     self._extension = extension
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="honeybee.radiance.datatype.RadianceReadOnly" class="name">class <span class="ident">RadianceReadOnly</span></p>
+      
+  
+    <div class="desc"><p>A descriptor for creating Readonly values.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceReadOnly', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceReadOnly" class="source">
+    <pre><code>class RadianceReadOnly(object):
+    """A descriptor for creating Readonly values."""
+
+    def __init__(self, name):
+        self._name = '_' + str(name)
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self._name)
+
+    def __set__(self, instance, value):
+        # Let the value be set first time through constructor.
+        # Block all other attempts.
+        try:
+            value = getattr(instance, self._name)
+            raise Exception("The attribute %s is read only. "
+                            "It's default value is %s" % (self._name[1:], value))
+        except AttributeError:
+            setattr(instance, self._name, value)
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.datatype.RadianceReadOnly">RadianceReadOnly</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.datatype.RadianceReadOnly.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.datatype.RadianceReadOnly.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.datatype.RadianceReadOnly.__init__" class="source">
+    <pre><code>def __init__(self, name):
+    self._name = '_' + str(name)
 </code></pre>
   </div>
 </div>
@@ -2464,27 +2548,31 @@ defaultValue: Optional. The value to be assigned in case no value is
             toRadString string representation of the component.
     """
 
-    __slots__ = ('_tupleSize', '_type')
+    __slots__ = ('_tupleSize', '_type', '_testType')
 
     def __init__(self, name, descriptiveName=None, validRange=None,
                  acceptedInputs=None, tupleSize=None, numType=None,
-                 defaultValue=None):
+                 defaultValue=None, testType=True):
 
         RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                                  validRange, defaultValue)
         self._tupleSize = tupleSize
         self._type = numType
+        self._testType = testType
 
     def __set__(self, instance, value):
         """
-        Check for tuple size and valid range if specified. Parse from strings
-        if input is specified as a string instead of a number.
+        Check for tuple size and valid range if specified.
+
+        Parse from strings if input is specified as a string instead of a number.
         """
         if value is not None:
-            if self._type:
-                numType = self._type
-            else:
-                numType = float
+
+            if self._testType:
+                if self._type:
+                    numType = self._type
+                else:
+                    numType = float
 
             try:
                 finalValue = value.replace(',', ' ').split()
@@ -2492,7 +2580,8 @@ defaultValue: Optional. The value to be assigned in case no value is
                 finalValue = value
 
             try:
-                finalValue = map(numType, finalValue)
+                if self._testType:
+                    finalValue = map(numType, finalValue)
             except TypeError:
                 msg = "The specified input for %s is %s. " \
                       "The value should be a list or a tuple." \
@@ -2522,6 +2611,10 @@ defaultValue: Optional. The value to be assigned in case no value is
 
             setattr(instance, self._name,
                     RadianceDataType(self._name, tuple(finalValue)))
+
+    def __getitem__(self, i):
+        """Get item i from tuple."""
+        return self._defaultValue[i]
 </code></pre>
   </div>
 </div>
@@ -2534,11 +2627,23 @@ defaultValue: Optional. The value to be assigned in case no value is
           <li>honeybee.radiance.datatype.RadianceDefault</li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.datatype.RadianceTuple.isRadianceDataType" class="name">var <span class="ident">isRadianceDataType</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Check if object is a RadinaceDataType.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.datatype.RadianceTuple.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None, defaultValue=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None, defaultValue=None, testType=True)</p>
     </div>
     
 
@@ -2549,11 +2654,12 @@ defaultValue: Optional. The value to be assigned in case no value is
   <div id="source-honeybee.radiance.datatype.RadianceTuple.__init__" class="source">
     <pre><code>def __init__(self, name, descriptiveName=None, validRange=None,
              acceptedInputs=None, tupleSize=None, numType=None,
-             defaultValue=None):
+             defaultValue=None, testType=True):
     RadianceDefault.__init__(self, name, descriptiveName, acceptedInputs,
                              validRange, defaultValue)
     self._tupleSize = tupleSize
     self._type = numType
+    self._testType = testType
 </code></pre>
   </div>
 </div>
@@ -2638,6 +2744,7 @@ isJoined: Set to True if the Boolean should be returned as a joined
         o = RadianceValue('o', 'output format', defaultValue='f',
                           acceptedInputs=('f', 'd'))
     """
+
     __slots__ = ()
 
     def __init__(self, name, descriptiveName=None, acceptedInputs=None,
@@ -2658,6 +2765,18 @@ isJoined: Set to True if the Boolean should be returned as a joined
           <li>honeybee.radiance.datatype.RadianceDefault</li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.datatype.RadianceValue.isRadianceDataType" class="name">var <span class="ident">isRadianceDataType</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Check if object is a RadinaceDataType.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">

@@ -1004,6 +1004,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.hbpointgroup.AnalysisPointGroup.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.hbpointgroup.AnalysisPointGroup.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.hbpointgroup.AnalysisPointGroup.sortPointsClockWise">sortPointsClockWise</a></li>
     <li class="mono"><a href="#honeybee.hbpointgroup.AnalysisPointGroup.toRadString">toRadString</a></li>
   </ul>
@@ -1095,7 +1096,6 @@ class PointGroup(object):
     def __init__(self, points):
         """Initialize a PointGroup."""
         self.__pointsCount = 0
-
         self.points = points
         """A list of points as x, y, z."""
 
@@ -1224,6 +1224,10 @@ class AnalysisPointGroup(PointGroup):
             __aps.append(ap.toRadString())
 
         return "\n".join(__aps)
+
+    def ToString(self):
+        """Overwrite ToString .NET method."""
+        return self.__repr__(self)
 
     def __repr__(self):
         """Return analysis points and directions."""
@@ -1449,6 +1453,10 @@ class AnalysisPointGroup(PointGroup):
 
         return "\n".join(__aps)
 
+    def ToString(self):
+        """Overwrite ToString .NET method."""
+        return self.__repr__(self)
+
     def __repr__(self):
         """Return analysis points and directions."""
         return self.toRadString()
@@ -1547,6 +1555,28 @@ class AnalysisPointGroup(PointGroup):
   
             
   <div class="item">
+    <div class="name def" id="honeybee.hbpointgroup.AnalysisPointGroup.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite ToString .NET method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbpointgroup.AnalysisPointGroup.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbpointgroup.AnalysisPointGroup.ToString" class="source">
+    <pre><code>def ToString(self):
+    """Overwrite ToString .NET method."""
+    return self.__repr__(self)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.hbpointgroup.AnalysisPointGroup.sortPointsClockWise">
     <p>def <span class="ident">sortPointsClockWise</span>(</p><p>self, normal)</p>
     </div>
@@ -1619,7 +1649,6 @@ class AnalysisPointGroup(PointGroup):
     def __init__(self, points):
         """Initialize a PointGroup."""
         self.__pointsCount = 0
-
         self.points = points
         """A list of points as x, y, z."""
 

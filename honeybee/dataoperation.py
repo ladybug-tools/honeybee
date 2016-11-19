@@ -41,7 +41,7 @@ def unflatten(guide, falttenedInput):
 
 # Match list of points and vectors for Radiance grid-based analysis
 def matchPointsAndVectors(ptsT, vecT):
-    """Convert a Dynamo list fo data to list.
+    """Convert list fo data to list.
 
     Args:
         ptsT: List of lists of test points.
@@ -60,7 +60,7 @@ def matchPointsAndVectors(ptsT, vecT):
         except:
             v = []
 
-        tempPts, tempVectors = __matchData(
+        tempPts, tempVectors = matchData(
             list(flatten(p)), list(flatten(v))
         )
 
@@ -68,7 +68,7 @@ def matchPointsAndVectors(ptsT, vecT):
             pts[i] = tempPts
             vec[i] = tempVectors
         else:
-            # empty branch
+            # empty list
             pts.remove(i)
             vec.remove(i)
 
@@ -76,13 +76,13 @@ def matchPointsAndVectors(ptsT, vecT):
 
 
 # TODO: move this method to list operation library
-def __matchData(guide, follower, noneValue=(0, 0, 1)):
-    """Match data between two lists.
+def matchData(guide, follower, noneValue=(0, 0, 1)):
+    """Match data between two lists and reomove None values.
 
     Args:
         guide: Long list.
         follower: Short list.
-        noneValue: Place holder for default value if shortlist is an empty lists.
+        noneValue: Place holder for alternative values for None values in shortlist.
     """
     tempPts = range(len(guide))
     tempVectors = range(len(guide))
@@ -110,7 +110,7 @@ def __matchData(guide, follower, noneValue=(0, 0, 1)):
         else:
             # empty list
             tempPts.remove(c)
-            tempVectors(c)
+            tempVectors.remove(c)
 
     return tempPts, tempVectors
 

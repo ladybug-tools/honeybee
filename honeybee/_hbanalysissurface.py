@@ -71,6 +71,11 @@ class HBAnalysisSurface(HBObject):
         """Return True if Honeybee surface is Fenestration Surface."""
         pass
 
+    @property
+    def hasRadianceGlassMaterial(self):
+        """Returns true if surface has radiance glass material."""
+        return self.radianceMaterial.isGlassMaterial
+
     @abstractproperty
     def parent(self):
         """Return parent for HBAnalysisSurface.

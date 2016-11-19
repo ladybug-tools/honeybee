@@ -20,12 +20,12 @@ class CIERadianceSky(RadianceSky):
     """
 
     __skyTypes = {
-        0 : ('+s', 'sunnyWSun'),
-        1 : ('-s', 'sunnyNoSun'),
-        2 : ('+i', 'intermWSun'),
-        3 : ('-i', 'intermNoSun'),
-        4 : ('-c', 'cloudySky'),
-        5 : ('-u', 'uniformSky')
+        0: ('+s', 'sunnyWSun'),
+        1: ('-s', 'sunnyNoSun'),
+        2: ('+i', 'intermWSun'),
+        3: ('-i', 'intermNoSun'),
+        4: ('-c', 'cloudySky'),
+        5: ('-u', 'uniformSky')
     }
 
     def __init__(self, location, month=6, day=21, hour=9, skyType=0, north=0):
@@ -46,9 +46,8 @@ class CIERadianceSky(RadianceSky):
 
         # check datetime to be valid
         try:
-            _dt = datetime(2016, self.month, self.day, int(self.hour),
-                           int((self.hour - int(self.hour)) * 60))
-
+            datetime(2016, self.month, self.day, int(self.hour),
+                     int((self.hour - int(self.hour)) * 60))
         except Exception as e:
             raise ValueError("Invalid input for month, day, hour:\n%s" % e)
 

@@ -994,6 +994,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.addAdditionalParameterByNameAndValue">addAdditionalParameterByNameAndValue</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.addDefaultParameterName">addDefaultParameterName</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceBoolFlag">addRadianceBoolFlag</a></li>
@@ -1001,11 +1002,14 @@ table {
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadiancePath">addRadiancePath</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceTuple">addRadianceTuple</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceValue">addRadianceValue</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.freeze">freeze</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.getParameterDefaultValueBasedOnQuality">getParameterDefaultValueBasedOnQuality</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.importParameterValuesFromString">importParameterValuesFromString</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.removeParameter">removeParameter</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.removeParameters">removeParameters</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.tryToUnfreeze">tryToUnfreeze</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.rcontrib.RcontribParameters.unfreeze">unfreeze</a></li>
   </ul>
 
         </li>
@@ -1031,9 +1035,11 @@ table {
     <pre><code># coding=utf-8
 """Radiance rcontrib Parameters."""
 from gridbased import GridBasedParameters
+from ._frozen import frozen
 
 
 # TODO: Implement the rest of rcontrib options
+@frozen
 class RcontribParameters(GridBasedParameters):
     """Radiance Parameters for rcontrib command including rtrace parameters.
 
@@ -1079,9 +1085,12 @@ class RcontribParameters(GridBasedParameters):
     def __init__(self, modFile=None):
         """Init paramters."""
         GridBasedParameters.__init__(self)
+
         # add parameters
-        self.addRadianceValue('M', 'modifiers file', defaultValue=modFile,
-                              attributeName='modFile')
+        self.addRadianceValue('M', 'modifiers file', attributeName='modFile')
+        self.modFile = modFile
+        """[-M file] File path to a file with a list of modifiers
+        (Default: None)"""
 </code></pre>
   </div>
 
@@ -1180,9 +1189,12 @@ print rcp.toRadString()
     def __init__(self, modFile=None):
         """Init paramters."""
         GridBasedParameters.__init__(self)
+
         # add parameters
-        self.addRadianceValue('M', 'modifiers file', defaultValue=modFile,
-                              attributeName='modFile')
+        self.addRadianceValue('M', 'modifiers file', attributeName='modFile')
+        self.modFile = modFile
+        """[-M file] File path to a file with a list of modifiers
+        (Default: None)"""
 </code></pre>
   </div>
 </div>
@@ -1243,6 +1255,18 @@ print rcp.toRadString()
 
             </div>
             <div class="item">
+            <p id="honeybee.radiance.parameters.rcontrib.RcontribParameters.modFile" class="name">var <span class="ident">modFile</span></p>
+            
+
+            
+  
+    <div class="desc"><p>[-M file] File path to a file with a list of modifiers
+(Default: None)</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.parameters.rcontrib.RcontribParameters.parameters" class="name">var <span class="ident">parameters</span></p>
             
 
@@ -1280,7 +1304,7 @@ print rcp.toRadString()
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, modFile=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
@@ -1290,12 +1314,32 @@ print rcp.toRadString()
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.rcontrib.RcontribParameters.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.__init__" class="source">
-    <pre><code>def __init__(self, modFile=None):
-    """Init paramters."""
-    GridBasedParameters.__init__(self)
-    # add parameters
-    self.addRadianceValue('M', 'modifiers file', defaultValue=modFile,
-                          attributeName='modFile')
+    <pre><code>@wraps(func)
+def wrapper(self, *args, **kwargs):
+    func(self, *args, **kwargs)
+    self.__frozen = True  # set __frozen to True for the original class
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.rcontrib.RcontribParameters.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.ToString" class="source">
+    <pre><code>def ToString(self):
+    """Overwrite .NET ToString method."""
+    return self.__repr__()
 </code></pre>
   </div>
 </div>
@@ -1353,10 +1397,13 @@ print rcp.toRadString()
             "'{0}' is already set as a parameter. Use 'self.{0}' to change the value".format(name)
         )
     try:
+        self.tryToUnfreeze()
         setattr(self, name, str(value))
         self.__additionalParameters.append(name)
     except TypeError:
         raise ValueError("Value should be a string or convertable to a string.")
+    else:
+        self.freeze()
 </code></pre>
   </div>
 </div>
@@ -1403,7 +1450,7 @@ used otherwise.</p>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceBoolFlag">
-    <p>def <span class="ident">addRadianceBoolFlag</span>(</p><p>self, name, descriptiveName=None, defaultValue=None, isDualSign=False, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceBoolFlag</span>(</p><p>self, name, descriptiveName=None, isDualSign=False, attributeName=None)</p>
     </div>
     
 
@@ -1423,11 +1470,6 @@ used otherwise.</p>
     debugging and readability, it is strongly suggested that this input
     be specified for all instances.
 
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
-
 isDualSign: Set to True if the Boolean should return +/- value.
     (i.e. +I/-I) (Default: False)
 
@@ -1438,8 +1480,8 @@ attributeName: Optional. A string the will be used as the attribute
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceBoolFlag', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceBoolFlag" class="source">
-    <pre><code>def addRadianceBoolFlag(self, name, descriptiveName=None, defaultValue=None,
-                        isDualSign=False, attributeName=None):
+    <pre><code>def addRadianceBoolFlag(self, name, descriptiveName=None, isDualSign=False,
+                        attributeName=None):
     """Add a boolean value to parameters.
     Attributes:
         name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
@@ -1453,10 +1495,6 @@ attributeName: Optional. A string the will be used as the attribute
             Radiance. Although this is an optional input, for the purposes of
             debugging and readability, it is strongly suggested that this input
             be specified for all instances.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         isDualSign: Set to True if the Boolean should return +/- value.
             (i.e. +I/-I) (Default: False)
         attributeName: Optional. A string the will be used as the attribute
@@ -1464,13 +1502,11 @@ attributeName: Optional. A string the will be used as the attribute
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceBoolFlag(name, descriptiveName, defaultValue, isDualSign)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceBoolFlag(name, descriptiveName, None,
+                                         isDualSign),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1480,7 +1516,7 @@ attributeName: Optional. A string the will be used as the attribute
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceNumber">
-    <p>def <span class="ident">addRadianceNumber</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, numType=None, checkPositive=False, defaultValue=None, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceNumber</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, numType=None, checkPositive=False, attributeName=None)</p>
     </div>
     
 
@@ -1521,11 +1557,6 @@ numType: Optional. Acceptable inputs are float or int. If specified, the
     Also, if the number changes (for example from 4.212 to 4 due to int
     being specified as _type_), then a warning will be issued.
 
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
-
 attributeName: Optional. A string the will be used as the attribute
     name that will be added to parameters class. If None name will be
     used insted.
@@ -1535,7 +1566,7 @@ attributeName: Optional. A string the will be used as the attribute
   <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceNumber" class="source">
     <pre><code>def addRadianceNumber(self, name, descriptiveName=None, validRange=None,
                       acceptedInputs=None, numType=None, checkPositive=False,
-                      defaultValue=None, attributeName=None):
+                      attributeName=None):
     """Add a radiance number to parameters.
     Attributes:
         name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
@@ -1566,23 +1597,17 @@ attributeName: Optional. A string the will be used as the attribute
             __set__ method will ensure that the value is stored in that type.
             Also, if the number changes (for example from 4.212 to 4 due to int
             being specified as _type_), then a warning will be issued.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         attributeName: Optional. A string the will be used as the attribute
             name that will be added to parameters class. If None name will be
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceNumber(name, descriptiveName, validRange, acceptedInputs,
-                           numType, checkPositive, defaultValue)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceNumber(name, descriptiveName, validRange,
+                                       acceptedInputs, numType,
+                                       checkPositive),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1655,14 +1680,11 @@ attributeName: Optional. A string the will be used as the attribute
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadiancePath(name, descriptiveName, relativePath,
-                         checkExists, extension)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadiancePath(name, descriptiveName, relativePath,
+                                     checkExists, extension),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1672,7 +1694,7 @@ attributeName: Optional. A string the will be used as the attribute
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceTuple">
-    <p>def <span class="ident">addRadianceTuple</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None, defaultValue=None, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceTuple</span>(</p><p>self, name, descriptiveName=None, validRange=None, acceptedInputs=None, tupleSize=None, numType=None, attributeName=None)</p>
     </div>
     
 
@@ -1704,15 +1726,11 @@ validRange: Optional. The valid range for several prominent radiance
     parameters with similar valid ranges. If _validRange is specified,
     a warning will be issued in case the provided input is not within
     that range.
+
 tupleSize: Optional. Specify the number of inputs that are expected.
 
 numType: Optional. Acceptable inputs are float or int. If specified, the
     __set__ method will ensure that the value is stored in that type.
-
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
 
 attributeName: Optional. A string the will be used as the attribute
     name that will be added to parameters class. If None name will be
@@ -1723,7 +1741,7 @@ attributeName: Optional. A string the will be used as the attribute
   <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceTuple" class="source">
     <pre><code>def addRadianceTuple(self, name, descriptiveName=None, validRange=None,
                      acceptedInputs=None, tupleSize=None, numType=None,
-                     defaultValue=None, attributeName=None):
+                     attributeName=None):
     """Add a radiance numeric tuple e.g (0.5,0.3,0.2).
     Attributes:
         name: Required for all cases. Name of the flag, like 'ab' for '-ab 5'
@@ -1751,23 +1769,16 @@ attributeName: Optional. A string the will be used as the attribute
         tupleSize: Optional. Specify the number of inputs that are expected.
         numType: Optional. Acceptable inputs are float or int. If specified, the
             __set__ method will ensure that the value is stored in that type.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         attributeName: Optional. A string the will be used as the attribute
             name that will be added to parameters class. If None name will be
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceTuple(name, descriptiveName, validRange, acceptedInputs,
-                          tupleSize, numType, defaultValue)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceTuple(name, descriptiveName, validRange,
+                                      acceptedInputs, tupleSize, numType),
+                        attributeName
+                        )
 </code></pre>
   </div>
 </div>
@@ -1777,7 +1788,7 @@ attributeName: Optional. A string the will be used as the attribute
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceValue">
-    <p>def <span class="ident">addRadianceValue</span>(</p><p>self, name, descriptiveName=None, acceptedInputs=None, defaultValue=None, isJoined=False, attributeName=None)</p>
+    <p>def <span class="ident">addRadianceValue</span>(</p><p>self, name, descriptiveName=None, acceptedInputs=None, isJoined=False, attributeName=None)</p>
     </div>
     
 
@@ -1804,11 +1815,6 @@ acceptedInputs:Optional. List of inputs that are permissible for a
     the user-specified input doesn't exist in _acceptedInputs then a
     value error will be raised.
 
-defaultValue: Optional. The value to be assigned in case no value is
-    assigned by the user. If the default value is not specified then
-    the attribute won't be considered int the creation of the
-    toRadString string representation of the component.
-
 isJoined: Set to True if the Boolean should be returned as a joined
     output (i.e. -of, -od) (Default: False)
 
@@ -1820,7 +1826,7 @@ attributeName: Optional. A string the will be used as the attribute
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceValue', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.addRadianceValue" class="source">
     <pre><code>def addRadianceValue(self, name, descriptiveName=None, acceptedInputs=None,
-                     defaultValue=None, isJoined=False, attributeName=None):
+                     isJoined=False, attributeName=None):
     """
     Add a radiance string value.
     Attributes:
@@ -1841,10 +1847,6 @@ attributeName: Optional. A string the will be used as the attribute
             inputs are known it is recommended that this input be specified.If
             the user-specified input doesn't exist in _acceptedInputs then a
             value error will be raised.
-        defaultValue: Optional. The value to be assigned in case no value is
-            assigned by the user. If the default value is not specified then
-            the attribute won't be considered int the creation of the
-            toRadString string representation of the component.
         isJoined: Set to True if the Boolean should be returned as a joined
             output (i.e. -of, -od) (Default: False)
         attributeName: Optional. A string the will be used as the attribute
@@ -1852,14 +1854,31 @@ attributeName: Optional. A string the will be used as the attribute
             used insted.
     """
     # set the new attribute based on inputs
-    _attrname = attributeName if attributeName is not None else name
-    setattr(self.__class__,
-            _attrname,
-            RadianceValue(name, descriptiveName, acceptedInputs,
-                          defaultValue, isJoined)
-            )
-    # add name of the attribute to default parameters
-    self.addDefaultParameterName(_attrname, name)
+    self.__setattribute(name,
+                        RadianceValue(name, descriptiveName, acceptedInputs,
+                                      None, isJoined),
+                        attributeName
+                        )
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.freeze">
+    <p>def <span class="ident">freeze</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.rcontrib.RcontribParameters.freeze', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.freeze" class="source">
+    <pre><code>def freeze(self):
+    self._frozen = True
 </code></pre>
   </div>
 </div>
@@ -2038,11 +2057,58 @@ print rp.getParameterValue("ab")
     ]
     _additionalParameters = [
         "-%s %s" % (key, getattr(self, key))
-        if getattr(self, key).strip() != ""
+        if str(getattr(self, key)).strip() != ""
         else "-%s" % key
         for key in self.additionalParameters
     ]
     return " ".join(_defaultParameters + _additionalParameters)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.tryToUnfreeze">
+    <p>def <span class="ident">tryToUnfreeze</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Try to unfreeze subclass to add a new attribute.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.rcontrib.RcontribParameters.tryToUnfreeze', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.tryToUnfreeze" class="source">
+    <pre><code>def tryToUnfreeze(self):
+    """Try to unfreeze subclass to add a new attribute."""
+    try:
+        self.unfreeze()
+    except AttributeError:
+        raise Exception(
+            "Sub-classes from RadianceParameters should be @frozen"
+        )
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.rcontrib.RcontribParameters.unfreeze">
+    <p>def <span class="ident">unfreeze</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.rcontrib.RcontribParameters.unfreeze', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.rcontrib.RcontribParameters.unfreeze" class="source">
+    <pre><code>def unfreeze(self):
+    self._frozen = False
 </code></pre>
   </div>
 </div>
