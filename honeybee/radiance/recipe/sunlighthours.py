@@ -21,13 +21,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     Attributes:
         sunVectors: A list of ladybug sun vectors as (x, y, z) values. Z value
             for sun vectors should be negative (coming from sun toward earth)
-        pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test
-            points. Each list of test points will be converted to a
-            TestPointGroup. If testPts is a single flattened list only one
-            TestPointGroup will be created.
-        vectorGroups: An optional list of (x, y, z) vectors. Each vector
-            represents direction of corresponding point in testPts. If the
-            vector is not provided (0, 0, 1) will be assigned.
+        analysisGrids: List of analysis grids.
         timestep: The number of timesteps per hour for sun vectors. This number
             should be smaller than 60 and divisible by 60. The default is set to
             1 such that one sun vector is generated for each hour (Default: 1).
@@ -36,9 +30,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     Usage:
         # initiate analysisRecipe
-        analysisRecipe = HBSunlightHoursAnalysisRecipe(
-            sunVectors, testPoints, ptsVectors
-            )
+        analysisRecipe = HBSunlightHoursAnalysisRecipe(sunVectors, analysisGrids)
 
         # add honeybee object
         analysisRecipe.hbObjects = HBObjs
@@ -53,13 +45,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    # ad =
-
-    def __init__(self, sunVectors, pointGroups, vectorGroups=[],
-                 timestep=1, hbObjects=None, subFolder="sunlighthour"):
+    def __init__(self, sunVectors, analysisGrids, timestep=1, hbObjects=None,
+                 subFolder="sunlighthour"):
         """Create sunlighthours recipe."""
         HBGenericGridBasedAnalysisRecipe.__init__(
-            self, pointGroups, vectorGroups, hbObjects, subFolder
+            self, analysisGrids, hbObjects, subFolder
         )
 
         self.sunVectors = sunVectors
@@ -76,6 +66,30 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         self.resultsFile = []
         # create a result loader to load the results once the analysis is done.
         self.loader = LoadSunlighthoursResults(self.timestep, self.resultsFile)
+
+    def fromPointsAndVectors(cls, sunVectors, pointGroups, vectorGroups=[],
+                             timestep=1, hbObjects=None, subFolder="sunlighthour"):
+        """Create sunlighthours recipe from points and vectors.
+
+        Args:
+            sunVectors: A list of ladybug sun vectors as (x, y, z) values. Z value
+                for sun vectors should be negative (coming from sun toward earth)
+            pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test
+                points. Each list of test points will be converted to a
+                TestPointGroup. If testPts is a single flattened list only one
+                TestPointGroup will be created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+                represents direction of corresponding point in testPts. If the
+                vector is not provided (0, 0, 1) will be assigned.
+            timestep: The number of timesteps per hour for sun vectors. This number
+                should be smaller than 60 and divisible by 60. The default is set to
+                1 such that one sun vector is generated for each hour (Default: 1).
+            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
+            subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+        """
+        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
+                                                              vectorGroups)
+        return cls(sunVectors, analysisGrids, timestep, hbObjects, subFolder)
 
     @classmethod
     def fromLBSuns(cls, suns, pointGroups, vectorGroups=[], timestep=1,
@@ -98,12 +112,13 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
         """
         try:
-            sunVectors = [s.sunVector for s in suns if s.isDuringDay]
+            sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
         except AttributeError:
-            raise ValueError("%s is not a valid LBSun" % s)
+            raise TypeError("The input is not a valid LBSun.")
 
-        return cls(sunVectors, pointGroups, vectorGroups, timestep,
-                   hbObjects, subFolder)
+        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
+                                                              vectorGroups)
+        return cls(sunVectors, analysisGrids, timestep, hbObjects, subFolder)
 
     @classmethod
     def fromLocationAndHoys(cls, location, HOYs, pointGroups, vectorGroups=[],
@@ -111,12 +126,13 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         """Create sunlighthours recipe from Location and hours of year."""
         sp = LBSunpath.fromLocation(location)
 
-        suns = [sp.calculateSunFromHOY(HOY) for HOY in HOYs]
+        suns = (sp.calculateSunFromHOY(HOY) for HOY in HOYs)
 
-        sunVectors = [s.sunVector for s in suns if s.isDuringDay]
+        sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
 
-        return cls(sunVectors, pointGroups, vectorGroups, timestep,
-                   hbObjects, subFolder)
+        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
+                                                              vectorGroups)
+        return cls(sunVectors, analysisGrids, timestep, hbObjects, subFolder)
 
     @classmethod
     def fromLocationAndAnalysisPeriod(
@@ -126,12 +142,13 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         """Create sunlighthours recipe from Location and analysis period."""
         sp = LBSunpath.fromLocation(location)
 
-        suns = [sp.calculateSunFromHOY(HOY) for HOY in analysisPeriod.floatHOYs]
+        suns = (sp.calculateSunFromHOY(HOY) for HOY in analysisPeriod.floatHOYs)
 
-        sunVectors = [s.sunVector for s in suns if s.isDuringDay]
+        sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
 
-        return cls(sunVectors, pointGroups, vectorGroups,
-                   analysisPeriod.timestep, hbObjects,
+        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
+                                                              vectorGroups)
+        return cls(sunVectors, analysisGrids, analysisPeriod.timestep, hbObjects,
                    subFolder)
 
     @property
@@ -142,13 +159,13 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     @sunVectors.setter
     def sunVectors(self, vectors):
         try:
-            self.__sunVectors = [Vector3(*v).flipped() for v in vectors
-                                 if v[2] < 0]
+            self.__sunVectors = tuple(Vector3(*v).flipped() for v in vectors
+                                      if v[2] < 0)
         except TypeError:
-            self.__sunVectors = [Vector3(v.X, v.Y, v.Z).flipped()
-                                 for v in vectors if v.Z < 0]
+            self.__sunVectors = tuple(Vector3(v.X, v.Y, v.Z).flipped()
+                                      for v in vectors if v.Z < 0)
         except IndexError:
-            raise ValueError("Failed to create a sun vector from %s" % str(v))
+            raise ValueError("Failed to create the sun vectors!")
 
         if len(self.sunVectors) != len(vectors):
             print "%d vectors with positive z value are found and removed " \

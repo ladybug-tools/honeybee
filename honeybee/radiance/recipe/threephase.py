@@ -1,4 +1,4 @@
-from ._gridbasedbase import HBGenericGridBasedAnalysisRecipe
+from .annual import HBAnnualAnalysisRecipe
 from ..postprocess.annualresults import LoadAnnualsResults
 from ..parameters.rfluxmtx import RfluxmtxParameters
 from ..command.rfluxmtx import Rfluxmtx
@@ -13,7 +13,7 @@ import os
 import subprocess
 
 
-class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
+class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
     """Annual analysis recipe.
 
     Attributes:
@@ -40,17 +40,14 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    def __init__(self, skyMtx, analysisGrids, hbObjects=None,
-                 subFolder="annualdaylight"):
+    def __init__(self, skyMtx, analysisGrids, reuseDaylightMtx=True, hbObjects=None,
+                 subFolder="threephase"):
         """Create an annual recipe."""
-        HBGenericGridBasedAnalysisRecipe.__init__(
-            self, analysisGrids, hbObjects, subFolder
+        HBAnnualAnalysisRecipe.__init__(
+            self, skyMtx, analysisGrids, hbObjects, subFolder
         )
 
-        assert hasattr(skyMtx, 'epwFile') and hasattr(skyMtx, 'skyDensity'), \
-            TypeError('{} is not a SkyMatrix'.format(skyMtx))
-
-        self.skyMatrix = skyMtx
+        self.reuseDaylightMtx = reuseDaylightMtx
 
         # set RfluxmtxParameters as default radiance parameter for annual analysis
         self.__radianceParameters = RfluxmtxParameters()
@@ -70,9 +67,9 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
-        cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1, hbObjects=None,
-            subFolder="annualdaylight"):
-        """Create annual recipe from weather file, points and vectors.
+        cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
+            reuseDaylightMtx=True, hbObjects=None, subFolder="threephase"):
+        """Create three-phase recipe from weather file, points and vectors.
 
         Args:
             epwFile: An EnergyPlus weather file.
@@ -94,11 +91,12 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
 
-        return cls(skyMtx, analysisGrids, hbObjects, subFolder)
+        return cls(skyMtx, analysisGrids, hbObjects, reuseDaylightMtx, subFolder)
 
     @classmethod
-    def fromPointsFile(cls, epwFile, pointsFile, skyDensity=0, hbObjects=None,
-                       subFolder="annualdaylight"):
+    def fromPointsFile(cls, epwFile, pointsFile, skyDensity=1,
+                       reuseDaylightMtx=True, hbObjects=None,
+                       subFolder="threephase"):
         """Create an annual recipe from points file."""
         try:
             with open(pointsFile, "rb") as inf:
@@ -108,7 +106,8 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             raise ValueError("Couldn't import points from {}".format(pointsFile))
 
         return cls.fromWeatherFilePointsAndVectors(
-            epwFile, pointGroups, vectorGroups, skyDensity, hbObjects, subFolder)
+            epwFile, pointGroups, vectorGroups, skyDensity, hbObjects,
+            reuseDaylightMtx, subFolder)
 
     @property
     def radianceParameters(self):
@@ -150,7 +149,7 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         _ispath = preparedir(_basePath)
         assert _ispath, "Failed to create %s. Try a different path!" % _basePath
 
-        # create main folder targetFolder\projectName\annualdaylight
+        # create main folder targetFolder\projectName\threephase
         _path = os.path.join(_basePath, self.subFolder)
         _ispath = preparedir(_path)
 

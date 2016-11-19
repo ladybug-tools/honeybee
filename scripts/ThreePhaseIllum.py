@@ -26,15 +26,14 @@ from honeybee.radiance.command.gensky import Gensky, GenskyParameters
 from honeybee.radiance.command.pcomb import PcombImage, PcombParameters, Pcomb
 
 
-
-
 os.chdir(r'../tests/room')
 
 if not os.path.exists('temp'):
     os.mkdir('temp')
 
-def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
-              calculationType='annual',epwFile=None,tmatrixFile=None):
+
+def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
+              calculationType='annual', epwFile=None, tmatrixFile=None):
 
 
     if phasesToCalculate['v']:
@@ -99,10 +98,9 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
     dMatrix = r"temp/dmatrix.dmx"
 
+    # Step4a: Create the sky vector.
 
-    #Step4a: Create the sky vector.
-
-    #Step4a.1: Create a sky defintion
+    # Step4a.1: Create a sky defintion
     # Step s: Creating the sky matrix
     if phasesToCalculate['s']:
         if calculationType == 'annual':
@@ -118,9 +116,8 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
             skyVector = r'temp/day.smx'
         else:
-            genskPar = GenskyParameters()
             gensk = Gensky()
-            gensk.monthDayHour = (11,11,11)
+            gensk.monthDayHour = (11, 11, 11)
             gensk.outputFile = 'temp/sky.rad'
             gensk.execute()
 
@@ -133,9 +130,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
     else:
         skyVector = r'temp/sky.vec'
 
-
-
-    #Step5: Generate results
+    # Step5: Generate results
     dct = Dctimestep()
     dct.tmatrixFile = tMatrix
     dct.vmatrixSpec = vMatrix
@@ -146,8 +141,9 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
 
     return 'temp/results.txt'
 
-phases={'v':True,'t':True,'d':True,'s':True}
-tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
+phases = {'v': True, 't': True, 'd': True, 's': True}
+tmatrices = ('xmls/clear.xml', 'xmls/diffuse50.xml',
+             'xmls/ExtVenetianBlind_17tilt.xml')
 
 epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
             'epws/USA_KY_London-Corbin-Magee.Field.724243_TMY3.epw',
@@ -157,8 +153,8 @@ epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
             'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
 
 for matrix in tmatrices[:1]:
-    resultsFile = run3phase(calculationType='annual',tmatrixFile=matrix,
-                           phasesToCalculate=phases,epwFile=epwFiles[1])
+    resultsFile = run3phase(calculationType='annual', tmatrixFile=matrix,
+                            phasesToCalculate=phases, epwFile=epwFiles[1])
 
     with open(resultsFile) as results:
         for lines in results:
