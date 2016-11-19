@@ -13,12 +13,13 @@ class AnalysisPoint(object):
         values: List of values for this analysis point.
     """
 
-    __slots__ = ('__loc', '__dir', '__values')
+    __slots__ = ('__loc', '__dir', '__values', '__sources')
 
     def __init__(self, location, direction, values=None):
         """Create an analysis point."""
         self.location = location
         self.direction = direction
+        self.__sources = ()  # light sources for this analysis point
         self.__values = values
 
     @property
@@ -97,6 +98,11 @@ class AnalysisGrid(object):
         points, vectors = matchData(points, vectors, (0, 0, 1))
         aps = tuple(AnalysisPoint(pt, v) for pt, v in zip(points, vectors))
         return cls(aps)
+
+    @property
+    def isAnalysisGrid(self):
+        """Return True for AnalysisGrid."""
+        return True
 
     @property
     def points(self):

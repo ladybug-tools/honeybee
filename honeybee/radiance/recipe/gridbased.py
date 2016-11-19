@@ -16,12 +16,7 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     Attributes:
         sky: A honeybee sky for the analysis
-        pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test points.
-            Each list of test points will be converted to a TestPointGroup. If testPts
-            is a single flattened list only one TestPointGroup will be created.
-        vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
-            of corresponding point in testPts. If the vector is not provided (0, 0, 1)
-            will be assigned.
+        analysisGrids: List of analysis grids.
         simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         radParameters: Radiance parameters for grid based analysis (rtrace).
@@ -53,13 +48,11 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     # TODO: implemnt isChanged at HBDaylightAnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
-    def __init__(self, sky, pointGroups, vectorGroups=[], simulationType=0,
-                 radParameters=None, hbObjects=None, subFolder="gridbased"):
+    def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
+                 hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        HBGenericGridBasedAnalysisRecipe.__init__(self, pointGroups=pointGroups,
-                                                  vectorGroups=vectorGroups,
-                                                  hbObjects=hbObjects,
-                                                  subFolder=subFolder)
+        HBGenericGridBasedAnalysisRecipe.__init__(
+            self, analysisGrids, hbObjects, subFolder)
 
         self.sky = sky
         """A honeybee sky for the analysis."""
@@ -78,6 +71,33 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         # create a result loader to load the results once the analysis is done.
         self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
                                                      self.resultsFile)
+
+    @classmethod
+    def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
+                             simulationType=0, radParameters=None,
+                             hbObjects=None, subFolder="gridbased"):
+        """Create grid based recipe from points and vectors.
+
+        Args:
+            sky: A honeybee sky for the analysis
+            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
+                test points. Each list of test points will be converted to a
+                TestPointGroup. If testPts is a single flattened list only one
+                TestPointGroup will be created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+                represents direction of corresponding point in testPts. If the
+                vector is not provided (0, 0, 1) will be assigned.
+            simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance
+                (Candela) (Default: 0).
+            radParameters: Radiance parameters for grid based analysis (rtrace).
+                (Default: gridbased.LowQuality)
+            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
+            subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
+        """
+        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
+                                                              vectorGroups)
+        return cls(sky, analysisGrids, simulationType, radParameters, hbObjects,
+                   subFolder)
 
     @property
     def simulationType(self):
@@ -256,5 +276,5 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         return "%s: %s\n#PointGroups: %d #Points: %d" % \
             (self.__class__.__name__,
              _analysisType[self.simulationType],
-             self.numOfPointGroups,
+             self.numOfAnalysisGrids,
              self.numOfTotalPoints)

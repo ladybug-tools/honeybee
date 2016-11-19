@@ -1,6 +1,7 @@
 ﻿import os
 import core
 
+
 class EPW:
     def __init__(self, epwFileAddress=None):
         """
@@ -70,7 +71,8 @@ class EPW:
             self.stationLocation.elevation = float(locationData[9])
 
             self.__isLocationLoaded = True
-            if onlyImportLocation: return
+            if onlyImportLocation:
+                return
 
         # TODO: create an object from the header and analyze data
         # get epw header
@@ -489,7 +491,7 @@ class EPW:
     def epw2wea(self, filePath = None):
         """Write wea file from epw file
             WEA carries radiation values from epw ans is what gendaymtx uses to generate the sky
-            I'm wrote my own implementation to avoid shipping epw2wea.exe file. Now epw2wea is
+            I'm writing my own implementation to avoid shipping epw2wea.exe file. Now epw2wea is
             part of the Radiance distribution
         """
         if not filePath:

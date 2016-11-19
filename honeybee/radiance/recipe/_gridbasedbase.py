@@ -9,7 +9,7 @@ from ..analysisgrid import AnalysisGrid
 from ._recipebase import HBDaylightAnalysisRecipe
 
 import os
-from collections import namedtuple, Iterable
+from collections import namedtuple
 
 
 class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
@@ -19,139 +19,95 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     sunlighthours recipe and annual analysis recipe.
 
     Attributes:
-        pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
-            test points. Each list of test points will be converted to a TestPointGroup.
-            If testPts is a single flattened list only one TestPointGroup will be created.
-        vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
-            of corresponding point in testPts. If the vector is not provided (0, 0, 1)
-            will be assigned.
+        analysisGrids: A collection of honeybee AnalysisGrid. Use fromPointsAndVectors
+            classmethod to create the recipe by points and vectors.
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
     """
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, pointGroups, vectorGroups=[], hbObjects=None,
-                 subFolder="gridbased"):
+    def __init__(self, analysisGrids, hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
         # keep track of original points for re-structuring them later on
         HBDaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
                                           subFolder=subFolder)
-        self.__originalPoints = pointGroups
-
-        # create analysisi point groups
-        self.createAnalysisPointGroups(pointGroups, vectorGroups)
+        self.analysisGrids = analysisGrids
 
     @classmethod
-    def fromAnalysisPointGroups(pointGroups):
-        """Create the recipe from analysisGrid."""
-        pass
-
-    @property
-    def originalPoints(self):
-        """Get original test points."""
-        return self.__originalPoints
-
-    @property
-    def pointGroups(self):
-        """Return analysis point groups."""
-        return self.analysisPointsGroups
-
-    @pointGroups.setter
-    def pointGroups(self):
-        """Return analysis point groups."""
-        raise ValueError("You can't set pointGroups directly. " +
-                         "Use updatePointGroups method instead.")
-
-    def updatePointGroups(self, pointGroups, vectorGroups=[]):
-        """Update point groups.
+    def fromPointsAndVectors(cls, pointGroups, vectorGroups=None, hbObjects=None,
+                             subFolder="gridbased"):
+        """Create the recipe from analysisGrid.
 
         Args:
-            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
-                test points. Each list of test points will be converted to a
-                TestPointGroup. If testPts is a single flattened list only one
-                TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector
-                represents direction of corresponding point in testPts. If the
-                vector is not provided (0, 0, 1) will be assigned.
+            pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
+                test points. Each list of test points will be converted to a TestPointGroup.
+                If testPts is a single flattened list only one TestPointGroup will be created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
+                of corresponding point in testPts. If the vector is not provided (0, 0, 1)
+                will be assigned.
+            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
+            subFolder: Analysis subfolder for this recipe. (Default: "gridbased").
         """
-        self.createAnalysisPointGroups(pointGroups, vectorGroups)
+        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups, vectorGroups)
+        return cls(analysisGrids, hbObjects, subFolder)
+
+    @property
+    def analysisGrids(self):
+        """Return analysis grids."""
+        return self.__analysisGrids
+
+    @analysisGrids.setter
+    def analysisGrids(self, ags):
+        """Set analysis grids."""
+        self.__analysisGrids = tuple(ags)
+
+        for ag in self.__analysisGrids:
+            assert hasattr(ag, 'isAnalysisGrid'), \
+                '{} is not an AnalysisGrid.'.format(ag)
 
     @property
     def points(self):
         """Return nested list of points."""
-        return tuple(ap.points for ap in self.analysisPointsGroups)
-
-    @property
-    def numOfPointGroups(self):
-        """Number of point groups."""
-        return len(self.analysisPointsGroups)
-
-    @property
-    def numOfTotalPoints(self):
-        """Number of total points."""
-        return sum(len(ap) for ap in self.analysisPointsGroups)
+        return tuple(ap.points for ap in self.analysisGrids)
 
     @property
     def vectors(self):
         """Nested list of vectors."""
-        return tuple(ap.vectors for ap in self.analysisPointsGroups)
+        return tuple(ap.vectors for ap in self.analysisGrids)
 
     @property
-    def analysisPointsGroups(self):
-        """Return list of AnalysisPointGroups."""
-        return self.__analysisPointGroups
+    def numOfAnalysisGrids(self):
+        """Number of point groups."""
+        return len(self.analysisGrids)
 
-    def createAnalysisPointGroups(self, pointGroups, vectorGroups):
-        """Create AnalysisPointGroups from input points and vectors.
+    @property
+    def numOfTotalPoints(self):
+        """Number of total points."""
+        return sum(len(tuple(pts)) for pts in self.points)
 
-        You can acces AnalysisPointGroups using self.analysisPointsGroups property.
+    @staticmethod
+    def analysisGridsFromPointsAndVectors(pointGroups, vectorGroups=None):
+        """Create analysisGrid classes from points and vectors.
+
+        Args:
+            pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
+                test points. Each list of test points will be converted to a TestPointGroup.
+                If testPts is a single flattened list only one TestPointGroup will be created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
+                of corresponding point in testPts. If the vector is not provided (0, 0, 1)
+                will be assigned.
         """
-        self.__analysisPointGroups = []
+        vectorGroups = vectorGroups or ((),)
 
-        if len(pointGroups) == 0:
-            return
-        # input is single point! Create a single group but seriously!?
-        elif not isinstance(pointGroups[0], Iterable):
-            pointGroups = [[pointGroups]]
-            vectorGroups = [[vectorGroups]]
-        # if point group is flatten - create a single group
-        elif not isinstance(pointGroups[0][0], Iterable) \
-                and not hasattr(pointGroups[0][0], "X"):
-            pointGroups = [pointGroups]
-            vectorGroups = [vectorGroups]
+        vectorGroups = tuple(vectorGroups[i] if i < len(vectorGroups) else vectorGroups[-1]
+                             for i in range(len(pointGroups)))
 
-        for groupCount, pts in enumerate(pointGroups):
-            try:
-                # create a list for vectors if it's not provided by user
-                vectors = vectorGroups[groupCount]
-                if vectors == [[]]:
-                    vectors = [(0, 0, 1)]
-            except IndexError:
-                vectors = [(0, 0, 1)]
-            finally:
-                # last check for vectors in case user input is a flatten lists
-                # for nested group of points.
-                if not isinstance(vectors[0], Iterable) and not hasattr(vectors[0], 'X'):
-                    vectors = [vectors]
+        print zip(pointGroups, vectorGroups)
+        analysisGrids = (AnalysisGrid.fromPointsAndVectors(pts, vectors)
+                         for pts, vectors in zip(pointGroups, vectorGroups))
 
-                self.__analysisPointGroups.append(AnalysisGrid(pts, vectors))
-
-    def flatten(self, inputList):
-        """Return a flattened genertor from an input list.
-
-        Usage:
-
-            inputList = [['a'], ['b', 'c', 'd'], [['e']], ['f']]
-            list(flatten(inputList))
-            >> ['a', 'b', 'c', 'd', 'e', 'f']
-        """
-        for el in inputList:
-            if isinstance(el, Iterable) and not isinstance(el, basestring):
-                for sub in self.flatten(el):
-                    yield sub
-            else:
-                yield el
+        return analysisGrids
 
     def toRadString(self, hbObjects=False, points=False):
         """Return a tuple of multiline string radiance definition.
@@ -176,7 +132,7 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         _geoStr = ""
 
         if points:
-            _ptsStr = "\n".join([ap.toRadString() for ap in self.analysisPointsGroups])
+            _ptsStr = "\n".join((ag.toRadString() for ag in self.analysisGrids))
 
         if hbObjects:
             _matStr, _geoStr = self.hbObjectsToRadString()
@@ -256,7 +212,7 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
     def __repr__(self):
         """Represent grid based recipe."""
-        return "%s\n#PointGroups: %d #Points: %d" % \
+        return "%s\n#AnalysisGrids: %d #Points: %d" % \
             (self.__class__.__name__,
-             self.numOfPointGroups,
+             self.numOfAnalysisGrids,
              self.numOfTotalPoints)

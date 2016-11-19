@@ -5,10 +5,10 @@ from ._frozen import frozen
 
 @frozen
 class GenskyParameters(AdvancedRadianceParameters):
-    """
+    """Gensky parameters.
 
     Read more:
-    http://radsite.lbl.gov/radiance/man_html/gensky.1.html
+        http://radsite.lbl.gov/radiance/man_html/gensky.1.html
 
 
     Attributes:
