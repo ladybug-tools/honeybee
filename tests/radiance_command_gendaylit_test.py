@@ -7,7 +7,7 @@ from honeybee.radiance.parameters.gendaylit import GendaylitParameters
 import os
 
 
-class GenskyTestCase(unittest.TestCase):
+class GendaylitTestCase(unittest.TestCase):
     """Test for (honeybee/radiance/command/gendaylit.py)."""
 
     # preparing to test.
