@@ -1,10 +1,13 @@
 from .annual import HBAnnualAnalysisRecipe
 from ..postprocess.annualresults import LoadAnnualsResults
 from ..parameters.rfluxmtx import RfluxmtxParameters
+from ..parameters.xform import XformParameters
+from ..command.dctimestep import Dctimestep
 from ..command.rfluxmtx import Rfluxmtx
 from ..command.epw2wea import Epw2wea
 from ..command.gendaymtx import Gendaymtx
 from ..command.rmtxop import Rmtxop
+from ..command.xform import Xform
 from ..sky.skymatrix import SkyMatrix
 
 from ...helper import preparedir, getRadiancePathLines
@@ -159,15 +162,8 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         # if not self.isChanged:
         #     print "Inputs has not changed! Check files at %s" % _path
 
-        # 0.write points
-        pointsFile = self.writePointsToFile(_path, projectName)
-
-        # 1.write materials and geometry files
-        matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
-
-        # 2.write batch file
+        # 0.create a place holder for batch file
         batchFileLines = []
-
         # add path if needed
         batchFileLines.append(getRadiancePathLines())
 
@@ -175,48 +171,86 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
         batchFileLines.append(dirLine)
 
-        # # 2.1.Create annual daylight vectors through epw2wea and gendaymtx.
-        weaFile = Epw2wea(self.skyMatrix.epwFile)
-        weaFile.outputWeaFile = os.path.join(_path, projectName + ".wea")
-        batchFileLines.append(weaFile.toRadString())
+        # 1.write points
+        pointsFile = self.writePointsToFile(_path, projectName)
 
-        gdm = Gendaymtx(outputName=os.path.join(_path, projectName + ".smx"),
-                        weaFile=weaFile.outputWeaFile)
+        # 2.write materials and geometry files
+        matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
 
-        gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
-        batchFileLines.append(gdm.toRadString())
+        # 3.0. find glazing items with .xml material, write them to a separate
+        # file and invert them
+        bsdfGlazing = tuple(f for f in self.hbObjects
+                            if hasattr(f.radianceMaterial, 'xmlfile'))[0]
 
-        # # 2.2.Generate daylight coefficients using rfluxmtx
+        tMatrix = bsdfGlazing.radianceMaterial.xmlfile
+
+        glssPath = os.path.join(_path, 'glazing.rad')
+        glssRevPath = os.path.join(_path, 'glazingI.rad')
+        bsdfGlazing.radStringToFile(glssPath)
+
+        xfrParam = XformParameters()
+        xfrParam.invertSurfaces = True
+
+        xfr = Xform()
+        xfr.xformParameters = xfrParam
+        xfr.radFile = glssPath
+        xfr.outputFile = glssRevPath
+        batchFileLines.append(xfr.toRadString())
+
+        # # 3.1.Create annual daylight vectors through epw2wea and gendaymtx.
+        skyMtx = self.skyMatrix.execute(_path)
+
+        # # 3.2.Generate view matrix
         rflux = Rfluxmtx(projectName)
-        rflux.rfluxmtxParameters = self.radianceParameters
-
         rflux.sender = '-'
+        rflux.rfluxmtxParameters = None
+        rflux.rfluxmtxParameters.irradianceCalc = True
+        rflux.rfluxmtxParameters.ambientAccuracy = 0.1
+        rflux.rfluxmtxParameters.ambientBounces = 10
+        rflux.rfluxmtxParameters.ambientDivisions = 65536
+        rflux.rfluxmtxParameters.limitWeight = 1E-5
 
-        # I think it should be more explicit that this line is writing the sky
-        # to a file - rflux.writeDefaultSkyGroundToFile ?
-        skyFile = rflux.defaultSkyGround(os.path.join(_path, "rfluxSky.rad"),
-                                         skyType=self.skyType)
-        rflux.receiverFile = skyFile
-        rflux.radFiles = [matFile, geoFile]
+        # This needs to be automated based on the normal of each window.
+        # Klems full basis sampling and the window faces +Y
+        recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
+        rflux.receiverFile = rflux.addControlParameters(
+            glssPath, {bsdfGlazing.radianceMaterial.name: recCtrlPar})
+
+        rflux.radFiles = (matFile, geoFile, 'glazing.rad')
         rflux.pointsFile = pointsFile
-        rflux.outputMatrix = os.path.join(_path, projectName + ".dc")
-
+        rflux.outputMatrix = projectName + ".vmx"
         batchFileLines.append(rflux.toRadString())
+        vMatrix = rflux.outputMatrix
 
-        # # 2.3. matrix calculations
-        tempmtx = Rmtxop(matrixFiles=(rflux.outputMatrix, gdm.outputFile),
-                         outputFile=os.path.join(_path, "illuminance.tmp"))
+        # 3.3 daylight matrix
+        rflux2 = Rfluxmtx()
+        rflux2.samplingRaysCount = 1000
+        rflux2.sender = 'glazingI.rad_m'
+        skyFile = rflux2.defaultSkyGround(
+            os.path.join(_path, 'rfluxSky.rad'),
+            skyType='r{}'.format(self.skyMatrix.skyDensity))
 
-        batchFileLines.append(tempmtx.toRadString())
+        rflux2.receiverFile = skyFile
+        rflux2.rfluxmtxParameters = None
+        rflux2.rfluxmtxParameters.ambientAccuracy = 0.1
+        rflux2.rfluxmtxParameters.ambientDivisions = 1024
+        rflux2.rfluxmtxParameters.ambientBounces = 2
+        rflux2.rfluxmtxParameters.limitWeight = 0.0000001
+        rflux2.radFiles = (matFile, geoFile, 'glazing.rad')
+        rflux2.outputMatrix = projectName + ".dmx"
+        batchFileLines.append(rflux2.toRadString())
+        dMatrix = rflux2.outputMatrix
 
-        finalmtx = Rmtxop(matrixFiles=[tempmtx.outputFile],
-                          outputFile=os.path.join(_path, "illuminance.ill"))
-        finalmtx.rmtxopParameters.outputFormat = 'a'
-        finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
-        finalmtx.rmtxopParameters.transposeMatrix = True
-        batchFileLines.append(finalmtx.toRadString())
+        # 4. matrix calculations
+        dct = Dctimestep()
+        dct.tmatrixFile = tMatrix
+        dct.vmatrixSpec = vMatrix
+        dct.dmatrixFile = str(dMatrix)
+        dct.skyVectorFile = skyMtx
+        dct.outputFileName = r"illuminance.ill"
+        batchFileLines.append(dct.toRadString())
 
-        # # 2.3 write batch file
+        # 5. write batch file
         batchFile = os.path.join(_path, projectName + ".bat")
         self.write(batchFile, "\n".join(batchFileLines))
         self.__batchFile = batchFile
