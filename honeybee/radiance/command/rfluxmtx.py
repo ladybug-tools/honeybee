@@ -220,6 +220,8 @@ class Rfluxmtx(RadianceCommand):
     verbose = RadianceBoolFlag('v','verbose commands in stdout')
     numProcessors = RadianceNumber('n', 'number of processors',
                                     numType=int)
+
+    # TODO: This method misses RfluxmtxParameters as an input.
     def __init__(self, sender=None, receiverFile=None, octreeFile=None,
                  radFiles=None, pointsFile=None, outputMatrix=None,
                  viewRaysFile=None, viewInfoFile=None, outputFilenameFormat=None,
@@ -251,7 +253,7 @@ class Rfluxmtx(RadianceCommand):
 
         self.pointsFileData = ''
 
-        self.viewRaysFile= viewRaysFile
+        self.viewRaysFile = viewRaysFile
         """File containing ray samples generated from vwrays"""
 
         self.viewInfoFile = viewInfoFile
@@ -326,9 +328,8 @@ class Rfluxmtx(RadianceCommand):
         return self.__rfluxmtxParameters
 
     @rfluxmtxParameters.setter
-    def rfluxmtxParameters(self,parameters):
-        self.__rfluxmtxParameters = parameters if parameters is not None\
-            else RfluxmtxParameters()
+    def rfluxmtxParameters(self, parameters):
+        self.__rfluxmtxParameters = parameters or RfluxmtxParameters()
 
         assert hasattr(self.rfluxmtxParameters, "isRadianceParameters"), \
             "input rfluxmtxParameters is not a valid parameters type."

@@ -45,7 +45,7 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
         rfluxPara.ambientDivisions = 65536
         rfluxPara.limitWeight = 1E-5
 
-        #step 1.1 Invert glazing surface with xform so that it faces inwards
+        # step 1.1 Invert glazing surface with xform so that it faces inwards
         xfrPara = XformParameters()
         xfrPara.invertSurfaces = True
 
@@ -66,18 +66,16 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
         rflux.rfluxmtxParameters = rfluxPara
         rflux.pointsFile = 'indoor_points.pts'
         rflux.outputMatrix = r'temp/vmatrix.vmx'
-        rflux.radFiles = ['room.mat','room.rad','glazing.rad']
+        rflux.radFiles = ['room.mat', 'room.rad', 'glazing.rad']
         rflux.execute()
 
     vMatrix = r'temp/vmatrix.vmx'
 
-
-
-    #Step2: Assign T matrix from precalculated XML files.
+    # Step2: Assign T matrix from precalculated XML files.
     tMatrix = tmatrixFile or r'xmls/clear.xml'
 
     if phasesToCalculate['d']:
-        #Step3: Create D matrix.
+        # Step3: Create D matrix.
         rfluxPara = RfluxmtxParameters()
         rfluxPara.ambientAccuracy = 0.1
         rfluxPara.ambientDivisions = 1024
@@ -87,7 +85,7 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
         rflux2 = Rfluxmtx()
         rflux2.samplingRaysCount = 1000
         rflux2.sender = 'glazingI.rad_m'
-        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r4')
+        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r4')
         rflux2.receiverFile = skyFile
         rflux2.rfluxmtxParameters = rfluxPara
         rflux2.radFiles = [r"room.mat",

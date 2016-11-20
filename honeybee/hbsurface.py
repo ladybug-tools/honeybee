@@ -181,9 +181,8 @@ class HBSurface(HBAnalysisSurface):
 
     # TODO: implement joinOutput argument
     def toRadString(self, includeMaterials=False,
-                    includeChildrenSurfaces=True, joinOutput = True):
+                    includeChildrenSurfaces=True, joinOutput=True):
         """Return Radiance definition for this surface as a string."""
-
         surfaceString = super(HBSurface, self).toRadString(includeMaterials,
                                                            joinOutput)
 
