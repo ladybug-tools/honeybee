@@ -31,7 +31,7 @@ class Gendaylit(RadianceCommand):
         gndayParam.dirNormDifHorzIrrad = (600,100)
 
         # create the gendaylit Command.
-        gnday = GenSky(monthDayHour=(1,1,11), gendaylitParameters=gndayParam,
+        gnday = Gendaylit(monthDayHour=(1,1,11), gendaylitParameters=gndayParam,
         outputName = r'd:/sunnyWSun_010111.sky' )
 
         # run gendaylit
@@ -59,12 +59,10 @@ class Gendaylit(RadianceCommand):
         self.monthDayHour = monthDayHour
         self.gendaylitParameters = gendaylitParameters
 
-
     @property
     def gendaylitParameters(self):
         """Get and set gendaylitParameters."""
         return self.__gendaylitParameters
-
 
     @gendaylitParameters.setter
     def gendaylitParameters(self, gendaylitParam):
@@ -73,7 +71,6 @@ class Gendaylit(RadianceCommand):
 
         assert hasattr(self.gendaylitParameters, "isRadianceParameters"), \
             "input gendaylitParameters is not a valid parameters type."
-
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
@@ -89,7 +86,6 @@ class Gendaylit(RadianceCommand):
         )
 
         return radString
-
 
     @property
     def inputFiles(self):
