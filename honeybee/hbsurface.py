@@ -181,14 +181,14 @@ class HBSurface(HBAnalysisSurface):
 
     # TODO: implement joinOutput argument
     def toRadString(self, includeMaterials=False,
-                    includeChildrenSurfaces=True, joinOutput=True):
+                    includeChildrenSurfaces=True, joinOutput=True, reverse=False):
         """Return Radiance definition for this surface as a string."""
         surfaceString = super(HBSurface, self).toRadString(includeMaterials,
-                                                           joinOutput)
+                                                           joinOutput, reverse)
 
         if includeChildrenSurfaces and self.hasChildSurfaces:
             childrenSurfacesString = [
-                childSurface.toRadString(includeMaterials, joinOutput)
+                childSurface.toRadString(includeMaterials, joinOutput, reverse)
                 for childSurface in self.childrenSurfaces
             ]
             return "%s\n%s" % (surfaceString,
@@ -198,7 +198,7 @@ class HBSurface(HBAnalysisSurface):
             return surfaceString
 
     def radStringToFile(self, filePath, includeMaterials=False,
-                        includeChildrenSurfaces=True):
+                        includeChildrenSurfaces=True, reverse=False):
         """Write Radiance definition for this surface to a file.
 
         Args:
@@ -213,7 +213,7 @@ class HBSurface(HBAnalysisSurface):
         with open(filePath, "w") as outf:
             try:
                 outf.write(self.toRadString(includeMaterials,
-                                            includeChildrenSurfaces))
+                                            includeChildrenSurfaces, reverse))
                 return True
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)

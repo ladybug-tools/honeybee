@@ -73,7 +73,7 @@ class HBAnalysisSurface(HBObject):
 
     @property
     def hasRadianceGlassMaterial(self):
-        """Returns true if surface has radiance glass material."""
+        """Return true if surface has radiance glass material."""
         return self.radianceMaterial.isGlassMaterial
 
     @abstractproperty
@@ -389,8 +389,11 @@ class HBAnalysisSurface(HBObject):
 
             return AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
 
-    def toRadString(self, includeMaterials=False, joinOutput=True):
-        """Return Radiance definition for this surface as a string."""
+    def toRadString(self, includeMaterials=False, joinOutput=True, reverse=False):
+        """Return Radiance definition for this surface as a string.
+
+        reverse: Set to True to reverse surface direction.
+        """
         # prepare points for surface.
         if self.isChildSurface or not self.hasChildSurfaces:
             __pts = self.absolutePoints
@@ -404,7 +407,10 @@ class HBAnalysisSurface(HBObject):
 
             __pts = AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
 
-            __pts = [__pts]
+            __pts = (__pts,)
+
+        if reverse:
+            __pts = tuple(tuple(reversed(pts)) for pts in __pts)
 
         __numPtGroups = len(__pts)
         # create a place holder for each point group (face)
@@ -429,7 +435,7 @@ class HBAnalysisSurface(HBObject):
                 if includeMaterials \
                 else __pgStrings
 
-    def radStringToFile(self, filePath, includeMaterials=False):
+    def radStringToFile(self, filePath, includeMaterials=False, reverse=False):
         """Write Radiance definition for this surface to a file.
 
         Args:
@@ -443,7 +449,7 @@ class HBAnalysisSurface(HBObject):
 
         with open(filePath, "w") as outf:
             try:
-                outf.write(self.toRadString(includeMaterials))
+                outf.write(self.toRadString(includeMaterials, reverse=reverse))
                 return True
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)
