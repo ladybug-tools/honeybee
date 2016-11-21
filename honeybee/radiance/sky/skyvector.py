@@ -2,6 +2,10 @@ from _skyBase import RadianceSky
 from ..command.genskyvec import Genskyvec
 from ..command.gensky import Gensky
 from ..command.gendaylit import Gendaylit
+from ..parameters.gendaylit import GendaylitParameters
+
+from ...ladybug.epw import EPW
+from ...ladybug.core import LBDateTime
 import os
 
 
@@ -42,15 +46,23 @@ class SkyVector(RadianceSky):
             skyDensity: A positive intger for sky density. [1] Tregenza Sky,
                 [2] Reinhart Sky, etc. (Default: 1)
         """
-        raise NotImplementedError()
-        location = ()
+        epw = EPW(epwFile)
+        location = epw.location
         skyfile = 'CB_{}_{}_{}_{}_{}_{}_{}.sky'.format(
             location.stationId, location.city.replace(' ', ''), location.latitude,
             location.longitude, month, day, hour
         )
-        gendl = Gendaylit.formWeatherFile(epwFile, monthDayHour=(month, day, hour))
+        #
+        HOY = LBDateTime(month, day, hour).HOY
+        dnr = epw.directNormalRadiation.values()[HOY]
+        dgr = epw.diffuseHorizontalRadiation.values()[HOY]
+        gdp = GendaylitParameters(dirNormDifHorzIrrad=(dnr, dgr))
+
+        gendl = Gendaylit(monthDayHour=(month, day, hour),
+                          gendaylitParameters=gdp)
         gendl.outputFile = skyfile
         gendl.execute()
+
         return cls(skyfile, skyDensity, isClimateBased=True)
 
     @classmethod

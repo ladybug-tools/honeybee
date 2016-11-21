@@ -72,7 +72,6 @@ class Folders(object):
                 self.perlExePath = __perlpath
                 # raise NotImplementedError
 
-
     def __which(self, program):
         """Find executable programs.
 
@@ -87,7 +86,7 @@ class Folders(object):
             # Make sure it's not part of Dive installation as DIVA doesn't
             # follow the standard structure folder for Daysim and Radiance
             # Note: (@mostaphaRoudsari, DIVA check is only required for...
-            #...Windows.
+            # ...Windows.
             if fpath.upper().find("DIVA") and os.name == 'nt':
                 return False
             # Return true if file exists and is executable
@@ -175,13 +174,14 @@ class Folders(object):
         if not openStudioPath:
             return
 
-        possiblePerLocations = [pathVal for pathVal in os.listdir(openStudioPath)
-                                if 'perl' in pathVal.lower()]
+        possiblePerLocations = (pathVal for pathVal in os.listdir(openStudioPath)
+                                if 'perl' in pathVal.lower())
 
-        possiblePerLocations = [os.path.join(openStudioPath, pathVal, 'perl\\bin')
-                                for pathVal in possiblePerLocations]
+        possiblePerLocations = (os.path.join(openStudioPath, pathVal, 'perl\\bin')
+                                for pathVal in possiblePerLocations)
 
         for binDir in possiblePerLocations:
+            print binDir
             if 'perl.exe' in os.listdir(binDir):
                 self.__perlExePath = os.path.join(binDir, 'perl.exe')
                 break
@@ -194,7 +194,9 @@ class Folders(object):
 
     @property
     def pythonExePath(self):
+        """Path to Python folder."""
         return sys.executable
+
 f = Folders(mute=True)
 radlibPath = f.radlibPath
 """Path to Radinace libraries folder."""

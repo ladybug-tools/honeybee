@@ -1,10 +1,11 @@
 # coding=utf-8
 
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath,RadianceNumber,RadianceTuple
+from ..datatype import RadiancePath, RadianceNumber, RadianceTuple
 from ..datatype import RadianceBoolFlag
 
 import os
+
 
 class Genskyvec(RadianceCommand):
 
@@ -25,10 +26,9 @@ class Genskyvec(RadianceCommand):
         self.headerSuppress = headerSuppress
         self.skySubdivision = skySubdivision
         self.skyColorRgb = skyColorRgb
-        self.sunOnlyVector=sunOnlyVector
+        self.sunOnlyVector = sunOnlyVector
         self.inputSkyFile = inputSkyFile
         self.outputFile = outputFile
-
 
     @property
     def inputFiles(self):
@@ -38,24 +38,30 @@ class Genskyvec(RadianceCommand):
         # TODO: This only works for Windows for now.
         # Need to make the path lookup thing x-platform.
         perlPath = self.normspace(self.perlExePath) if os.name == 'nt' else ''
+        if os.name == 'nt' and not perlPath:
+            raise IOError('Failed to find perl installation.\n'
+                          'genskyvec.pl needs perl to run successfully.')
+
         exeName = 'genskyvec.pl' if os.name == 'nt' else 'genskyvec'
-        cmdPath = self.normspace(os.path.join(self.radbinPath,exeName))
+        cmdPath = self.normspace(os.path.join(self.radbinPath, exeName))
 
         headerSuppress = self.headerSuppress.toRadString()
         skySubDiv = self.skySubdivision.toRadString()
         skyColor = self.skyColorRgb.toRadString()
         sunOnly = self.sunOnlyVector.toRadString()
 
-        inputParams = "{} {} {} {}".format(headerSuppress,skySubDiv,skyColor,
+        inputParams = "{} {} {} {}".format(headerSuppress,
+                                           skySubDiv,
+                                           skyColor,
                                            sunOnly)
         inputSky = self.inputSkyFile.toRadString()
-        inputSky = "< %s"%inputSky if inputSky else ''
+        inputSky = "< %s" % inputSky if inputSky else ''
 
         output = self.outputFile.toRadString()
-        output = "> %s"%output if output else ''
+        output = "> %s" % output if output else ''
 
-        radString = "{} {} {} {} {}".format(perlPath,cmdPath,inputParams,
-                                            inputSky,output)
+        radString = "{} {} {} {} {}".format(perlPath, cmdPath, inputParams,
+                                            inputSky, output)
 
         self.checkInputFiles(radString)
 
