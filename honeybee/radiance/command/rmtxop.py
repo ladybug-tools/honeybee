@@ -18,7 +18,8 @@ class Rmtxop(RadianceCommand):
                               descriptiveName='output matrix file',
                               relativePath=None, checkExists=False)
 
-    def __init__(self, matrixFiles=None, outputFile=None, rmtxopParameters=None):
+    def __init__(self, matrixFiles=None, compoundMatrices=None,
+                 outputFile=None, rmtxopParameters=None):
         RadianceCommand.__init__(self)
 
         self.matrixFiles = matrixFiles
@@ -26,6 +27,8 @@ class Rmtxop(RadianceCommand):
         self.outputFile = outputFile
 
         self.rmtxopParameters = rmtxopParameters
+
+        # self.compoundMatrices = compoundMatrices
 
     @property
     def rmtxopParameters(self):
@@ -40,6 +43,26 @@ class Rmtxop(RadianceCommand):
         assert hasattr(self.rmtxopParameters, "isRadianceParameters"), \
             "input rmtxopParameters is not a valid parameters type."
 
+    # @property
+    # def compoundMatrices(self):
+    #     return self.__compoundMatrices
+    #
+    # @compoundMatrices.setter
+    # def compoundMatrices(self,*matrixAndParams):
+    #     if matrixAndParams:
+    #         fileList = []
+    #         for matrixFile,Parameters in matrixAndParams:
+    #             assert os.path.exists(matrixFile),\
+    #                 'The file specified for the matrix %s does not exist'%matrixFile
+    #             assert isinstance(Parameters,RmtxopParameters),\
+    #                 'The valid input for matrixAndParams is a list of tuples that contains' \
+    #                 'matrix files and RmtxopParameters that are to be assigned to them. In ' \
+    #                 'this the RmtxopParamter has not been correctly assigned.'
+    #             fileList.append((os.path.normpath(matrixFile),Parameters))
+    #         self.__compoundMatrices = fileList
+    #     else:
+    #         self.__compoundMatrices = None
+
     @property
     def matrixFiles(self):
         """Get and set scene files."""
@@ -52,10 +75,18 @@ class Rmtxop(RadianceCommand):
 
     def toRadString(self, relativePath=False):
         """Return full command as string."""
-        radString = "%s %s %s > %s" % (
+
+
+        compoundMatrices = ''
+        # if self.compoundMatrices:
+        #     for matrixFile,Parameters in self.compoundMatrices:
+        #         compoundMatrices +='%s %s '%(Parameters.toRadString(),matrixFile)
+
+        radString = "%s %s %s %s > %s" % (
             self.normspace(os.path.join(self.radbinPath, 'rmtxop')),
             self.rmtxopParameters.toRadString(),
-            " ".join(self.matrixFiles),
+            " + ".join(self.matrixFiles),
+            compoundMatrices,
             self.normspace(self.outputFile.toRadString())
         )
 
