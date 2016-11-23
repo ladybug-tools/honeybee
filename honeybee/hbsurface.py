@@ -188,7 +188,8 @@ class HBSurface(HBAnalysisSurface):
 
         if includeChildrenSurfaces and self.hasChildSurfaces:
             childrenSurfacesString = [
-                childSurface.toRadString(includeMaterials, joinOutput, reverse)
+                childSurface.toRadString(includeMaterials, joinOutput,
+                                         reverse=reverse)
                 for childSurface in self.childrenSurfaces
             ]
             return "%s\n%s" % (surfaceString,
@@ -212,8 +213,8 @@ class HBSurface(HBAnalysisSurface):
 
         with open(filePath, "w") as outf:
             try:
-                outf.write(self.toRadString(includeMaterials,
-                                            includeChildrenSurfaces, reverse))
+                outf.write(self.toRadString(
+                    includeMaterials, includeChildrenSurfaces, reverse=reverse))
                 return True
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)

@@ -47,7 +47,7 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             self, analysisGrids, hbObjects, subFolder
         )
 
-        assert hasattr(skyMtx, 'epwFile') and hasattr(skyMtx, 'skyDensity'), \
+        assert hasattr(skyMtx, 'skyDensity'), \
             TypeError('{} is not a SkyMatrix'.format(skyMtx))
 
         self.skyMatrix = skyMtx

@@ -53,7 +53,8 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
         xfr.xformParameters = xfrPara
         xfr.radFile = 'glazing.rad'
         xfr.outputFile = 'glazingI.rad'
-        xfr.execute()
+        print xfr.toRadString()
+        # xfr.execute()
 
         rflux = Rfluxmtx()
         rflux.sender = '-'
@@ -63,11 +64,12 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
         recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
         rflux.receiverFile = rflux.addControlParameters('glazingI.rad',
                                                         {'Exterior_Window': recCtrlPar})
+
         rflux.rfluxmtxParameters = rfluxPara
         rflux.pointsFile = 'indoor_points.pts'
         rflux.outputMatrix = r'temp/vmatrix.vmx'
         rflux.radFiles = ['room.mat', 'room.rad', 'glazing.rad']
-        rflux.execute()
+        # rflux.execute()
 
     vMatrix = r'temp/vmatrix.vmx'
 
@@ -110,14 +112,14 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
 
             genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
             genday.gendaymtxParameters = gendayParam
-            genday.execute()
+            # genday.execute()
 
             skyVector = r'temp/day.smx'
         else:
             gensk = Gensky()
             gensk.monthDayHour = (11, 11, 11)
             gensk.outputFile = 'temp/sky.rad'
-            gensk.execute()
+            # gensk.execute()
 
             genskv = Genskyvec()
             genskv.inputSkyFile = r'temp/sky.rad'
