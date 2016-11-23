@@ -4,16 +4,17 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Glow
 """
 
 from ..datatype import RadianceNumber
-from _materialbase import RadianceMaterial
+from ._materialbase import RadianceMaterial
+
 
 class GlowMaterial(RadianceMaterial):
 
-
     red = RadianceNumber('red',checkPositive=True)
     blue = RadianceNumber('blue', checkPositive=True)
-    green= RadianceNumber('green',checkPositive=True)
-    maxRadius=RadianceNumber('maxRadius',checkPositive=True)
-    def __init__(self,name,red=0,green=0,blue=0,maxRadius=0):
+    green = RadianceNumber('green',checkPositive=True)
+    maxRadius = RadianceNumber('maxRadius',checkPositive=True)
+
+    def __init__(self, name, red=0, green=0, blue=0, maxRadius=0):
         """
         Create glow material
         Attributes:
@@ -25,7 +26,7 @@ class GlowMaterial(RadianceMaterial):
             blue: A positive value for the Blue channel of the glow
             modifer: Material modifier. The default value is void.
         """
-        RadianceMaterial.__init__(self,name,materialType='glow',modifier='void')
+        RadianceMaterial.__init__(self, name, materialType='glow', modifier='void')
         self.red=red
         """A positive value for the Red channel of the glow"""
         self.green=green

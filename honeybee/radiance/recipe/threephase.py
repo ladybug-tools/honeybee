@@ -8,6 +8,7 @@ from ..command.epw2wea import Epw2wea
 from ..command.gendaymtx import Gendaymtx
 from ..command.rmtxop import Rmtxop
 from ..command.xform import Xform
+from ..material.glow import GlowMaterial
 from ..sky.skymatrix import SkyMatrix
 
 from ...helper import preparedir, getRadiancePathLines
@@ -180,22 +181,16 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         # 3.0. find glazing items with .xml material, write them to a separate
         # file and invert them
         bsdfGlazing = tuple(f for f in self.hbObjects
-                            if hasattr(f.radianceMaterial, 'xmlfile'))[0]
+                            if hasattr(f.radianceMaterial, 'xmlfile'))[0].duplicate()
 
         tMatrix = bsdfGlazing.radianceMaterial.xmlfile
 
-        glssPath = os.path.join(_path, 'glazing.rad')
-        glssRevPath = os.path.join(_path, 'glazingI.rad')
-        bsdfGlazing.radStringToFile(glssPath)
+        # maek a copy of the glass and change the material to glow
+        bsdfGlazing.radianceMaterial = GlowMaterial(
+            bsdfGlazing.radianceMaterial.name + '_glow', 1, 1, 1)
+        glassPath = os.path.join(_path, 'glazing.rad')
 
-        xfrParam = XformParameters()
-        xfrParam.invertSurfaces = True
-
-        xfr = Xform()
-        xfr.xformParameters = xfrParam
-        xfr.radFile = glssPath
-        xfr.outputFile = glssRevPath
-        batchFileLines.append(xfr.toRadString())
+        bsdfGlazing.radStringToFile(glassPath, includeMaterials=True, reverse=True)
 
         # # 3.1.Create annual daylight vectors through epw2wea and gendaymtx.
         skyMtx = self.skyMatrix.execute(_path)
@@ -214,7 +209,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         # Klems full basis sampling and the window faces +Y
         recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
         rflux.receiverFile = rflux.addControlParameters(
-            glssPath, {bsdfGlazing.radianceMaterial.name: recCtrlPar})
+            glassPath, {bsdfGlazing.radianceMaterial.name: recCtrlPar})
 
         rflux.radFiles = (matFile, geoFile, 'glazing.rad')
         rflux.pointsFile = pointsFile
@@ -225,7 +220,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         # 3.3 daylight matrix
         rflux2 = Rfluxmtx()
         rflux2.samplingRaysCount = 1000
-        rflux2.sender = 'glazingI.rad_m'
+        rflux2.sender = rflux.receiverFile
         skyFile = rflux2.defaultSkyGround(
             os.path.join(_path, 'rfluxSky.rad'),
             skyType='r{}'.format(self.skyMatrix.skyDensity))
@@ -247,10 +242,18 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         dct.vmatrixSpec = vMatrix
         dct.dmatrixFile = str(dMatrix)
         dct.skyVectorFile = skyMtx
-        dct.outputFileName = r"illuminance.ill"
+        dct.outputFileName = r"illuminance.tmp"
         batchFileLines.append(dct.toRadString())
 
-        # 5. write batch file
+        # 5. convert r, g ,b values to illuminance
+        finalmtx = Rmtxop(matrixFiles=[dct.outputFileName],
+                          outputFile="illuminance.ill")
+        finalmtx.rmtxopParameters.outputFormat = 'a'
+        finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
+        finalmtx.rmtxopParameters.transposeMatrix = True
+        batchFileLines.append(finalmtx.toRadString())
+
+        # 6. write batch file
         batchFile = os.path.join(_path, projectName + ".bat")
         self.write(batchFile, "\n".join(batchFileLines))
         self.__batchFile = batchFile

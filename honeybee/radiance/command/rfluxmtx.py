@@ -1,15 +1,16 @@
 # coding=utf-8
 
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath, RadianceValue,RadianceNumber
+from ..datatype import RadiancePath, RadianceValue, RadianceNumber
 from ..datatype import RadianceBoolFlag
 from ..parameters.rfluxmtx import RfluxmtxParameters
 
 import os
 
 
-
 class Rfluxmtx(RadianceCommand):
+    """Radiance Rfluxmtx matrix."""
+
     groundString = """
     void glow ground_glow
     0
@@ -49,8 +50,8 @@ class Rfluxmtx(RadianceCommand):
                     scN for shirley-chiu subdivisions."""
             self.hemisphereUpDirection = hemiUpDirection
             """The acceptable inputs for hemisphere direction are %s""" % \
-            (",".join(('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
-                       '-Z', '-x', '-y', '-z')))
+                (",".join(('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
+                           '-Z', '-x', '-y', '-z')))
             self.outputFile = outputFile
 
         @property
@@ -59,14 +60,16 @@ class Rfluxmtx(RadianceCommand):
 
         @hemisphereType.setter
         def hemisphereType(self, value):
+            """Hemisphere type.
+
+            The acceptable inputs for hemisphere type are:
+                u for uniform.(Usually applicable for ground).
+                kf for klems full.
+                kh for klems half.
+                kq for klems quarter.
+                rN for Reinhart - Tregenza type skies. N stands for subdivisions and defaults to 1.
+                scN for shirley-chiu subdivisions.
             """
-                The acceptable inputs for hemisphere type are:
-                    u for uniform.(Usually applicable for ground).\n
-                    kf for klems full.\n
-                    kh for klems half.\n
-                    kq for klems quarter.\n
-                    rN for Reinhart - Tregenza type skies. N stands for subdivisions and defaults to 1.\n
-                    scN for shirley-chiu subdivisions."""
             if value:
                 if value in ('u', 'kf', 'kh', 'kq'):
                     self._hemisphereType = value
@@ -183,10 +186,9 @@ class Rfluxmtx(RadianceCommand):
         checkDict = dict.fromkeys(modifierDict.keys(), None)
         for lines in fileData.split('\n'):
             for key, value in modifierDict.items():
-                if key in lines and not checkDict[
-                    key] and not lines.strip().startswith('#'):
+                if key in lines and not checkDict[key] and \
+                    not lines.strip().startswith('#'):
                     outputString += str(value) + '\n'
-                    # outputString += lines.strip() + '\n'
                     checkDict[key] = True
             else:
                 outputString += lines.strip() + '\n'
@@ -195,8 +197,8 @@ class Rfluxmtx(RadianceCommand):
             assert value, "The modifier %s was not found in the string specified" % key
 
         if os.path.exists(inputString):
-            newOutputFile = inputString + '_m'
-            with open(newOutputFile, 'w')as newoutput:
+            newOutputFile = inputString[:-4] + '_m' + inputString[-4:]
+            with open(newOutputFile, 'w') as newoutput:
                 newoutput.write(outputString)
             outputString = newOutputFile
         return outputString
@@ -270,7 +272,7 @@ class Rfluxmtx(RadianceCommand):
         return self._outputFilenameFormat
 
     @outputFilenameFormat.setter
-    def outputFilenameFormat(self,value):
+    def outputFilenameFormat(self, value):
         #TODO: Add testing logic for this !
         if value:
             self._outputFilenameFormat = value
@@ -282,7 +284,7 @@ class Rfluxmtx(RadianceCommand):
         return self._viewInfoFile
 
     @viewInfoFile.setter
-    def viewInfoFile(self,fileName):
+    def viewInfoFile(self, fileName):
         """
             The input for this setter is a file containing the view dimensions
             calculated through the -d option in rfluxmtx.
@@ -336,7 +338,7 @@ class Rfluxmtx(RadianceCommand):
 
     def toRadString(self, relativePath=False):
         octree = self.octreeFile.toRadString()
-        octree = '-i %s'%self.normspace(octree) if octree else ''
+        octree = '-i %s' % self.normspace(octree) if octree else ''
         samplingCount = self.samplingRaysCount.toRadString()
 
         outputDataFormat = self.outputDataFormat.toRadString()
@@ -345,45 +347,46 @@ class Rfluxmtx(RadianceCommand):
         numberOfProcessors = self.numProcessors.toRadString()
 
         pointsFile = self.normspace(self.pointsFile)
-        pointsFile = '< %s'%pointsFile if pointsFile else ''
+        pointsFile = '< %s' % pointsFile if pointsFile else ''
 
         viewFileSamples = self.normspace(self.viewRaysFile.toRadString())
-        viewFileSamples = '< %s'%viewFileSamples if viewFileSamples else ''
+        viewFileSamples = '< %s' % viewFileSamples if viewFileSamples else ''
 
         assert not (pointsFile and viewFileSamples),\
-        'View file and points file cannot be specified at the same time!'
+            'View file and points file cannot be specified at the same time!'
 
         inputRays = pointsFile or viewFileSamples
 
         outputMatrix = self.normspace(self.outputMatrix.toRadString())
-        outputMatrix = "> %s"%outputMatrix if outputMatrix else ''
+        outputMatrix = "> %s" % outputMatrix if outputMatrix else ''
 
         outputFilenameFormat = self.outputFilenameFormat
-        outputFilenameFormat = "-o %s"%outputFilenameFormat if\
-        outputFilenameFormat else ''
-        #Lambda shortcut for adding an input or nothing to the command
-        addToStr = lambda val: "%s "%val if val else ''
+        outputFilenameFormat = "-o %s" % outputFilenameFormat if \
+            outputFilenameFormat else ''
+        # Lambda shortcut for adding an input or nothing to the command
+        addToStr = lambda val: "%s " % val if val else ''
 
-        #Creating the string this way because it might change again in the
+        # Creating the string this way because it might change again in the
         # future.
-        radString = "%s "%self.normspace(os.path.join(self.radbinPath,
-                                                     'rfluxmtx'))
-        radString += addToStr(outputDataFormat)
-        radString += addToStr(verbose)
-        radString += addToStr(numberOfProcessors)
-        radString += addToStr(self.pointsFileData)
-        radString += addToStr(self._viewFileDimensions)
-        radString += addToStr(samplingCount)
-        radString += addToStr(self.rfluxmtxParameters.toRadString())
-        radString += addToStr(outputFilenameFormat)
-        radString += addToStr(self.sender)
-        radString += addToStr(self.normspace(self.receiverFile.toRadString()))
-        radString += addToStr(" ".join(self.radFiles))
-        radString += addToStr(octree)
-        radString += addToStr(inputRays)
-        radString += addToStr(outputMatrix)
 
-        return radString
+        radString = ["%s " % self.normspace(os.path.join(self.radbinPath,
+                                                         'rfluxmtx'))]
+        radString.append(addToStr(outputDataFormat))
+        radString.append(addToStr(verbose))
+        radString.append(addToStr(numberOfProcessors))
+        radString.append(addToStr(self.pointsFileData))
+        radString.append(addToStr(self._viewFileDimensions))
+        radString.append(addToStr(samplingCount))
+        radString.append(addToStr(self.rfluxmtxParameters.toRadString()))
+        radString.append(addToStr(outputFilenameFormat))
+        radString.append(addToStr(self.sender))
+        radString.append(addToStr(self.normspace(self.receiverFile.toRadString())))
+        radString.append(addToStr(" ".join(self.radFiles)))
+        radString.append(addToStr(octree))
+        radString.append(addToStr(inputRays))
+        radString.append(addToStr(outputMatrix))
+
+        return ''.join(radString)
 
     @property
     def inputFiles(self):

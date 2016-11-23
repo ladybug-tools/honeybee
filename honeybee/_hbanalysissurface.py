@@ -8,6 +8,7 @@ from surfacetype import Floor, Wall, Window, Ceiling
 import os
 import types
 import math
+import copy
 
 
 class HBAnalysisSurface(HBObject):
@@ -449,7 +450,8 @@ class HBAnalysisSurface(HBObject):
 
         with open(filePath, "w") as outf:
             try:
-                outf.write(self.toRadString(includeMaterials, reverse=reverse))
+                outf.write(self.toRadString(includeMaterials=includeMaterials,
+                                            reverse=reverse))
                 return True
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)
@@ -482,6 +484,10 @@ class HBAnalysisSurface(HBObject):
     def toEPString(self, includeConstruction=False, includeMaterials=False):
         """Return EnergyPlus definition for this surface."""
         raise NotImplementedError
+
+    def duplicate(self):
+        """Copy honeybee surface."""
+        return copy.deepcopy(self)
 
     def ToString(self):
         """Overwrite .NET ToString method."""
