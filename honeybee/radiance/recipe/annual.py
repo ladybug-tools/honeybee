@@ -40,8 +40,8 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    def __init__(self, skyMtx, analysisGrids, hbObjects=None,
-                 subFolder="annualdaylight"):
+    def __init__(self, skyMtx, analysisGrids, radianceParameters=None,
+                 hbObjects=None, subFolder="annualdaylight"):
         """Create an annual recipe."""
         HBGenericGridBasedAnalysisRecipe.__init__(
             self, analysisGrids, hbObjects, subFolder
@@ -51,17 +51,7 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             TypeError('{} is not a SkyMatrix'.format(skyMtx))
 
         self.skyMatrix = skyMtx
-
-        # set RfluxmtxParameters as default radiance parameter for annual analysis
-        self.__radianceParameters = RfluxmtxParameters()
-        self.__radianceParameters.irradianceCalc = True
-
-        # @sarith do we want to set these values as default?
-        self.__radianceParameters.ambientAccuracy = 0.1
-        self.__radianceParameters.ambientDivisions = 4096
-        self.__radianceParameters.ambientBounces = 6
-        self.__radianceParameters.limitWeight = 0.001
-
+        self.radianceParameters = radianceParameters
         self.__batchFile = None
         self.resultsFile = []
 
@@ -70,8 +60,8 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
-        cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1, hbObjects=None,
-            subFolder="annualdaylight"):
+        cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
+            radianceParameters=None, hbObjects=None, subFolder="annualdaylight"):
         """Create annual recipe from weather file, points and vectors.
 
         Args:
@@ -94,10 +84,11 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
 
-        return cls(skyMtx, analysisGrids, hbObjects, subFolder)
+        return cls(skyMtx, analysisGrids, radianceParameters, hbObjects, subFolder)
 
     @classmethod
-    def fromPointsFile(cls, epwFile, pointsFile, skyDensity=0, hbObjects=None,
+    def fromPointsFile(cls, epwFile, pointsFile, skyDensity=0,
+                       radianceParameters=None, hbObjects=None,
                        subFolder="annualdaylight"):
         """Create an annual recipe from points file."""
         try:
@@ -108,12 +99,30 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             raise ValueError("Couldn't import points from {}".format(pointsFile))
 
         return cls.fromWeatherFilePointsAndVectors(
-            epwFile, pointGroups, vectorGroups, skyDensity, hbObjects, subFolder)
+            epwFile, pointGroups, vectorGroups, skyDensity, radianceParameters,
+            hbObjects, subFolder)
 
     @property
     def radianceParameters(self):
         """Radiance parameters for annual analysis."""
         return self.__radianceParameters
+
+    @radianceParameters.setter
+    def radianceParameters(self, par):
+        if not par:
+            # set RfluxmtxParameters as default radiance parameter for annual analysis
+            self.__radianceParameters = RfluxmtxParameters()
+            self.__radianceParameters.irradianceCalc = True
+
+            # @sarith do we want to set these values as default?
+            self.__radianceParameters.ambientAccuracy = 0.1
+            self.__radianceParameters.ambientDivisions = 4096
+            self.__radianceParameters.ambientBounces = 6
+            self.__radianceParameters.limitWeight = 0.001
+        else:
+            assert hasattr(par, 'isRfluxmtxParameters'), \
+                TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))
+            self.__daylightMtxParameters = par
 
     @property
     def skyType(self):
@@ -147,7 +156,7 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         _basePath = os.path.join(targetFolder, projectName)
-        _ispath = preparedir(_basePath)
+        _ispath = preparedir(_basePath, removeContent=False)
         assert _ispath, "Failed to create %s. Try a different path!" % _basePath
 
         # create main folder targetFolder\projectName\annualdaylight

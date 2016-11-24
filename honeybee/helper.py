@@ -24,14 +24,15 @@ def getRadiancePathLines():
         return ""
 
 
-def preparedir(targetDir):
+def preparedir(targetDir, removeContent=True):
     """Prepare a folder for analysis.
 
     This method creates the folder if it is not created, and removes the file in
     the folder if the folder already existed.
     """
     if os.path.isdir(targetDir):
-        nukedir(targetDir, False)
+        if removeContent:
+            nukedir(targetDir, False)
     else:
         try:
             os.mkdir(targetDir)

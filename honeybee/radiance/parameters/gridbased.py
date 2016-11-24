@@ -55,34 +55,33 @@ class GridBasedParameters(AdvancedRadianceParameters):
         > -aa 0.1 -ab 5 -dj 0.7 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512 -u
     """
 
-    def __init__(self, quality=None,ambientBounces=None,ambientDivisions=None,
-                 ambientSupersamples=None,ambientResolution=None,ambientAccuracy=None,
-                 directJitter=None, directSampling=None,directThreshold=None,
-                 directCertainty=None,directSecRelays=None,directPresampDensity=None,
-                 specularThreshold=None,limitWeight=None,limitReflections=None,
-                 specularSampling=None,irradianceCalc =None,uncorRandSamp=None):
+    def __init__(self, quality=None, ambientBounces=None, ambientDivisions=None,
+                 ambientSupersamples=None, ambientResolution=None, ambientAccuracy=None,
+                 directJitter=None, directSampling=None, directThreshold=None,
+                 directCertainty=None, directSecRelays=None, directPresampDensity=None,
+                 specularThreshold=None, limitWeight=None, limitReflections=None,
+                 specularSampling=None, irradianceCalc=None, uncorRandSamp=None):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
         self.quality = quality
         """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
-        self.addRadianceNumber('ab',descriptiveName='ambient bounces',
-                               attributeName="ambientBounces",numType=int)
+        self.addRadianceNumber('ab', descriptiveName='ambient bounces',
+                               attributeName="ambientBounces", numType=int)
         self.ambientBounces = ambientBounces
         """ Number of ambient bounces. This is the maximum number of diffuse
             bounces computed by the indirect calculation. A value of zero
             implies no indirect calculation."""
 
-
-        self.addRadianceNumber('ad',descriptiveName='ambient divisions',
-                               attributeName="ambientDivisions",numType=int)
+        self.addRadianceNumber('ad', descriptiveName='ambient divisions',
+                               attributeName="ambientDivisions", numType=int)
         self.ambientDivisions = ambientDivisions
         """ Number of ambient divisions. The error in the Monte Carlo calculation
             of indirect illuminance will be inversely proportional to the square
             root of this number. A value of zero implies no indirect calculation.
         """
 
-        self.addRadianceNumber('as',descriptiveName='ambient super samples',
+        self.addRadianceNumber('as', descriptiveName='ambient super samples',
                                attributeName='ambientSupersamples',numType=int)
         self.ambientSupersamples = ambientSupersamples
         """ Number of ambient super-samples. Super-samples are applied only to

@@ -1,13 +1,9 @@
 from .annual import HBAnnualAnalysisRecipe
 from ..postprocess.annualresults import LoadAnnualsResults
 from ..parameters.rfluxmtx import RfluxmtxParameters
-from ..parameters.xform import XformParameters
 from ..command.dctimestep import Dctimestep
 from ..command.rfluxmtx import Rfluxmtx
-from ..command.epw2wea import Epw2wea
-from ..command.gendaymtx import Gendaymtx
 from ..command.rmtxop import Rmtxop
-from ..command.xform import Xform
 from ..material.glow import GlowMaterial
 from ..sky.skymatrix import SkyMatrix
 
@@ -23,7 +19,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
     Attributes:
 
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+        subFolder: Analysis subfolder for this recipe. (Default: "threephase")
 
     Usage:
         # initiate analysisRecipe
@@ -44,25 +40,18 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    def __init__(self, skyMtx, analysisGrids, reuseDaylightMtx=True, hbObjects=None,
-                 subFolder="threephase"):
+    def __init__(self, skyMtx, analysisGrids, viewMtxParameters=None,
+                 daylightMtxParameters=None, reuseViewMtx=True,
+                 reuseDaylightMtx=True, hbObjects=None, subFolder="threephase"):
         """Create an annual recipe."""
         HBAnnualAnalysisRecipe.__init__(
-            self, skyMtx, analysisGrids, hbObjects, subFolder
+            self, skyMtx, analysisGrids, hbObjects=hbObjects, subFolder=subFolder
         )
 
+        self.viewMtxParameters = viewMtxParameters
+        self.daylightMtxParameters = daylightMtxParameters
+        self.reuseViewMtx = reuseViewMtx
         self.reuseDaylightMtx = reuseDaylightMtx
-
-        # set RfluxmtxParameters as default radiance parameter for annual analysis
-        self.__radianceParameters = RfluxmtxParameters()
-        self.__radianceParameters.irradianceCalc = True
-
-        # @sarith do we want to set these values as default?
-        self.__radianceParameters.ambientAccuracy = 0.1
-        self.__radianceParameters.ambientDivisions = 4096
-        self.__radianceParameters.ambientBounces = 6
-        self.__radianceParameters.limitWeight = 0.001
-
         self.__batchFile = None
         self.resultsFile = []
 
@@ -72,6 +61,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
     @classmethod
     def fromWeatherFilePointsAndVectors(
         cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
+        viewMtxParameters=None, daylightMtxParameters=None, reuseViewMtx=True,
             reuseDaylightMtx=True, hbObjects=None, subFolder="threephase"):
         """Create three-phase recipe from weather file, points and vectors.
 
@@ -95,12 +85,15 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
 
-        return cls(skyMtx, analysisGrids, hbObjects, reuseDaylightMtx, subFolder)
+        return cls(
+            skyMtx, analysisGrids, viewMtxParameters, daylightMtxParameters,
+            reuseViewMtx, reuseDaylightMtx, hbObjects, subFolder)
 
     @classmethod
-    def fromPointsFile(cls, epwFile, pointsFile, skyDensity=1,
-                       reuseDaylightMtx=True, hbObjects=None,
-                       subFolder="threephase"):
+    def fromPointsFile(
+        cls, epwFile, pointsFile, skyDensity=1, viewMtxParameters=None,
+        daylightMtxParameters=None, reuseViewMtx=True, reuseDaylightMtx=True,
+            hbObjects=None, subFolder="threephase"):
         """Create an annual recipe from points file."""
         try:
             with open(pointsFile, "rb") as inf:
@@ -110,13 +103,47 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
             raise ValueError("Couldn't import points from {}".format(pointsFile))
 
         return cls.fromWeatherFilePointsAndVectors(
-            epwFile, pointGroups, vectorGroups, skyDensity, hbObjects,
-            reuseDaylightMtx, subFolder)
+            epwFile, pointGroups, vectorGroups, skyDensity, viewMtxParameters,
+            daylightMtxParameters, reuseViewMtx, reuseDaylightMtx, hbObjects,
+            subFolder)
 
     @property
-    def radianceParameters(self):
-        """Radiance parameters for annual analysis."""
-        return self.__radianceParameters
+    def viewMtxParameters(self):
+        """View matrix parameters."""
+        return self.__viewMtxParameters
+
+    @viewMtxParameters.setter
+    def viewMtxParameters(self, vm):
+        if not vm:
+            self.__viewMtxParameters = RfluxmtxParameters()
+            self.__viewMtxParameters.irradianceCalc = True
+            self.__viewMtxParameters.ambientAccuracy = 0.1
+            self.__viewMtxParameters.ambientBounces = 10
+            self.__viewMtxParameters.ambientDivisions = 65536
+            self.__viewMtxParameters.limitWeight = 1E-5
+        else:
+            assert hasattr(vm, 'isRfluxmtxParameters'), \
+                TypeError('Expected RfluxmtxParameters not {}'.format(type(vm)))
+            self.__viewMtxParameters = vm
+
+    @property
+    def daylightMtxParameters(self):
+        """View matrix parameters."""
+        return self.__daylightMtxParameters
+
+    @daylightMtxParameters.setter
+    def daylightMtxParameters(self, dm):
+        if not dm:
+            self.__daylightMtxParameters = RfluxmtxParameters()
+            self.__daylightMtxParameters.ambientAccuracy = 0.1
+            self.__daylightMtxParameters.ambientDivisions = 1024
+            self.__daylightMtxParameters.ambientBounces = 2
+            self.__daylightMtxParameters.limitWeight = 0.0000001
+
+        else:
+            assert hasattr(dm, 'isRfluxmtxParameters'), \
+                TypeError('Expected RfluxmtxParameters not {}'.format(type(dm)))
+            self.__daylightMtxParameters = dm
 
     @property
     def skyType(self):
@@ -150,12 +177,12 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         _basePath = os.path.join(targetFolder, projectName)
-        _ispath = preparedir(_basePath)
+        _ispath = preparedir(_basePath, removeContent=False)
         assert _ispath, "Failed to create %s. Try a different path!" % _basePath
 
         # create main folder targetFolder\projectName\threephase
         _path = os.path.join(_basePath, self.subFolder)
-        _ispath = preparedir(_path)
+        _ispath = preparedir(_path, removeContent=False)
 
         assert _ispath, "Failed to create %s. Try a different path!" % _path
 
@@ -193,48 +220,51 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         bsdfGlazing.radStringToFile(glassPath, includeMaterials=True, reverse=True)
 
         # # 3.1.Create annual daylight vectors through epw2wea and gendaymtx.
-        skyMtx = self.skyMatrix.execute(_path)
+        skyMtx = self.skyMatrix.execute(_path, reuse=True)
 
         # # 3.2.Generate view matrix
-        rflux = Rfluxmtx(projectName)
-        rflux.sender = '-'
-        rflux.rfluxmtxParameters = None
-        rflux.rfluxmtxParameters.irradianceCalc = True
-        rflux.rfluxmtxParameters.ambientAccuracy = 0.1
-        rflux.rfluxmtxParameters.ambientBounces = 10
-        rflux.rfluxmtxParameters.ambientDivisions = 65536
-        rflux.rfluxmtxParameters.limitWeight = 1E-5
+        if not os.path.isfile(os.path.join(_path, projectName + ".vmx")) or \
+                not self.reuseViewMtx:
+            rflux = Rfluxmtx(projectName)
+            rflux.sender = '-'
+            rflux.rfluxmtxParameters = self.viewMtxParameters
+            # This needs to be automated based on the normal of each window.
+            # Klems full basis sampling and the window faces +Y
+            recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
+            rflux.receiverFile = rflux.addControlParameters(
+                glassPath, {bsdfGlazing.radianceMaterial.name: recCtrlPar})
 
-        # This needs to be automated based on the normal of each window.
-        # Klems full basis sampling and the window faces +Y
-        recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
-        rflux.receiverFile = rflux.addControlParameters(
-            glassPath, {bsdfGlazing.radianceMaterial.name: recCtrlPar})
-
-        rflux.radFiles = (matFile, geoFile, 'glazing.rad')
-        rflux.pointsFile = pointsFile
-        rflux.outputMatrix = projectName + ".vmx"
-        batchFileLines.append(rflux.toRadString())
-        vMatrix = rflux.outputMatrix
+            rflux.radFiles = (matFile, geoFile, 'glazing.rad')
+            rflux.pointsFile = pointsFile
+            rflux.outputMatrix = projectName + ".vmx"
+            batchFileLines.append(rflux.toRadString())
+            vMatrix = rflux.outputMatrix
+        else:
+            vMatrix = projectName + ".vmx"
 
         # 3.3 daylight matrix
-        rflux2 = Rfluxmtx()
-        rflux2.samplingRaysCount = 1000
-        rflux2.sender = rflux.receiverFile
-        skyFile = rflux2.defaultSkyGround(
-            os.path.join(_path, 'rfluxSky.rad'),
-            skyType='r{}'.format(self.skyMatrix.skyDensity))
+        if not os.path.isfile(os.path.join(_path, projectName + ".dmx")) or \
+                not self.reuseDaylightMtx:
+            rflux2 = Rfluxmtx()
+            rflux2.samplingRaysCount = 1000
+            try:
+                # This will fail in case of not re-using daylight matrix
+                rflux2.sender = rflux.receiverFile
+            except UnboundLocalError:
+                rflux2.sender = glassPath[:-4] + '_m' + glassPath[-4:]
 
-        rflux2.receiverFile = skyFile
-        rflux2.rfluxmtxParameters = None
-        rflux2.rfluxmtxParameters.ambientAccuracy = 0.1
-        rflux2.rfluxmtxParameters.ambientDivisions = 1024
-        rflux2.rfluxmtxParameters.ambientBounces = 2
-        rflux2.rfluxmtxParameters.limitWeight = 0.0000001
-        rflux2.radFiles = (matFile, geoFile, 'glazing.rad')
-        rflux2.outputMatrix = projectName + ".dmx"
-        batchFileLines.append(rflux2.toRadString())
-        dMatrix = rflux2.outputMatrix
+            skyFile = rflux2.defaultSkyGround(
+                os.path.join(_path, 'rfluxSky.rad'),
+                skyType='r{}'.format(self.skyMatrix.skyDensity))
+
+            rflux2.receiverFile = skyFile
+            rflux2.rfluxmtxParameters = self.daylightMtxParameters
+            rflux2.radFiles = (matFile, geoFile, 'glazing.rad')
+            rflux2.outputMatrix = projectName + ".dmx"
+            batchFileLines.append(rflux2.toRadString())
+            dMatrix = rflux2.outputMatrix
+        else:
+            dMatrix = projectName + ".dmx"
 
         # 4. matrix calculations
         dct = Dctimestep()

@@ -255,7 +255,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         _basePath = os.path.join(targetFolder, projectName)
-        _ispath = preparedir(_basePath)
+        _ispath = preparedir(_basePath, removeContent=False)
         assert _ispath, "Failed to create %s. Try a different path!" % _basePath
 
         # create main folder targetFolder\projectName\gridbased

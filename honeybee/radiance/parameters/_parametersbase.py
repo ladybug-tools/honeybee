@@ -37,6 +37,8 @@ class RadianceParameters(object):
         # static parameters are collected here
         self.__additionalParameters = []
 
+        setattr(self, 'is{}'.format(self.__class__.__name__), True)
+
     @property
     def isRadianceParameters(self):
         """Return True to indicate this object is a RadianceParameters."""

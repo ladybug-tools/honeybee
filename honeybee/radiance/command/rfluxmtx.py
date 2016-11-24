@@ -273,11 +273,8 @@ class Rfluxmtx(RadianceCommand):
 
     @outputFilenameFormat.setter
     def outputFilenameFormat(self, value):
-        #TODO: Add testing logic for this !
-        if value:
-            self._outputFilenameFormat = value
-        else:
-            self._outputFilenameFormat = None
+        # TODO: Add testing logic for this !
+        self._outputFilenameFormat = value or None
 
     @property
     def viewInfoFile(self):
@@ -291,7 +288,7 @@ class Rfluxmtx(RadianceCommand):
         """
         if fileName:
             assert os.path.exists(fileName),\
-            "The file %s specified as viewInfoFile does not exist."
+                "The file %s specified as viewInfoFile does not exist."
             self._viewInfoFile = fileName
             with open(fileName) as viewFileName:
                 self._viewFileDimensions = viewFileName.read().strip()
@@ -308,11 +305,12 @@ class Rfluxmtx(RadianceCommand):
         if value:
             if os.path.exists(value):
                 with open(value)as pointsFile:
-                    numberOfPoints = len(pointsFile.read().split())/6
+                    numberOfPoints = len(pointsFile.read().split()) / 6
                     self.pointsFileData += '-y %s' % numberOfPoints
                 self._pointsFile = value
         else:
             self._pointsFile = ''
+
     @property
     def radFiles(self):
         """Get and set scene files."""
@@ -333,7 +331,7 @@ class Rfluxmtx(RadianceCommand):
     def rfluxmtxParameters(self, parameters):
         self.__rfluxmtxParameters = parameters or RfluxmtxParameters()
 
-        assert hasattr(self.rfluxmtxParameters, "isRadianceParameters"), \
+        assert hasattr(self.rfluxmtxParameters, "isRfluxmtxParameters"), \
             "input rfluxmtxParameters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):
