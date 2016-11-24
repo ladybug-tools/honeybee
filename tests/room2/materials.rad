@@ -1,0 +1,43 @@
+## materials.rad
+
+## default material
+void plastic sketchup_default_material
+0
+0
+5 0.4 0.4 0.4 0 0
+
+## material conversion from Sketchup rgb color
+void plastic Ceiling
+0
+0
+5 0.8500 0.0000 0.4233 0.000 0.000
+
+
+## material conversion from Sketchup rgb color
+void plastic ExteriorWalls
+0
+0
+5 0.3133 0.2567 0.1767 0.000 0.000
+
+
+## material conversion from Sketchup rgb color
+void plastic Floor
+0
+0
+5 0.6800 0.6800 0.8500 0.000 0.000
+
+
+## material conversion from Sketchup rgb color
+void plastic Ground
+0
+0
+5 0.3967 0.3867 0.3867 0.000 0.000
+
+
+## material conversion from Sketchup rgb color
+void plastic InteriorWall
+0
+0
+5 0.8500 0.7200 0.3367 0.000 0.000
+
+
