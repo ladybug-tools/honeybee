@@ -319,6 +319,19 @@ class HBAnalysisSurface(HBObject):
             self.__pts[subsurfaceNumber].append(pt)
 
     @property
+    def normal(self):
+        """Return surface normal for the first face."""
+        return go.calculateNormalFromPoints(self.points[0])
+
+    @property
+    def upnormal(self):
+        """Get upnormal for this surface.
+
+        Use this value to set up rfluxmtx header.
+        """
+        return go.calculateUpVectorFromPoints(self.points[0])
+
+    @property
     def radProperties(self):
         """Get and set Radiance properties."""
         return self.__radProperties

@@ -230,7 +230,8 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
             rflux.rfluxmtxParameters = self.viewMtxParameters
             # This needs to be automated based on the normal of each window.
             # Klems full basis sampling and the window faces +Y
-            recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
+            recCtrlPar = rflux.ControlParameters(
+                hemiType='kf', hemiUpDirection=bsdfGlazing.upnormal)
             rflux.receiverFile = rflux.addControlParameters(
                 glassPath, {bsdfGlazing.radianceMaterial.name: recCtrlPar})
 

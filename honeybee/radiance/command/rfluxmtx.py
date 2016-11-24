@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceValue, RadianceNumber
 from ..datatype import RadianceBoolFlag
 from ..parameters.rfluxmtx import RfluxmtxParameters
@@ -36,9 +36,14 @@ class Rfluxmtx(RadianceCommand):
     """
 
     class ControlParameters(object):
+        """Rfluxmtx ControlParameters.
+
+        Set the values for hemispheretype, hemisphere up direction
+        and output file location(optional).
+        """
+
         def __init__(self, hemiType='u', hemiUpDirection='Y', outputFile=''):
-            """Set the values for hemispheretype, hemisphere up direction
-            and output file location(optional)."""
+            """Init class."""
             self.hemisphereType = hemiType
             """
                 The acceptable inputs for hemisphere type are:
@@ -118,17 +123,28 @@ class Rfluxmtx(RadianceCommand):
 
         @hemisphereUpDirection.setter
         def hemisphereUpDirection(self, value):
-            """The acceptable inputs for hemisphere direction are 'X', 'Y',
-            'Z', 'x', 'y', 'z', '-X', '-Y','-Z', '-x', '-y','-z'"""
-            if value:
-                allowedValues = ('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
-                                 '-Z', '-x', '-y', '-z',"+X","+Y","+Z",
-                                 '+x',"+y","+z")
+            """hemisphere direction.
+
+            The acceptable inputs for hemisphere direction are a tuple with 3 values
+            or 'X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y','-Z', '-x', '-y','-z'.
+            """
+            allowedValues = ('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
+                             '-Z', '-x', '-y', '-z', "+X", "+Y", "+Z",
+                             '+x', "+y", "+z")
+
+            if isinstance(value, (tuple, list)):
+                assert len(value) == 3, \
+                    'Length of emisphereUpDirection vector should be 3.'
+                self._hemisphereUpDirection = ','.join((str(v) for v in value))
+
+            elif value:
                 assert value in allowedValues, "The value for hemisphereUpDirection" \
                                                "should be one of the following: %s" \
                                                % (','.join(allowedValues))
 
                 self._hemisphereUpDirection = value
+            else:
+                self._hemisphereUpDirection = '+Z'
 
         def __str__(self):
             outputFileSpec = "o=%s" % self.outputFile if self.outputFile else ''

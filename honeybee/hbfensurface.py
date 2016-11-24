@@ -41,11 +41,12 @@ class HBFenSurface(HBAnalysisSurface):
         hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", True, True)
     """
 
-    def __init__(self, name, sortedPoints=[], isNameSetByUser=False,
+    def __init__(self, name, sortedPoints=None, isNameSetByUser=False,
                  radProperties=None, epProperties=None):
         """Init honeybee surface."""
         _surfaceType = 5
         _isTypeSetByUser = True
+        sortedPoints = sortedPoints or []
 
         HBAnalysisSurface.__init__(self, name, sortedPoints=sortedPoints,
                                    surfaceType=_surfaceType,
