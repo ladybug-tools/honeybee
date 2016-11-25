@@ -208,7 +208,17 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         # 3.0. find glazing items with .xml material, write them to a separate
         # file and invert them
         bsdfGlazing = tuple(f for f in self.hbObjects
-                            if hasattr(f.radianceMaterial, 'xmlfile'))[0].duplicate()
+                            if hasattr(f, 'isHBFenSurface') and
+                            hasattr(f.radianceMaterial, 'xmlfile'))
+
+        if not bsdfGlazing:
+            raise ValueError(
+                ' At the minimum, there must be one HBWindowSurface in HBOjects '
+                'to set-up a three-phase analysis. 0 found!')
+
+        # TODO: Take all the glazing objects and run separate view matrix for each.
+        print 'Number of HBWindowSurfaces: %d' % (len(bsdfGlazing))
+        bsdfGlazing = bsdfGlazing[0].duplicate()
 
         tMatrix = bsdfGlazing.radianceMaterial.xmlfile
 

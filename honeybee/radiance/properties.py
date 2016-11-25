@@ -14,9 +14,14 @@ class RadianceProperties(object):
             overwritten by honeybee in cases like solve adjacencies.
     """
 
-    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
+    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False,
+                 alternateMaterials=None, windowGroupName=None):
         """Create radiance properties for surface."""
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
+        # TODO: Clarify how alternate materials works. Is it only for 3-phase
+        # analysis or is it an option to set-up any parameteric study.
+        self.alternateMaterials = alternateMaterials or ()
+        self.windowGroupName = windowGroupName
 
     @property
     def isRadianceProperties(self):
