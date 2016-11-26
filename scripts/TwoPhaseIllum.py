@@ -33,7 +33,7 @@ def run2Phase(calculationType='annual'):
 
         genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
         genday.gendaymtxParameters = gendayParam
-        genday.execute()
+        # genday.execute()
         skyVector = r'temp/day.smx'
     else:
         gensk = Gensky()
@@ -53,9 +53,9 @@ def run2Phase(calculationType='annual'):
     rfluxPara = RfluxmtxParameters()
     rfluxPara.irradianceCalc = False
     rfluxPara.ambientAccuracy = 0.1
-    rfluxPara.ambientDivisions = 4096
-    rfluxPara.ambientBounces = 12
-    rfluxPara.limitWeight = 0.0000001
+    rfluxPara.ambientDivisions = 10
+    rfluxPara.ambientBounces = 1
+    rfluxPara.limitWeight = 0.1
     rfluxPara.quality = 0
     rflux = Rfluxmtx()
     rflux.sender = '-'
@@ -80,7 +80,7 @@ def run2Phase(calculationType='annual'):
     mtx2Param = RmtxopParameters()
     mtx2Param.outputFormat = 'a'
     mtx2Param.combineValues = (47.4, 119.9, 11.6)
-    mtx2Param.transposeMatrix = True
+    # mtx2Param.transposeMatrix = True
     mtx2 = Rmtxop(matrixFiles=[r'temp/illuminance.tmp'], outputFile=r'temp/illuminance.ill')
     mtx2.rmtxopParameters = mtx2Param
     mtx2.execute()
