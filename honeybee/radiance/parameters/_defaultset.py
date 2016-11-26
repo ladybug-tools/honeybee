@@ -42,4 +42,4 @@ rpict_number_parameters = {
     'specularSampling': {'name':'ss','dscrip': 'specular sampling', 'type': float, 'defaultValue': 0, 'values': [0, .7, 1]}}
 
 rpict_boolean_parameters = {
-    'uncorRandSamp': {'dscrip': 'uncorrelated random sampling', 'type': bool, 'defaultValue': False, 'values': [False, False, False]}}
+    'uncorRandSamp': {'name':'u','dscrip': 'uncorrelated random sampling', 'type': bool, 'defaultValue': False, 'values': [False, False, False]}}

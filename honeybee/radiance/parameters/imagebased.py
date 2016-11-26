@@ -321,10 +321,10 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         Set the pixel depth-of-field aperture to a diameter of dia (in world
         coordinates). This will be used in conjunction with the view focal
         distance, indicated by the length of the view direction vector given
-        in the −vd option. It is not advisable to use this option in combination
+        in the -vd option. It is not advisable to use this option in combination
         with the pdfblur(1) program, since one takes the place of the other.
         However, it may improve results with pdfblur to use a very small
-        fraction with the −pd option, to avoid the ghosting effect of too
+        fraction with the -pd option, to avoid the ghosting effect of too
         few samples.
         """
 
