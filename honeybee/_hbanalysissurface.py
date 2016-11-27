@@ -67,10 +67,20 @@ class HBAnalysisSurface(HBObject):
         """Return True for HBSurface."""
         return True
 
+    @property
+    def isHBFenSurface(self):
+        """Return True for HBFenSurfaces."""
+        return False
+
     @abstractproperty
     def isChildSurface(self):
         """Return True if Honeybee surface is Fenestration Surface."""
         pass
+
+    @property
+    def hasBSDFRadianceMaterial(self):
+        """Return True if .xml BSDF material is assigned for radiance material."""
+        return self.isHBFenSurface and hasattr(self.radianceMaterial, 'xmlfile')
 
     @property
     def hasRadianceGlassMaterial(self):

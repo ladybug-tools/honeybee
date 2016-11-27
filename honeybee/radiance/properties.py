@@ -2,8 +2,6 @@
 from material._materialbase import RadianceMaterial
 
 
-# TODO: Currently Radiance properties for HBSurface is limited to material
-# This might need to change in the near future
 class RadianceProperties(object):
     """Radiance properties for HBSurface.
 

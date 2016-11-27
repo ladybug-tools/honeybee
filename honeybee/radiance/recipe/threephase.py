@@ -42,12 +42,14 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
 
     def __init__(self, skyMtx, analysisGrids, viewMtxParameters=None,
                  daylightMtxParameters=None, reuseViewMtx=True,
-                 reuseDaylightMtx=True, hbObjects=None, subFolder="threephase"):
+                 reuseDaylightMtx=True, hbWindowSurfaces=None, hbObjects=None,
+                 subFolder="threephase"):
         """Create an annual recipe."""
         HBAnnualAnalysisRecipe.__init__(
             self, skyMtx, analysisGrids, hbObjects=hbObjects, subFolder=subFolder
         )
 
+        self.windowSurfaces = hbWindowSurfaces
         self.viewMtxParameters = viewMtxParameters
         self.daylightMtxParameters = daylightMtxParameters
         self.reuseViewMtx = reuseViewMtx
@@ -62,7 +64,8 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
     def fromWeatherFilePointsAndVectors(
         cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
         viewMtxParameters=None, daylightMtxParameters=None, reuseViewMtx=True,
-            reuseDaylightMtx=True, hbObjects=None, subFolder="threephase"):
+        reuseDaylightMtx=True, hbWindowSurfaces=None, hbObjects=None,
+            subFolder="threephase"):
         """Create three-phase recipe from weather file, points and vectors.
 
         Args:
@@ -87,13 +90,13 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
 
         return cls(
             skyMtx, analysisGrids, viewMtxParameters, daylightMtxParameters,
-            reuseViewMtx, reuseDaylightMtx, hbObjects, subFolder)
+            reuseViewMtx, reuseDaylightMtx, hbWindowSurfaces, hbObjects, subFolder)
 
     @classmethod
     def fromPointsFile(
         cls, epwFile, pointsFile, skyDensity=1, viewMtxParameters=None,
         daylightMtxParameters=None, reuseViewMtx=True, reuseDaylightMtx=True,
-            hbObjects=None, subFolder="threephase"):
+            hbWindowSurfaces=None, hbObjects=None, subFolder="threephase"):
         """Create an annual recipe from points file."""
         try:
             with open(pointsFile, "rb") as inf:
@@ -104,8 +107,64 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
 
         return cls.fromWeatherFilePointsAndVectors(
             epwFile, pointGroups, vectorGroups, skyDensity, viewMtxParameters,
-            daylightMtxParameters, reuseViewMtx, reuseDaylightMtx, hbObjects,
-            subFolder)
+            daylightMtxParameters, reuseViewMtx, reuseDaylightMtx, hbWindowSurfaces,
+            hbObjects, subFolder)
+
+    @property
+    def windowSurfaces(self):
+        """List of window surfaces."""
+        return self.__windowSurfaces
+
+    @windowSurfaces.setter
+    def windowSurfaces(self, hbWindowSurfaces):
+        """List of window surfaces.
+
+        Args:
+            ws: A list of window surfaces.
+        """
+        hbWindowSurfaces = hbWindowSurfaces or ()
+        # check inputs
+        for f in hbWindowSurfaces:
+            assert f.hasBSDFRadianceMaterial, \
+                TypeError(
+                    '{} is not a HBWindowSurface. A HBWindowSurface must be a '
+                    'HBFenSurface and has a BSDF radiance material.'.format(f))
+
+        self.__windowSurfaces = hbWindowSurfaces
+
+    # TODO: Create windowGroups as classes
+    @property
+    def windowGroups(self):
+        """Get window groups as a dictionary {'windowGroupName': [srf1, srf2,...]}.
+
+        Window groups will be calculated from windowSurfaces. You can set-up
+        windowgroup names for each surface by using radProperties.windowGroupName
+        method.
+        """
+        _wgroups = {}
+        for srf in self.windowSurfaces:
+            wgn = srf.radProperties.windowGroupName or srf.name
+            if wgn not in _wgroups:
+                _wgroups[wgn] = {
+                    'normal': srf.normal, 'upnormal': srf.upnormal, 'surfaces': [srf],
+                    'states': (srf.radianceMaterial,) + tuple(srf.radProperties.alternateMaterials)}
+            else:
+                # the group is already created. check normal direction and it
+                # to surfaces.
+                assert srf.normal == _wgroups[wgn]['normal'], \
+                    ValueError(
+                        'Normal direction of Windows in a window groups should match.\n'
+                        '{} from {} does not match {} from {}.'.format(
+                            srf.normal, srf, _wgroups[wgn]['normal'], _wgroups[wgn]['surfaces'][0]
+                        ))
+                # TODO: Check radiance matrials and alternateMaterials to match.
+                assert (srf.radianceMaterial,) + tuple(srf.radProperties.alternateMaterials) \
+                    == _wgroups[wgn]['states'], \
+                    '{} has a different radiance material than windowgroup material.'.format(srf)
+
+                _wgroups[wgn]['surfaces'].append(srf)
+
+        return _wgroups
 
     @property
     def viewMtxParameters(self):
@@ -174,6 +233,10 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         Returns:
             True in case of success.
         """
+        assert self.__windowSurfaces, \
+            ValueError('At the minimum, there must be one HBWindowSurface '
+                       'to set-up a three-phase analysis. 0 Found!')
+
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         _basePath = os.path.join(targetFolder, projectName)
@@ -205,94 +268,100 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         # 2.write materials and geometry files
         matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
 
-        # 3.0. find glazing items with .xml material, write them to a separate
-        # file and invert them
-        bsdfGlazing = tuple(f for f in self.hbObjects
-                            if hasattr(f, 'isHBFenSurface') and
-                            hasattr(f.radianceMaterial, 'xmlfile'))
+        # 3.0.Create sky matrix.
+        skyMtx = self.skyMatrix.execute(_path, reuse=True)
 
-        if not bsdfGlazing:
-            raise ValueError(
+        # 3.1. find glazing items with .xml material, write them to a separate
+        # file and invert them
+        windowGroups = self.windowGroups
+        assert len(windowGroups) > 0, \
+            ValueError(
                 ' At the minimum, there must be one HBWindowSurface in HBOjects '
                 'to set-up a three-phase analysis. 0 found!')
 
-        # TODO: Take all the glazing objects and run separate view matrix for each.
-        print 'Number of HBWindowSurfaces: %d' % (len(bsdfGlazing))
-        bsdfGlazing = bsdfGlazing[0].duplicate()
+        print 'Number of window groups: %d' % (len(windowGroups))
 
-        tMatrix = bsdfGlazing.radianceMaterial.xmlfile
+        glowM = GlowMaterial('vmtx_glow', 1, 1, 1)
 
-        # maek a copy of the glass and change the material to glow
-        bsdfGlazing.radianceMaterial = GlowMaterial(
-            bsdfGlazing.radianceMaterial.name + '_glow', 1, 1, 1)
-        glassPath = os.path.join(_path, 'glazing.rad')
+        for count, (windowGroup, attr) in enumerate(windowGroups.iteritems()):
+            print '    [{}] {} (number of states: {})'.format(
+                count, windowGroup, len(attr['states']))
 
-        bsdfGlazing.radStringToFile(glassPath, includeMaterials=True, reverse=True)
+            # make a copy of the glass and change the material to glow
+            surfaces = tuple(srf.duplicate() for srf in attr['surfaces'])
+            for surface in surfaces:
+                surface.radianceMaterial = glowM
 
-        # # 3.1.Create annual daylight vectors through epw2wea and gendaymtx.
-        skyMtx = self.skyMatrix.execute(_path, reuse=True)
+            windowGroupPath = os.path.join(_path, '{}.rad'.format(windowGroup))
+            with open(windowGroupPath, 'wb') as outf:
+                outf.write(surfaces[0].radianceMaterial.toRadString() + '\n')
+                for srf in surfaces:
+                    outf.write(srf.toRadString(reverse=True) + '\n')
 
-        # # 3.2.Generate view matrix
-        if not os.path.isfile(os.path.join(_path, projectName + ".vmx")) or \
-                not self.reuseViewMtx:
-            rflux = Rfluxmtx(projectName)
-            rflux.sender = '-'
-            rflux.rfluxmtxParameters = self.viewMtxParameters
-            # This needs to be automated based on the normal of each window.
-            # Klems full basis sampling and the window faces +Y
-            recCtrlPar = rflux.ControlParameters(
-                hemiType='kf', hemiUpDirection=bsdfGlazing.upnormal)
-            rflux.receiverFile = rflux.addControlParameters(
-                glassPath, {bsdfGlazing.radianceMaterial.name: recCtrlPar})
+            # 3.2.Generate view matrix
+            if not os.path.isfile(os.path.join(_path, windowGroup + ".vmx")) or \
+                    not self.reuseViewMtx:
+                rflux = Rfluxmtx(windowGroup)
+                rflux.sender = '-'
+                rflux.rfluxmtxParameters = self.viewMtxParameters
+                # Klems full basis sampling
+                recCtrlPar = rflux.ControlParameters(
+                    hemiType='kf', hemiUpDirection=attr['upnormal'])
+                rflux.receiverFile = rflux.addControlParameters(
+                    windowGroupPath, {'vmtx_glow': recCtrlPar})
 
-            rflux.radFiles = (matFile, geoFile, 'glazing.rad')
-            rflux.pointsFile = pointsFile
-            rflux.outputMatrix = projectName + ".vmx"
-            batchFileLines.append(rflux.toRadString())
-            vMatrix = rflux.outputMatrix
-        else:
-            vMatrix = projectName + ".vmx"
+                rflux.radFiles = (matFile, geoFile, '{}.rad'.format(windowGroup))
+                rflux.pointsFile = pointsFile
+                rflux.outputMatrix = windowGroup + ".vmx"
+                batchFileLines.append(rflux.toRadString())
+                vMatrix = rflux.outputMatrix
+            else:
+                vMatrix = windowGroup + ".vmx"
 
-        # 3.3 daylight matrix
-        if not os.path.isfile(os.path.join(_path, projectName + ".dmx")) or \
-                not self.reuseDaylightMtx:
-            rflux2 = Rfluxmtx()
-            rflux2.samplingRaysCount = 1000
-            try:
-                # This will fail in case of not re-using daylight matrix
-                rflux2.sender = rflux.receiverFile
-            except UnboundLocalError:
-                rflux2.sender = glassPath[:-4] + '_m' + glassPath[-4:]
+            # 3.3 daylight matrix
+            if not os.path.isfile(os.path.join(_path, windowGroup + ".dmx")) or \
+                    not self.reuseDaylightMtx:
+                rflux2 = Rfluxmtx()
+                rflux2.samplingRaysCount = 1000
+                try:
+                    # This will fail in case of not re-using daylight matrix
+                    rflux2.sender = rflux.receiverFile
+                except UnboundLocalError:
+                    rflux2.sender = windowGroupPath[:-4] + '_m' + windowGroupPath[-4:]
 
-            skyFile = rflux2.defaultSkyGround(
-                os.path.join(_path, 'rfluxSky.rad'),
-                skyType='r{}'.format(self.skyMatrix.skyDensity))
+                skyFile = rflux2.defaultSkyGround(
+                    os.path.join(_path, 'rfluxSky.rad'),
+                    skyType='r{}'.format(self.skyMatrix.skyDensity))
 
-            rflux2.receiverFile = skyFile
-            rflux2.rfluxmtxParameters = self.daylightMtxParameters
-            rflux2.radFiles = (matFile, geoFile, 'glazing.rad')
-            rflux2.outputMatrix = projectName + ".dmx"
-            batchFileLines.append(rflux2.toRadString())
-            dMatrix = rflux2.outputMatrix
-        else:
-            dMatrix = projectName + ".dmx"
+                rflux2.receiverFile = skyFile
+                rflux2.rfluxmtxParameters = self.daylightMtxParameters
+                rflux2.radFiles = (matFile, geoFile, '{}.rad'.format(windowGroup))
+                rflux2.outputMatrix = windowGroup + ".dmx"
+                batchFileLines.append(rflux2.toRadString())
+                dMatrix = rflux2.outputMatrix
+            else:
+                dMatrix = windowGroup + ".dmx"
 
-        # 4. matrix calculations
-        dct = Dctimestep()
-        dct.tmatrixFile = tMatrix
-        dct.vmatrixSpec = vMatrix
-        dct.dmatrixFile = str(dMatrix)
-        dct.skyVectorFile = skyMtx
-        dct.outputFileName = r"illuminance.tmp"
-        batchFileLines.append(dct.toRadString())
+            for state in attr['states']:
+                # 4. matrix calculations
+                dct = Dctimestep()
+                dct.tmatrixFile = state.xmlfile
+                dct.vmatrixSpec = vMatrix
+                dct.dmatrixFile = str(dMatrix)
+                dct.skyVectorFile = skyMtx
+                dct.outputFileName = r'{}..{}.tmp'.format(windowGroup, state.name)
+                batchFileLines.append(dct.toRadString())
 
-        # 5. convert r, g ,b values to illuminance
-        finalmtx = Rmtxop(matrixFiles=[dct.outputFileName],
-                          outputFile="illuminance.ill")
-        finalmtx.rmtxopParameters.outputFormat = 'a'
-        finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
-        finalmtx.rmtxopParameters.transposeMatrix = True
-        batchFileLines.append(finalmtx.toRadString())
+                # 5. convert r, g ,b values to illuminance
+                outputName = r'{}..{}.ill'.format(windowGroup, state.name)
+                self.resultsFile.append(os.path.join(_path, outputName))
+                finalmtx = Rmtxop(
+                    matrixFiles=[dct.outputFileName],
+                    outputFile=outputName)
+                finalmtx.rmtxopParameters.outputFormat = 'a'
+                finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
+                finalmtx.rmtxopParameters.transposeMatrix = True
+                batchFileLines.append(finalmtx.toRadString())
 
         # 6. write batch file
         batchFile = os.path.join(_path, projectName + ".bat")
@@ -314,9 +383,6 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
 
             self.isCalculated = True
             # self.isChanged = False
-
-            self.resultsFile = [os.path.join(os.path.split(self.__batchFile)[0],
-                                             "illuminance.ill")]
             return True
         else:
             raise Exception("You need to write the files before running the recipe.")
