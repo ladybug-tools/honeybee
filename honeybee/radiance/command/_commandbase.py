@@ -133,8 +133,14 @@ class RadianceCommand(object):
 
         #TODO: Check if this works with Mac too. Currently assuming it does.
         else:
-            __executable = os.path.normpath(
-                os.path.join(str(radbinPath),self.__class__.__name__.lower()))
+        #Update: 29th Nov 2016, made a fix so that genBSDF type commands will work.
+            if self.executableName:
+                exeNameOnly = os.path.splitext(self.executableName)[0]
+                __executable = os.path.normpath(
+                    os.path.join(str(radbinPath), exeNameOnly))
+            else:
+                __executable = os.path.normpath(
+                    os.path.join(str(radbinPath),self.__class__.__name__.lower()))
 
 
         if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
