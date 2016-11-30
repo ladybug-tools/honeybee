@@ -16,7 +16,7 @@ if 'honeybee' not in sys.modules:
     sys.path.insert(
         0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from sarith.results.rad2Daysim import annual2daysim,single2daysim
+from sarith.results.rad2Daysim import annual2daysim, single2daysim
 from sarith.visuals.gridPlots import gridPlot
 from sarith.results.ill import Illarr
 from sarith.results.dayIll import Dayill
@@ -446,4 +446,3 @@ if __name__ == "__main__":
                    viewFile=r'views/south.vf', skyDescr=1, klemsForVmtx='kf',
                    vmtxParam=None, dmtxParam=None, TransposeAnnualResults=True,
                    skyVectorParam=None,outputImageName='res.hdr',numProcess=8)
-

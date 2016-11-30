@@ -100,8 +100,8 @@ class RadianceCommand(object):
         """
         # make sure wea file is provided
         _msg = "To generate a valid %s command you need to specify the path" \
-            " to inpt files:" \
-            "\nCurrent command won't work: %s" \
+            " to input files:" \
+            "\nCurrent command won't work:\n%s" \
             % (self.__class__.__name__, radString)
 
         if self.inputFiles is None:
@@ -119,7 +119,7 @@ class RadianceCommand(object):
         """Check if executable file exist."""
         radbinPath = self.radbinPath if not radbinPath else radbinPath
 
-        #Check if the operating system is Windows or Mac/Linux. At present
+        # Check if the operating system is Windows or Mac/Linux. At present
         # the naming conventions inside Mac and Linux are assumed to work the
         # same.
         if os.name == 'nt':
@@ -131,11 +131,10 @@ class RadianceCommand(object):
                     os.path.join(str(radbinPath),
                                  '{}.exe'.format(self.__class__.__name__.lower())))
 
-        #TODO: Check if this works with Mac too. Currently assuming it does.
+        # TODO: Check if this works with Mac too. Currently assuming it does.
         else:
             __executable = os.path.normpath(
-                os.path.join(str(radbinPath),self.__class__.__name__.lower()))
-
+                os.path.join(str(radbinPath), self.__class__.__name__.lower()))
 
         if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
             __err = "Can't find %s.\n" % __executable + \

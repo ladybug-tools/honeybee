@@ -1,5 +1,6 @@
 """A collection of auxiliary funtions for working with files and directories."""
 import os
+import shutil
 import config
 
 
@@ -33,13 +34,13 @@ def preparedir(targetDir, removeContent=True):
     if os.path.isdir(targetDir):
         if removeContent:
             nukedir(targetDir, False)
+        return True
     else:
         try:
-            os.mkdir(targetDir)
+            os.makedirs(targetDir)
         except Exception as e:
             print "Failed to create folder: %s\n%s" % (targetDir, e)
             return False
-    return True
 
 
 def nukedir(targetDir, rmdir=False):
@@ -73,3 +74,43 @@ def nukedir(targetDir, rmdir=False):
             os.rmdir(d)
         except:
             print "Failed to remove %s" % d
+
+
+def writeToFile(filePath, data, mkdir=False):
+    """Write a string of data to file.
+
+    Args:
+        filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+        data: Any data as string
+        mkdir: Set to True to create the directory if doesn't exist (Default: False)
+    """
+    __dir, __name = os.path.split(filePath)
+
+    if not os.path.isdir(__dir):
+        if mkdir:
+            preparedir(__dir)
+        else:
+            raise ValueError("Failed to find %s." % __dir)
+
+    with open(filePath, "w") as outf:
+        try:
+            outf.write(str(data))
+            return filePath
+        except Exception as e:
+            print "Failed to write %s to file:\n\t%s" % (__name, str(e))
+            return False
+
+
+def copyFilesToFolder(files, targetFolder):
+    """Copy a list of files to a new target folder.
+
+    Returns:
+        A list of fullpath of the new files.
+    """
+    if not files:
+        return []
+
+    for f in files:
+        shutil.copy(f, targetFolder)
+
+    return [os.path.join(targetFolder, os.path.split(f)[-1]) for f in files]

@@ -53,6 +53,7 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         self.skyMatrix = skyMtx
         self.radianceParameters = radianceParameters
         self.__batchFile = None
+        self.__commands = []
         self.resultsFile = []
 
         # create a result loader to load the results once the analysis is done.
@@ -176,28 +177,26 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
 
         # 2.write batch file
-        batchFileLines = []
-
         # add path if needed
-        batchFileLines.append(getRadiancePathLines())
+        self.__commands.append(getRadiancePathLines())
 
         # TODO: This line won't work in linux.
         dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
-        batchFileLines.append(dirLine)
+        self.__commands.append(dirLine)
 
         # # 2.1.Create annual daylight vectors through epw2wea and gendaymtx.
         weaFile = Epw2wea(self.skyMatrix.epwFile)
         weaFile.outputWeaFile = os.path.join(_path, projectName + ".wea")
-        batchFileLines.append(weaFile.toRadString())
+        self.__commands.append(weaFile.toRadString())
 
         gdm = Gendaymtx(outputName=os.path.join(_path, projectName + ".smx"),
                         weaFile=weaFile.outputWeaFile)
 
         gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
-        batchFileLines.append(gdm.toRadString())
+        self.__commands.append(gdm.toRadString())
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
-        rflux = Rfluxmtx(projectName)
+        rflux = Rfluxmtx()
         rflux.rfluxmtxParameters = self.radianceParameters
 
         rflux.sender = '-'
@@ -211,24 +210,24 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         rflux.pointsFile = pointsFile
         rflux.outputMatrix = os.path.join(_path, projectName + ".dc")
 
-        batchFileLines.append(rflux.toRadString())
+        self.__commands.append(rflux.toRadString())
 
         # # 2.3. matrix calculations
         tempmtx = Rmtxop(matrixFiles=(rflux.outputMatrix, gdm.outputFile),
                          outputFile=os.path.join(_path, "illuminance.tmp"))
 
-        batchFileLines.append(tempmtx.toRadString())
+        self.__commands.append(tempmtx.toRadString())
 
         finalmtx = Rmtxop(matrixFiles=[tempmtx.outputFile],
                           outputFile=os.path.join(_path, "illuminance.ill"))
         finalmtx.rmtxopParameters.outputFormat = 'a'
         finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
         finalmtx.rmtxopParameters.transposeMatrix = True
-        batchFileLines.append(finalmtx.toRadString())
+        self.__commands.append(finalmtx.toRadString())
 
         # # 2.3 write batch file
         batchFile = os.path.join(_path, projectName + ".bat")
-        self.write(batchFile, "\n".join(batchFileLines))
+        self.write(batchFile, "\n".join(self.__commands))
         self.__batchFile = batchFile
 
         print "Files are written to: %s" % _path

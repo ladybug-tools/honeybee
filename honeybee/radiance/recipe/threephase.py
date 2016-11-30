@@ -7,7 +7,7 @@ from ..command.rmtxop import Rmtxop
 from ..material.glow import GlowMaterial
 from ..sky.skymatrix import SkyMatrix
 
-from ...helper import preparedir, getRadiancePathLines
+from ...helper import preparedir, getRadiancePathLines, nukedir
 
 import os
 import subprocess
@@ -55,6 +55,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         self.reuseViewMtx = reuseViewMtx
         self.reuseDaylightMtx = reuseDaylightMtx
         self.__batchFile = None
+        self.__commands = []  # place-holder for batch commands
         self.resultsFile = []
 
         # create a result loader to load the results once the analysis is done.
@@ -247,6 +248,8 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         _path = os.path.join(_basePath, self.subFolder)
         _ispath = preparedir(_path, removeContent=False)
 
+        _subFolders = ('bsdf', 'views', 'skies', 'results', 'results/matrices')
+
         assert _ispath, "Failed to create %s. Try a different path!" % _path
 
         # Check if anything has changed
@@ -254,13 +257,13 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
         #     print "Inputs has not changed! Check files at %s" % _path
 
         # 0.create a place holder for batch file
-        batchFileLines = []
+        self.__commands = []
         # add path if needed
-        batchFileLines.append(getRadiancePathLines())
+        self.__commands.append(getRadiancePathLines())
 
         # TODO: This line won't work in linux.
         dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
-        batchFileLines.append(dirLine)
+        self.__commands.append(dirLine)
 
         # 1.write points
         pointsFile = self.writePointsToFile(_path, projectName)
@@ -287,7 +290,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
             print '    [{}] {} (number of states: {})'.format(
                 count, windowGroup, len(attr['states']))
 
-            # make a copy of the glass and change the material to glow
+            # make a copy of window groups and change the material to glow
             surfaces = tuple(srf.duplicate() for srf in attr['surfaces'])
             for surface in surfaces:
                 surface.radianceMaterial = glowM
@@ -301,7 +304,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
             # 3.2.Generate view matrix
             if not os.path.isfile(os.path.join(_path, windowGroup + ".vmx")) or \
                     not self.reuseViewMtx:
-                rflux = Rfluxmtx(windowGroup)
+                rflux = Rfluxmtx()
                 rflux.sender = '-'
                 rflux.rfluxmtxParameters = self.viewMtxParameters
                 # Klems full basis sampling
@@ -313,7 +316,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
                 rflux.radFiles = (matFile, geoFile, '{}.rad'.format(windowGroup))
                 rflux.pointsFile = pointsFile
                 rflux.outputMatrix = windowGroup + ".vmx"
-                batchFileLines.append(rflux.toRadString())
+                self.__commands.append(rflux.toRadString())
                 vMatrix = rflux.outputMatrix
             else:
                 vMatrix = windowGroup + ".vmx"
@@ -337,7 +340,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
                 rflux2.rfluxmtxParameters = self.daylightMtxParameters
                 rflux2.radFiles = (matFile, geoFile, '{}.rad'.format(windowGroup))
                 rflux2.outputMatrix = windowGroup + ".dmx"
-                batchFileLines.append(rflux2.toRadString())
+                self.__commands.append(rflux2.toRadString())
                 dMatrix = rflux2.outputMatrix
             else:
                 dMatrix = windowGroup + ".dmx"
@@ -350,7 +353,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
                 dct.dmatrixFile = str(dMatrix)
                 dct.skyVectorFile = skyMtx
                 dct.outputFileName = r'{}..{}.tmp'.format(windowGroup, state.name)
-                batchFileLines.append(dct.toRadString())
+                self.__commands.append(dct.toRadString())
 
                 # 5. convert r, g ,b values to illuminance
                 outputName = r'{}..{}.ill'.format(windowGroup, state.name)
@@ -361,11 +364,11 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
                 finalmtx.rmtxopParameters.outputFormat = 'a'
                 finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
                 finalmtx.rmtxopParameters.transposeMatrix = True
-                batchFileLines.append(finalmtx.toRadString())
+                self.__commands.append(finalmtx.toRadString())
 
         # 6. write batch file
-        batchFile = os.path.join(_path, projectName + ".bat")
-        self.write(batchFile, "\n".join(batchFileLines))
+        batchFile = os.path.join(_path, "commands.bat")
+        self.write(batchFile, "\n".join(self.__commands))
         self.__batchFile = batchFile
 
         print "Files are written to: %s" % _path
@@ -383,6 +386,8 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
 
             self.isCalculated = True
             # self.isChanged = False
+            # remove temp folder
+            nukedir(os.path.join(os.path.dirname(self.__batchFile), '/.tmp'))
             return True
         else:
             raise Exception("You need to write the files before running the recipe.")

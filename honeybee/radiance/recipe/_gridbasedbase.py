@@ -1,4 +1,4 @@
-"""Honeybee generic grid base analysis base class.
+"""Honeybee generic grid base analysis baseclass.
 
 This class is base class for common gridbased analysis recipes as well as
 sunlighthours recipe and annual analysis recipe.
@@ -6,10 +6,10 @@ sunlighthours recipe and annual analysis recipe.
 
 from abc import ABCMeta, abstractmethod
 from ..analysisgrid import AnalysisGrid
+from ...helper import writeToFile
 from ._recipebase import HBDaylightAnalysisRecipe
 
 import os
-from collections import namedtuple
 
 
 class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
@@ -109,43 +109,17 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
 
         return analysisGrids
 
-    def toRadString(self, hbObjects=False, points=False):
-        """Return a tuple of multiline string radiance definition.
+    def toRadStringPoints(self):
+        """Return points radiance definition as a single multiline string."""
+        return '\n'.join((ag.toRadString() for ag in self.analysisGrids))
 
-        Args:
-            hbObjects: Set to True to generate string for materials and geometries (Default: False).
-            points: Set to True to generate string for points (Default: False).
-
-        Returns:
-            A namedTuple of multiline data. Keys are: points materials geometries
-
-        Usage:
-            s = self.toRadString(True, True)
-            ptsString , matString, geoString = s
-            or
-            s = self.toRadString(points=True)
-            ptsString = s.points
-        """
-        _radDefinition = namedtuple("RadString", "points materials geometries")
-        _ptsStr = ""
-        _matStr = ""
-        _geoStr = ""
-
-        if points:
-            _ptsStr = "\n".join((ag.toRadString() for ag in self.analysisGrids))
-
-        if hbObjects:
-            _matStr, _geoStr = self.hbObjectsToRadString()
-
-        return _radDefinition(_ptsStr, _matStr, _geoStr)
-
-    def writePointsToFile(self, targetDir, projectName, mkdir=False):
+    def writePointsToFile(self, targetDir, fileName, mkdir=False):
         """Write point groups to file.
 
         Args:
             targetDir: Path to project directory (e.g. c:/ladybug)
-            projectName: Project name as string.Points will be saved as
-                projectName.pts
+            fileName: File name as string. Points will be saved as
+                fileName.pts
 
         Returns:
             Path to file in case of success.
@@ -153,53 +127,12 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
         Exceptions:
             ValueError if targetDir doesn't exist and mkdir is False.
         """
-        assert type(projectName) is str, "projectName should be a string."
-        projectName += ".pts"
+        assert type(fileName) is str, 'fileName should be a string.'
+        fileName = fileName if fileName.lower().endswith('.pts') \
+            else fileName + '.pts'
 
-        _pts = self.write(os.path.join(targetDir, projectName),
-                          self.toRadString(points=True).points + "\n", mkdir)
-
-        if _pts:
-            return _pts
-
-    def writeHBObjectsToFile(self, targetDir, projectName, mkdir=False,
-                             writeMaterial=True, writeGeometry=True):
-        """Write HBobjects to *.rad and .mat files.
-
-        Args:
-            targetDir: Path to project directory (e.g. c:/ladybug)
-            projectName: Project name as string. Geometries will be saved as
-                projectName.rad and materials will be saved as projectName.mat
-            mkdir: Set to True to create the directory if doesn't exist (Default: False)
-
-        Returns:
-            Path to materiald and geometry files as a tuple (*.mat, *.rad).
-
-        Exceptions:
-            ValueError if targetDir doesn't exist and mkdir is False.
-        """
-        assert type(projectName) is str, "projectName should be a string."
-
-        _matStr, _geoStr = self.hbObjectsToRadString()
-
-        _mat = self.write(os.path.join(targetDir, projectName + ".mat"),
-                          _matStr + "\n", mkdir) if writeMaterial else " "
-
-        _geo = self.write(os.path.join(targetDir, projectName + ".rad"),
-                          _geoStr + "\n", mkdir) if writeMaterial else " "
-
-        if _mat and _geo:
-            return _mat, _geo
-
-    @abstractmethod
-    def writeToFile(self):
-        """Write files for the analysis recipe to file."""
-        pass
-
-    @abstractmethod
-    def run(self):
-        """Run the analysis."""
-        pass
+        return writeToFile(os.path.join(targetDir, fileName),
+                           self.toRadStringPoints() + "\n", mkdir)
 
     @abstractmethod
     def results(self):

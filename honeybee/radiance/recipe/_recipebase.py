@@ -1,9 +1,10 @@
 """Base ckass for RADIANCE Analysis Recipes."""
 from abc import ABCMeta, abstractmethod
-from ...helper import preparedir
+from ...helper import preparedir, writeToFile, copyFilesToFolder
 
-import os
 from collections import namedtuple
+import os
+import subprocess
 
 
 class HBDaylightAnalysisRecipe(object):
@@ -16,7 +17,7 @@ class HBDaylightAnalysisRecipe(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, hbObjects=None, subFolder=""):
+    def __init__(self, hbObjects=None, subFolder=None):
         """Create Analysis recipe."""
         self.hbObjects = hbObjects
         """An optional list of Honeybee surfaces or zones. (Default: None)"""
@@ -24,6 +25,20 @@ class HBDaylightAnalysisRecipe(object):
         self.subFolder = subFolder
         """Sub-folder for this analysis recipe. (e.g. "gridbased", "imagebased")"""
 
+        self.additionalRadianceFiles = []
+        """Additional Radiance files other than honeybee objects.
+
+            Thes files will be added to the radiance scene. If you're adding files
+            that are dependant on each other they should be in the correct order.
+
+            Valid files are *.rad, *.mat and *.oct.
+        """
+        self.copyAdditionalFilesLocally = True
+        """A boolean that indicates to copy additional files to the radiance folder.
+            (default: True)
+        """
+        self.resultsFile = []
+        self.commands = []
         self.isCalculated = False
         self.isChanged = True
 
@@ -40,112 +55,243 @@ class HBDaylightAnalysisRecipe(object):
     @hbObjects.setter
     def hbObjects(self, hbObjects):
         if not hbObjects:
-            self.__hbObjs = []
+            self.__hbObjs = ()
+            self.__radianceMaterials = ()
         else:
-            self.__hbObjs = [hbo for hbo in hbObjects if hasattr(hbo, 'isHBObject')]
-            _dif = len(hbObjects) - len(self.__hbObjs)
-            if _dif:
-                print "%d non Honeybee objects are found and removed." % _dif
+            try:
+                self.__radianceMaterials = \
+                    set(mat for hbo in hbObjects for mat in hbo.radianceMaterials)
+            except AttributeError:
+                raise TypeError('At the minimum one of the inputs is not a Honeybee object.')
+
+            self.__hbObjs = hbObjects
+
+    @property
+    def radianceMaterials(self):
+        """Get list of radiance materials for Honeybee objects in this recipe."""
+        return self.__radianceMaterials
 
     @property
     def subFolder(self):
         """Sub-folder for Grid-based analysis."""
-        return self.__folder
+        return self.__subFolder
 
     @subFolder.setter
     def subFolder(self, value):
         """Sub-folder for Grid-based analysis."""
-        self.__folder = str(value)
+        self.__subFolder = str(value)
 
-    def hbObjectsToRadString(self):
-        """Return geometries and materials as a tuple of multiline string.
+    @property
+    def additionalRadianceFiles(self):
+        """Additional Radiance files other than honeybee objects.
 
-        Returns:
-            A namedTuple of multiline data. Keys are: materials geometries
+        Thes files will be added to the radiance scene. If you're adding files
+        that are dependant on each other they should be in the correct order.
 
-        Usage:
-            s = self.hbObjectsToRadString()
-            geoString = s.geometries
-            matString = s.materials
-            or
-            s = self.hbObjectsToRadString()
-            matString, geoString = s
+        Valid files are *.rad, *.mat and *.oct.
         """
-        _radDefinition = namedtuple("RadString", "materials geometries")
-        _matStr = ""
-        _geoStr = ""
+        return self.__additionalRadianceFiles
 
-        if len(self.hbObjects) > 0:
-            _materials = []
-            _geos = []
-            for hbo in self.hbObjects:
-                _materials.extend([material for material in hbo.radianceMaterials])
-                _geos.append(hbo.toRadString(includeMaterials=False, joinOutput=True))
-
-            # remove duplicated materials
-            _materials = set([mat.toRadString() for mat in _materials])
-            _matStr = "\n".join(_materials)
-
-            # joing geometries
-            _geoStr = "\n".join(_geos)
-
-            print "Number of total materials: %d" % len(_materials)
-            print "Number of total surfaces: %d" % len(_geos)
+    @additionalRadianceFiles.setter
+    def additionalRadianceFiles(self, arf):
+        if not arf:
+            self.__additionalRadianceFiles = ()
         else:
-            print "Warning: Found no Honeybee objects."
+            _f = namedtuple('AdditionalRadianceFiles', 'mat rad oct')
+            self.__additionalRadianceFiles = _f(
+                tuple(f for f in arf if arf.lower().endswith('.mat')),
+                tuple(f for f in arf if arf.lower().endswith('.rad')),
+                tuple(f for f in arf if arf.lower().endswith('.oct')))
 
-        return _radDefinition(_matStr, _geoStr)
+    def prepareSubFolder(self, targetFolder,
+                         subFolders=('.tmp', 'objects', 'skies', 'results'),
+                         removeContent=True):
+        """Create subfolders under targetFolder/self.subfolder.
 
-    @abstractmethod
+        By default a honeybee radiance analysis folder structure is as below.
+        . taragetFolder
+            .. subfolder
+                . command.bat
+                . *.pts  # point files
+                . *.vf  # view files
+                . *.oct  # octree files
+                .. .tmp (*.tmp)  # This folder will be removed after running the analysis
+                .. objects (*.rad, *.mat)
+                .. skies (*.sky, *.wea)
+                .. results
+                    ..matrix (*.vmx, *.dmx) # only for 3-Phase analysis
+                    ..hdr (*.hdr)  # only for view-based analysis
+                    ..ill (*.ill)  # illuminance values for annual analysis
+        """
+        for f in subFolders:
+            p = os.path.join(targetFolder, self.subFolder, f)
+            preparedir(p, removeContent)
+
+    def toRadStringGeometries(self):
+        """Return geometries radiance definition as a single multiline string."""
+        print 'Number of Honeybee objects: %d' % len(self.hbObjects)
+        _geos = (hbo.toRadString(includeMaterials=False, joinOutput=True)
+                 for hbo in self.hbObjects)
+
+        return "\n".join(_geos)
+
+    def toRadStringMaterials(self):
+        """Return radiance definition of materials as a single multiline string."""
+        print 'Number of radiance materials: %d' % len(self.radianceMaterials)
+        return "\n".join((hbo.toRadString() for hbo in self.radianceMaterials))
+
+    def toRadStringMaterialsAndGeometries(self):
+        """Return geometries radiance definition as a single multiline string."""
+        _mattgeos = (hbo.toRadString(includeMaterials=True, joinOutput=True)
+                     for hbo in self.hbObjects)
+
+        return "\n".join(_mattgeos)
+
+    # TODO: Get commands without running write method.
     def toRadString(self):
         """Radiance representation of the recipe."""
-        pass
+        return '\n'.join(self.commands)
 
-    # TODO: Check for white space in names. I need to test some cases to make
-    # sure what will and what will not fail for Radiance before implementing this.
-    @staticmethod
-    def write(filePath, data, mkdir=False):
-        """Write a string of data to file.
+    def writeGeometriesToFile(self, targetDir, fileName, mkdir=False):
+        """Write geometries to file.
 
         Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
-            data: Any data as string
-            mkdir: Set to True to create the directory if doesn't exist (Default: False)
-        """
-        __dir, __name = os.path.split(filePath)
-
-        if not os.path.isdir(__dir):
-            if mkdir:
-                preparedir(__dir)
-            else:
-                raise ValueError("Target dir doesn't exist: %s" % __dir)
-
-        with open(filePath, "w") as outf:
-            try:
-                outf.write(str(data))
-                return filePath
-            except Exception as e:
-                print "Failed to write points to file:\n%s" % e
-                return False
-
-    @abstractmethod
-    def writeToFile(self, targetFolder):
-        """Write files for the analysis recipe to file.
-
-        Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+            targetDir: Path to project directory (e.g. c:/ladybug)
+            fileName: File name as string. materials will be saved as
+                fileName.rad
 
         Returns:
-            True in case of success. False in case of failure.
-        """
-        pass
+            Path to file in case of success.
 
-    @abstractmethod
-    def run(self):
+        Exceptions:
+            ValueError if targetDir doesn't exist and mkdir is False.
+        """
+        assert type(fileName) is str, 'fileName should be a string.'
+        fileName = fileName if fileName.lower().endswith('.rad') \
+            else fileName + '.rad'
+
+        return writeToFile(os.path.join(targetDir, fileName),
+                           self.toRadStringGeometries() + "\n", mkdir)
+
+    def writeMatrialsToFile(self, targetDir, fileName, mkdir=False):
+        """Write materials to file.
+
+        Args:
+            targetDir: Path to project directory (e.g. c:/ladybug)
+            fileName: File name as string. materials will be saved as
+                fileName.mat
+
+        Returns:
+            Path to file in case of success.
+
+        Exceptions:
+            ValueError if targetDir doesn't exist and mkdir is False.
+        """
+        assert type(fileName) is str, 'fileName should be a string.'
+        fileName = fileName if fileName.lower().endswith('.mat') \
+            else fileName + '.mat'
+
+        return writeToFile(os.path.join(targetDir, fileName),
+                           self.toRadStringMaterials() + "\n", mkdir)
+
+    def writeMaterialsAndGeometriesToFile(self, targetDir, fileName, mkdir=False):
+        """Write geometries to file.
+
+        Args:
+            targetDir: Path to project directory (e.g. c:/ladybug)
+            fileName: File name as string. materials will be saved as
+                fileName.rad
+
+        Returns:
+            Path to file in case of success.
+
+        Exceptions:
+            ValueError if targetDir doesn't exist and mkdir is False.
+        """
+        assert type(fileName) is str, 'fileName should be a string.'
+        fileName = fileName if fileName.lower().endswith('.rad') \
+            else fileName + '.rad'
+
+        return writeToFile(os.path.join(targetDir, fileName),
+                           self.toRadStringMaterialsAndGeometries() + "\n",
+                           mkdir)
+
+    def write(self, targetFolder, projectName='untitled', relPath=True):
+        """Write geometry and material files to folder.
+
+        Returns:
+            studyFolder, Materil files, geometry files, octree files
+        """
+        if not targetFolder:
+            targetFolder = os.path.join(os.environ['USERPROFILE'], 'honeybee')
+
+        _ispath = preparedir(targetFolder, False)
+        assert _ispath, "Failed to create %s. Try a different path!" % targetFolder
+
+        projectName = 'untitled' if not projectName else str(projectName)
+
+        _basePath = os.path.join(targetFolder, projectName)
+        _ispath = preparedir(_basePath, removeContent=False)
+        assert _ispath, "Failed to create %s. Try a different path!" % _basePath
+
+        # create subfolders inside the folder
+        self.prepareSubFolder(_basePath,
+                              subFolders=('objects', 'skies', 'results'),
+                              removeContent=True)
+
+        _path = os.path.join(_basePath, self.subFolder)
+        # Check if anything has changed
+        # if not self.isChanged:
+        #     print "Inputs has not changed! Check files at %s" % _path
+
+        # 3.write materials and geometry files
+        matFile = self.writeMatrialsToFile(_path + '/objects', projectName)
+        geoFile = self.writeGeometriesToFile(_path + '/objects', projectName)
+
+        # 3.1. copy additional files if anything
+        if self.additionalRadianceFiles and self.copyAdditionalFilesLocally:
+            matFilesAdd = copyFilesToFolder(self.additionalRadianceFiles.mat,
+                                            _path + '/objects')
+            radFilesAdd = copyFilesToFolder(self.additionalRadianceFiles.rad,
+                                            _path + '/objects')
+            octFilesAdd = copyFilesToFolder(self.additionalRadianceFiles.oct,
+                                            _path + '/objects')
+        elif self.additionalRadianceFiles:
+            matFilesAdd = self.additionalRadianceFiles.mat
+            radFilesAdd = self.additionalRadianceFiles.rad
+            octFilesAdd = self.additionalRadianceFiles.oct
+        else:
+            matFilesAdd, radFilesAdd, octFilesAdd = [], [], []
+
+        files = namedtuple(
+            'Files', 'path geoFile matFile radFilesAdd matFilesAdd octFilesAdd'
+        )
+
+        return files(_path, geoFile, matFile, radFilesAdd, matFilesAdd,
+                     octFilesAdd)
+
+    # TODO: Write a runmanager class to handle runs
+    def run(self, commandFile, debug=False):
         """Run the analysis."""
-        pass
+        assert os.path.isfile(commandFile), \
+            ValueError('Failed to find command file: {}'.format(commandFile))
+
+        if debug:
+            with open(self.__batchFile, "a") as bf:
+                bf.write("\npause\n")
+
+        subprocess.call(commandFile)
+
+        self.isCalculated = True
+        # self.isChanged = False
+        return True
 
     @abstractmethod
     def results(self):
         """Return results for this analysis."""
         pass
+
+    @staticmethod
+    def relpath(path, start):
+        """Return a relative path."""
+        return os.path.relpath(path, start)
