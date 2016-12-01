@@ -181,7 +181,6 @@ class Folders(object):
                                 for pathVal in possiblePerLocations)
 
         for binDir in possiblePerLocations:
-            print binDir
             if 'perl.exe' in os.listdir(binDir):
                 self.__perlExePath = os.path.join(binDir, 'perl.exe')
                 break
