@@ -4,12 +4,9 @@ from ._defaultset import rpict_number_parameters, rpict_boolean_parameters
 from ._frozen import frozen
 
 
-# TODO: Implement additional Rad Parameters
-# @mostaphaRoudsari I think this TODO is done.
-
 @frozen
 class ImageBasedParameters(AdvancedRadianceParameters):
-    """Radiance Parameters for generating images.
+    u"""Radiance Parameters for generating images.
 
     Attributes:
         quality: An integer between 0-2 (0:low, 1: medium or 2: high quality)
@@ -60,10 +57,11 @@ class ImageBasedParameters(AdvancedRadianceParameters):
                  directJitter=None, directSampling=None, directThreshold=None,
                  directCertainty=None, directSecRelays=None, directPresampDensity=None,
                  specularThreshold=None, limitWeight=None, limitReflections=None,
-                 specularSampling=None,  uncorRandSamp=None, pixelSampling=None,
-                 pixelJitter=None,pixelTolerance=None,pixelAspectRatio=None,
-                 pixelMotionBlur=None,pixelDepthOfField=None,ambientValue=None,
-                 ambientWeight=None,directVisibility=None,backFaceVisibility=None ):
+                 specularSampling=None, irradianceCalc=None, uncorRandSamp=None,
+                 pixelSampling=None, pixelJitter=None, pixelTolerance=None,
+                 pixelAspectRatio=None, pixelMotionBlur=None, pixelDepthOfField=None,
+                 ambientValue=None, ambientWeight=None, directVisibility=None,
+                 backFaceVisibility=None):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
         self.quality = quality
@@ -248,9 +246,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         image sampling to obtain faster renderings.
         """
 
+        self.addRadianceNumber('ps', descriptiveName='pixel sampling rate',
+                               numType=int, attributeName='pixelSampling')
 
-        self.addRadianceNumber('ps',descriptiveName='pixel sampling rate',numType=int,
-                               attributeName='pixelSampling')
         self.pixelSampling = pixelSampling
         """
         -ps size
@@ -258,9 +256,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         Set the pixel sample spacing to the integer size. This specifies the
         sample spacing (in pixels) for adaptive subdivision on the image plane.
         """
-
-        self.addRadianceNumber('pt',descriptiveName='pixel sampling tolerance',numType=float,
-                               attributeName='pixelTolerance')
+        self.addRadianceNumber('pt', descriptiveName='pixel sampling tolerance',
+                               numType=float, attributeName='pixelTolerance')
         self.pixelTolerance = pixelTolerance
         """
         -pt frac
@@ -269,8 +266,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         than this amount, a third sample is taken between them.
         """
 
-        self.addRadianceNumber('pj',descriptiveName='anti-aliazing jitter',numType=float,
-                               attributeName='pixelJitter')
+        self.addRadianceNumber('pj', descriptiveName='anti-aliazing jitter',
+                               numType=float, attributeName='pixelJitter')
         self.pixelJitter = pixelJitter
         """-pj frac
 
@@ -281,9 +278,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         low-resolution images.
         """
 
-        self.addRadianceNumber('pa',descriptiveName='pixel aspect ratio',numType=float,
-                               attributeName='pixelAspectRatio')
-        self.pixelAspectRatio=pixelAspectRatio
+        self.addRadianceNumber('pa', descriptiveName='pixel aspect ratio',
+                               numType=float, attributeName='pixelAspectRatio')
+        self.pixelAspectRatio = pixelAspectRatio
         """
         -pa rat
 
@@ -293,10 +290,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         adhere to the given maxima.
         """
 
-
-        self.addRadianceNumber('pm',descriptiveName='pixel motion blur',numType=float,
-                               attributeName='pixelMotionBlur')
-        self.pixelMotionBlur=pixelMotionBlur
+        self.addRadianceNumber('pm', descriptiveName='pixel motion blur',
+                               numType=float, attributeName='pixelMotionBlur')
+        self.pixelMotionBlur = pixelMotionBlur
         """
         -pm frac
 
@@ -312,9 +308,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         to avoid the ghosting effect of too few time samples.
         """
 
-        self.addRadianceNumber('pd',descriptiveName='pixel depth-of-field',numType=float,
-                               attributeName='pixelDepthOfField')
-        self.pixelDepthOfField=pixelDepthOfField
+        self.addRadianceNumber('pd', descriptiveName='pixel depth-of-field',
+                               numType=float, attributeName='pixelDepthOfField')
+        self.pixelDepthOfField = pixelDepthOfField
         """
         -pd dia
 
@@ -328,8 +324,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         few samples.
         """
 
-        self.addRadianceTuple('av',descriptiveName='ambient value',tupleSize=3,
-                              attributeName='ambientValue',numType=float)
+        self.addRadianceTuple('av', descriptiveName='ambient value', tupleSize=3,
+                              attributeName='ambientValue', numType=float)
         self.ambientValue = ambientValue
         """
         -av red grn blu
@@ -341,8 +337,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         overall accuracy.
         """
 
-        self.addRadianceNumber('aw',descriptiveName='ambient weight',numType=int,
-                              attributeName='ambientWeight')
+        self.addRadianceNumber('aw', descriptiveName='ambient weight', numType=int,
+                               attributeName='ambientWeight')
         self.ambientWeight = ambientWeight
         """
         -aw N
@@ -357,9 +353,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         indoor and outdoor (daylight) areas are visible
         """
 
-        self.addRadianceBoolFlag('dv',descriptiveName='light source visibility',
+        self.addRadianceBoolFlag('dv', descriptiveName='light source visibility',
                                  attributeName='directVisibility')
-        self.directVisibility=directVisibility
+        self.directVisibility = directVisibility
         """
         -dv
 
@@ -370,9 +366,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         the output.
         """
 
-        self.addRadianceBoolFlag('bv',descriptiveName='back face visibility',
+        self.addRadianceBoolFlag('bv', descriptiveName='back face visibility',
                                  attributeName='backFaceVisibility')
-        self.backFaceVisibility=backFaceVisibility
+        self.backFaceVisibility = backFaceVisibility
         """
          -bv
 
@@ -386,6 +382,20 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         materials.
         """
 
+        self.addRadianceBoolFlag('i', descriptiveName='irradiance calculation',
+                                 attributeName='irradianceCalc')
+        self.irradianceCalc = irradianceCalc
+        u"""
+        -i
+
+            Boolean switch to compute irradiance rather than radiance values.
+            This only affects the final result, substituting a Lambertian surface
+            and multiplying the radiance by pi. Glass and other transparent surfaces
+            are ignored during this stage. Light sources still appear with their
+            original radiance values, though the -dv option (above) may be used
+            to override this. The radiance default value for this option is False.
+        """
+
         self.addRadianceBoolFlag('u', descriptiveName='uncorrelated random sampling',
                                  attributeName='uncorRandSamp')
         self.uncorRandSamp = uncorRandSamp
@@ -397,6 +407,21 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         in a brushed appearance in specular highlights. When "on", pure Monte
         Carlo sampling is used in all calculations.
         """
+
+    @classmethod
+    def LowQuality(cls):
+        """Radiance parmaters for a quick analysis."""
+        return cls(quality=0)
+
+    @classmethod
+    def MediumQuality(cls):
+        """Medium quality Radiance parmaters."""
+        return cls(quality=1)
+
+    @classmethod
+    def HighQuality(cls):
+        """High quality radiance parameters."""
+        return cls(quality=2)
 
     @property
     def isImageBasedRadianceParameters(self):
@@ -467,29 +492,3 @@ class ImageBasedParameters(AdvancedRadianceParameters):
             "%s is not a valid radiance parameter" % str(parameter)
 
         return rpict_boolean_parameters[__key]["values"][self.quality]
-
-#@mostaphaRoudsari, added Image to the end of LowQuality, MediumQuality etc so that there
-# is no conflict with Gridbased parameters of similar names.
-
-class LowQualityImage(ImageBasedParameters):
-    """Radiance parmaters for a quick analysis."""
-
-    def __init__(self):
-        """Create low quality radiance parameters for quick studies."""
-        ImageBasedParameters.__init__(self, quality=0)
-
-
-class MediumQualityImage(ImageBasedParameters):
-    """Medium quality Radiance parmaters."""
-
-    def __init__(self):
-        """Create medium quality radiance parameters."""
-        ImageBasedParameters.__init__(self, quality=1)
-
-
-class HighQualityImage(ImageBasedParameters):
-    """High quality radiance parameters."""
-
-    def __init__(self):
-        """Create high quality radiance parameters."""
-        ImageBasedParameters.__init__(self, quality=2)

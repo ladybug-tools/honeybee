@@ -28,7 +28,7 @@ class View(object):
                 5: Planisphere [stereographic] projection (s)
             For more detailed description about view types check rpict manual
             page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-        viewHSize: Set the view horizontal size (-vs). For a perspective
+        viewHSize: Set the view horizontal size (-vh). For a perspective
             projection (including fisheye views), val is the horizontal field
             of view (in degrees). For a parallel projection, val is the view
             width in world coordinates.
@@ -106,10 +106,13 @@ class View(object):
     __viewType = RadianceNumber('vt', 'view type', numType=int, validRange=[0, 5],
                                 defaultValue=0)
 
-    def __init__(self, viewPoint=None, viewDirection=None, viewUpVector=None,
+    def __init__(self, name, viewPoint=None, viewDirection=None, viewUpVector=None,
                  viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
                  viewShift=0, viewLift=0):
         u"""Init view."""
+        self.name = name
+        """View name."""
+
         self.viewPoint = viewPoint
         """Set the view point (-vp) to (x, y, z)."""
 
@@ -156,6 +159,11 @@ class View(object):
         """
 
     @property
+    def isView(self):
+        """Return True for view."""
+        return True
+
+    @property
     def viewType(self):
         """Set and get view type (-vt) to one of the choices below (0-5).
 
@@ -175,6 +183,14 @@ class View(object):
             self.viewHSize = 180
             self.viewVSize = 180
             print "Changed viewHSize and viewVSize to 180 for fisheye view type."
+
+        elif self.viewType == 0:
+            assert self.viewHSize < 180, ValueError(
+                '\n{} is an invalid horizontal view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.viewHSize))
+            assert self.viewVSize < 180, ValueError(
+                '\n{} is an invalid vertical view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.viewVSize))
 
     def calculateViewGrid(self, xDivCount=1, yDivCount=1):
         """Return a list of views for grid of views.
@@ -298,6 +314,10 @@ class View(object):
     def saveToFile(self, working):
         """Save view to a file."""
         pass
+
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
 
     def __repr__(self):
         """View representation."""

@@ -277,7 +277,7 @@ class HBDaylightAnalysisRecipe(object):
             ValueError('Failed to find command file: {}'.format(commandFile))
 
         if debug:
-            with open(self.__batchFile, "a") as bf:
+            with open(commandFile, "a") as bf:
                 bf.write("\npause\n")
 
         subprocess.call(commandFile)

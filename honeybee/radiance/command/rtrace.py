@@ -24,7 +24,7 @@ class Rtrace(RadianceCommand):
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
     pointsFile = RadiancePath("points", "test point file", extension=".pts")
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
+    def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
                  simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly

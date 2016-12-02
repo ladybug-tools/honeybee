@@ -82,14 +82,14 @@ class GridBasedParameters(AdvancedRadianceParameters):
         """
 
         self.addRadianceNumber('as', descriptiveName='ambient super samples',
-                               attributeName='ambientSupersamples',numType=int)
+                               attributeName='ambientSupersamples', numType=int)
         self.ambientSupersamples = ambientSupersamples
         """ Number of ambient super-samples. Super-samples are applied only to
             the ambient divisions which show a significant change.
         """
 
-        self.addRadianceNumber('ar',descriptiveName='ambient resolution',
-                               attributeName='ambientResolution',numType=int)
+        self.addRadianceNumber('ar', descriptiveName='ambient resolution',
+                               attributeName='ambientResolution', numType=int)
         self.ambientResolution = ambientResolution
         """ Number of ambient resolution. This number will determine the maximum
             density of ambient values used in interpolation. Error will start to
@@ -97,16 +97,15 @@ class GridBasedParameters(AdvancedRadianceParameters):
             ambient resolution. The maximum ambient value density is the scene
             size times the ambient accuracy."""
 
-        self.addRadianceNumber('aa',descriptiveName='ambient accuracy',
-                               attributeName='ambientAccuracy',numType=float)
+        self.addRadianceNumber('aa', descriptiveName='ambient accuracy',
+                               attributeName='ambientAccuracy', numType=float)
         self.ambientAccuracy = ambientAccuracy
         """Number of ambient accuracy. This value will approximately equal the
         error from indirect illuminance interpolation. A value of zero implies
         no interpolation."""
 
-
-        self.addRadianceNumber('dj',descriptiveName='direct source jitter',
-                               attributeName='directJitter',numType=float)
+        self.addRadianceNumber('dj', descriptiveName='direct source jitter',
+                               attributeName='directJitter', numType=float)
         self.directJitter = directJitter
         """
         -dj frac
@@ -121,8 +120,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
         direct jitter by setting -ps to 1.
         """
 
-        self.addRadianceNumber('ds',descriptiveName='direct sampling',
-                               attributeName='directSampling',numType=float)
+        self.addRadianceNumber('ds', descriptiveName='direct sampling',
+                               attributeName='directSampling', numType=float)
         self.directSampling = directSampling
         """
         -ds frac
@@ -134,9 +133,9 @@ class GridBasedParameters(AdvancedRadianceParameters):
         each light source.
         """
 
-        self.addRadianceNumber('dt',descriptiveName='direct thresholding',
-                               numType=float,attributeName='directThreshold')
-        self.directThreshold=directThreshold
+        self.addRadianceNumber('dt', descriptiveName='direct thresholding',
+                               numType=float, attributeName='directThreshold')
+        self.directThreshold = directThreshold
         """
         -dt frac
 
@@ -160,7 +159,6 @@ class GridBasedParameters(AdvancedRadianceParameters):
         that all shadow lines resulting in a contrast change greater than the
         -dt specification will be calculated.
         """
-
 
         self.addRadianceNumber('dr', descriptiveName='direct relays',
                                numType=float, attributeName='directSecRelays')
@@ -189,9 +187,9 @@ class GridBasedParameters(AdvancedRadianceParameters):
         tested for shadows if it is tested at all.
         """
 
-        self.addRadianceNumber('st',descriptiveName='specular threshold',numType=float,
-                               attributeName='specularThreshold')
-        self.specularThreshold=specularThreshold
+        self.addRadianceNumber('st', descriptiveName='specular threshold',
+                               numType=float, attributeName='specularThreshold')
+        self.specularThreshold = specularThreshold
         """
         -st frac
 
@@ -205,8 +203,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
         and one offers a compromise between image accuracy and rendering time.
         """
 
-        self.addRadianceNumber('lw',descriptiveName='limit weight',numType=float,
-                               attributeName='limitWeight')
+        self.addRadianceNumber('lw', descriptiveName='limit weight',
+                               numType=float, attributeName='limitWeight')
         self.limitWeight = limitWeight
         """
         -lw frac
@@ -219,8 +217,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
         the ray weight divided by the given frac.
         """
 
-        self.addRadianceNumber('lr',descriptiveName='limit reflections',numType=int,
-                               attributeName='limitReflections')
+        self.addRadianceNumber('lr', descriptiveName='limit reflections',
+                               numType=int, attributeName='limitReflections')
         self.limitReflections = limitReflections
         """
         -lr N
@@ -232,8 +230,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
         a setting of 0 (no limit) may cause a stack overflow.
         """
 
-        self.addRadianceNumber('ss',descriptiveName='specular sampling',numType=float,
-                               attributeName='specularSampling')
+        self.addRadianceNumber('ss', descriptiveName='specular sampling',
+                               numType=float, attributeName='specularSampling')
         self.specularSampling = specularSampling
         """
         -ss samp
@@ -247,7 +245,7 @@ class GridBasedParameters(AdvancedRadianceParameters):
         image sampling to obtain faster renderings.
         """
 
-        self.addRadianceBoolFlag('I',descriptiveName='irradiance calculation',
+        self.addRadianceBoolFlag('I', descriptiveName='irradiance calculation',
                                  attributeName='irradianceCalc')
         self.irradianceCalc = irradianceCalc
         """
@@ -259,10 +257,9 @@ class GridBasedParameters(AdvancedRadianceParameters):
             radiance default value for this option is False.
         """
 
-
-        self.addRadianceBoolFlag('u',descriptiveName='uncorrelated random sampling',
+        self.addRadianceBoolFlag('u', descriptiveName='uncorrelated random sampling',
                                  attributeName='uncorRandSamp')
-        self.uncorRandSamp=uncorRandSamp
+        self.uncorRandSamp = uncorRandSamp
         """
         -u
 
@@ -292,7 +289,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
             # add all numeric parameters
             for name, data in rtrace_number_parameters.iteritems():
-                self.addRadianceNumber(data['name'], data['dscrip'],numType=data['type'],
+                self.addRadianceNumber(data['name'], data['dscrip'],
+                                       numType=data['type'],
                                        attributeName=name)
 
             # add boolean parameters
@@ -314,7 +312,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
             # add boolean parameters
             for name, data in rtrace_boolean_parameters.iteritems():
-                self.addRadianceBoolFlag(data['name'], data['dscrip'],attributeName=name)
+                self.addRadianceBoolFlag(data['name'], data['dscrip'],
+                                         attributeName=name)
                 setattr(self, name, data['values'][self.quality])
 
     def getParameterDefaultValueBasedOnQuality(self, parameter):
