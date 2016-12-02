@@ -1,5 +1,4 @@
 """Base ckass for RADIANCE Analysis Recipes."""
-from abc import ABCMeta, abstractmethod
 from ...helper import preparedir, writeToFile, copyFilesToFolder
 
 from collections import namedtuple
@@ -15,9 +14,7 @@ class HBDaylightAnalysisRecipe(object):
         subFolder: Sub-folder for this analysis recipe. (e.g. "gridbased")
     """
 
-    __metaclass__ = ABCMeta
-
-    def __init__(self, hbObjects=None, subFolder=None):
+    def __init__(self, hbObjects=None, subFolder=None, scene=None):
         """Create Analysis recipe."""
         self.hbObjects = hbObjects
         """An optional list of Honeybee surfaces or zones. (Default: None)"""
@@ -25,18 +22,9 @@ class HBDaylightAnalysisRecipe(object):
         self.subFolder = subFolder
         """Sub-folder for this analysis recipe. (e.g. "gridbased", "imagebased")"""
 
-        self.additionalRadianceFiles = []
-        """Additional Radiance files other than honeybee objects.
+        self.scene = scene
+        """Additional Radiance files other than honeybee objects."""
 
-            Thes files will be added to the radiance scene. If you're adding files
-            that are dependant on each other they should be in the correct order.
-
-            Valid files are *.rad, *.mat and *.oct.
-        """
-        self.copyAdditionalFilesLocally = True
-        """A boolean that indicates to copy additional files to the radiance folder.
-            (default: True)
-        """
         self.resultsFile = []
         self.commands = []
         self.isCalculated = False
@@ -82,26 +70,18 @@ class HBDaylightAnalysisRecipe(object):
         self.__subFolder = str(value)
 
     @property
-    def additionalRadianceFiles(self):
-        """Additional Radiance files other than honeybee objects.
+    def scene(self):
+        """A base scene for the recipe."""
+        return self.__scene
 
-        Thes files will be added to the radiance scene. If you're adding files
-        that are dependant on each other they should be in the correct order.
-
-        Valid files are *.rad, *.mat and *.oct.
-        """
-        return self.__additionalRadianceFiles
-
-    @additionalRadianceFiles.setter
-    def additionalRadianceFiles(self, arf):
-        if not arf:
-            self.__additionalRadianceFiles = ()
+    @scene.setter
+    def scene(self, sc):
+        if not sc:
+            self.__scene = None
         else:
-            _f = namedtuple('AdditionalRadianceFiles', 'mat rad oct')
-            self.__additionalRadianceFiles = _f(
-                tuple(f for f in arf if arf.lower().endswith('.mat')),
-                tuple(f for f in arf if arf.lower().endswith('.rad')),
-                tuple(f for f in arf if arf.lower().endswith('.oct')))
+            assert hasattr(sc, 'files'), '{} is not a Radiance Scene. ' \
+                'Scene should be an instance from the type Scene.'.format(sc)
+            self.__scene = sc
 
     def prepareSubFolder(self, targetFolder,
                          subFolders=('.tmp', 'objects', 'skies', 'results'),
@@ -142,10 +122,10 @@ class HBDaylightAnalysisRecipe(object):
 
     def toRadStringMaterialsAndGeometries(self):
         """Return geometries radiance definition as a single multiline string."""
-        _mattgeos = (hbo.toRadString(includeMaterials=True, joinOutput=True)
-                     for hbo in self.hbObjects)
+        _mat = self.toRadStringMaterials()
+        _geo = self.toRadStringGeometries()
 
-        return "\n".join(_mattgeos)
+        return "\n".join((_mat, _geo))
 
     # TODO: Get commands without running write method.
     def toRadString(self):
@@ -234,10 +214,15 @@ class HBDaylightAnalysisRecipe(object):
         _ispath = preparedir(_basePath, removeContent=False)
         assert _ispath, "Failed to create %s. Try a different path!" % _basePath
 
+        print 'Preparing %s' % os.path.join(_basePath, self.subFolder)
         # create subfolders inside the folder
         self.prepareSubFolder(_basePath,
                               subFolders=('objects', 'skies', 'results'),
                               removeContent=True)
+
+        if self.scene:
+            self.prepareSubFolder(_basePath, subFolders=('scene',),
+                                  removeContent=self.scene.overwrite)
 
         _path = os.path.join(_basePath, self.subFolder)
         # Check if anything has changed
@@ -245,21 +230,28 @@ class HBDaylightAnalysisRecipe(object):
         #     print "Inputs has not changed! Check files at %s" % _path
 
         # 3.write materials and geometry files
-        matFile = self.writeMatrialsToFile(_path + '/objects', projectName)
-        geoFile = self.writeGeometriesToFile(_path + '/objects', projectName)
+        matFile = self.writeMatrialsToFile(_path + '\\objects', projectName)
+        geoFile = self.writeGeometriesToFile(_path + '\\objects', projectName)
 
-        # 3.1. copy additional files if anything
-        if self.additionalRadianceFiles and self.copyAdditionalFilesLocally:
-            matFilesAdd = copyFilesToFolder(self.additionalRadianceFiles.mat,
-                                            _path + '/objects')
-            radFilesAdd = copyFilesToFolder(self.additionalRadianceFiles.rad,
-                                            _path + '/objects')
-            octFilesAdd = copyFilesToFolder(self.additionalRadianceFiles.oct,
-                                            _path + '/objects')
-        elif self.additionalRadianceFiles:
-            matFilesAdd = self.additionalRadianceFiles.mat
-            radFilesAdd = self.additionalRadianceFiles.rad
-            octFilesAdd = self.additionalRadianceFiles.oct
+        # 3.1. copy scene files if anything
+        if self.scene:
+            if self.scene.numberOfFiles == 1:
+                print 'Adding one file from the radiance scene.'
+            else:
+                print 'Adding %d files from the radiance scene.' % \
+                    self.scene.numberOfFiles
+
+            if self.scene.copyLocal:
+                matFilesAdd = copyFilesToFolder(
+                    self.scene.files.mat, _path + '\\scene', self.scene.overwrite)
+                radFilesAdd = copyFilesToFolder(
+                    self.scene.files.rad, _path + '\\scene', self.scene.overwrite)
+                octFilesAdd = copyFilesToFolder(
+                    self.scene.files.oct, _path + '\\scene', self.scene.overwrite)
+            else:
+                matFilesAdd = self.scene.files.mat
+                radFilesAdd = self.scene.files.rad
+                octFilesAdd = self.scene.files.oct
         else:
             matFilesAdd, radFilesAdd, octFilesAdd = [], [], []
 
@@ -286,10 +278,9 @@ class HBDaylightAnalysisRecipe(object):
         # self.isChanged = False
         return True
 
-    @abstractmethod
     def results(self):
         """Return results for this analysis."""
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def relpath(path, start):

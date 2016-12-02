@@ -101,7 +101,7 @@ def writeToFile(filePath, data, mkdir=False):
             return False
 
 
-def copyFilesToFolder(files, targetFolder):
+def copyFilesToFolder(files, targetFolder, overwrite=True):
     """Copy a list of files to a new target folder.
 
     Returns:
@@ -111,6 +111,20 @@ def copyFilesToFolder(files, targetFolder):
         return []
 
     for f in files:
-        shutil.copy(f, targetFolder)
+        target = os.path.join(targetFolder, os.path.split(f)[-1])
+        if os.path.exists(target):
+            if overwrite:
+                # remove the file before copying
+                try:
+                    os.remove(target)
+                except:
+                    raise IOError("Failed to remove %s" % f)
+                else:
+                    shutil.copy(f, target)
+            else:
+                continue
+        else:
+            print 'copying %s to %s' % (os.path.split(f)[-1], targetFolder)
+            shutil.copy(f, targetFolder)
 
     return [os.path.join(targetFolder, os.path.split(f)[-1]) for f in files]
