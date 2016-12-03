@@ -140,22 +140,17 @@ class Xform(RadianceCommand):
 
     @property
     def radFile(self):
-        return self._radFile
+        """Get and set rad files."""
+        return self.__radFile
 
     @radFile.setter
-    def radFile(self,filePath):
-        if filePath:
-            #The only way to make xform work, considering that we are launching
-            # it using the full path .ie. c:\radiance..\xform is to provide
-            # the full path of the input file to it.
-
-            self._radFile = os.path.abspath(os.path.normpath(filePath))
-            if not self.outputFile:
-                fileName,fileExt = os.path.splitext(filePath)
-                outputFileName = fileName+'_xfrm'+fileExt
-                self.outputFile =outputFileName
+    def radFile(self, files):
+        if files:
+            if isinstance(files,basestring):
+                files = [files]
+            self.__radFile = [os.path.normpath(f) for f in files]
         else:
-            self._radFile = ''
+            self.__radFile = []
     @property
     def outputFile(self):
         return self._outputFile
@@ -177,7 +172,7 @@ class Xform(RadianceCommand):
         """Return full command as a string"""
         cmdPath = self.normspace(os.path.join(self.radbinPath,'xform'))
         xformParam = self.xformParameters.toRadString()
-        inputPath = self.normspace(self.radFile)
+        inputPath = " ".join(self.normspace(f) for f in self.radFile)
         outputPath = self.normspace(self.outputFile)
 
         radString = "{0} {1} {2} {3} > {4}".format(cmdPath,xformParam,
