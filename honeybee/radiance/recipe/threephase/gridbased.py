@@ -1,19 +1,19 @@
-from .annual import HBAnnualAnalysisRecipe
-from ..postprocess.annualresults import LoadAnnualsResults
-from ..parameters.rfluxmtx import RfluxmtxParameters
-from ..command.dctimestep import Dctimestep
-from ..command.rfluxmtx import Rfluxmtx
-from ..command.rmtxop import Rmtxop
-from ..material.glow import GlowMaterial
-from ..sky.skymatrix import SkyMatrix
+from ..annual.gridbased import HBAnnualGridBasedAnalysisRecipe
+from ...postprocess.annualresults import LoadAnnualsResults
+from ...parameters.rfluxmtx import RfluxmtxParameters
+from ...command.dctimestep import Dctimestep
+from ...command.rfluxmtx import Rfluxmtx
+from ...command.rmtxop import Rmtxop
+from ...material.glow import GlowMaterial
+from ...sky.skymatrix import SkyMatrix
 
-from ...helper import preparedir, getRadiancePathLines, nukedir
+from ....helper import preparedir, getRadiancePathLines, nukedir
 
 import os
 import subprocess
 
 
-class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
+class ThreePhaseGridBasedAnalysisRecipe(HBAnnualGridBasedAnalysisRecipe):
     """Annual analysis recipe.
 
     Attributes:
@@ -45,7 +45,7 @@ class HBThreePhaseAnalysisRecipe(HBAnnualAnalysisRecipe):
                  reuseDaylightMtx=True, hbWindowSurfaces=None, hbObjects=None,
                  subFolder="threephase"):
         """Create an annual recipe."""
-        HBAnnualAnalysisRecipe.__init__(
+        HBAnnualGridBasedAnalysisRecipe.__init__(
             self, skyMtx, analysisGrids, hbObjects=hbObjects, subFolder=subFolder
         )
 

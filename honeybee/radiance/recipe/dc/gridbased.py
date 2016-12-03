@@ -1,49 +1,54 @@
-from ._gridbasedbase import HBGenericGridBasedAnalysisRecipe
-from ..postprocess.annualresults import LoadAnnualsResults
-from ..parameters.rfluxmtx import RfluxmtxParameters
-from ..command.rfluxmtx import Rfluxmtx
-from ..command.epw2wea import Epw2wea
-from ..command.gendaymtx import Gendaymtx
-from ..command.rmtxop import Rmtxop
-from ..sky.skymatrix import SkyMatrix
-
-from ...helper import preparedir, getRadiancePathLines
+from .._gridbasedbase import GenericGridBasedAnalysisRecipe
+from ...postprocess.annualresults import LoadAnnualsResults
+from ...parameters.rfluxmtx import RfluxmtxParameters
+from ...command.rfluxmtx import Rfluxmtx
+from ...command.epw2wea import Epw2wea
+from ...command.gendaymtx import Gendaymtx
+from ...command.dctimestep import Dctimestep
+from ...command.rmtxop import Rmtxop
+from ...sky.skymatrix import SkyMatrix
+from ....helper import writeToFile
 
 import os
-import subprocess
 
 
-class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
-    """Annual analysis recipe.
+class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+    """Grid based daylight coefficient analysis recipe.
 
     Attributes:
-
+        skyMtx: A radiance SkyMatrix or SkyVector. For an SkyMatrix the analysis
+            will be ran for the analysis period.
+        analysisGrids: A list of Honeybee analysis grids. Daylight metrics will
+            be calculated for each analysisGrid separately.
+        radianceParameters: Radiance parameters for this analysis. Parameters
+            should be an instance of RfluxmtxParameters.
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+        subFolder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
+
 
     Usage:
         # initiate analysisRecipe
-        analysisRecipe = HBAnnualAnalysisRecipe(
-            epwFile, testPoints, ptsVectors
+        analysisRecipe = DaylightCoeffGridBasedAnalysisRecipe(
+            skyMtx, analysisGrids, radParameters
             )
 
         # add honeybee object
         analysisRecipe.hbObjects = HBObjs
 
         # write analysis files to local drive
-        analysisRecipe.writeToFile(_folder_, _name_)
+        commandsFile = analysisRecipe.write(_folder_, _name_)
 
         # run the analysis
-        analysisRecipe.run(debaug=False)
+        analysisRecipe.run(commandsFile)
 
         # get the results
         print analysisRecipe.results()
     """
 
     def __init__(self, skyMtx, analysisGrids, radianceParameters=None,
-                 hbObjects=None, subFolder="annualdaylight"):
+                 hbObjects=None, subFolder="daylightcoeff"):
         """Create an annual recipe."""
-        HBGenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBasedAnalysisRecipe.__init__(
             self, analysisGrids, hbObjects, subFolder
         )
 
@@ -51,10 +56,8 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             TypeError('{} is not a SkyMatrix'.format(skyMtx))
 
         self.skyMatrix = skyMtx
+
         self.radianceParameters = radianceParameters
-        self.__batchFile = None
-        self.__commands = []
-        self.resultsFile = []
 
         # create a result loader to load the results once the analysis is done.
         self.loader = LoadAnnualsResults(self.resultsFile)
@@ -62,8 +65,8 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     @classmethod
     def fromWeatherFilePointsAndVectors(
         cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
-            radianceParameters=None, hbObjects=None, subFolder="annualdaylight"):
-        """Create annual recipe from weather file, points and vectors.
+            radianceParameters=None, hbObjects=None, subFolder="daylightcoeff"):
+        """Create grid based daylight coefficient from weather file, points and vectors.
 
         Args:
             epwFile: An EnergyPlus weather file.
@@ -90,8 +93,8 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     @classmethod
     def fromPointsFile(cls, epwFile, pointsFile, skyDensity=0,
                        radianceParameters=None, hbObjects=None,
-                       subFolder="annualdaylight"):
-        """Create an annual recipe from points file."""
+                       subFolder="daylightcoeff"):
+        """Create grid based daylight coefficient recipe from points file."""
         try:
             with open(pointsFile, "rb") as inf:
                 pointGroups = tuple(line.split()[:3] for line in inf.readline())
@@ -130,127 +133,87 @@ class HBAnnualAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
-    # TODO: Add path to PATH and use relative path in batch files
-    # TODO: @sariths docstring should be modified
-    def writeToFile(self, targetFolder, projectName, radFiles=None,
-                    useRelativePath=False):
+    # TODO: docstring should be modified
+    def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
-
-        Files for sunlight hours analysis are:
-            test points <projectName.pts>: List of analysis points.
-            material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
-            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
-            batch file <*.bat>: An executable batch file which has the list of commands.
-                oconv [material file] [geometry file] [sun materials file] [sun geometries file] > [octree file]
-                rcontrib -ab 0 -ad 10000 -I -M [sunlist.txt] -dc 1 [octree file]< [pts file] > [rcontrib results file]
 
         Args:
             targetFolder: Path to parent folder. Files will be created under
                 targetFolder/gridbased. use self.subFolder to change subfolder name.
             projectName: Name of this project as a string.
-            radFiles: A list of additional .rad files to be added to the scene
-            useRelativePath: Set to True to use relative path in bat file <NotImplemented!>.
-
+            header: A boolean to include the header lines in commands.bat. header
+                includes PATH and cd toFolder
         Returns:
-            True in case of success.
+            Full path to command.bat
         """
         # 0.prepare target folder
         # create main folder targetFolder\projectName
-        _basePath = os.path.join(targetFolder, projectName)
-        _ispath = preparedir(_basePath, removeContent=False)
-        assert _ispath, "Failed to create %s. Try a different path!" % _basePath
-
-        # create main folder targetFolder\projectName\annualdaylight
-        _path = os.path.join(_basePath, self.subFolder)
-        _ispath = preparedir(_path)
-
-        assert _ispath, "Failed to create %s. Try a different path!" % _path
-
-        # Check if anything has changed
-        # if not self.isChanged:
-        #     print "Inputs has not changed! Check files at %s" % _path
+        sceneFiles = super(
+            GenericGridBasedAnalysisRecipe, self).write(
+                targetFolder, projectName,
+                subFolders=('.tmp', 'objects', 'skies', 'results', 'results\\matrix'),
+                removeSubFoldersContent=False)
 
         # 0.write points
-        pointsFile = self.writePointsToFile(_path, projectName)
-
-        # 1.write materials and geometry files
-        matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
+        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
 
         # 2.write batch file
-        # add path if needed
-        self.__commands.append(getRadiancePathLines())
+        self.commands = []
+        self.resultsFile = []
 
-        # TODO: This line won't work in linux.
-        dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
-        self.__commands.append(dirLine)
+        if header:
+            self.commands.append(self.header(sceneFiles.path))
 
         # # 2.1.Create annual daylight vectors through epw2wea and gendaymtx.
         weaFile = Epw2wea(self.skyMatrix.epwFile)
-        weaFile.outputWeaFile = os.path.join(_path, projectName + ".wea")
-        self.__commands.append(weaFile.toRadString())
+        weaFile.outputWeaFile = os.path.join('skies', projectName + ".wea")
+        self.commands.append(weaFile.toRadString())
 
-        gdm = Gendaymtx(outputName=os.path.join(_path, projectName + ".smx"),
+        gdm = Gendaymtx(outputName=os.path.join('skies', projectName + ".smx"),
                         weaFile=weaFile.outputWeaFile)
 
         gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
-        self.__commands.append(gdm.toRadString())
+        self.commands.append(gdm.toRadString())
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
+        rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
+            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+
         rflux = Rfluxmtx()
         rflux.rfluxmtxParameters = self.radianceParameters
-
+        rflux.radFiles = tuple(self.relpath(f, sceneFiles.path) for f in rfluxFiles)
         rflux.sender = '-'
-
-        # I think it should be more explicit that this line is writing the sky
-        # to a file - rflux.writeDefaultSkyGroundToFile ?
-        skyFile = rflux.defaultSkyGround(os.path.join(_path, "rfluxSky.rad"),
-                                         skyType=self.skyType)
-        rflux.receiverFile = skyFile
-        rflux.radFiles = [matFile, geoFile]
+        skyFile = rflux.defaultSkyGround(
+            os.path.join(sceneFiles.path, 'skies\\rfluxSky.rad'),
+            skyType=self.skyType)
+        rflux.receiverFile = self.relpath(skyFile, sceneFiles.path)
         rflux.pointsFile = pointsFile
-        rflux.outputMatrix = os.path.join(_path, projectName + ".dc")
-
-        self.__commands.append(rflux.toRadString())
+        rflux.outputMatrix = 'results\\matrix\\%s.dc' % projectName
+        self.commands.append(rflux.toRadString())
 
         # # 2.3. matrix calculations
-        tempmtx = Rmtxop(matrixFiles=(rflux.outputMatrix, gdm.outputFile),
-                         outputFile=os.path.join(_path, "illuminance.tmp"))
+        dct = Dctimestep()
+        dct.skyVectorFile = gdm.outputFile
+        dct.dmatrixFile = str(rflux.outputMatrix)
+        dct.outputFile = '.tmp\\illuminance.tmp'
+        self.commands.append(dct.toRadString())
 
-        self.__commands.append(tempmtx.toRadString())
-
-        finalmtx = Rmtxop(matrixFiles=[tempmtx.outputFile],
-                          outputFile=os.path.join(_path, "illuminance.ill"))
+        finalmtx = Rmtxop(matrixFiles=(dct.outputFile,),
+                          outputFile='results\\illuminance.ill')
         finalmtx.rmtxopParameters.outputFormat = 'a'
         finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
         finalmtx.rmtxopParameters.transposeMatrix = True
-        self.__commands.append(finalmtx.toRadString())
+        self.commands.append(finalmtx.toRadString())
 
         # # 2.3 write batch file
-        batchFile = os.path.join(_path, projectName + ".bat")
-        self.write(batchFile, "\n".join(self.__commands))
-        self.__batchFile = batchFile
+        batchFile = os.path.join(sceneFiles.path, "commands.bat")
 
-        print "Files are written to: %s" % _path
-        return _path
+        writeToFile(batchFile, "\n".join(self.commands))
 
-    # TODO: Update the method to batch run and move it to baseclass
-    def run(self, debug=False):
-        """Run the analysis."""
-        if self.__batchFile:
-            if debug:
-                with open(self.__batchFile, "a") as bf:
-                    bf.write("\npause")
+        self.resultsFile = (os.path.join(sceneFiles.path, str(finalmtx.outputFile)),)
 
-            subprocess.call(self.__batchFile)
-
-            self.isCalculated = True
-            # self.isChanged = False
-
-            self.resultsFile = [os.path.join(os.path.split(self.__batchFile)[0],
-                                             "illuminance.ill")]
-            return True
-        else:
-            raise Exception("You need to write the files before running the recipe.")
+        print "Files are written to: %s" % sceneFiles.path
+        return batchFile
 
     def results(self, flattenResults=True):
         """Return results for this analysis."""

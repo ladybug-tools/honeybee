@@ -1,7 +1,7 @@
 """Radiance Grid-based Analysis Recipe."""
 
 # from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
-from ._imagebasedbase import HBGenericImageBasedAnalysisRecipe
+from ._imagebasedbase import GenericImageBasedAnalysisRecipe
 from ..parameters.imagebased import ImageBasedParameters
 from ..command.oconv import Oconv
 from ..command.rpict import Rpict
@@ -9,7 +9,7 @@ from ...helper import writeToFile
 import os
 
 
-class HBImageBasedAnalysisRecipe(HBGenericImageBasedAnalysisRecipe):
+class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
     """Grid base analysis base class.
 
     Attributes:
@@ -27,7 +27,7 @@ class HBImageBasedAnalysisRecipe(HBGenericImageBasedAnalysisRecipe):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = HBImageBasedAnalysisRecipe(
+        analysisRecipe = ImageBasedAnalysisRecipe(
             sky, views, simType
             )
 
@@ -44,12 +44,12 @@ class HBImageBasedAnalysisRecipe(HBGenericImageBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    # TODO: implemnt isChanged at HBDaylightAnalysisRecipe level to reload the results
+    # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
     def __init__(self, sky, views, simulationType=0, radParameters=None,
                  hbObjects=None, subFolder="imagebased"):
         """Create grid-based recipe."""
-        HBGenericImageBasedAnalysisRecipe.__init__(
+        GenericImageBasedAnalysisRecipe.__init__(
             self, views, hbObjects, subFolder)
 
         self.sky = sky
@@ -116,7 +116,7 @@ class HBImageBasedAnalysisRecipe(HBGenericImageBasedAnalysisRecipe):
             "%s is not a radiance parameters." % type(radParameters)
         self.__radianceParameters = radParameters
 
-    def write(self, targetFolder, projectName='untitled', relPath=True):
+    def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
         Files for an image based analysis are:
@@ -134,18 +134,15 @@ class HBImageBasedAnalysisRecipe(HBGenericImageBasedAnalysisRecipe):
             targetFolder: Path to parent folder. Files will be created under
                 targetFolder/gridbased. use self.subFolder to change subfolder name.
             projectName: Name of this project as a string.
-            relPath: Use relative path for files in batch files.
 
         Returns:
             Full path to command.bat
         """
-        self.resultsFile = []
-
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            HBImageBasedAnalysisRecipe, self).write(targetFolder,
-                                                    projectName, relPath)
+            ImageBasedAnalysisRecipe, self).write(targetFolder,
+                                                  projectName)
 
         # add view folder
         self.prepareSubFolder(os.path.join(targetFolder, projectName),
@@ -159,22 +156,18 @@ class HBImageBasedAnalysisRecipe(HBGenericImageBasedAnalysisRecipe):
 
         # 3.write batch file
         self.commands = []
+        self.resultsFile = []
 
-        # TODO: This line won't work in linux.
-        dirLine = "%s\ncd %s" % (os.path.splitdrive(sceneFiles.path)[0],
-                                 sceneFiles.path)
-        self.commands.append(dirLine)
+        if header:
+            self.commands.append(self.header(sceneFiles.path))
 
         # # 4.1.prepare oconv
         octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
             sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
 
         oc = Oconv(projectName)
-        if relPath:
-            oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
-                                  for f in octSceneFiles)
-        else:
-            oc.sceneFiles = octSceneFiles
+        oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
+                              for f in octSceneFiles)
 
         self.commands.append(oc.toRadString())
 
@@ -184,10 +177,8 @@ class HBImageBasedAnalysisRecipe(HBGenericImageBasedAnalysisRecipe):
             rp = Rpict('results\\' + view.name,
                        simulationType=self.simulationType,
                        rpictParameters=self.radianceParameters)
-            rp.octreeFile = str(oc.outputFile) if relPath \
-                else os.path.join(sceneFiles.path, str(oc.outputFile))
-            rp.viewFile = self.relpath(f, sceneFiles.path) \
-                if relPath else f
+            rp.octreeFile = str(oc.outputFile)
+            rp.viewFile = self.relpath(f, sceneFiles.path)
 
             self.commands.append(rp.toRadString())
             self.resultsFile.append(

@@ -1,15 +1,15 @@
 """Radiance Grid-based Analysis Recipe."""
 
 from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
-from ._gridbasedbase import HBGenericGridBasedAnalysisRecipe
+from ._gridbasedbase import GenericGridBasedAnalysisRecipe
 from ..parameters.gridbased import LowQuality
 from ..command.oconv import Oconv
 from ..command.rtrace import Rtrace
-from ...helper import writeToFile
+from ...helper import getRadiancePathLines, writeToFile
 import os
 
 
-class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
+class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     """Grid base analysis base class.
 
     Attributes:
@@ -27,7 +27,7 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = HBGridBasedAnalysisRecipe(
+        analysisRecipe = GridBasedAnalysisRecipe(
             sky, testPoints, ptsVectors, simType
             )
 
@@ -44,12 +44,12 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    # TODO: implemnt isChanged at HBDaylightAnalysisRecipe level to reload the results
+    # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
     def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
                  hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        HBGenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBasedAnalysisRecipe.__init__(
             self, analysisGrids, hbObjects, subFolder)
 
         self.sky = sky
@@ -143,7 +143,7 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             "%s is not a radiance parameters." % type(radParameters)
         self.__radianceParameters = radParameters
 
-    def write(self, targetFolder, projectName='untitled', relPath=True):
+    def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
         Files for a grid based analysis are:
@@ -161,7 +161,6 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             targetFolder: Path to parent folder. Files will be created under
                 targetFolder/gridbased. use self.subFolder to change subfolder name.
             projectName: Name of this project as a string.
-            relPath: Use relative path for files in batch files.
 
         Returns:
             Full path to command.bat
@@ -169,9 +168,8 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            HBGenericGridBasedAnalysisRecipe, self).write(targetFolder,
-                                                          projectName,
-                                                          relPath)
+            GenericGridBasedAnalysisRecipe, self).write(targetFolder,
+                                                        projectName)
 
         # 1.write points
         pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
@@ -181,32 +179,26 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
         # 3.write batch file
         self.commands = []
+        self.resultsFile = []
 
-        # TODO: This line won't work in linux.
-        dirLine = "%s\ncd %s" % (os.path.splitdrive(sceneFiles.path)[0],
-                                 sceneFiles.path)
-        self.commands.append(dirLine)
+        if header:
+            self.commands.append(self.header(sceneFiles.path))
 
         # # 4.1.prepare oconv
         octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
             sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
 
         oc = Oconv(projectName)
-        if relPath:
-            oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
-                                  for f in octSceneFiles)
-        else:
-            oc.sceneFiles = octSceneFiles
+        oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
+                              for f in octSceneFiles)
 
         # # 4.2.prepare rtrace
         rt = Rtrace('results\\' + projectName,
                     simulationType=self.simulationType,
                     radianceParameters=self.radianceParameters)
         rt.radianceParameters.h = True
-        rt.octreeFile = str(oc.outputFile) if relPath \
-            else os.path.join(sceneFiles.path, str(oc.outputFile))
-        rt.pointsFile = self.relpath(pointsFile, sceneFiles.path) \
-            if relPath else pointsFile
+        rt.octreeFile = str(oc.outputFile)
+        rt.pointsFile = self.relpath(pointsFile, sceneFiles.path)
 
         # # 4.3 write batch file
         self.commands.append(oc.toRadString())
@@ -215,7 +207,7 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
         writeToFile(batchFile, "\n".join(self.commands))
 
-        self.resultsFiles = (os.path.join(sceneFiles.path, str(rt.outputFile)),)
+        self.resultFiles = (os.path.join(sceneFiles.path, str(rt.outputFile)),)
 
         print "Files are written to: %s" % sceneFiles.path
         return batchFile
@@ -227,7 +219,7 @@ class HBGridBasedAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             "to run the analysis before loading the results."
 
         self.loader.simulationType = self.simulationType
-        self.loader.resultFiles = self.resultsFiles
+        self.loader.resultFiles = self.resultFiles
         return self.loader.results
 
     def ToString(self):

@@ -97,8 +97,7 @@ def writeToFile(filePath, data, mkdir=False):
             outf.write(str(data))
             return filePath
         except Exception as e:
-            print "Failed to write %s to file:\n\t%s" % (__name, str(e))
-            return False
+            raise IOError("Failed to write %s to file:\n\t%s" % (__name, str(e)))
 
 
 def copyFilesToFolder(files, targetFolder, overwrite=True):

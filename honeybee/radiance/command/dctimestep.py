@@ -1,28 +1,29 @@
 # coding=utf-8
 """dctimestep - transform a RADIANCE scene description"""
 
-from _commandbase import RadianceCommand
-from ..datatype import RadiancePath,RadianceValue
+from ._commandbase import RadianceCommand
+from ..datatype import RadiancePath, RadianceValue
 from ..parameters.dctimestep import DctimestepParameters
 
 import os
 
+
 class Dctimestep(RadianceCommand):
-    #It makes sense to always use the outputFileNameFormat input to specify the
+    # It makes sense to always use the outputFileNameFormat input to specify the
     # output file instead of using the stdout parameter.
-    vmatrixSpec = RadianceValue('vmatrix','V matrix specification')
-    tmatrixFile = RadiancePath('tmatrix','T matrix XML file')
-    dmatrixFile = RadiancePath('dmatrix','D matrix file')
+    vmatrixSpec = RadianceValue('vmatrix', 'V matrix specification')
+    tmatrixFile = RadiancePath('tmatrix', 'T matrix XML file')
+    dmatrixFile = RadiancePath('dmatrix', 'D matrix file')
     skyVectorFile = RadiancePath('skyVectorFile', 'sky vector file',
                                  relativePath=None)
-    outputFileName = RadiancePath('outputFile','output file name',
-                                  relativePath=None)
+    outputFile = RadiancePath('outputFile', 'output file name',
+                              relativePath=None)
     daylightCoeffSpec = RadiancePath('dayCoeff',
                                      'Daylight Coefficients Specification')
 
-    def __init__(self,tmatrixFile=None,dmatrixFile=None,skyVectorFile=None,
-                 vmatrixSpec=None,dctimestepParameters=None,
-                 outputFilenameFormat=None,outputFileName=None,
+    def __init__(self, tmatrixFile=None, dmatrixFile=None, skyVectorFile=None,
+                 vmatrixSpec=None, dctimestepParameters=None,
+                 outputFilenameFormat=None, outputName=None,
                  daylightCoeffSpec=None):
         RadianceCommand.__init__(self)
 
@@ -32,20 +33,19 @@ class Dctimestep(RadianceCommand):
         self.skyVectorFile = skyVectorFile
         self.dctimestepParameters = dctimestepParameters
         self.outputFilenameFormat = outputFilenameFormat
-        self.outputFileName = outputFileName
+        self.outputFile = outputName
         self.daylightCoeffSpec = daylightCoeffSpec
 
     @property
     def dctimestepParameters(self):
         """Get and set gendaymtxParameters."""
         return self.__dctimestepParameters
-    
-    
+
     @dctimestepParameters.setter
     def dctimestepParameters(self, parameters):
         self.__dctimestepParameters = parameters if parameters is not None \
             else DctimestepParameters()
-    
+
         assert hasattr(self.dctimestepParameters, "isRadianceParameters"), \
             "input dctimestepParameters is not a valid parameters type."
 
@@ -63,29 +63,28 @@ class Dctimestep(RadianceCommand):
 
     def toRadString(self, relativePath=False):
         cmdPath = self.normspace(os.path.join(self.radbinPath, 'dctimestep'))
-        vmatrix = self.vmatrixSpec.toRadString().replace('-vmatrix','')
+        vmatrix = self.vmatrixSpec.toRadString().replace('-vmatrix', '')
         tmatrix = self.normspace(self.tmatrixFile.toRadString())
         dmatrix = self.normspace(self.dmatrixFile.toRadString())
         threePhaseInputs = vmatrix and tmatrix and dmatrix
         skyVector = self.normspace(self.skyVectorFile.toRadString())
         dctimestepParam = self.dctimestepParameters.toRadString()
         opFileFmt = self.outputFilenameFormat
-        outputFileNameFormat = '-o %s'%opFileFmt if opFileFmt else ''
-        outputFileName = self.normspace(self.outputFileName.toRadString())
-        outputFileName = '> %s'%outputFileName if outputFileName else ''
+        outputFileNameFormat = '-o %s' % opFileFmt if opFileFmt else ''
+        outputFileName = self.normspace(self.outputFile.toRadString())
+        outputFileName = '> %s' % outputFileName if outputFileName else ''
         daylightCoeffSpec = self.normspace(self.daylightCoeffSpec.toRadString())
 
-
         assert not (threePhaseInputs and daylightCoeffSpec),\
-        'The inputs for both daylight coefficients as well as the 3 Phase method' \
-        ' have been specified. Only one of those methods should be used for ' \
-        'calculation at a given time. Please check your inputs.'
+            'The inputs for both daylight coefficients as well as the 3 Phase method' \
+            ' have been specified. Only one of those methods should be used for ' \
+            'calculation at a given time. Please check your inputs.'
 
-        addToStr = lambda val: "%s "%val if val else ''
+        addToStr = lambda val: "%s " % val if val else ''
 
-        #Creating the string this way because it might change again in the
+        # Creating the string this way because it might change again in the
         # future.
-        radString = "%s "%cmdPath
+        radString = "%s " % cmdPath
         radString += addToStr(dctimestepParam)
         radString += addToStr(outputFileNameFormat)
         radString += addToStr(vmatrix)
@@ -104,5 +103,5 @@ class Dctimestep(RadianceCommand):
         if dcInput:
             return self.skyVectorFile.toRadString(),
         else:
-            return (self.tmatrixFile.toRadString(),self.dmatrixFile.toRadString(),
+            return (self.tmatrixFile.toRadString(), self.dmatrixFile.toRadString(),
                     self.skyVectorFile.toRadString())

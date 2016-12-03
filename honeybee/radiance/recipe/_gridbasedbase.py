@@ -7,12 +7,12 @@ sunlighthours recipe and annual analysis recipe.
 from abc import ABCMeta, abstractmethod
 from ..analysisgrid import AnalysisGrid
 from ...helper import writeToFile
-from ._recipebase import HBDaylightAnalysisRecipe
+from ._recipebase import DaylightAnalysisRecipe
 
 import os
 
 
-class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
+class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     """Honeybee generic grid base analysis base class.
 
     This class is base class for common gridbased analysis recipes as well as
@@ -30,7 +30,7 @@ class HBGenericGridBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     def __init__(self, analysisGrids, hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
         # keep track of original points for re-structuring them later on
-        HBDaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
+        DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
                                           subFolder=subFolder)
         self.analysisGrids = analysisGrids
 

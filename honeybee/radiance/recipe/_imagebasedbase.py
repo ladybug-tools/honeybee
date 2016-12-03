@@ -5,12 +5,12 @@ This class is base class for common imagebased analysis recipes.
 
 from abc import ABCMeta, abstractmethod
 from ...helper import writeToFile
-from ._recipebase import HBDaylightAnalysisRecipe
+from ._recipebase import DaylightAnalysisRecipe
 
 import os
 
 
-class HBGenericImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
+class GenericImageBasedAnalysisRecipe(DaylightAnalysisRecipe):
     """Honeybee generic grid base analysis base class.
 
     This class is base class for common gridbased analysis recipes as well as
@@ -27,7 +27,7 @@ class HBGenericImageBasedAnalysisRecipe(HBDaylightAnalysisRecipe):
     def __init__(self, views, hbObjects=None, subFolder="imagebased"):
         """Create image-based recipe."""
         # keep track of original points for re-structuring them later on
-        HBDaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
+        DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
                                           subFolder=subFolder)
         self.views = views
 

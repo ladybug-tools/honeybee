@@ -1,12 +1,13 @@
 """Base ckass for RADIANCE Analysis Recipes."""
-from ...helper import preparedir, writeToFile, copyFilesToFolder
+from ...helper import preparedir, writeToFile, copyFilesToFolder, \
+    getRadiancePathLines
 
 from collections import namedtuple
 import os
 import subprocess
 
 
-class HBDaylightAnalysisRecipe(object):
+class DaylightAnalysisRecipe(object):
     """Analysis Recipe Base class.
 
     Attributes:
@@ -82,6 +83,16 @@ class HBDaylightAnalysisRecipe(object):
             assert hasattr(sc, 'files'), '{} is not a Radiance Scene. ' \
                 'Scene should be an instance from the type Scene.'.format(sc)
             self.__scene = sc
+
+    # TODO: This should be cross platform and also support cloud-based modeling.
+    def header(self, targetFolder, includRadPath=True):
+        """Get the header for bat file."""
+        dirLine = "%s\ncd %s\n" % (os.path.splitdrive(targetFolder)[0], targetFolder)
+
+        if includRadPath:
+            return '\n'.join((getRadiancePathLines(), dirLine))
+        else:
+            return dirLine
 
     def prepareSubFolder(self, targetFolder,
                          subFolders=('.tmp', 'objects', 'skies', 'results'),
@@ -196,7 +207,9 @@ class HBDaylightAnalysisRecipe(object):
                            self.toRadStringMaterialsAndGeometries() + "\n",
                            mkdir)
 
-    def write(self, targetFolder, projectName='untitled', relPath=True):
+    def write(self, targetFolder, projectName='untitled',
+              subFolders=('objects', 'skies', 'results'),
+              removeSubFoldersContent=True):
         """Write geometry and material files to folder.
 
         Returns:
@@ -217,8 +230,8 @@ class HBDaylightAnalysisRecipe(object):
         print 'Preparing %s' % os.path.join(_basePath, self.subFolder)
         # create subfolders inside the folder
         self.prepareSubFolder(_basePath,
-                              subFolders=('objects', 'skies', 'results'),
-                              removeContent=True)
+                              subFolders=subFolders,
+                              removeContent=removeSubFoldersContent)
 
         if self.scene:
             self.prepareSubFolder(_basePath, subFolders=('scene',),

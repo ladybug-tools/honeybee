@@ -1,7 +1,6 @@
-from ._gridbasedbase import HBGenericGridBasedAnalysisRecipe
+from ._gridbasedbase import GenericGridBasedAnalysisRecipe
 from ..postprocess.sunlighthourresults import LoadSunlighthoursResults
 from ..parameters.rcontrib import RcontribParameters
-from ..command._commandbase import RadianceCommand
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
 from ...helper import writeToFile
@@ -12,7 +11,7 @@ from ...ladybug.sunpath import LBSunpath
 import os
 
 
-class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
+class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     """Sunlight hour analysis.
 
     This class calculates number of sunlight hours for a group of test points.
@@ -29,7 +28,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     Usage:
         # initiate analysisRecipe
-        analysisRecipe = HBSunlightHoursAnalysisRecipe(sunVectors, analysisGrids)
+        analysisRecipe = SunlightHoursAnalysisRecipe(sunVectors, analysisGrids)
 
         # add honeybee object
         analysisRecipe.hbObjects = HBObjs
@@ -47,7 +46,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     def __init__(self, sunVectors, analysisGrids, timestep=1, hbObjects=None,
                  subFolder='sunlighthour'):
         """Create sunlighthours recipe."""
-        HBGenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBasedAnalysisRecipe.__init__(
             self, analysisGrids, hbObjects, subFolder
         )
 
@@ -228,7 +227,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             raise IOError('Failed to write sun vectors!')
 
     # TODO: Add path to PATH and use relative path in batch files
-    def write(self, targetFolder, projectName='untitled', relPath=False):
+    def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
         Files for sunlight hours analysis are:
@@ -246,7 +245,6 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             targetFolder: Path to parent folder. Files will be created under
                 targetFolder/gridbased. use self.subFolder to change subfolder name.
             projectName: Name of this project as a string.
-            relPath: Use relative path for files in batch files.
 
         Returns:
             True in case of success.
@@ -254,9 +252,8 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            HBGenericGridBasedAnalysisRecipe, self).write(targetFolder,
-                                                          projectName,
-                                                          relPath)
+            GenericGridBasedAnalysisRecipe, self).write(targetFolder,
+                                                        projectName)
 
         # 1.write points
         pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
@@ -266,32 +263,28 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             sceneFiles.path + '\\skies', projectName)
 
         # 2.1.add sun list to modifiers
-        self.__radianceParameters.modFile = RadianceCommand.normspace(sunsList)
+        self.__radianceParameters.modFile = self.relpath(sunsList, sceneFiles.path)
 
         # 3.write batch file
         self.commands = []
+        self.resultsFile = []
 
-        # TODO: This line won't work in linux.
-        dirLine = "%s\ncd %s" % (os.path.splitdrive(sceneFiles.path)[0], sceneFiles.path)
-        self.commands.append(dirLine)
+        if header:
+            self.commands.append(self.header(sceneFiles.path))
 
         # # 4.1.prepare oconv
         octSceneFiles = [sceneFiles.matFile, sceneFiles.geoFile, sunsMat, sunsGeo] + \
             sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+
         oc = Oconv(projectName)
-        if relPath:
-            oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
-                                  for f in octSceneFiles)
-        else:
-            oc.sceneFiles = octSceneFiles
+        oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
+                              for f in octSceneFiles)
 
         # # 4.2.prepare Rcontrib
         rct = Rcontrib('results\\' + projectName,
                        rcontribParameters=self.__radianceParameters)
-        rct.octreeFile = str(oc.outputFile) if relPath \
-            else os.path.join(sceneFiles.path, str(oc.outputFile))
-        rct.pointsFile = self.relpath(pointsFile, sceneFiles.path) \
-            if relPath else pointsFile
+        rct.octreeFile = str(oc.outputFile)
+        rct.pointsFile = self.relpath(pointsFile, sceneFiles.path)
 
         # # 4.3 write batch file
         self.commands.append(oc.toRadString())
@@ -300,7 +293,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
         writeToFile(batchFile, '\n'.join(self.commands))
 
-        self.resultsFiles = (os.path.join(sceneFiles.path, str(rct.outputFile)),)
+        self.resultsFile = (os.path.join(sceneFiles.path, str(rct.outputFile)),)
 
         print 'Files are written to: %s' % sceneFiles.path
         return batchFile
@@ -312,5 +305,5 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             'to run the analysis before loading the results.'
 
         self.loader.timestep = self.timestep
-        self.loader.resultFiles = self.resultsFiles
+        self.loader.resultFiles = self.resultsFile
         return self.loader.results
