@@ -15,7 +15,7 @@ if 'honeybee' not in sys.modules:
         0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import honeybee.config
-honeybee.config.perlExePath = r'C:\Program Files\OpenStudio 1.13.0\strawberry-perl-5.16.2.1-32bit-portable-reduced\perl\bin\perl.exe'
+# honeybee.config.perlExePath = r'C:\Program Files\OpenStudio 1.13.0\strawberry-perl-5.16.2.1-32bit-portable-reduced\perl\bin\perl.exe'
 from honeybee.radiance.parameters.rfluxmtx import RfluxmtxParameters
 from honeybee.radiance.command.rfluxmtx import Rfluxmtx
 from honeybee.radiance.command.epw2wea import Epw2wea
@@ -29,7 +29,7 @@ from honeybee.radiance.command.vwrays import Vwrays,VwraysParameters
 os.chdir(r'../tests/room')
 
 def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
-          epwFile=None, hdrResultsFileName=None, timeStamp=None):
+          epwFile=None, hdrResultsFileName=None, timeStamp=None,skyDensity=1):
 
     if phasesToCalculate['dc']:
         # Step1: Create the view matrix.
@@ -73,10 +73,11 @@ def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
 
         rflux = Rfluxmtx()
         rflux.sender = '-'
-
+        groundFileFormat = 'temp/%s.hdr'%(1+144*(skyDensity**2))
         # Klems full basis sampling and the window faces +Y
-        recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
-        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r1')
+        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r1',
+                                                    groundFileFormat=groundFileFormat,
+                                                    skyFileFormat=r'temp/%03d.hdr')
 
         rflux.outputDataFormat = 'fc'
         rflux.verbose = True
@@ -85,10 +86,8 @@ def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
         rflux.viewInfoFile = r'temp/viewSouthDimensions.txt'
         rflux.viewRaysFile = r'temp/viewSouthRays.txt'
         rflux.radFiles = ['room.mat', 'room.rad', 'glazing.rad']
-        rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
         rflux.samplingRaysCount = 3
-
         rflux.execute()
 
     # Step4a: Create the sky vector.
@@ -101,7 +100,7 @@ def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
             weaFile.execute()
 
             gendayParam = GendaymtxParameters()
-            gendayParam.skyDensity = 1
+            gendayParam.skyDensity = skyDensity
 
             genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
             genday.gendaymtxParameters = gendayParam
@@ -115,9 +114,9 @@ def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
             gensk.execute()
 
             genskv = Genskyvec()
-            genskv.inputSkyFile = r'temp/sky.rad'
-            genskv.outputFile = r'temp/sky.vec'
-            genskv.skySubdivision = 1
+            genskv.inputSkyFile = os.path.abspath(r'temp/sky.rad')
+            genskv.outputFile = os.path.abspath(r'temp/sky.vec')
+            genskv.skySubdivision = skyDensity
             genskv.execute()
             skyVector = r'temp/sky.vec'
     else:
@@ -132,7 +131,7 @@ def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
 
     return 'temp/results.txt'
 
-phases = {'dc': False, 's': False}
+phases = {'dc': True, 's': True}
 tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
 epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
@@ -140,7 +139,7 @@ epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
             'epws/USA_MA_Boston-City.WSO_TMY.epw',
             'epws/USA_NC_Charlotte-Douglas.Intl.AP.723140_TMY3.epw',
             'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
-            'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
+            'epws/philly.epw']
 
 timeStamps = ((11, 6, 11),)  # [(11, 11, idx) for idx in range(8, 9)]
 for idx, timeStamp in enumerate(timeStamps):
@@ -149,3 +148,4 @@ for idx, timeStamp in enumerate(timeStamps):
                         phasesToCalculate=phases, epwFile=epwFiles[1],
                         hdrResultsFileName=r'temp/%shrs.hdr' % timeStamp[-1],
                         timeStamp=timeStamp)
+    assert 0
