@@ -1,6 +1,6 @@
 # coding=utf-8
 """RADIANCE rcontrib command."""
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath
 from ..parameters.imagebased import ImageBasedParameters
 from ..view import View
@@ -10,65 +10,108 @@ import os
 
 
 class Rpict(RadianceCommand):
+    """Rpict command."""
 
-    outputImage = RadiancePath("img", "output image file", extension=".hdr")
+    outputFile = RadiancePath("img", "output image file", extension=".hdr")
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    viewFile = RadiancePath('vf','view file')
-    def __init__(self,outputImage=None,octreeFile=None,imageParameters=None,view=None,
-                 viewFile=None):
+    viewFile = RadiancePath('vf', 'view file')
 
+    def __init__(self, outputName='untitled', octreeFile=None, view=None,
+                 viewFile=None, simulationType=2, rpictParameters=None):
+        """Init command."""
         RadianceCommand.__init__(self)
-
-        self.outputImage = outputImage
+        self.outputFile = outputName if outputName.lower().endswith(".hdr") \
+            else outputName + ".hdr"
         self.octreeFile = octreeFile
-        self.imageParameters=imageParameters
-        self.view=view
+        self.rpictParameters = rpictParameters
+        self.view = view
         self.viewFile = viewFile
-    @property
-    def imageParameters(self):
-        """Get and set image parameters for rendering."""
-        return self.__imageParameters
+        self.simulationType = simulationType
 
-    @imageParameters.setter
-    def imageParameters(self, parameters):
-        self.__imageParameters = parameters if parameters is not None \
+    @property
+    def simulationType(self):
+        """Get/set simulation Type.
+
+        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
+        """
+        return self.__simType
+
+    @simulationType.setter
+    def simulationType(self, value):
+        try:
+            value = int(value)
+        except:
+            value = 2
+
+        assert 0 <= value <= 2, \
+            "Simulation type should be between 0-2. Current value: {}".format(value)
+
+        # If this is a radiation analysis make sure the sky is climate-based
+        if value == 1:
+            assert self.sky.isClimateBased, \
+                "The sky for radition analysis should be climate-based."
+
+        self.__simType = value
+
+        # trun on/off I paramter
+        # -I > Boolean switch to compute irradiance rather than radiance, with
+        # the input origin and direction interpreted instead as measurement point
+        # and orientation.
+        if self.__simType in (0, 1):
+            self.rpictParameters.irradianceCalc = True
+        else:
+            # luminance
+            self.rpictParameters.irradianceCalc = False
+
+    @property
+    def rpictParameters(self):
+        """Get and set image parameters for rendering."""
+        return self.__rpictParameters
+
+    @rpictParameters.setter
+    def rpictParameters(self, parameters):
+        self.__rpictParameters = parameters if parameters is not None \
             else ImageBasedParameters()
 
-        assert hasattr(self.imageParameters, "isImageBasedRadianceParameters"), \
+        assert hasattr(self.rpictParameters, "isImageBasedRadianceParameters"), \
             "input rcontribParamters is not a valid parameters type."
 
     @property
     def view(self):
-        """Get and set view for rpict"""
+        """Get and set view for rpict."""
         return self.__view
 
     @view.setter
-    def view(self,view):
-        if view:
-            self.__view=view if view is not None else View()
-
-            assert isinstance(self.__view,View),\
-                'The input for view should an instance of the class View'
+    def view(self, v):
+        if v is not None:
+            assert isinstance(v, View),\
+                'The input for view should an instance of the class View.'
+            self.__view = v
         else:
             self.__view = None
 
     def toRadString(self, relativePath=False):
-        """Return full command as string"""
+        """Return full command as string."""
         cmd = self.normspace(os.path.join(self.radbinPath, "rpict"))
-        param = self.imageParameters.toRadString()
+        param = self.rpictParameters.toRadString()
         view = self.view.toRadString() if self.view else ''
-        viewFile = '-vf %s'%self.viewFile if self.viewFile._value else ''
-        output = "> %s"%(self.outputImage if self.outputImage._value else 'untitled.hdr')
+        viewFile = '-vf %s' % self.viewFile if self.viewFile._value else ''
+        output = "> %s" % (self.outputFile if self.outputFile._value else 'untitled.hdr')
 
-        radString = "%s %s %s %s %s %s"%(cmd,param,view,viewFile,
-                                         self.octreeFile.toRadString(),
-                                         output)
+        radString = "%s %s %s %s %s %s" % (
+            cmd, param, view, viewFile, self.octreeFile.toRadString(), output)
+
         return radString
 
     @property
     def inputFiles(self):
-        return self.octreeFile,
+        """List of input files that should be checked before running the analysis."""
+        if not self.view:
+            return self.octreeFile, self.viewFile
+        else:
+            return self.octreeFile,
 
     def execute(self):
+        """Execute the command."""
         self.checkInputFiles(self.toRadString())
         RadianceCommand.execute(self)

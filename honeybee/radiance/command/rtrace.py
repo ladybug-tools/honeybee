@@ -12,7 +12,7 @@ class Rtrace(RadianceCommand):
     Attributes:
         outputName: Name of output file (Default: untitled).
         octreeFile: Full path to input oct files (Default: None)
-        pointFile: Full path to input pt files (Default: None)
+        pointsFile: Full path to input pt files (Default: None)
         simulationType: An integer to define type of analysis.
             0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
@@ -22,9 +22,9 @@ class Rtrace(RadianceCommand):
 
     outputFile = RadiancePath("res", "results file", extension=".res")
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointFile = RadiancePath("points", "test point file", extension=".pts")
+    pointsFile = RadiancePath("points", "test point file", extension=".pts")
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointFile=None,
+    def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
                  simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
@@ -37,7 +37,7 @@ class Rtrace(RadianceCommand):
         self.octreeFile = octreeFile
         """Full path to input oct file."""
 
-        self.pointFile = pointFile
+        self.pointsFile = pointsFile
         """Full path to input points file."""
 
         self.radianceParameters = radianceParameters
@@ -113,7 +113,7 @@ class Rtrace(RadianceCommand):
             self.normspace(os.path.join(self.radbinPath, "rtrace")),
             self.radianceParameters.toRadString(),
             self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointFile.toRadString()),
+            self.normspace(self.pointsFile.toRadString()),
             self.normspace(self.outputFile.toRadString())
         )
 
@@ -124,4 +124,4 @@ class Rtrace(RadianceCommand):
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.octreeFile, self.pointFile
+        return self.octreeFile, self.pointsFile

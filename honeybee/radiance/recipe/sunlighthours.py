@@ -1,19 +1,17 @@
-from ._gridbasedbase import HBGenericGridBasedAnalysisRecipe
+from ._gridbasedbase import GenericGridBasedAnalysisRecipe
 from ..postprocess.sunlighthourresults import LoadSunlighthoursResults
 from ..parameters.rcontrib import RcontribParameters
-from ..command._commandbase import RadianceCommand
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
-from ...helper import preparedir
+from ...helper import writeToFile
 from ...vectormath.euclid import Vector3
 
 from ...ladybug.sunpath import LBSunpath
 
 import os
-import subprocess
 
 
-class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
+class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     """Sunlight hour analysis.
 
     This class calculates number of sunlight hours for a group of test points.
@@ -30,7 +28,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     Usage:
         # initiate analysisRecipe
-        analysisRecipe = HBSunlightHoursAnalysisRecipe(sunVectors, analysisGrids)
+        analysisRecipe = SunlightHoursAnalysisRecipe(sunVectors, analysisGrids)
 
         # add honeybee object
         analysisRecipe.hbObjects = HBObjs
@@ -46,9 +44,9 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
     """
 
     def __init__(self, sunVectors, analysisGrids, timestep=1, hbObjects=None,
-                 subFolder="sunlighthour"):
+                 subFolder='sunlighthour'):
         """Create sunlighthours recipe."""
-        HBGenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBasedAnalysisRecipe.__init__(
             self, analysisGrids, hbObjects, subFolder
         )
 
@@ -62,13 +60,11 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         self.__radianceParameters.directThreshold = 0
         self.__radianceParameters.directJitter = 0
 
-        self.__batchFile = None
-        self.resultsFile = []
         # create a result loader to load the results once the analysis is done.
         self.loader = LoadSunlighthoursResults(self.timestep, self.resultsFile)
 
     def fromPointsAndVectors(cls, sunVectors, pointGroups, vectorGroups=[],
-                             timestep=1, hbObjects=None, subFolder="sunlighthour"):
+                             timestep=1, hbObjects=None, subFolder='sunlighthour'):
         """Create sunlighthours recipe from points and vectors.
 
         Args:
@@ -93,7 +89,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     @classmethod
     def fromLBSuns(cls, suns, pointGroups, vectorGroups=[], timestep=1,
-                   hbObjects=None, subFolder="sunlighthour"):
+                   hbObjects=None, subFolder='sunlighthour'):
         """Create sunlighthours recipe from LB sun objects.
 
         Attributes:
@@ -114,7 +110,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         try:
             sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
         except AttributeError:
-            raise TypeError("The input is not a valid LBSun.")
+            raise TypeError('The input is not a valid LBSun.')
 
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
@@ -122,7 +118,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     @classmethod
     def fromLocationAndHoys(cls, location, HOYs, pointGroups, vectorGroups=[],
-                            timestep=1, hbObjects=None, subFolder="sunlighthour"):
+                            timestep=1, hbObjects=None, subFolder='sunlighthour'):
         """Create sunlighthours recipe from Location and hours of year."""
         sp = LBSunpath.fromLocation(location)
 
@@ -136,10 +132,12 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
     @classmethod
     def fromLocationAndAnalysisPeriod(
-        cls, location, analysisPeriod, pointGroups, vectorGroups=[],
-        hbObjects=None, subFolder="sunlighthour"
+        cls, location, analysisPeriod, pointGroups, vectorGroups=None,
+        hbObjects=None, subFolder='sunlighthour'
     ):
         """Create sunlighthours recipe from Location and analysis period."""
+        vectorGroups = vectorGroups or ()
+
         sp = LBSunpath.fromLocation(location)
 
         suns = (sp.calculateSunFromHOY(HOY) for HOY in analysisPeriod.floatHOYs)
@@ -168,8 +166,8 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             raise ValueError("Failed to create the sun vectors!")
 
         if len(self.sunVectors) != len(vectors):
-            print "%d vectors with positive z value are found and removed " \
-                "from sun vectors" % (len(vectors) - len(self.sunVectors))
+            print '%d vectors with positive z value are found and removed ' \
+                'from sun vectors' % (len(vectors) - len(self.sunVectors))
 
     @property
     def timestep(self):
@@ -186,7 +184,7 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
         except:
             self.__timestep = 1
 
-        assert self.__timestep != 0, "ValueError: TimeStep cannot be 0."
+        assert self.__timestep != 0, 'ValueError: TimeStep cannot be 0.'
 
     def writeSunsToFile(self, targetDir, projectName, mkdir=False):
         """Write sunlist, sun geometry and sun material files.
@@ -210,25 +208,26 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
 
         # create data
         for count, v in enumerate(self.sunVectors):
-            _suns[count] = "solar%d" % count
-            _mat[count] = "void light solar%d 0 0 3 1.0 1.0 1.0" % count
+            _suns[count] = 'solar%d' % count
+            _mat[count] = 'void light solar%d 0 0 3 1.0 1.0 1.0' % count
             _geo[count] = \
-                "solar{0} source sun{0} 0 0 4 {1} {2} {3} 0.533".format(
+                'solar{0} source sun{0} 0 0 4 {1} {2} {3} 0.533'.format(
                     count, v.X, v.Y, v.Z)
 
-        _sunsf = self.write(os.path.join(targetDir, projectName + ".sun"),
-                            "\n".join(_suns) + "\n", mkdir)
-        _matf = self.write(os.path.join(targetDir, projectName + "_suns.mat"),
-                           "\n".join(_mat) + "\n", mkdir)
-        _geof = self.write(os.path.join(targetDir, projectName + "_suns.rad"),
-                           "\n".join(_geo) + "\n", mkdir)
+        _sunsf = writeToFile(os.path.join(targetDir, projectName + '.sun'),
+                             '\n'.join(_suns) + '\n', mkdir)
+        _matf = writeToFile(os.path.join(targetDir, projectName + '_suns.mat'),
+                            '\n'.join(_mat) + '\n', mkdir)
+        _geof = writeToFile(os.path.join(targetDir, projectName + '_suns.rad'),
+                            '\n'.join(_geo) + '\n', mkdir)
 
         if _sunsf and _matf and _geof:
             return _sunsf, _matf, _geof
+        else:
+            raise IOError('Failed to write sun vectors!')
 
     # TODO: Add path to PATH and use relative path in batch files
-    def writeToFile(self, targetFolder, projectName, radFiles=None,
-                    useRelativePath=False):
+    def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
         Files for sunlight hours analysis are:
@@ -246,96 +245,64 @@ class HBSunlightHoursAnalysisRecipe(HBGenericGridBasedAnalysisRecipe):
             targetFolder: Path to parent folder. Files will be created under
                 targetFolder/gridbased. use self.subFolder to change subfolder name.
             projectName: Name of this project as a string.
-            radFiles: A list of additional .rad files to be added to the scene
-            useRelativePath: Set to True to use relative path in bat file <NotImplemented!>.
 
         Returns:
             True in case of success.
         """
         # 0.prepare target folder
         # create main folder targetFolder\projectName
-        _basePath = os.path.join(targetFolder, projectName)
-        _ispath = preparedir(_basePath)
-        assert _ispath, "Failed to create %s. Try a different path!" % _basePath
+        sceneFiles = super(
+            GenericGridBasedAnalysisRecipe, self).write(targetFolder,
+                                                        projectName)
 
-        # create main folder targetFolder\projectName\gridbased
-        _path = os.path.join(_basePath, self.subFolder)
-        _ispath = preparedir(_path)
+        # 1.write points
+        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
 
-        assert _ispath, "Failed to create %s. Try a different path!" % _path
+        # 2.write sun files
+        sunsList, sunsMat, sunsGeo = self.writeSunsToFile(
+            sceneFiles.path + '\\skies', projectName)
 
-        # Check if anything has changed
-        # if not self.isChanged:
-        #     print "Inputs has not changed! Check files at %s" % _path
+        # 2.1.add sun list to modifiers
+        self.__radianceParameters.modFile = self.relpath(sunsList, sceneFiles.path)
 
-        # 1.write sun files
-        sunsList, sunsMat, sunsGeo = self.writeSunsToFile(_path, projectName)
+        # 3.write batch file
+        self.commands = []
+        self.resultsFile = []
 
-        # 1.1.add sun list to modifiers
-        self.__radianceParameters.modFile = RadianceCommand.normspace(sunsList)
-
-        # 2.write points
-        pointsFile = self.writePointsToFile(_path, projectName)
-
-        # 3.write materials and geometry files
-        matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
-
-        # 4.write batch file
-        batchFileLines = []
-
-        # TODO: This line won't work in linux.
-        dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
-        batchFileLines.append(dirLine)
+        if header:
+            self.commands.append(self.header(sceneFiles.path))
 
         # # 4.1.prepare oconv
-        oc = Oconv(projectName)
-        oc.sceneFiles = [matFile, geoFile, sunsMat, sunsGeo]
+        octSceneFiles = [sceneFiles.matFile, sceneFiles.geoFile, sunsMat, sunsGeo] + \
+            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
 
-        # # 4.2.prepare rtrace
-        rct = Rcontrib(projectName,
+        oc = Oconv(projectName)
+        oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
+                              for f in octSceneFiles)
+
+        # # 4.2.prepare Rcontrib
+        rct = Rcontrib('results\\' + projectName,
                        rcontribParameters=self.__radianceParameters)
-        rct.octreeFile = os.path.join(_path, projectName + ".oct")
-        rct.pointsFile = pointsFile
+        rct.octreeFile = str(oc.outputFile)
+        rct.pointsFile = self.relpath(pointsFile, sceneFiles.path)
 
         # # 4.3 write batch file
-        batchFileLines.append(oc.toRadString())
-        batchFileLines.append(rct.toRadString())
-        batchFile = os.path.join(_path, projectName + ".bat")
+        self.commands.append(oc.toRadString())
+        self.commands.append(rct.toRadString())
+        batchFile = os.path.join(sceneFiles.path, "commands.bat")
 
-        self.write(batchFile, "\n".join(batchFileLines))
+        writeToFile(batchFile, '\n'.join(self.commands))
 
-        self.__batchFile = batchFile
+        self.resultsFile = (os.path.join(sceneFiles.path, str(rct.outputFile)),)
 
-        print "Files are written to: %s" % _path
-        return _path
-
-    # TODO: Update the method to batch run and move it to baseclass
-    def run(self, debug=False):
-        """Run the analysis."""
-        if self.__batchFile:
-            if debug:
-                with open(self.__batchFile, "a") as bf:
-                    bf.write("\npause")
-
-            if len(self.sunVectors) > 2047:
-                print "Update Radiance in case you get this error: " \
-                    "rcontrib: internal - too many modifiers."
-
-            subprocess.call(self.__batchFile)
-
-            self.isCalculated = True
-            # self.isChanged = False
-
-            self.resultsFile = [self.__batchFile.replace(".bat", ".dc")]
-            return True
-        else:
-            raise Exception("You need to write the files before running the recipe.")
+        print 'Files are written to: %s' % sceneFiles.path
+        return batchFile
 
     def results(self, flattenResults=True):
         """Return results for this analysis."""
         assert self.isCalculated, \
-            "You haven't run the Recipe yet. Use self.run " + \
-            "to run the analysis before loading the results."
+            'You haven not run the Recipe yet. Use self.run ' + \
+            'to run the analysis before loading the results.'
 
         self.loader.timestep = self.timestep
         self.loader.resultFiles = self.resultsFile

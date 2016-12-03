@@ -7,6 +7,15 @@ Purpose: Prototype for showing illuminance calculations using 2 Phase.
 Keywords: Radiance, 2Phase, Image-Based, Luminance
 """
 
+import os
+import sys
+
+if 'honeybee' not in sys.modules:
+    sys.path.insert(
+        0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import honeybee.config
+honeybee.config.perlExePath = r'C:\Program Files\OpenStudio 1.13.0\strawberry-perl-5.16.2.1-32bit-portable-reduced\perl\bin\perl.exe'
 from honeybee.radiance.parameters.rfluxmtx import RfluxmtxParameters
 from honeybee.radiance.command.rfluxmtx import Rfluxmtx
 from honeybee.radiance.command.epw2wea import Epw2wea
@@ -15,37 +24,15 @@ from honeybee.radiance.command.dctimestep import Dctimestep
 from honeybee.radiance.command.genskyvec import Genskyvec
 from honeybee.radiance.command.gensky import Gensky,GenskyParameters
 from honeybee.radiance.command.vwrays import Vwrays,VwraysParameters
-import os
-
 
 
 os.chdir(r'../tests/room')
 
-
-def runDc(phasesToCalculate={'dc':True, 's':True},
-          calculationType='annual', epwFile=None,
-          hdrResultsFileName=None,timeStamp = None):
-
+def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
+          epwFile=None, hdrResultsFileName=None, timeStamp=None):
 
     if phasesToCalculate['dc']:
         # Step1: Create the view matrix.
-        rfluxPara = RfluxmtxParameters()
-        rfluxPara.ambientAccuracy = 0.1
-        rfluxPara.ambientBounces = 10
-        #using this for a quicker run
-        rfluxPara.ambientBounces = 5
-
-        rfluxPara.ambientDivisions = 65536
-        # using this for a quicker run
-        rfluxPara.ambientDivisions = 2000
-
-        rfluxPara.limitWeight = 1E-5
-        rfluxPara.limitWeight = 1E-2
-
-
-
-
-
         vwrParaDim = VwraysParameters()
         vwrParaDim.calcImageDim = True
         vwrParaDim.xResolution = 800
@@ -64,22 +51,32 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         vwrParaSamp.samplingRaysCount = 3
         vwrParaSamp.jitter = 0.7
 
-
-        vwrSamp  = Vwrays()
+        vwrSamp = Vwrays()
         vwrSamp.vwraysParameters = vwrParaSamp
         vwrSamp.viewFile = 'viewSouth1.vf'
         vwrSamp.outputFile = r'temp/viewSouthRays.txt'
         vwrSamp.outputDataFormat = 'f'
         vwrSamp.execute()
 
+        rfluxPara = RfluxmtxParameters()
+        rfluxPara.ambientAccuracy = 0.1
+        rfluxPara.ambientBounces = 10
+        # using this for a quicker run
+        rfluxPara.ambientBounces = 5
 
+        rfluxPara.ambientDivisions = 65536
+        # using this for a quicker run
+        rfluxPara.ambientDivisions = 2000
+
+        rfluxPara.limitWeight = 1E-5
+        rfluxPara.limitWeight = 1E-2
 
         rflux = Rfluxmtx()
         rflux.sender = '-'
 
-        #Klems full basis sampling and the window faces +Y
-        recCtrlPar = rflux.ControlParameters(hemiType='kf',hemiUpDirection='+Z')
-        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r2')
+        # Klems full basis sampling and the window faces +Y
+        recCtrlPar = rflux.ControlParameters(hemiType='kf', hemiUpDirection='+Z')
+        rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r1')
 
         rflux.outputDataFormat = 'fc'
         rflux.verbose = True
@@ -87,17 +84,16 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
         rflux.rfluxmtxParameters = rfluxPara
         rflux.viewInfoFile = r'temp/viewSouthDimensions.txt'
         rflux.viewRaysFile = r'temp/viewSouthRays.txt'
-        rflux.radFiles = ['room.mat','room.rad','glazing.rad']
+        rflux.radFiles = ['room.mat', 'room.rad', 'glazing.rad']
         rflux.outputFilenameFormat = r'temp/%03d.hdr'
         rflux.samplingRaysCount = 9
         rflux.samplingRaysCount = 3
 
         rflux.execute()
 
+    # Step4a: Create the sky vector.
 
-    #Step4a: Create the sky vector.
-
-    #Step4a.1: Create a sky defintion
+    # Step4a.1: Create a sky defintion
     # Step s: Creating the sky matrix
     if phasesToCalculate['s']:
         if calculationType == 'annual':
@@ -113,33 +109,30 @@ def runDc(phasesToCalculate={'dc':True, 's':True},
 
             skyVector = r'temp/day.smx'
         else:
-            genskPar = GenskyParameters()
             gensk = Gensky()
-            gensk.monthDayHour = timeStamp or (11,11,11)
+            gensk.monthDayHour = timeStamp or (11, 11, 11)
             gensk.outputFile = 'temp/sky.rad'
             gensk.execute()
 
             genskv = Genskyvec()
             genskv.inputSkyFile = r'temp/sky.rad'
             genskv.outputFile = r'temp/sky.vec'
-            genskv.skySubdivision =2
+            genskv.skySubdivision = 1
             genskv.execute()
             skyVector = r'temp/sky.vec'
     else:
         skyVector = r'temp/sky.vec'
 
-
-
-    #Step5: Generate results
+    # Step5: Generate results
     dct = Dctimestep()
-    dct.daylightCoeffSpec= r'temp/%03d.hdr'
+    dct.daylightCoeffSpec = r'temp/%03d.hdr'
     dct.skyVectorFile = skyVector
-    dct.outputFileName = hdrResultsFileName or  r'temp/results.hdr'
+    dct.outputFile = r'temp/results.hdr'
     dct.execute()
 
     return 'temp/results.txt'
 
-phases={'dc':True,'s':True}
+phases = {'dc': False, 's': False}
 tmatrices = ['xmls/clear.xml', 'xmls/diffuse50.xml', 'xmls/ExtVenetianBlind_17tilt.xml']
 
 epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
@@ -149,10 +142,10 @@ epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
             'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
             'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
 
-timeStamps = [(11,11,idx) for idx in range(8,18)]
-for idx,timeStamp in enumerate(timeStamps):
+timeStamps = ((11, 6, 11),)  # [(11, 11, idx) for idx in range(8, 9)]
+for idx, timeStamp in enumerate(timeStamps):
 
-    resultsFile= runDc(calculationType='single',
-                       phasesToCalculate=phases, epwFile=epwFiles[1],
-                       hdrResultsFileName=r'temp/%shrs.hdr'%timeStamp[-1],
-timeStamp=timeStamp)
+    resultsFile = runDc(calculationType='single',
+                        phasesToCalculate=phases, epwFile=epwFiles[1],
+                        hdrResultsFileName=r'temp/%shrs.hdr' % timeStamp[-1],
+                        timeStamp=timeStamp)

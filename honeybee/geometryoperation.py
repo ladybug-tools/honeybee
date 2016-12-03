@@ -50,6 +50,17 @@ def calculateNormalFromPoints(pts):
         return tuple(v1.cross(v2).normalize())
 
 
+def calculateUpVectorFromPoints(pts):
+    """Calculate up vector for a surface from points."""
+    xAxis = Vector3(pts[1][0] - pts[0][0],
+                    pts[1][1] - pts[0][1],
+                    pts[1][2] - pts[0][2])
+
+    normal = Vector3(*calculateNormalFromPoints(pts))
+
+    return tuple(normal.cross(xAxis).normalize())
+
+
 def calculateCenterPointFromPoints(pts):
     """Calculate center point.
 
@@ -79,6 +90,7 @@ def calculateVectorAngleToZAxis(vector):
     except TypeError:
         # Vectors from Dynamo are not iterable!
         return math.degrees(zAxis.angle(Vector3(vector.X, vector.Y, vector.Z)))
+
 
 if __name__ == "__main__":
     pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))

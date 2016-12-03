@@ -67,10 +67,20 @@ class HBAnalysisSurface(HBObject):
         """Return True for HBSurface."""
         return True
 
+    @property
+    def isHBFenSurface(self):
+        """Return True for HBFenSurfaces."""
+        return False
+
     @abstractproperty
     def isChildSurface(self):
         """Return True if Honeybee surface is Fenestration Surface."""
         pass
+
+    @property
+    def hasBSDFRadianceMaterial(self):
+        """Return True if .xml BSDF material is assigned for radiance material."""
+        return self.isHBFenSurface and hasattr(self.radianceMaterial, 'xmlfile')
 
     @property
     def hasRadianceGlassMaterial(self):
@@ -317,6 +327,19 @@ class HBAnalysisSurface(HBObject):
             # input is a tuple or a generator
             self.__pts[subsurfaceNumber] = list(self.__pts[subsurfaceNumber])
             self.__pts[subsurfaceNumber].append(pt)
+
+    @property
+    def normal(self):
+        """Return surface normal for the first face."""
+        return go.calculateNormalFromPoints(self.points[0])
+
+    @property
+    def upnormal(self):
+        """Get upnormal for this surface.
+
+        Use this value to set up rfluxmtx header.
+        """
+        return go.calculateUpVectorFromPoints(self.points[0])
 
     @property
     def radProperties(self):

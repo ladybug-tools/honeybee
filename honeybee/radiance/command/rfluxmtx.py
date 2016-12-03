@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceValue, RadianceNumber
 from ..datatype import RadianceBoolFlag
 from ..parameters.rfluxmtx import RfluxmtxParameters
@@ -36,9 +36,14 @@ class Rfluxmtx(RadianceCommand):
     """
 
     class ControlParameters(object):
+        """Rfluxmtx ControlParameters.
+
+        Set the values for hemispheretype, hemisphere up direction
+        and output file location(optional).
+        """
+
         def __init__(self, hemiType='u', hemiUpDirection='Y', outputFile=''):
-            """Set the values for hemispheretype, hemisphere up direction
-            and output file location(optional)."""
+            """Init class."""
             self.hemisphereType = hemiType
             """
                 The acceptable inputs for hemisphere type are:
@@ -118,17 +123,28 @@ class Rfluxmtx(RadianceCommand):
 
         @hemisphereUpDirection.setter
         def hemisphereUpDirection(self, value):
-            """The acceptable inputs for hemisphere direction are 'X', 'Y',
-            'Z', 'x', 'y', 'z', '-X', '-Y','-Z', '-x', '-y','-z'"""
-            if value:
-                allowedValues = ('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
-                                 '-Z', '-x', '-y', '-z',"+X","+Y","+Z",
-                                 '+x',"+y","+z")
+            """hemisphere direction.
+
+            The acceptable inputs for hemisphere direction are a tuple with 3 values
+            or 'X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y','-Z', '-x', '-y','-z'.
+            """
+            allowedValues = ('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
+                             '-Z', '-x', '-y', '-z', "+X", "+Y", "+Z",
+                             '+x', "+y", "+z")
+
+            if isinstance(value, (tuple, list)):
+                assert len(value) == 3, \
+                    'Length of emisphereUpDirection vector should be 3.'
+                self._hemisphereUpDirection = ','.join((str(v) for v in value))
+
+            elif value:
                 assert value in allowedValues, "The value for hemisphereUpDirection" \
                                                "should be one of the following: %s" \
                                                % (','.join(allowedValues))
 
                 self._hemisphereUpDirection = value
+            else:
+                self._hemisphereUpDirection = '+Z'
 
         def __str__(self):
             outputFileSpec = "o=%s" % self.outputFile if self.outputFile else ''
@@ -273,11 +289,8 @@ class Rfluxmtx(RadianceCommand):
 
     @outputFilenameFormat.setter
     def outputFilenameFormat(self, value):
-        #TODO: Add testing logic for this !
-        if value:
-            self._outputFilenameFormat = value
-        else:
-            self._outputFilenameFormat = None
+        # TODO: Add testing logic for this !
+        self._outputFilenameFormat = value or None
 
     @property
     def viewInfoFile(self):
@@ -291,7 +304,7 @@ class Rfluxmtx(RadianceCommand):
         """
         if fileName:
             assert os.path.exists(fileName),\
-            "The file %s specified as viewInfoFile does not exist."
+                "The file %s specified as viewInfoFile does not exist."
             self._viewInfoFile = fileName
             with open(fileName) as viewFileName:
                 self._viewFileDimensions = viewFileName.read().strip()
@@ -308,11 +321,18 @@ class Rfluxmtx(RadianceCommand):
         if value:
             if os.path.exists(value):
                 with open(value)as pointsFile:
-                    numberOfPoints = len(pointsFile.read().split())/6
+                    numberOfPoints = len(pointsFile.read().split()) / 6
                     self.pointsFileData += '-y %s' % numberOfPoints
-                self._pointsFile = value
+
+                # TODO: Find a better solution to keep the path relative
+                # Currently the start folder is assumed to be the same folder
+                # as where the point is. This can break the code.
+                self._pointsFile = os.path.split(value)[-1]
+            else:
+                raise ValueError('Failed to find pointsFile: {}.'.format(value))
         else:
             self._pointsFile = ''
+
     @property
     def radFiles(self):
         """Get and set scene files."""
@@ -333,7 +353,7 @@ class Rfluxmtx(RadianceCommand):
     def rfluxmtxParameters(self, parameters):
         self.__rfluxmtxParameters = parameters or RfluxmtxParameters()
 
-        assert hasattr(self.rfluxmtxParameters, "isRadianceParameters"), \
+        assert hasattr(self.rfluxmtxParameters, "isRfluxmtxParameters"), \
             "input rfluxmtxParameters is not a valid parameters type."
 
     def toRadString(self, relativePath=False):

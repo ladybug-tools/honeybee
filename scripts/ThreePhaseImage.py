@@ -38,7 +38,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         rfluxPara = RfluxmtxParameters()
         rfluxPara.ambientAccuracy = 0.1
         rfluxPara.ambientBounces = 10
-        #using this for a quicker run
+        # using this for a quicker run
         rfluxPara.ambientBounces = 5
 
         rfluxPara.ambientDivisions = 65536
@@ -59,7 +59,6 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         xfr.outputFile = 'glazingI.rad'
         xfr.execute()
 
-
         vwrParaDim = VwraysParameters()
         vwrParaDim.calcImageDim = True
         vwrParaDim.xResolution = 800
@@ -78,8 +77,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         # vwrParaSamp.samplingRaysCount = 3
         vwrParaSamp.jitter = 0.7
 
-
-        vwrSamp  = Vwrays()
+        vwrSamp = Vwrays()
         vwrSamp.vwraysParameters = vwrParaSamp
         vwrSamp.viewFile = 'viewSouth1.vf'
         vwrSamp.outputFile = r'temp/viewSouthRays.txt'
