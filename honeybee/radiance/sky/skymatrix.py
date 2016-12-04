@@ -1,5 +1,5 @@
-from _skyBase import RadianceSky
-from ...ladybug.epw import EPW
+from ladybug.epw import EPW
+from ._skyBase import RadianceSky
 from ..command.gendaymtx import Gendaymtx
 import os
 
@@ -12,9 +12,11 @@ class SkyMatrix(RadianceSky):
         epwFile: Full filepath to a weather file.
         skyDensity: A positive intger for sky density. [1] Tregenza Sky,
             [2] Reinhart Sky, etc. (Default: 1)
+        north: An angle between 0-360 to indicate north direction (Default: 0).
+        hoys: The list of hours for generating the sky matrix (Default: 0..8759)
     """
 
-    def __init__(self, epwFile, skyDensity=1):
+    def __init__(self, epwFile, skyDensity=1, north=0, hoys=None):
         """Create sky."""
         RadianceSky.__init__(self)
         assert os.path.isfile(epwFile), 'Invalid path: {}'.format(epwFile)
@@ -22,6 +24,8 @@ class SkyMatrix(RadianceSky):
         self.epwFile = os.path.normpath(epwFile)
         self.epwData = EPW(self.epwFile)
         self.skyDensity = skyDensity or 1
+        self.north = north
+        self.hoys = range(8760)
 
     @property
     def isClimateBased(self):

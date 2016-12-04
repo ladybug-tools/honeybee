@@ -6,7 +6,7 @@ from ..command.rcontrib import Rcontrib
 from ...helper import writeToFile
 from ...vectormath.euclid import Vector3
 
-from ...ladybug.sunpath import LBSunpath
+from ladybug.sunpath import LBSunpath
 
 import os
 

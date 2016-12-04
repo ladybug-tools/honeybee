@@ -4,8 +4,8 @@ from ..command.gensky import Gensky
 from ..command.gendaylit import Gendaylit
 from ..parameters.gendaylit import GendaylitParameters
 
-from ...ladybug.epw import EPW
-from ...ladybug.core import LBDateTime
+from ladybug.epw import EPW
+from ladybug.core import LBDateTime
 import os
 
 
@@ -111,6 +111,9 @@ class SkyVector(RadianceSky):
     def main(self):
         """Generate Radiance's line for sky with certain illuminance value."""
         return " "
+
+    def toRadString(self):
+        pass
 
     def execute(self, workingDir, reuse=True):
         """Generate sky vector.
