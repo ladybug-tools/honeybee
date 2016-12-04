@@ -55,14 +55,14 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         self.sky = sky
         """A honeybee sky for the analysis."""
 
+        self.radianceParameters = radParameters
+        """Radiance parameters for grid based analysis (rtrace).
+            (Default: imagebased.LowQualityImage)"""
+
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
            2: Luminance (Candela) (Default: 0)
         """
-
-        self.radianceParameters = radParameters
-        """Radiance parameters for grid based analysis (rtrace).
-            (Default: imagebased.LowQualityImage)"""
 
         # create a result loader to load the results once the analysis is done.
         # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,

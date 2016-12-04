@@ -31,7 +31,7 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
         """Create grid-based recipe."""
         # keep track of original points for re-structuring them later on
         DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
-                                          subFolder=subFolder)
+                                        subFolder=subFolder)
         self.analysisGrids = analysisGrids
 
     @classmethod

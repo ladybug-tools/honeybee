@@ -126,8 +126,6 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             # set RfluxmtxParameters as default radiance parameter for annual analysis
             self.__radianceParameters = RfluxmtxParameters()
             self.__radianceParameters.irradianceCalc = True
-
-            # @sarith do we want to set these values as default?
             self.__radianceParameters.ambientAccuracy = 0.1
             self.__radianceParameters.ambientDivisions = 4096
             self.__radianceParameters.ambientBounces = 6
