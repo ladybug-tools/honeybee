@@ -111,6 +111,11 @@ def copyFilesToFolder(files, targetFolder, overwrite=True):
 
     for f in files:
         target = os.path.join(targetFolder, os.path.split(f)[-1])
+
+        if target == f:
+            # both file path are the same!
+            return target
+
         if os.path.exists(target):
             if overwrite:
                 # remove the file before copying

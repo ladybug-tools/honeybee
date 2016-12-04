@@ -252,8 +252,8 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).write(targetFolder,
-                                                        projectName)
+            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+                targetFolder, projectName)
 
         # 1.write points
         pointsFile = self.writePointsToFile(sceneFiles.path, projectName)

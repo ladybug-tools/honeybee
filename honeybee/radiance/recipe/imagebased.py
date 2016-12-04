@@ -46,7 +46,7 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
 
     # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
-    def __init__(self, sky, views, simulationType=0, radParameters=None,
+    def __init__(self, sky, views, simulationType=2, radParameters=None,
                  hbObjects=None, subFolder="imagebased"):
         """Create grid-based recipe."""
         GenericImageBasedAnalysisRecipe.__init__(
@@ -141,8 +141,8 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            ImageBasedAnalysisRecipe, self).write(targetFolder,
-                                                  projectName)
+            ImageBasedAnalysisRecipe, self).populateSubFolders(
+                targetFolder, projectName)
 
         # add view folder
         self.prepareSubFolder(os.path.join(targetFolder, projectName),
