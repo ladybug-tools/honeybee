@@ -207,9 +207,9 @@ class DaylightAnalysisRecipe(object):
                            self.toRadStringMaterialsAndGeometries() + "\n",
                            mkdir)
 
-    def write(self, targetFolder, projectName='untitled',
-              subFolders=('objects', 'skies', 'results'),
-              removeSubFoldersContent=True):
+    def populateSubFolders(self, targetFolder, projectName='untitled',
+                           subFolders=('objects', 'skies', 'results'),
+                           removeSubFoldersContent=True):
         """Write geometry and material files to folder.
 
         Returns:
@@ -249,9 +249,9 @@ class DaylightAnalysisRecipe(object):
         # 3.1. copy scene files if anything
         if self.scene:
             if self.scene.numberOfFiles == 1:
-                print 'Adding one file from the radiance scene.'
+                print 'One file from the radiance scene is added to the analysis.'
             else:
-                print 'Adding %d files from the radiance scene.' % \
+                print '%d files from the radiance scene are added to the analysis.' % \
                     self.scene.numberOfFiles
 
             if self.scene.copyLocal:
@@ -290,6 +290,10 @@ class DaylightAnalysisRecipe(object):
         self.isCalculated = True
         # self.isChanged = False
         return True
+
+    def write(self):
+        """Write files for this recipe to folder."""
+        raise NotImplementedError()
 
     def results(self):
         """Return results for this analysis."""

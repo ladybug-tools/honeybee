@@ -46,7 +46,7 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
 
     # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
-    def __init__(self, sky, views, simulationType=0, radParameters=None,
+    def __init__(self, sky, views, simulationType=2, radParameters=None,
                  hbObjects=None, subFolder="imagebased"):
         """Create grid-based recipe."""
         GenericImageBasedAnalysisRecipe.__init__(
@@ -55,14 +55,14 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         self.sky = sky
         """A honeybee sky for the analysis."""
 
+        self.radianceParameters = radParameters
+        """Radiance parameters for grid based analysis (rtrace).
+            (Default: imagebased.LowQualityImage)"""
+
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
            2: Luminance (Candela) (Default: 0)
         """
-
-        self.radianceParameters = radParameters
-        """Radiance parameters for grid based analysis (rtrace).
-            (Default: imagebased.LowQualityImage)"""
 
         # create a result loader to load the results once the analysis is done.
         # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
@@ -141,8 +141,8 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            ImageBasedAnalysisRecipe, self).write(targetFolder,
-                                                  projectName)
+            ImageBasedAnalysisRecipe, self).populateSubFolders(
+                targetFolder, projectName)
 
         # add view folder
         self.prepareSubFolder(os.path.join(targetFolder, projectName),

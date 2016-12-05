@@ -1,51 +1,60 @@
-from ..annual.gridbased import HBAnnualGridBasedAnalysisRecipe
+from ..dc.gridbased import DaylightCoeffGridBasedAnalysisRecipe
 from ...postprocess.annualresults import LoadAnnualsResults
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...command.dctimestep import Dctimestep
 from ...command.rfluxmtx import Rfluxmtx
 from ...command.rmtxop import Rmtxop
+from ...command.epw2wea import Epw2wea
+from ...command.gendaymtx import Gendaymtx
 from ...material.glow import GlowMaterial
 from ...sky.skymatrix import SkyMatrix
-
-from ....helper import preparedir, getRadiancePathLines, nukedir
+from ....helper import writeToFile, copyFilesToFolder
 
 import os
-import subprocess
 
 
-class ThreePhaseGridBasedAnalysisRecipe(HBAnnualGridBasedAnalysisRecipe):
-    """Annual analysis recipe.
+# TODO: implement simulationType
+class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
+    """Grid based three phase analysis recipe.
 
     Attributes:
-
+        skyMtx: A radiance SkyMatrix or SkyVector. For an SkyMatrix the analysis
+            will be ran for the analysis period.
+        analysisGrids: A list of Honeybee analysis grids. Daylight metrics will
+            be calculated for each analysisGrid separately.
+        simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+            (Default: 0)
+        radianceParameters: Radiance parameters for this analysis. Parameters
+            should be an instance of RfluxmtxParameters.
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "threephase")
+        subFolder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
 
     Usage:
+
         # initiate analysisRecipe
-        analysisRecipe = HBAnnualAnalysisRecipe(
-            epwFile, testPoints, ptsVectors
+        analysisRecipe = ThreePhaseGridBasedAnalysisRecipe(
+            skyMtx, analysisGrids, radParameters
             )
 
         # add honeybee object
         analysisRecipe.hbObjects = HBObjs
 
         # write analysis files to local drive
-        analysisRecipe.writeToFile(_folder_, _name_)
+        commandsFile = analysisRecipe.write(_folder_, _name_)
 
         # run the analysis
-        analysisRecipe.run(debaug=False)
+        analysisRecipe.run(commandsFile)
 
         # get the results
         print analysisRecipe.results()
     """
 
-    def __init__(self, skyMtx, analysisGrids, viewMtxParameters=None,
-                 daylightMtxParameters=None, reuseViewMtx=True,
-                 reuseDaylightMtx=True, hbWindowSurfaces=None, hbObjects=None,
-                 subFolder="threephase"):
+    def __init__(self, skyMtx, analysisGrids, simulationType=0,
+                 viewMtxParameters=None, daylightMtxParameters=None,
+                 reuseViewMtx=True, reuseDaylightMtx=True, hbWindowSurfaces=None,
+                 hbObjects=None, subFolder="gridbased_threephase"):
         """Create an annual recipe."""
-        HBAnnualGridBasedAnalysisRecipe.__init__(
+        DaylightCoeffGridBasedAnalysisRecipe.__init__(
             self, skyMtx, analysisGrids, hbObjects=hbObjects, subFolder=subFolder
         )
 
@@ -54,19 +63,15 @@ class ThreePhaseGridBasedAnalysisRecipe(HBAnnualGridBasedAnalysisRecipe):
         self.daylightMtxParameters = daylightMtxParameters
         self.reuseViewMtx = reuseViewMtx
         self.reuseDaylightMtx = reuseDaylightMtx
-        self.__batchFile = None
-        self.__commands = []  # place-holder for batch commands
-        self.resultsFile = []
-
         # create a result loader to load the results once the analysis is done.
         self.loader = LoadAnnualsResults(self.resultsFile)
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
         cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
-        viewMtxParameters=None, daylightMtxParameters=None, reuseViewMtx=True,
-        reuseDaylightMtx=True, hbWindowSurfaces=None, hbObjects=None,
-            subFolder="threephase"):
+        simulationType=0, viewMtxParameters=None, daylightMtxParameters=None,
+        reuseViewMtx=True, reuseDaylightMtx=True, hbWindowSurfaces=None,
+            hbObjects=None, subFolder="gridbased_threephase"):
         """Create three-phase recipe from weather file, points and vectors.
 
         Args:
@@ -90,14 +95,16 @@ class ThreePhaseGridBasedAnalysisRecipe(HBAnnualGridBasedAnalysisRecipe):
                                                               vectorGroups)
 
         return cls(
-            skyMtx, analysisGrids, viewMtxParameters, daylightMtxParameters,
-            reuseViewMtx, reuseDaylightMtx, hbWindowSurfaces, hbObjects, subFolder)
+            skyMtx, analysisGrids, simulationType, viewMtxParameters,
+            daylightMtxParameters, reuseViewMtx, reuseDaylightMtx, hbWindowSurfaces,
+            hbObjects, subFolder)
 
     @classmethod
     def fromPointsFile(
-        cls, epwFile, pointsFile, skyDensity=1, viewMtxParameters=None,
-        daylightMtxParameters=None, reuseViewMtx=True, reuseDaylightMtx=True,
-            hbWindowSurfaces=None, hbObjects=None, subFolder="threephase"):
+        cls, epwFile, pointsFile, skyDensity=1, simulationType=0,
+        viewMtxParameters=None, daylightMtxParameters=None, reuseViewMtx=True,
+        reuseDaylightMtx=True, hbWindowSurfaces=None, hbObjects=None,
+            subFolder="gridbased_threephase"):
         """Create an annual recipe from points file."""
         try:
             with open(pointsFile, "rb") as inf:
@@ -107,9 +114,9 @@ class ThreePhaseGridBasedAnalysisRecipe(HBAnnualGridBasedAnalysisRecipe):
             raise ValueError("Couldn't import points from {}".format(pointsFile))
 
         return cls.fromWeatherFilePointsAndVectors(
-            epwFile, pointGroups, vectorGroups, skyDensity, viewMtxParameters,
-            daylightMtxParameters, reuseViewMtx, reuseDaylightMtx, hbWindowSurfaces,
-            hbObjects, subFolder)
+            epwFile, pointGroups, vectorGroups, skyDensity, simulationType,
+            viewMtxParameters, daylightMtxParameters, reuseViewMtx, reuseDaylightMtx,
+            hbWindowSurfaces, hbObjects, subFolder)
 
     @property
     def windowSurfaces(self):
@@ -210,10 +217,8 @@ class ThreePhaseGridBasedAnalysisRecipe(HBAnnualGridBasedAnalysisRecipe):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
-    # TODO: Add path to PATH and use relative path in batch files
-    # TODO: @sariths docstring should be modified
-    def writeToFile(self, targetFolder, projectName, radFiles=None,
-                    useRelativePath=False):
+    # TODO: docstring should be modified
+    def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
         Files for sunlight hours analysis are:
@@ -234,163 +239,166 @@ class ThreePhaseGridBasedAnalysisRecipe(HBAnnualGridBasedAnalysisRecipe):
         Returns:
             True in case of success.
         """
-        assert self.__windowSurfaces, \
-            ValueError('At the minimum, there must be one HBWindowSurface '
-                       'to set-up a three-phase analysis. 0 Found!')
-
-        # 0.prepare target folder
-        # create main folder targetFolder\projectName
-        _basePath = os.path.join(targetFolder, projectName)
-        _ispath = preparedir(_basePath, removeContent=False)
-        assert _ispath, "Failed to create %s. Try a different path!" % _basePath
-
-        # create main folder targetFolder\projectName\threephase
-        _path = os.path.join(_basePath, self.subFolder)
-        _ispath = preparedir(_path, removeContent=False)
-
-        _subFolders = ('bsdf', 'views', 'skies', 'results', 'results/matrices')
-
-        assert _ispath, "Failed to create %s. Try a different path!" % _path
-
-        # Check if anything has changed
-        # if not self.isChanged:
-        #     print "Inputs has not changed! Check files at %s" % _path
-
-        # 0.create a place holder for batch file
-        self.__commands = []
-        # add path if needed
-        self.__commands.append(getRadiancePathLines())
-
-        # TODO: This line won't work in linux.
-        dirLine = "%s\ncd %s" % (os.path.splitdrive(_path)[0], _path)
-        self.__commands.append(dirLine)
-
-        # 1.write points
-        pointsFile = self.writePointsToFile(_path, projectName)
-
-        # 2.write materials and geometry files
-        matFile, geoFile = self.writeHBObjectsToFile(_path, projectName)
-
-        # 3.0.Create sky matrix.
-        skyMtx = self.skyMatrix.execute(_path, reuse=True)
-
-        # 3.1. find glazing items with .xml material, write them to a separate
-        # file and invert them
         windowGroups = self.windowGroups
         assert len(windowGroups) > 0, \
             ValueError(
                 ' At the minimum, there must be one HBWindowSurface in HBOjects '
                 'to set-up a three-phase analysis. 0 found!')
 
+        # 0.prepare target folder
+        # create main folder targetFolder\projectName
+        sceneFiles = super(
+            ThreePhaseGridBasedAnalysisRecipe, self).populateSubFolders(
+                targetFolder, projectName,
+                subFolders=('.tmp', 'bsdfs', 'objects', 'skies', 'results',
+                            'objects\\windowGroups', 'results\\matrix'),
+                removeSubFoldersContent=False)
+
+        # 0.write points
+        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
+
+        # 2.write batch file
+        self.commands = []
+        self.resultsFile = []
+
+        if header:
+            self.commands.append(self.header(sceneFiles.path))
+
+        # 3.0.Create sky matrix.
+        # TODO: Update skyMtx and use skyMatrix.write to write wea file
+        # and then add execute line to batch file if needed.
+        # skyMtx = self.skyMatrix.execute(sceneFiles.path, reuse=True)
+        weaFilepath = 'skies\\{}.wea'.format(projectName)
+        if not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)):
+            weaFile = Epw2wea(self.skyMatrix.epwFile)
+            weaFile.outputWeaFile = weaFilepath
+            self.commands.append(weaFile.toRadString())
+
+        skyMtx = 'skies\\{}.smx'.format(projectName)
+        if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)):
+            gdm = Gendaymtx(outputName=skyMtx, weaFile=weaFilepath)
+            gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
+            self.commands.append(gdm.toRadString())
+
+        # 3.1. find glazing items with .xml material, write them to a separate
+        # file and invert them
         print 'Number of window groups: %d' % (len(windowGroups))
 
         glowM = GlowMaterial('vmtx_glow', 1, 1, 1)
 
+        # write calculations for each window group
         for count, (windowGroup, attr) in enumerate(windowGroups.iteritems()):
             print '    [{}] {} (number of states: {})'.format(
                 count, windowGroup, len(attr['states']))
+
+            # copy all the state materials to bsdfs folder
+            _xmlFiles = copyFilesToFolder(
+                tuple(s.xmlfile for s in attr['states']),
+                os.path.join(sceneFiles.path, 'bsdfs'))
+
+            # update path to updated xml files.
+            # for xmlf, wg in zip(xmlFiles, attr['states']):
+            #     wg.xmlfile = xmlf
 
             # make a copy of window groups and change the material to glow
             surfaces = tuple(srf.duplicate() for srf in attr['surfaces'])
             for surface in surfaces:
                 surface.radianceMaterial = glowM
 
-            windowGroupPath = os.path.join(_path, '{}.rad'.format(windowGroup))
+            # write each window group
+            windowGroupPath = os.path.join(
+                sceneFiles.path, 'objects\\windowgroups\\{}.rad'.format(windowGroup))
+
             with open(windowGroupPath, 'wb') as outf:
                 outf.write(surfaces[0].radianceMaterial.toRadString() + '\n')
                 for srf in surfaces:
                     outf.write(srf.toRadString(reverse=True) + '\n')
 
             # 3.2.Generate view matrix
-            if not os.path.isfile(os.path.join(_path, windowGroup + ".vmx")) or \
-                    not self.reuseViewMtx:
-                rflux = Rfluxmtx()
-                rflux.sender = '-'
-                rflux.rfluxmtxParameters = self.viewMtxParameters
+            vMatrix = 'results\\matrix\\{}.vmx'.format(windowGroup)
+            if not os.path.isfile(os.path.join(sceneFiles.path, vMatrix)) \
+                    or not self.reuseViewMtx:
+                # TODO: @sariths is checking for this to make sure we don't need
+                # to include rest of the window groups in the scene
+                viewMtxFiles = (sceneFiles.matFile, sceneFiles.geoFile)
+
+                vMtxRflux = Rfluxmtx()
+                vMtxRflux.sender = '-'
+                vMtxRflux.rfluxmtxParameters = self.viewMtxParameters
+
                 # Klems full basis sampling
-                recCtrlPar = rflux.ControlParameters(
+                recCtrlPar = vMtxRflux.ControlParameters(
                     hemiType='kf', hemiUpDirection=attr['upnormal'])
-                rflux.receiverFile = rflux.addControlParameters(
+                wg_m = vMtxRflux.addControlParameters(
                     windowGroupPath, {'vmtx_glow': recCtrlPar})
 
-                rflux.radFiles = (matFile, geoFile, '{}.rad'.format(windowGroup))
-                rflux.pointsFile = pointsFile
-                rflux.outputMatrix = windowGroup + ".vmx"
-                self.__commands.append(rflux.toRadString())
-                vMatrix = rflux.outputMatrix
-            else:
-                vMatrix = windowGroup + ".vmx"
+                vMtxRflux.receiverFile = self.relpath(wg_m, sceneFiles.path)
+
+                vMtxRflux.radFiles = tuple(self.relpath(f, sceneFiles.path)
+                                           for f in viewMtxFiles)
+
+                vMtxRflux.pointsFile = pointsFile
+                vMtxRflux.outputMatrix = vMatrix
+                self.commands.append(vMtxRflux.toRadString())
 
             # 3.3 daylight matrix
-            if not os.path.isfile(os.path.join(_path, windowGroup + ".dmx")) or \
-                    not self.reuseDaylightMtx:
-                rflux2 = Rfluxmtx()
-                rflux2.samplingRaysCount = 1000
-                try:
-                    # This will fail in case of not re-using daylight matrix
-                    rflux2.sender = rflux.receiverFile
-                except UnboundLocalError:
-                    rflux2.sender = windowGroupPath[:-4] + '_m' + windowGroupPath[-4:]
+            dMatrix = 'results\\matrix\\{}.dmx'.format(windowGroup)
+            if not os.path.isfile(os.path.join(sceneFiles.path, dMatrix)) \
+                    or not self.reuseDaylightMtx:
 
-                skyFile = rflux2.defaultSkyGround(
-                    os.path.join(_path, 'rfluxSky.rad'),
+                daylightMtxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
+                    sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+
+                dMtxRflux = Rfluxmtx()
+                dMtxRflux.samplingRaysCount = 1000
+                try:
+                    # This line fails in case of not re-using daylight matrix
+                    dMtxRflux.sender = str(vMtxRflux.receiverFile)
+                except UnboundLocalError:
+                    dMtxRflux.sender = self.relpath(
+                        windowGroupPath[:-4] + '_m' + windowGroupPath[-4:],
+                        sceneFiles.path)
+
+                skyFile = dMtxRflux.defaultSkyGround(
+                    os.path.join(sceneFiles.path, 'skies\\rfluxSky.rad'),
                     skyType='r{}'.format(self.skyMatrix.skyDensity))
 
-                rflux2.receiverFile = skyFile
-                rflux2.rfluxmtxParameters = self.daylightMtxParameters
-                rflux2.radFiles = (matFile, geoFile, '{}.rad'.format(windowGroup))
-                rflux2.outputMatrix = windowGroup + ".dmx"
-                self.__commands.append(rflux2.toRadString())
-                dMatrix = rflux2.outputMatrix
-            else:
-                dMatrix = windowGroup + ".dmx"
+                dMtxRflux.receiverFile = self.relpath(skyFile, sceneFiles.path)
+                dMtxRflux.rfluxmtxParameters = self.daylightMtxParameters
+                dMtxRflux.radFiles = tuple(self.relpath(f, sceneFiles.path)
+                                           for f in daylightMtxFiles)
+                dMtxRflux.outputMatrix = dMatrix
+                self.commands.append(dMtxRflux.toRadString())
 
-            for state in attr['states']:
+            for count, state in enumerate(attr['states']):
                 # 4. matrix calculations
                 dct = Dctimestep()
-                dct.tmatrixFile = state.xmlfile
+                dct.tmatrixFile = self.relpath(_xmlFiles[count], sceneFiles.path)
                 dct.vmatrixSpec = vMatrix
-                dct.dmatrixFile = str(dMatrix)
+                dct.dmatrixFile = dMatrix
                 dct.skyVectorFile = skyMtx
-                dct.outputFileName = r'{}..{}.tmp'.format(windowGroup, state.name)
-                self.__commands.append(dct.toRadString())
+                dct.outputFile = r'.tmp\\{}..{}.tmp'.format(windowGroup, state.name)
+                self.commands.append(dct.toRadString())
 
                 # 5. convert r, g ,b values to illuminance
-                outputName = r'{}..{}.ill'.format(windowGroup, state.name)
-                self.resultsFile.append(os.path.join(_path, outputName))
-                finalmtx = Rmtxop(
-                    matrixFiles=[dct.outputFileName],
-                    outputFile=outputName)
+                outputName = r'results\\{}..{}.ill'.format(windowGroup, state.name)
+                self.resultsFile.append(os.path.join(sceneFiles.path, outputName))
+                finalmtx = Rmtxop(matrixFiles=(dct.outputFile,),
+                                  outputFile=outputName)
                 finalmtx.rmtxopParameters.outputFormat = 'a'
                 finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
                 finalmtx.rmtxopParameters.transposeMatrix = True
-                self.__commands.append(finalmtx.toRadString())
+                self.commands.append(finalmtx.toRadString())
 
-        # 6. write batch file
-        batchFile = os.path.join(_path, "commands.bat")
-        self.write(batchFile, "\n".join(self.__commands))
+                self.resultsFile.append(os.path.join(sceneFiles.path, outputName))
+
+        # 5. write batch file
+        batchFile = os.path.join(sceneFiles.path, "commands.bat")
+        writeToFile(batchFile, "\n".join(self.commands))
         self.__batchFile = batchFile
 
-        print "Files are written to: %s" % _path
-        return _path
-
-    # TODO: Update the method to batch run and move it to baseclass
-    def run(self, debug=False):
-        """Run the analysis."""
-        if self.__batchFile:
-            if debug:
-                with open(self.__batchFile, "a") as bf:
-                    bf.write("\npause")
-
-            subprocess.call(self.__batchFile)
-
-            self.isCalculated = True
-            # self.isChanged = False
-            # remove temp folder
-            nukedir(os.path.join(os.path.dirname(self.__batchFile), '/.tmp'))
-            return True
-        else:
-            raise Exception("You need to write the files before running the recipe.")
+        print "Files are written to: %s" % sceneFiles.path
+        return batchFile
 
     def results(self, flattenResults=True):
         """Return results for this analysis."""
