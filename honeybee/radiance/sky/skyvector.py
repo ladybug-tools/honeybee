@@ -23,6 +23,9 @@ class SkyVector(RadianceSky):
         """Create sky."""
         RadianceSky.__init__(self)
         self.sky = sky
+        self.__month = self.sky.monthDayHour[0]
+        self.__day = self.sky.monthDayHour[1]
+        self.__hour = self.sky.monthDayHour[2]
         self.skyDensity = skyDensity or 1
         self.__isClimateBased = isClimateBased
 
@@ -114,6 +117,21 @@ class SkyVector(RadianceSky):
     def isSkyVector(self):
         """Return True."""
         return True
+
+    @property
+    def hour(self):
+        """Return hour."""
+        return self.__hour
+
+    @property
+    def day(self):
+        """Return hour."""
+        return self.__day
+
+    @property
+    def month(self):
+        """Return hour."""
+        return self.__month
 
     @property
     def name(self):

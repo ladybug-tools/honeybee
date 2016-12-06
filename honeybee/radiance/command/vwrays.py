@@ -48,7 +48,7 @@ class Vwrays(RadianceCommand):
     @outputFile.setter
     def outputFile(self, filePath):
         if filePath:
-            self._outputFile = os.path.abspath(os.path.normpath(filePath))
+            self._outputFile = os.path.normpath(filePath)
         else:
             self._outputFile = ''
 

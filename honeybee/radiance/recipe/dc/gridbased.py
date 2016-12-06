@@ -2,7 +2,6 @@ from .._gridbasedbase import GenericGridBasedAnalysisRecipe
 from ...postprocess.annualresults import LoadAnnualsResults
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...command.rfluxmtx import Rfluxmtx
-from ...command.epw2wea import Epw2wea
 from ...command.gendaymtx import Gendaymtx
 from ...command.dctimestep import Dctimestep
 from ...command.rmtxop import Rmtxop

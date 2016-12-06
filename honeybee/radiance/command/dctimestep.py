@@ -51,17 +51,26 @@ class Dctimestep(RadianceCommand):
 
     @property
     def outputFilenameFormat(self):
+        """-o option in dctimestep.
+
+        The -o option may be used to specify a file or a set of output files to
+        use rather than the standard output. If the given specification contains
+        a '%d' format string, this will be replaced by the time step index,
+        starting from 1. In this way, multiple output pictures may be produced,
+        or separate result vectors (one per timestep).
+        """
         return self._outputFilenameFormat
 
     @outputFilenameFormat.setter
-    def outputFilenameFormat(self,value):
-        #TODO: Add testing logic for this !
+    def outputFilenameFormat(self, value):
+        # TODO: Add testing logic for this !
         if value:
             self._outputFilenameFormat = value
         else:
             self._outputFilenameFormat = None
 
     def toRadString(self, relativePath=False):
+        """Return radiance command line."""
         cmdPath = self.normspace(os.path.join(self.radbinPath, 'dctimestep'))
         vmatrix = self.vmatrixSpec.toRadString().replace('-vmatrix', '')
         tmatrix = self.normspace(self.tmatrixFile.toRadString())
