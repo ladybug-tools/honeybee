@@ -9,19 +9,19 @@ import os
 
 class Genskyvec(RadianceCommand):
 
-    headerSuppress = RadianceBoolFlag('h','suppress information header')
-    skySubdivision = RadianceNumber('m','reinhart sky subdivision',numType=int)
-    skyColorRgb = RadianceTuple('c','RGB value for sky color',tupleSize=3)
-    sunOnlyVector = RadianceBoolFlag('d','produce a sky vector with sun only')
-    inputSkyFile = RadiancePath('inputSkyFile','input sky file from gensky',
+    headerSuppress = RadianceBoolFlag('h', 'suppress information header')
+    skySubdivision = RadianceNumber('m', 'reinhart sky subdivision', numType=int)
+    skyColorRgb = RadianceTuple('c', 'RGB value for sky color', tupleSize=3)
+    sunOnlyVector = RadianceBoolFlag('d', 'produce a sky vector with sun only')
+    inputSkyFile = RadiancePath('inputSkyFile', 'input sky file from gensky',
                                 relativePath=None)
-    outputFile = RadiancePath('outputFile','output sky vector file',
+    outputFile = RadiancePath('outputFile', 'output sky vector file',
                               relativePath=None)
 
-    def __init__(self,headerSuppress=None,skySubdivision=None,skyColorRgb=None,
-                 sunOnlyVector=None,inputSkyFile=None,outputFile=None):
+    def __init__(self, headerSuppress=None, skySubdivision=None, skyColorRgb=None,
+                 sunOnlyVector=None, inputSkyFile=None, outputFile=None):
 
-        RadianceCommand.__init__(self,executableName='genskyvec.pl')
+        RadianceCommand.__init__(self, executableName='genskyvec.pl')
 
         self.headerSuppress = headerSuppress
         self.skySubdivision = skySubdivision

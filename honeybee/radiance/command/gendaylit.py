@@ -1,5 +1,5 @@
 # coding=utf-8
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceTuple
 from ..parameters.gendaylit import GendaylitParameters
 
@@ -47,7 +47,7 @@ class Gendaylit(RadianceCommand):
     outputFile = RadiancePath('outputFile', descriptiveName='output sky file',
                               relativePath=None, checkExists=False)
 
-    def __init__(self, outputName='untitled', monthDayHour=None,
+    def __init__(self, outputName='untitled', monthDayHour=None, rotation=0,
                  gendaylitParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
@@ -57,6 +57,7 @@ class Gendaylit(RadianceCommand):
         """results file for sky (Default: untitled)"""
 
         self.monthDayHour = monthDayHour
+        self.rotation = rotation
         self.gendaylitParameters = gendaylitParameters
 
     @property
@@ -78,10 +79,11 @@ class Gendaylit(RadianceCommand):
         monthDayHour = self.monthDayHour.toRadString().replace("-monthDayHour ", "") if \
             self.monthDayHour else ''
 
-        radString = "%s %s %s > %s" % (
+        radString = "%s %s %s | xform -rz %.3f > %s" % (
             self.normspace(os.path.join(self.radbinPath, 'gendaylit')),
             monthDayHour,
             self.gendaylitParameters.toRadString(),
+            self.rotation,
             self.normspace(self.outputFile.toRadString())
         )
 

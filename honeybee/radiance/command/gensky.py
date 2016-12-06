@@ -47,7 +47,7 @@ class Gensky(RadianceCommand):
     outputFile = RadiancePath('outputFile', descriptiveName='output sky file',
                               relativePath=None, checkExists=False)
 
-    def __init__(self, outputName='untitled', monthDayHour=None,
+    def __init__(self, outputName='untitled', monthDayHour=None, rotation=0,
                  genskyParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
@@ -57,12 +57,13 @@ class Gensky(RadianceCommand):
         """results file for sky (Default: untitled)"""
 
         self.monthDayHour = monthDayHour
-
+        self.rotation = 0
         self.genskyParameters = genskyParameters
 
     @classmethod
     def fromSkyType(cls, outputName='untitled', monthDayHour=(1, 21, 12),
-                    skyType=0, latitude=None, longitude=None, meridian=None):
+                    skyType=0, latitude=None, longitude=None, meridian=None,
+                    rotation=0):
         """Create a sky by sky type.
 
         Args:
@@ -104,7 +105,7 @@ class Gensky(RadianceCommand):
             _skyParameters.uniformCloudySky = True
 
         return cls(outputName=outputName, monthDayHour=monthDayHour,
-                   genskyParameters=_skyParameters)
+                   genskyParameters=_skyParameters, rotation=0)
 
     @classmethod
     def createUniformSkyfromIlluminanceValue(cls, outputName="untitled",
@@ -141,10 +142,11 @@ class Gensky(RadianceCommand):
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
         # generate the name from self.weaFile
-        radString = "%s %s %s > %s" % (
+        radString = "%s %s %s | xform -rz %.3f > %s" % (
             self.normspace(os.path.join(self.radbinPath, 'gensky')),
             self.monthDayHour.toRadString().replace("-monthDayHour ", ""),
             self.genskyParameters.toRadString(),
+            self.rotation,
             self.normspace(self.outputFile.toRadString())
         )
 
