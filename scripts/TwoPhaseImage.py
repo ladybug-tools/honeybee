@@ -61,20 +61,20 @@ def runDc(phasesToCalculate={'dc': True, 's': True}, calculationType='single',
 
         rfluxPara = RfluxmtxParameters()
         rfluxPara.ambientAccuracy = 0.1
-        rfluxPara.ambientBounces = 10
+        # rfluxPara.ambientBounces = 10
         # using this for a quicker run
         rfluxPara.ambientBounces = 5
 
-        rfluxPara.ambientDivisions = 65536
+        # rfluxPara.ambientDivisions = 65536
         # using this for a quicker run
-        # rfluxPara.ambientDivisions = 2000
+        rfluxPara.ambientDivisions = 2000
 
-        rfluxPara.limitWeight = 1E-5
-        # rfluxPara.limitWeight = 1E-2
+        # rfluxPara.limitWeight = 1E-5
+        rfluxPara.limitWeight = 1E-2
 
         rflux = Rfluxmtx()
         rflux.sender = '-'
-        groundFileFormat = 'temp/%s.hdr' % (1 + 144 * (skyDensity ** 2))
+        groundFileFormat = 'temp/viewSouth%s.hdr' % (1 + 144 * (skyDensity ** 2))
         # Klems full basis sampling and the window faces +Y
         rflux.receiverFile = rflux.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r1',
                                                     groundFileFormat=groundFileFormat,

@@ -2,7 +2,6 @@ from .._gridbasedbase import GenericGridBasedAnalysisRecipe
 from ...postprocess.annualresults import LoadAnnualsResults
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...command.rfluxmtx import Rfluxmtx
-from ...command.epw2wea import Epw2wea
 from ...command.gendaymtx import Gendaymtx
 from ...command.dctimestep import Dctimestep
 from ...command.rmtxop import Rmtxop
@@ -171,21 +170,27 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         if header:
             self.commands.append(self.header(sceneFiles.path))
 
-        # # 2.1.Create annual daylight vectors through epw2wea and gendaymtx.
-        # TODO: Update skyMtx and use skyMatrix.write to write wea file
-        # and then add execute line to batch file if needed.
-        # skyMtx = self.skyMatrix.execute(sceneFiles.path, reuse=True)
-        weaFilepath = 'skies\\{}.wea'.format(projectName)
-        if not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)):
-            weaFile = Epw2wea(self.skyMatrix.epwFile)
-            weaFile.outputWeaFile = weaFilepath
-            self.commands.append(weaFile.toRadString())
-
-        skyMtx = 'skies\\{}.smx'.format(projectName)
-        if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)):
-            gdm = Gendaymtx(outputName=skyMtx, weaFile=weaFilepath)
-            gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
-            self.commands.append(gdm.toRadString())
+        # 2.1.Create sky matrix.
+        if hasattr(self.skyMatrix, 'isSkyMatrix'):
+            weaFilepath = 'skies\\{}.wea'.format(self.skyMatrix.name)
+            skyMtx = 'skies\\{}.smx'.format(self.skyMatrix.name)
+            hoursFile = os.path.join(
+                sceneFiles.path, 'skies\\{}.hrs'.format(self.skyMatrix.name))
+            if not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)) \
+                    or not self.skyMatrix.hoursMatch(hoursFile):
+                self.skyMatrix.writeWea(
+                    os.path.join(sceneFiles.path, 'skies'), writeHours=True)
+                gdm = Gendaymtx(outputName=skyMtx, weaFile=weaFilepath)
+                gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
+                self.commands.append(gdm.toRadString())
+        else:
+            # sky vector
+            skyMtx = 'skies\\{}.vec'.format(self.skyMatrix.name)
+            wdir = os.path.join(sceneFiles.path, 'skies')
+            if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)):
+                self.skyMatrix.execute(wdir)
+                # TODO: adding this line to command line didn't work on windows
+                # self.commands.append(self.skyMatrix.toRadString(wdir, sceneFiles.path))
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
         rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \

@@ -1,6 +1,5 @@
 # coding=utf-8
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath
 from ..parameters.gendaymtx import GendaymtxParameters
 
 import os

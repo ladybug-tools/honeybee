@@ -303,7 +303,7 @@ class Rfluxmtx(RadianceCommand):
         """
         if fileName:
             assert os.path.exists(fileName),\
-                "The file %s specified as viewInfoFile does not exist."
+                "The file %s specified as viewInfoFile does not exist." % fileName
             self._viewInfoFile = fileName
             with open(fileName) as viewFileName:
                 self._viewFileDimensions = viewFileName.read().strip()
