@@ -63,8 +63,8 @@ class Folders(object):
 
         if self.__userPath["pathToOpenStudioFolder"].strip() is not "":
             openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
-            self.radbinPath = os.path.join(openStudioPath,
-                                           r"share\openStudio\Radiance\bin")
+            # self.radbinPath = os.path.join(openStudioPath,
+            #                                r"share\openStudio\Radiance\bin")
             self.perlExePath = openStudioPath
         else:
             if os.name == 'nt':
