@@ -383,7 +383,6 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
 
                 # 5. convert r, g ,b values to illuminance
                 outputName = r'results\\{}..{}.ill'.format(windowGroup, state.name)
-                self.resultsFile.append(os.path.join(sceneFiles.path, outputName))
                 finalmtx = Rmtxop(matrixFiles=(dct.outputFile,),
                                   outputFile=outputName)
                 finalmtx.rmtxopParameters.outputFormat = 'a'
