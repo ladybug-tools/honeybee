@@ -48,7 +48,6 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         rfluxPara.limitWeight = 1E-5
         # rfluxPara.lw = 1E-2
 
-
         #step 1.1 Invert glazing surface with xform so that it faces inwards
         xfrPara = XformParameters()
         xfrPara.invertSurfaces = True
@@ -124,7 +123,7 @@ def run3phase(phasesToCalculate={'v':True,'t':True,'d':True,'s':True},
         rflux2.numProcessors = numProcessors
         rflux2.samplingRaysCount = 1000
         rflux2.sender = 'glazingI.rad_m'
-        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad',skyType='r4')
+        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r4')
         rflux2.receiverFile = skyFile
         rflux2.rfluxmtxParameters = rfluxPara
         rflux2.radFiles = [r"room.mat",

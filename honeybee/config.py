@@ -29,9 +29,9 @@ class Folders(object):
 
     # You can manually set the path to Radinace and EnergyPlus here between r" "
     __userPath = {
-        "pathToRadianceFolder": r" ",
+        "pathToRadianceFolder": r'c:\radiance',
         "pathToEnergyPlusFolder": r" ",
-        "pathToOpenStudioFolder": r'C:\Program Files\OpenStudio 1.12.5',
+        "pathToOpenStudioFolder": r'C:\Program Files\OpenStudio 1.13.0',
     }
 
     def __init__(self, mute=False):
@@ -51,26 +51,32 @@ class Folders(object):
         if self.__userPath["pathToRadianceFolder"].strip() is not "":
             self.radbinPath = os.path.join(
                 self.__userPath["pathToRadianceFolder"], "bin")
-        elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
-            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
-            self.radbinPath = os.path.join(openStudioPath,
-                                           r"share\openStudio\Radiance\bin")
-            self.perlExePath = openStudioPath
         else:
             if os.name == 'nt':
                 __radbin, __radFile = self.__which("rad.exe")
                 self.radbinPath = __radbin
-                __perlpath, __perlFile = self.__which("perl.exe")
-                self.perlExePath = __perlFile
 
             # TODO: @sariths we need a method to search and find the executables
             elif os.name == 'posix':
                 __radbin, __radFile = self.__which("mkillum")
                 self.radbinPath = __radbin
 
+        if self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+            self.radbinPath = os.path.join(openStudioPath,
+                                           r"share\openStudio\Radiance\bin")
+            self.perlExePath = openStudioPath
+        else:
+            if os.name == 'nt':
+                __perlpath, __perlFile = self.__which("perl.exe")
+                self.perlExePath = __perlFile
+
+            # TODO: @sariths we need a method to search and find the executables
+            elif os.name == 'posix':
                 __perlpath, __perlFile = self.__which("perl")
                 self.perlExePath = __perlpath
                 # raise NotImplementedError
+
 
     def __which(self, program):
         """Find executable programs.
