@@ -1036,7 +1036,7 @@ class Rtrace(RadianceCommand):
     Attributes:
         outputName: Name of output file (Default: untitled).
         octreeFile: Full path to input oct files (Default: None)
-        pointFile: Full path to input pt files (Default: None)
+        pointsFile: Full path to input pt files (Default: None)
         simulationType: An integer to define type of analysis.
             0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
@@ -1046,9 +1046,9 @@ class Rtrace(RadianceCommand):
 
     outputFile = RadiancePath("res", "results file", extension=".res")
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointFile = RadiancePath("points", "test point file", extension=".pts")
+    pointsFile = RadiancePath("points", "test point file", extension=".pts")
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointFile=None,
+    def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
                  simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
@@ -1061,7 +1061,7 @@ class Rtrace(RadianceCommand):
         self.octreeFile = octreeFile
         """Full path to input oct file."""
 
-        self.pointFile = pointFile
+        self.pointsFile = pointsFile
         """Full path to input points file."""
 
         self.radianceParameters = radianceParameters
@@ -1137,7 +1137,7 @@ class Rtrace(RadianceCommand):
             self.normspace(os.path.join(self.radbinPath, "rtrace")),
             self.radianceParameters.toRadString(),
             self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointFile.toRadString()),
+            self.normspace(self.pointsFile.toRadString()),
             self.normspace(self.outputFile.toRadString())
         )
 
@@ -1148,7 +1148,7 @@ class Rtrace(RadianceCommand):
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.octreeFile, self.pointFile
+        return self.octreeFile, self.pointsFile
 </code></pre>
   </div>
 
@@ -1168,7 +1168,7 @@ class Rtrace(RadianceCommand):
 <p>Attributes:
     outputName: Name of output file (Default: untitled).
     octreeFile: Full path to input oct files (Default: None)
-    pointFile: Full path to input pt files (Default: None)
+    pointsFile: Full path to input pt files (Default: None)
     simulationType: An integer to define type of analysis.
         0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
         (Default: 0)
@@ -1185,7 +1185,7 @@ class Rtrace(RadianceCommand):
     Attributes:
         outputName: Name of output file (Default: untitled).
         octreeFile: Full path to input oct files (Default: None)
-        pointFile: Full path to input pt files (Default: None)
+        pointsFile: Full path to input pt files (Default: None)
         simulationType: An integer to define type of analysis.
             0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
@@ -1195,9 +1195,9 @@ class Rtrace(RadianceCommand):
 
     outputFile = RadiancePath("res", "results file", extension=".res")
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointFile = RadiancePath("points", "test point file", extension=".pts")
+    pointsFile = RadiancePath("points", "test point file", extension=".pts")
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointFile=None,
+    def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
                  simulationType=0, radianceParameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
@@ -1210,7 +1210,7 @@ class Rtrace(RadianceCommand):
         self.octreeFile = octreeFile
         """Full path to input oct file."""
 
-        self.pointFile = pointFile
+        self.pointsFile = pointsFile
         """Full path to input points file."""
 
         self.radianceParameters = radianceParameters
@@ -1286,7 +1286,7 @@ class Rtrace(RadianceCommand):
             self.normspace(os.path.join(self.radbinPath, "rtrace")),
             self.radianceParameters.toRadString(),
             self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointFile.toRadString()),
+            self.normspace(self.pointsFile.toRadString()),
             self.normspace(self.outputFile.toRadString())
         )
 
@@ -1297,7 +1297,7 @@ class Rtrace(RadianceCommand):
     @property
     def inputFiles(self):
         """Input files for this command."""
-        return self.octreeFile, self.pointFile
+        return self.octreeFile, self.pointsFile
 </code></pre>
   </div>
 </div>
@@ -1332,7 +1332,7 @@ class Rtrace(RadianceCommand):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.pointFile" class="name">var <span class="ident">pointFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
             
 
             
@@ -1418,7 +1418,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.pointFile" class="name">var <span class="ident">pointFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
             
 
             
@@ -1489,7 +1489,7 @@ def normspace(path):
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=&#39;untitled&#39;, octreeFile=None, pointFile=None, simulationType=0, radianceParameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=&#39;untitled&#39;, octreeFile=None, pointsFile=None, simulationType=0, radianceParameters=None)</p>
     </div>
     
 
@@ -1499,7 +1499,7 @@ def normspace(path):
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace.__init__" class="source">
-    <pre><code>def __init__(self, outputName="untitled", octreeFile=None, pointFile=None,
+    <pre><code>def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
              simulationType=0, radianceParameters=None):
     """Initialize the class."""
     # Initialize base class to make sure path to radiance is set correctly
@@ -1509,7 +1509,7 @@ def normspace(path):
     """oct file name which is usually the same as the project name (Default: untitled)"""
     self.octreeFile = octreeFile
     """Full path to input oct file."""
-    self.pointFile = pointFile
+    self.pointsFile = pointsFile
     """Full path to input points file."""
     self.radianceParameters = radianceParameters
     """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
@@ -1559,8 +1559,8 @@ later during the process.</p>
     """
     # make sure wea file is provided
     _msg = "To generate a valid %s command you need to specify the path" \
-        " to inpt files:" \
-        "\nCurrent command won't work: %s" \
+        " to input files:" \
+        "\nCurrent command won't work:\n%s" \
         % (self.__class__.__name__, radString)
     if self.inputFiles is None:
         return
@@ -1701,7 +1701,7 @@ running the command.</p></div>
         self.normspace(os.path.join(self.radbinPath, "rtrace")),
         self.radianceParameters.toRadString(),
         self.normspace(self.octreeFile.toRadString()),
-        self.normspace(self.pointFile.toRadString()),
+        self.normspace(self.pointsFile.toRadString()),
         self.normspace(self.outputFile.toRadString())
     )
     # make sure input files are set by user

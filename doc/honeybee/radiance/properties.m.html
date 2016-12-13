@@ -1021,8 +1021,6 @@ table {
 from material._materialbase import RadianceMaterial
 
 
-# TODO: Currently Radiance properties for HBSurface is limited to material
-# This might need to change in the near future
 class RadianceProperties(object):
     """Radiance properties for HBSurface.
 
@@ -1033,9 +1031,14 @@ class RadianceProperties(object):
             overwritten by honeybee in cases like solve adjacencies.
     """
 
-    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
+    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False,
+                 alternateMaterials=None, windowGroupName=None):
         """Create radiance properties for surface."""
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
+        # TODO: Clarify how alternate materials works. Is it only for 3-phase
+        # analysis or is it an option to set-up any parameteric study.
+        self.alternateMaterials = alternateMaterials or ()
+        self.windowGroupName = windowGroupName
 
     @property
     def isRadianceProperties(self):
@@ -1141,9 +1144,14 @@ if __name__ == "__main__":
             overwritten by honeybee in cases like solve adjacencies.
     """
 
-    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
+    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False,
+                 alternateMaterials=None, windowGroupName=None):
         """Create radiance properties for surface."""
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
+        # TODO: Clarify how alternate materials works. Is it only for 3-phase
+        # analysis or is it an option to set-up any parameteric study.
+        self.alternateMaterials = alternateMaterials or ()
+        self.windowGroupName = windowGroupName
 
     @property
     def isRadianceProperties(self):
@@ -1224,6 +1232,16 @@ if __name__ == "__main__":
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
+            <p id="honeybee.radiance.properties.RadianceProperties.alternateMaterials" class="name">var <span class="ident">alternateMaterials</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="honeybee.radiance.properties.RadianceProperties.isMaterialSetByUser" class="name">var <span class="ident">isMaterialSetByUser</span></p>
             
 
@@ -1255,11 +1273,21 @@ if __name__ == "__main__":
 </div>
 
             </div>
+            <div class="item">
+            <p id="honeybee.radiance.properties.RadianceProperties.windowGroupName" class="name">var <span class="ident">windowGroupName</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Methods</h3>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.properties.RadianceProperties.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, radianceMaterial=None, isMaterialSetByUser=False)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, radianceMaterial=None, isMaterialSetByUser=False, alternateMaterials=None, windowGroupName=None)</p>
     </div>
     
 
@@ -1269,9 +1297,14 @@ if __name__ == "__main__":
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.properties.RadianceProperties.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.properties.RadianceProperties.__init__" class="source">
-    <pre><code>def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
+    <pre><code>def __init__(self, radianceMaterial=None, isMaterialSetByUser=False,
+             alternateMaterials=None, windowGroupName=None):
     """Create radiance properties for surface."""
     self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
+    # TODO: Clarify how alternate materials works. Is it only for 3-phase
+    # analysis or is it an option to set-up any parameteric study.
+    self.alternateMaterials = alternateMaterials or ()
+    self.windowGroupName = windowGroupName
 </code></pre>
   </div>
 </div>

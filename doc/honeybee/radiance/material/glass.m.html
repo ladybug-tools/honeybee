@@ -1080,6 +1080,15 @@ class GlassMaterial(RadianceMaterial):
                    bTransmittance=rgbTransmittance, refraction=1.52, modifier="void")
 
     @property
+    def isGlassMaterial(self):
+        """Indicate if this object has glass Material.
+
+        This property will be used to separate the glass surfaces in a separate
+        file than the opaque surfaces.
+        """
+        return True
+
+    @property
     def rTransmittance(self):
         """Red transmittance."""
         return self.__r
@@ -1210,6 +1219,15 @@ if __name__ == "__main__":
         """
         return cls(name, rTransmittance=rgbTransmittance, gTransmittance=rgbTransmittance,
                    bTransmittance=rgbTransmittance, refraction=1.52, modifier="void")
+
+    @property
+    def isGlassMaterial(self):
+        """Indicate if this object has glass Material.
+
+        This property will be used to separate the glass surfaces in a separate
+        file than the opaque surfaces.
+        """
+        return True
 
     @property
     def rTransmittance(self):
@@ -1355,6 +1373,19 @@ def getTransmissivity(transmittance):
             
   
     <div class="desc"><p>Return first line of Material definition.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.glass.GlassMaterial.isGlassMaterial" class="name">var <span class="ident">isGlassMaterial</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Indicate if this object has glass Material.</p>
+<p>This property will be used to separate the glass surfaces in a separate
+file than the opaque surfaces.</p></div>
   <div class="source_cont">
 </div>
 

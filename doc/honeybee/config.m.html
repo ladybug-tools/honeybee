@@ -1070,9 +1070,9 @@ class Folders(object):
 
     # You can manually set the path to Radinace and EnergyPlus here between r" "
     __userPath = {
-        "pathToRadianceFolder": r" ",
+        "pathToRadianceFolder": r'c:\radiance',
         "pathToEnergyPlusFolder": r" ",
-        "pathToOpenStudioFolder": r'',
+        "pathToOpenStudioFolder": r'C:\Program Files\OpenStudio 1.13.0',
     }
 
     def __init__(self, mute=False):
@@ -1092,23 +1092,28 @@ class Folders(object):
         if self.__userPath["pathToRadianceFolder"].strip() is not "":
             self.radbinPath = os.path.join(
                 self.__userPath["pathToRadianceFolder"], "bin")
-        elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
-            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
-            self.radbinPath = os.path.join(openStudioPath,
-                                           r"share\openStudio\Radiance\bin")
-            self.perlExePath = openStudioPath
         else:
             if os.name == 'nt':
                 __radbin, __radFile = self.__which("rad.exe")
                 self.radbinPath = __radbin
-                __perlpath, __perlFile = self.__which("perl.exe")
-                self.perlExePath = __perlFile
 
             # TODO: @sariths we need a method to search and find the executables
             elif os.name == 'posix':
                 __radbin, __radFile = self.__which("mkillum")
                 self.radbinPath = __radbin
 
+        if self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+            # self.radbinPath = os.path.join(openStudioPath,
+            #                                r"share\openStudio\Radiance\bin")
+            self.perlExePath = openStudioPath
+        else:
+            if os.name == 'nt':
+                __perlpath, __perlFile = self.__which("perl.exe")
+                self.perlExePath = __perlFile
+
+            # TODO: @sariths we need a method to search and find the executables
+            elif os.name == 'posix':
                 __perlpath, __perlFile = self.__which("perl")
                 self.perlExePath = __perlpath
                 # raise NotImplementedError
@@ -1128,7 +1133,7 @@ class Folders(object):
             # Make sure it's not part of Dive installation as DIVA doesn't
             # follow the standard structure folder for Daysim and Radiance
             # Note: (@mostaphaRoudsari, DIVA check is only required for...
-            #...Windows.
+            # ...Windows.
             if fpath.upper().find("DIVA") and os.name == 'nt':
                 return False
             # Return true if file exists and is executable
@@ -1216,11 +1221,11 @@ class Folders(object):
         if not openStudioPath:
             return
 
-        possiblePerLocations = [pathVal for pathVal in os.listdir(openStudioPath)
-                                if 'perl' in pathVal.lower()]
+        possiblePerLocations = (pathVal for pathVal in os.listdir(openStudioPath)
+                                if 'perl' in pathVal.lower())
 
-        possiblePerLocations = [os.path.join(openStudioPath, pathVal, 'perl\\bin')
-                                for pathVal in possiblePerLocations]
+        possiblePerLocations = (os.path.join(openStudioPath, pathVal, 'perl\\bin')
+                                for pathVal in possiblePerLocations)
 
         for binDir in possiblePerLocations:
             if 'perl.exe' in os.listdir(binDir):
@@ -1235,7 +1240,9 @@ class Folders(object):
 
     @property
     def pythonExePath(self):
+        """Path to Python folder."""
         return sys.executable
+
 f = Folders(mute=True)
 radlibPath = f.radlibPath
 """Path to Radinace libraries folder."""
@@ -1361,9 +1368,9 @@ print folders.radbinPath
 
     # You can manually set the path to Radinace and EnergyPlus here between r" "
     __userPath = {
-        "pathToRadianceFolder": r" ",
+        "pathToRadianceFolder": r'c:\radiance',
         "pathToEnergyPlusFolder": r" ",
-        "pathToOpenStudioFolder": r'',
+        "pathToOpenStudioFolder": r'C:\Program Files\OpenStudio 1.13.0',
     }
 
     def __init__(self, mute=False):
@@ -1383,23 +1390,28 @@ print folders.radbinPath
         if self.__userPath["pathToRadianceFolder"].strip() is not "":
             self.radbinPath = os.path.join(
                 self.__userPath["pathToRadianceFolder"], "bin")
-        elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
-            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
-            self.radbinPath = os.path.join(openStudioPath,
-                                           r"share\openStudio\Radiance\bin")
-            self.perlExePath = openStudioPath
         else:
             if os.name == 'nt':
                 __radbin, __radFile = self.__which("rad.exe")
                 self.radbinPath = __radbin
-                __perlpath, __perlFile = self.__which("perl.exe")
-                self.perlExePath = __perlFile
 
             # TODO: @sariths we need a method to search and find the executables
             elif os.name == 'posix':
                 __radbin, __radFile = self.__which("mkillum")
                 self.radbinPath = __radbin
 
+        if self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+            openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+            # self.radbinPath = os.path.join(openStudioPath,
+            #                                r"share\openStudio\Radiance\bin")
+            self.perlExePath = openStudioPath
+        else:
+            if os.name == 'nt':
+                __perlpath, __perlFile = self.__which("perl.exe")
+                self.perlExePath = __perlFile
+
+            # TODO: @sariths we need a method to search and find the executables
+            elif os.name == 'posix':
                 __perlpath, __perlFile = self.__which("perl")
                 self.perlExePath = __perlpath
                 # raise NotImplementedError
@@ -1419,7 +1431,7 @@ print folders.radbinPath
             # Make sure it's not part of Dive installation as DIVA doesn't
             # follow the standard structure folder for Daysim and Radiance
             # Note: (@mostaphaRoudsari, DIVA check is only required for...
-            #...Windows.
+            # ...Windows.
             if fpath.upper().find("DIVA") and os.name == 'nt':
                 return False
             # Return true if file exists and is executable
@@ -1507,11 +1519,11 @@ print folders.radbinPath
         if not openStudioPath:
             return
 
-        possiblePerLocations = [pathVal for pathVal in os.listdir(openStudioPath)
-                                if 'perl' in pathVal.lower()]
+        possiblePerLocations = (pathVal for pathVal in os.listdir(openStudioPath)
+                                if 'perl' in pathVal.lower())
 
-        possiblePerLocations = [os.path.join(openStudioPath, pathVal, 'perl\\bin')
-                                for pathVal in possiblePerLocations]
+        possiblePerLocations = (os.path.join(openStudioPath, pathVal, 'perl\\bin')
+                                for pathVal in possiblePerLocations)
 
         for binDir in possiblePerLocations:
             if 'perl.exe' in os.listdir(binDir):
@@ -1526,6 +1538,7 @@ print folders.radbinPath
 
     @property
     def pythonExePath(self):
+        """Path to Python folder."""
         return sys.executable
 </code></pre>
   </div>
@@ -1577,6 +1590,7 @@ print folders.radbinPath
 
             
   
+    <div class="desc"><p>Path to Python folder.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1635,21 +1649,25 @@ print folders.radbinPath
     if self.__userPath["pathToRadianceFolder"].strip() is not "":
         self.radbinPath = os.path.join(
             self.__userPath["pathToRadianceFolder"], "bin")
-    elif self.__userPath["pathToOpenStudioFolder"].strip() is not "":
-        openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
-        self.radbinPath = os.path.join(openStudioPath,
-                                       r"share\openStudio\Radiance\bin")
-        self.perlExePath = openStudioPath
     else:
         if os.name == 'nt':
             __radbin, __radFile = self.__which("rad.exe")
             self.radbinPath = __radbin
-            __perlpath, __perlFile = self.__which("perl.exe")
-            self.perlExePath = __perlFile
         # TODO: @sariths we need a method to search and find the executables
         elif os.name == 'posix':
             __radbin, __radFile = self.__which("mkillum")
             self.radbinPath = __radbin
+    if self.__userPath["pathToOpenStudioFolder"].strip() is not "":
+        openStudioPath = self.__userPath["pathToOpenStudioFolder"].strip()
+        # self.radbinPath = os.path.join(openStudioPath,
+        #                                r"share\openStudio\Radiance\bin")
+        self.perlExePath = openStudioPath
+    else:
+        if os.name == 'nt':
+            __perlpath, __perlFile = self.__which("perl.exe")
+            self.perlExePath = __perlFile
+        # TODO: @sariths we need a method to search and find the executables
+        elif os.name == 'posix':
             __perlpath, __perlFile = self.__which("perl")
             self.perlExePath = __perlpath
 </code></pre>
