@@ -196,7 +196,8 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
             sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
 
-        dMatrix = 'results\\matrix\\{}.dc'.format(projectName)
+        dMatrix = 'results\\matrix\\{}_{}_{}.dc'.format(
+            projectName, self.skyMatrix.skyDensity, self.numOfTotalPoints)
         if not os.path.isfile(os.path.join(sceneFiles.path, dMatrix)) \
                 or not self.reuseDaylightMtx:
             rflux = Rfluxmtx()

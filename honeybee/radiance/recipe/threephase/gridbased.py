@@ -343,7 +343,9 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                 self.commands.append(vMtxRflux.toRadString())
 
             # 3.3 daylight matrix
-            dMatrix = 'results\\matrix\\{}.dmx'.format(windowGroup)
+            dMatrix = 'results\\matrix\\{}_{}_{}.dmx'.format(
+                windowGroup, self.skyMatrix.skyDensity, self.numOfTotalPoints)
+
             if not os.path.isfile(os.path.join(sceneFiles.path, dMatrix)) \
                     or not self.reuseDaylightMtx:
 
