@@ -284,12 +284,16 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
                     os.remove(tf)
                 except:
                     print "Failed to remove %s." % tf
-                else:
-                    os.rename(f, tf)
-            else:
-                os.rename(f, tf)
 
-            names.append(tf)
+            try:
+                os.rename(f, tf)
+            except WindowsError:
+                msg = 'Failed to rename (%s) to (%s)\n\t' \
+                    'Access is denied. Do you have the file open?' % (f, tf)
+                print msg
+                names.append(f)
+            else:
+                names.append(tf)
 
         self.resultsFile = names
         return self.resultsFile

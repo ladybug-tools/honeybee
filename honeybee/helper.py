@@ -38,6 +38,7 @@ def preparedir(targetDir, removeContent=True):
     else:
         try:
             os.makedirs(targetDir)
+            return True
         except Exception as e:
             print "Failed to create folder: %s\n%s" % (targetDir, e)
             return False

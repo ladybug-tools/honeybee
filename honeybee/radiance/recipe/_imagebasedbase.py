@@ -28,7 +28,7 @@ class GenericImageBasedAnalysisRecipe(DaylightAnalysisRecipe):
         """Create image-based recipe."""
         # keep track of original points for re-structuring them later on
         DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
-                                          subFolder=subFolder)
+                                        subFolder=subFolder)
         self.views = views
 
     @property
