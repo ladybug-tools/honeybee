@@ -179,8 +179,9 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
             # calculate view dimensions
             vwrDimFile = os.path.join(sceneFiles.path,
                                       r'views\\{}.dimensions'.format(view.name))
+            x, y = view.getViewDimension()
             with open(vwrDimFile, 'wb') as vdfile:
-                vdfile.write('-x %d -y %d -ld-\n' % (view.xRes, view.yRes))
+                vdfile.write('-x %d -y %d -ld-\n' % (x, y))
 
             # calculate sampling for each view
             vwrParaSamp = VwraysParameters()
