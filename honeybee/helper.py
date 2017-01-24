@@ -17,6 +17,13 @@ def normspace(path):
 
 def getRadiancePathLines():
     """Return path to radiance folders."""
+    if config.radbinPath.find(' ') != -1:
+        msg = 'Radiance path {} has a whitespace. Some of the radiance ' \
+            'commands may fail.\nWe strongly suggest you to install radiance ' \
+            'under a path with no withspace (e.g. c:/radiance)'.format(
+                self.radbinPath
+            )
+        print msg
     if os.name == 'nt':
         return "SET RAYPATH=.;{}\nPATH={};$PATH".format(
             normspace(config.radlibPath),
