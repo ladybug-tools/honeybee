@@ -282,11 +282,11 @@ def run3phaseMulti(pointsFile=None,outputIllName=None,viewFile=None,outputImageN
             if os.path.exists(skyMtxName) and reuse:
                 return skyMtxName
 
-            weaFile = Epw2wea(epwFile=epwFile,outputWeaFile=weaName)
+            weaFile = Epw2wea(epwFile=epwFile, outputWeaFile=weaName)
             weaFile.execute()
 
             if skyVectorParam:
-                assert isinstance(skyVectorParam,GendaymtxParameters),\
+                assert isinstance(skyVectorParam, GendaymtxParameters),\
                     'The input for skyVectorParam must be an instance of GendaymtxParameters.'
                 gendayParam = skyVectorParam
             else:
@@ -409,10 +409,10 @@ if __name__ == "__main__":
 
     if True:
         gensk = Gensky()
-        gensk.monthDayHour = (6, 31,9)
+        gensk.monthDayHour = (6, 31, 9)
         gensk.outputFile = 'temp/sky.rad'
         gensk.execute()
-        skyFile='temp/sky.rad'
+        skyFile = 'temp/sky.rad'
     else:
         skyFile = None
 

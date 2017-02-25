@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee API documentation</title>
-    <meta name="description" content="Honeybee core library." />
+    <title>honeybee.hbobject API documentation</title>
+    <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
 
@@ -984,36 +984,17 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#honeybee.e">e</a></li>
-    <li class="mono"><a href="#honeybee.lib">lib</a></li>
-  </ul>
-
-    </li>
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
-        <li class="mono"><a href="config.m.html">honeybee.config</a></li>
-        <li class="mono"><a href="dataoperation.m.html">honeybee.dataoperation</a></li>
-        <li class="mono"><a href="energyplus/index.html">honeybee.energyplus</a></li>
-        <li class="mono"><a href="geometryoperation.m.html">honeybee.geometryoperation</a></li>
-        <li class="mono"><a href="hbfensurface.m.html">honeybee.hbfensurface</a></li>
-        <li class="mono"><a href="hbobject.m.html">honeybee.hbobject</a></li>
-        <li class="mono"><a href="hbpointgroup.m.html">honeybee.hbpointgroup</a></li>
-        <li class="mono"><a href="hbshadesurface.m.html">honeybee.hbshadesurface</a></li>
-        <li class="mono"><a href="hbsurface.m.html">honeybee.hbsurface</a></li>
-        <li class="mono"><a href="hbzone.m.html">honeybee.hbzone</a></li>
-        <li class="mono"><a href="helper.m.html">honeybee.helper</a></li>
-        <li class="mono"><a href="radiance/index.html">honeybee.radiance</a></li>
-        <li class="mono"><a href="room.m.html">honeybee.room</a></li>
-        <li class="mono"><a href="surfacetype.m.html">honeybee.surfacetype</a></li>
-        <li class="mono"><a href="vectormath/index.html">honeybee.vectormath</a></li>
+        <li class="mono">
+        <span class="class_name"><a href="#honeybee.hbobject.HBObject">HBObject</a></span>
+        
+        </li>
       </ul>
     </li>
+
     </ul>
   </div>
 
@@ -1025,165 +1006,68 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee</span> module</h1>
-  <p>Honeybee core library.</p>
+  <h1 class="title"><span class="name">honeybee.hbobject</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee" class="source">
-    <pre><code>"""Honeybee core library."""
-import sys
-import os
-
-__dependencies = ('ladybug',)
-for lib in __dependencies:
-    if lib not in sys.modules:
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-    try:
-        __import__(lib)
-    except ImportError as e:
-        pass
-        # raise ImportError('Can\'t find {0} in sys.path.\n'
-        #                   'You need to install {0} to use honeybee.\n'
-        #                   'You can download {0} from\n'
-        #                   'https://github.com/ladybug-analysis-tools/{0}'
-        #                   .format(lib))
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbobject', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbobject" class="source">
+    <pre><code>lass HBObject(object):
+   """Base class for Honeybee Zone and Surface."""
+   @property
+   def isHBObject(self):
+       """Return True."""
+       return True
 </code></pre>
   </div>
 
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
+
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
       <div class="item">
-      <p id="honeybee.e" class="name">var <span class="ident">e</span></p>
+      <p id="honeybee.hbobject.HBObject" class="name">class <span class="ident">HBObject</span></p>
       
   
+    <div class="desc"><p>Base class for Honeybee Zone and Surface.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbobject.HBObject', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbobject.HBObject" class="source">
+    <pre><code>class HBObject(object):
+    """Base class for Honeybee Zone and Surface."""
+
+    @property
+    def isHBObject(self):
+        """Return True."""
+        return True
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.hbobject.HBObject">HBObject</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.hbobject.HBObject.isHBObject" class="name">var <span class="ident">isHBObject</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return True.</p></div>
   <div class="source_cont">
 </div>
 
+            </div>
       </div>
-      <div class="item">
-      <p id="honeybee.lib" class="name">var <span class="ident">lib</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
       </div>
 
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
-      <div class="item">
-      <p class="name"><a href="config.m.html">honeybee.config</a></p>
-      
-  
-    <div class="desc"><p>Honeybee configurations.</p>
-<p>Import this module in every module that you need to access Honeybee configurations.</p>
-<p>Usage:</p>
-<pre><code>import config
-print config.radlibPath
-print config.radbinPath
-print config.platform
-config.radbinPath = "c:/radiance/bin"
-</code></pre></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="dataoperation.m.html">honeybee.dataoperation</a></p>
-      
-  
-    <div class="desc"><p>Collection of functions for data operation.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="energyplus/index.html">honeybee.energyplus</a></p>
-      
-  
-    <div class="desc"><p>Honeybee EnergyPlus libraries.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="geometryoperation.m.html">honeybee.geometryoperation</a></p>
-      
-  
-    <div class="desc"><p>Collection of methods for geometrical operations.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="hbfensurface.m.html">honeybee.hbfensurface</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="hbobject.m.html">honeybee.hbobject</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="hbpointgroup.m.html">honeybee.hbpointgroup</a></p>
-      
-  
-    <div class="desc"><p>Honeybee PointGroup and TestPointGroup.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="hbshadesurface.m.html">honeybee.hbshadesurface</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="hbsurface.m.html">honeybee.hbsurface</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="hbzone.m.html">honeybee.hbzone</a></p>
-      
-  
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="helper.m.html">honeybee.helper</a></p>
-      
-  
-    <div class="desc"><p>A collection of auxiliary funtions for working with files and directories.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="radiance/index.html">honeybee.radiance</a></p>
-      
-  
-    <div class="desc"><p>Honeybee Radiance libraries.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="room.m.html">honeybee.room</a></p>
-      
-  
-    <div class="desc"><p>Honeybee test room.</p>
-<p>This class generates prototype rooms.</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="surfacetype.m.html">honeybee.surfacetype</a></p>
-      
-  
-    <div class="desc"><p>Honeybee surface types (e.g. wall, roof, etc.).</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="vectormath/index.html">honeybee.vectormath</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>

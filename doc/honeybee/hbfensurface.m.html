@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.hbsurface API documentation</title>
+    <title>honeybee.hbfensurface API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -989,23 +989,21 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.hbsurface.HBSurface">HBSurface</a></span>
+        <span class="class_name"><a href="#honeybee.hbfensurface.HBFenSurface">HBFenSurface</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.ToString">ToString</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.addFenestrationSurface">addFenestrationSurface</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.addFenestrationSurfaceBySize">addFenestrationSurfaceBySize</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.addPoint">addPoint</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.addPointList">addPointList</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.duplicate">duplicate</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.duplicateVertices">duplicateVertices</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.fromEPString">fromEPString</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.isNameSetByUser">isNameSetByUser</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.radStringToFile">radStringToFile</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.toEPString">toEPString</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.ToString">ToString</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.addPoint">addPoint</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.addPointList">addPointList</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.duplicate">duplicate</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.duplicateVertices">duplicateVertices</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.fromEPString">fromEPString</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.isNameSetByUser">isNameSetByUser</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.radStringToFile">radStringToFile</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.toEPString">toEPString</a></li>
+    <li class="mono"><a href="#honeybee.hbfensurface.HBFenSurface.toRadString">toRadString</a></li>
   </ul>
 
         </li>
@@ -1023,36 +1021,23 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.hbsurface</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.hbfensurface</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface" class="source">
     <pre><code>from _hbanalysissurface import HBAnalysisSurface
-from hbfensurface import HBFenSurface
-from vectormath.euclid import Vector3, Point3
-import os
 
 
-class HBSurface(HBAnalysisSurface):
-    """Base class for Honeybee surface.
+class HBFenSurface(HBAnalysisSurface):
+    """Honeybee fenestration surface.
 
-    Attributes:
+    Args:
         name: A unique string for surface name
         sortedPoints: A list of 3 points or more as tuple or list with three items
             (x, y, z). Points should be sorted. This class won't sort the points.
             If surfaces has multiple subsurfaces you can pass lists of point lists
             to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
-        surfaceType: Optional input for surface type. You can use any of the surface
-            types available from surfacetype libraries or use a float number to
-            indicate the type. If not indicated it will be assigned based on normal
-            angle of the surface which will be calculated from surface points.
-                0.0: Wall           0.5: UndergroundWall
-                1.0: Roof           1.5: UndergroundCeiling
-                2.0: Floor          2.25: UndergroundSlab
-                2.5: SlabOnGrade    2.75: ExposedFloor
-                3.0: Ceiling        4.0: AirWall
-                6.0: Context
         isNameSetByUser: If you want the name to be changed by honeybee any case
             set isNameSetByUser to True. Default is set to False which let Honeybee
             to rename the surface in cases like creating a newHBZone.
@@ -1063,54 +1048,56 @@ class HBSurface(HBAnalysisSurface):
 
     Usage:
 
-        pts = ((0, 0, 0), (10, 0, 0), (0, 0, 10))
-        hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True,
-                          isTypeSetByUser=True)
+        from honeybee.hbsurface import HBSurface
+        from honeybee.hbfensurface import HBFenSurface
 
-        print hbsrf.toRadString(includeMaterials=True)
+        # create a surface
+        pts = [(0, 0, 0), (10, 0, 0), (0, 0, 10)]
+        hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True)
 
-        > void plastic generic_wall
-        > 0
-        > 0
-        > 5 0.500 0.500 0.500 0.000 0.000
-        > generic_wall polygon 001
-        > 0
-        > 0
-        > 9
-        > 0 0 0
-        > 10 0 0
-        > 0 10 10
+        glzpts = [(1, 0, 1), (8, 0, 1), (1, 0, 8)]
+        glzsrf = HBFenSurface("glz_001", glzpts)
+
+        # add fenestration surface to hb surface
+        hbsrf.addFenestrationSurface(glzsrf)
+
+        # get full definiion of the surface including the fenestration
+        print hbsrf.toRadString(includeMaterials=True,
+                                includeChildrenSurfaces=True)
+
+        # save the definiion to a .rad file
+        hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", True, True)
     """
 
-    def __init__(self, name, sortedPoints=[], surfaceType=None,
-                 isNameSetByUser=False, isTypeSetByUser=False,
+    def __init__(self, name, sortedPoints=None, isNameSetByUser=False,
                  radProperties=None, epProperties=None):
         """Init honeybee surface."""
+        _surfaceType = 5
+        _isTypeSetByUser = True
+        sortedPoints = sortedPoints or []
+
         HBAnalysisSurface.__init__(self, name, sortedPoints=sortedPoints,
-                                   surfaceType=surfaceType,
+                                   surfaceType=_surfaceType,
                                    isNameSetByUser=isNameSetByUser,
-                                   isTypeSetByUser=isTypeSetByUser,
+                                   isTypeSetByUser=_isTypeSetByUser,
                                    radProperties=radProperties,
                                    epProperties=epProperties)
+        self.__isChildSurface = True
         self.__parent = None
-        self.__childSurfaces = []
 
     # TODO: Parse EnergyPlus properties
     @classmethod
     def fromEPString(cls, EPString):
-        """Init Honeybee surface from an EPString.
+        """Init Honeybee fenestration surface from an EPString.
 
         Args:
-            EPString: The full EPString for an EnergyPlus surface.
+            EPString: The full EPString for an EnergyPlus fenestration.
         """
-        _types = {'Wall': 0, 'Roof': 1, 'Floor': 2, 'Ceiling': 3}
-
         # clean input EPString - split based on comma
         _segments = EPString.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
         name = _segments[1]
-        _type = _types[_segments[2].capitalize()]
         _pts = range((len(_segments) - 11) / 3)
 
         # create points
@@ -1123,23 +1110,17 @@ class HBSurface(HBAnalysisSurface):
                 )
 
         # create the surfaceString
-        return cls(name, sortedPoints=_pts, surfaceType=_type,
-                   isNameSetByUser=True, isTypeSetByUser=True)
+        return cls(name, sortedPoints=_pts, isNameSetByUser=True)
 
     @property
-    def isHBSurface(self):
-        """Return True for HBSurface."""
+    def isHBFenSurface(self):
+        """Return True for HBFenSurface."""
         return True
 
     @property
     def isChildSurface(self):
-        """Return False for HBSurface."""
-        return False
-
-    @property
-    def hasChildSurfaces(self):
-        """Return True if Honeybee surface has Fenestration surrfaces."""
-        return len(self.__childSurfaces) != 0
+        """Return True if Honeybee surface is Fenestration Surface."""
+        return self.__isChildSurface
 
     @property
     def parent(self):
@@ -1149,106 +1130,8 @@ class HBSurface(HBAnalysisSurface):
     @parent.setter
     def parent(self, parent):
         """Set parent zone."""
-        if hasattr(parent, 'isHBZone'):
+        if hasattr(parent, 'isHBSurface'):
             self.__parent = parent
-
-    @property
-    def childrenSurfaces(self):
-        """Get children surfaces."""
-        return self.__childSurfaces
-
-    def addFenestrationSurfaceBySize(self, name, width, height, sillHeight=1,
-                                     radianceMaterial=None):
-        """Add rectangular fenestration surface to surface.
-
-        Args:
-            width: Opening width. Opening will be centered in HBSurface.
-            height: Opening height.
-            sillHeight: Sill height (default: 1).
-            radianceMaterial: Optional radiance material for this fenestration.
-        """
-        for pts in self.points:
-            assert len(pts) == 4, 'Length of points should be 4.'
-            pt0 = Point3(*pts[0])
-            pt1 = Point3(*pts[1])
-            pt3 = Point3(*pts[-1])
-            xAxis = Vector3(*(pt1 - pt0)).normalized()
-            yAxis = Vector3(*(pt3 - pt0)).normalized()
-            srfWidth = pt0.distance(pt1)
-            srfHeight = pt0.distance(pt3)
-
-            assert srfWidth > width, \
-                'Opening width [{}] should be smaller than ' \
-                'HBSurface width [{}].'.format(srfWidth, width)
-
-            assert srfHeight > height + sillHeight, \
-                'Opening height plus sill height [{}] should be smaller than ' \
-                'HBSurface height [{}].'.format(srfHeight + sillHeight, height)
-
-            # create fenestration surface
-            xGap = (srfWidth - width) / 2.0
-            glzPt0 = pt0 + (xGap * xAxis) + (sillHeight * yAxis)
-            glzPt1 = pt0 + ((xGap + width) * xAxis) + (sillHeight * yAxis)
-            glzPt2 = pt0 + ((xGap + width) * xAxis) + ((sillHeight + height) * yAxis)
-            glzPt3 = pt0 + (xGap * xAxis) + ((sillHeight + height) * yAxis)
-
-            glzsrf = HBFenSurface(name, [glzPt0, glzPt1, glzPt2, glzPt3])
-
-            if radianceMaterial:
-                glzsrf.radianceMaterial = radianceMaterial
-
-            self.addFenestrationSurface(glzsrf)
-
-    def addFenestrationSurface(self, fenestrationSurface):
-        """Add a fenestration surface to HB surface."""
-        assert hasattr(fenestrationSurface, 'isHBFenSurface'), \
-            '{} is not a HBFenSurfaces'.format(type(fenestrationSurface))
-
-        self.__childSurfaces.append(fenestrationSurface)
-
-        # set up parent object if it's not set
-        fenestrationSurface.parent = self
-
-    # TODO: implement joinOutput argument
-    def toRadString(self, includeMaterials=False,
-                    includeChildrenSurfaces=True, joinOutput=True, reverse=False):
-        """Return Radiance definition for this surface as a string."""
-        surfaceString = super(HBSurface, self).toRadString(includeMaterials,
-                                                           joinOutput, reverse)
-
-        if includeChildrenSurfaces and self.hasChildSurfaces:
-            childrenSurfacesString = [
-                childSurface.toRadString(includeMaterials, joinOutput,
-                                         reverse=reverse)
-                for childSurface in self.childrenSurfaces
-            ]
-            return "%s\n%s" % (surfaceString,
-                               "\n".join(childrenSurfacesString))
-        else:
-
-            return surfaceString
-
-    def radStringToFile(self, filePath, includeMaterials=False,
-                        includeChildrenSurfaces=True, reverse=False):
-        """Write Radiance definition for this surface to a file.
-
-        Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/geo.rad)
-
-        Returns:
-            True in case of success. False in case of failure.
-        """
-        assert os.path.isdir(os.path.split(filePath)[0]), \
-            "Cannot find %s." % os.path.split(filePath)[0]
-
-        with open(filePath, "w") as outf:
-            try:
-                outf.write(self.toRadString(
-                    includeMaterials, includeChildrenSurfaces, reverse=reverse))
-                return True
-            except Exception as e:
-                print "Failed to write %s to file:\n%s" % (self.name, e)
-                return False
 </code></pre>
   </div>
 
@@ -1260,26 +1143,16 @@ class HBSurface(HBAnalysisSurface):
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.hbsurface.HBSurface" class="name">class <span class="ident">HBSurface</span></p>
+      <p id="honeybee.hbfensurface.HBFenSurface" class="name">class <span class="ident">HBFenSurface</span></p>
       
   
-    <div class="desc"><p>Base class for Honeybee surface.</p>
-<p>Attributes:
+    <div class="desc"><p>Honeybee fenestration surface.</p>
+<p>Args:
     name: A unique string for surface name
     sortedPoints: A list of 3 points or more as tuple or list with three items
         (x, y, z). Points should be sorted. This class won't sort the points.
         If surfaces has multiple subsurfaces you can pass lists of point lists
         to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
-    surfaceType: Optional input for surface type. You can use any of the surface
-        types available from surfacetype libraries or use a float number to
-        indicate the type. If not indicated it will be assigned based on normal
-        angle of the surface which will be calculated from surface points.
-            0.0: Wall           0.5: UndergroundWall
-            1.0: Roof           1.5: UndergroundCeiling
-            2.0: Floor          2.25: UndergroundSlab
-            2.5: SlabOnGrade    2.75: ExposedFloor
-            3.0: Ceiling        4.0: AirWall
-            6.0: Context
     isNameSetByUser: If you want the name to be changed by honeybee any case
         set isNameSetByUser to True. Default is set to False which let Honeybee
         to rename the surface in cases like creating a newHBZone.
@@ -1288,46 +1161,38 @@ class HBSurface(HBAnalysisSurface):
     epProperties: EnergyPlus properties for this surface. If empty default
         epProperties will be assigned to surface by Honeybee.</p>
 <p>Usage:</p>
-<pre><code>pts = ((0, 0, 0), (10, 0, 0), (0, 0, 10))
-hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True,
-                  isTypeSetByUser=True)
+<pre><code>from honeybee.hbsurface import HBSurface
+from honeybee.hbfensurface import HBFenSurface
 
-print hbsrf.toRadString(includeMaterials=True)
+# create a surface
+pts = [(0, 0, 0), (10, 0, 0), (0, 0, 10)]
+hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True)
 
-&gt; void plastic generic_wall
-&gt; 0
-&gt; 0
-&gt; 5 0.500 0.500 0.500 0.000 0.000
-&gt; generic_wall polygon 001
-&gt; 0
-&gt; 0
-&gt; 9
-&gt; 0 0 0
-&gt; 10 0 0
-&gt; 0 10 10
+glzpts = [(1, 0, 1), (8, 0, 1), (1, 0, 8)]
+glzsrf = HBFenSurface("glz_001", glzpts)
+
+# add fenestration surface to hb surface
+hbsrf.addFenestrationSurface(glzsrf)
+
+# get full definiion of the surface including the fenestration
+print hbsrf.toRadString(includeMaterials=True,
+                        includeChildrenSurfaces=True)
+
+# save the definiion to a .rad file
+hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", True, True)
 </code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface" class="source">
-    <pre><code>class HBSurface(HBAnalysisSurface):
-    """Base class for Honeybee surface.
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface" class="source">
+    <pre><code>class HBFenSurface(HBAnalysisSurface):
+    """Honeybee fenestration surface.
 
-    Attributes:
+    Args:
         name: A unique string for surface name
         sortedPoints: A list of 3 points or more as tuple or list with three items
             (x, y, z). Points should be sorted. This class won't sort the points.
             If surfaces has multiple subsurfaces you can pass lists of point lists
             to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
-        surfaceType: Optional input for surface type. You can use any of the surface
-            types available from surfacetype libraries or use a float number to
-            indicate the type. If not indicated it will be assigned based on normal
-            angle of the surface which will be calculated from surface points.
-                0.0: Wall           0.5: UndergroundWall
-                1.0: Roof           1.5: UndergroundCeiling
-                2.0: Floor          2.25: UndergroundSlab
-                2.5: SlabOnGrade    2.75: ExposedFloor
-                3.0: Ceiling        4.0: AirWall
-                6.0: Context
         isNameSetByUser: If you want the name to be changed by honeybee any case
             set isNameSetByUser to True. Default is set to False which let Honeybee
             to rename the surface in cases like creating a newHBZone.
@@ -1338,54 +1203,56 @@ print hbsrf.toRadString(includeMaterials=True)
 
     Usage:
 
-        pts = ((0, 0, 0), (10, 0, 0), (0, 0, 10))
-        hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True,
-                          isTypeSetByUser=True)
+        from honeybee.hbsurface import HBSurface
+        from honeybee.hbfensurface import HBFenSurface
 
-        print hbsrf.toRadString(includeMaterials=True)
+        # create a surface
+        pts = [(0, 0, 0), (10, 0, 0), (0, 0, 10)]
+        hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True)
 
-        > void plastic generic_wall
-        > 0
-        > 0
-        > 5 0.500 0.500 0.500 0.000 0.000
-        > generic_wall polygon 001
-        > 0
-        > 0
-        > 9
-        > 0 0 0
-        > 10 0 0
-        > 0 10 10
+        glzpts = [(1, 0, 1), (8, 0, 1), (1, 0, 8)]
+        glzsrf = HBFenSurface("glz_001", glzpts)
+
+        # add fenestration surface to hb surface
+        hbsrf.addFenestrationSurface(glzsrf)
+
+        # get full definiion of the surface including the fenestration
+        print hbsrf.toRadString(includeMaterials=True,
+                                includeChildrenSurfaces=True)
+
+        # save the definiion to a .rad file
+        hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", True, True)
     """
 
-    def __init__(self, name, sortedPoints=[], surfaceType=None,
-                 isNameSetByUser=False, isTypeSetByUser=False,
+    def __init__(self, name, sortedPoints=None, isNameSetByUser=False,
                  radProperties=None, epProperties=None):
         """Init honeybee surface."""
+        _surfaceType = 5
+        _isTypeSetByUser = True
+        sortedPoints = sortedPoints or []
+
         HBAnalysisSurface.__init__(self, name, sortedPoints=sortedPoints,
-                                   surfaceType=surfaceType,
+                                   surfaceType=_surfaceType,
                                    isNameSetByUser=isNameSetByUser,
-                                   isTypeSetByUser=isTypeSetByUser,
+                                   isTypeSetByUser=_isTypeSetByUser,
                                    radProperties=radProperties,
                                    epProperties=epProperties)
+        self.__isChildSurface = True
         self.__parent = None
-        self.__childSurfaces = []
 
     # TODO: Parse EnergyPlus properties
     @classmethod
     def fromEPString(cls, EPString):
-        """Init Honeybee surface from an EPString.
+        """Init Honeybee fenestration surface from an EPString.
 
         Args:
-            EPString: The full EPString for an EnergyPlus surface.
+            EPString: The full EPString for an EnergyPlus fenestration.
         """
-        _types = {'Wall': 0, 'Roof': 1, 'Floor': 2, 'Ceiling': 3}
-
         # clean input EPString - split based on comma
         _segments = EPString.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
         name = _segments[1]
-        _type = _types[_segments[2].capitalize()]
         _pts = range((len(_segments) - 11) / 3)
 
         # create points
@@ -1398,23 +1265,17 @@ print hbsrf.toRadString(includeMaterials=True)
                 )
 
         # create the surfaceString
-        return cls(name, sortedPoints=_pts, surfaceType=_type,
-                   isNameSetByUser=True, isTypeSetByUser=True)
+        return cls(name, sortedPoints=_pts, isNameSetByUser=True)
 
     @property
-    def isHBSurface(self):
-        """Return True for HBSurface."""
+    def isHBFenSurface(self):
+        """Return True for HBFenSurface."""
         return True
 
     @property
     def isChildSurface(self):
-        """Return False for HBSurface."""
-        return False
-
-    @property
-    def hasChildSurfaces(self):
-        """Return True if Honeybee surface has Fenestration surrfaces."""
-        return len(self.__childSurfaces) != 0
+        """Return True if Honeybee surface is Fenestration Surface."""
+        return self.__isChildSurface
 
     @property
     def parent(self):
@@ -1424,106 +1285,8 @@ print hbsrf.toRadString(includeMaterials=True)
     @parent.setter
     def parent(self, parent):
         """Set parent zone."""
-        if hasattr(parent, 'isHBZone'):
+        if hasattr(parent, 'isHBSurface'):
             self.__parent = parent
-
-    @property
-    def childrenSurfaces(self):
-        """Get children surfaces."""
-        return self.__childSurfaces
-
-    def addFenestrationSurfaceBySize(self, name, width, height, sillHeight=1,
-                                     radianceMaterial=None):
-        """Add rectangular fenestration surface to surface.
-
-        Args:
-            width: Opening width. Opening will be centered in HBSurface.
-            height: Opening height.
-            sillHeight: Sill height (default: 1).
-            radianceMaterial: Optional radiance material for this fenestration.
-        """
-        for pts in self.points:
-            assert len(pts) == 4, 'Length of points should be 4.'
-            pt0 = Point3(*pts[0])
-            pt1 = Point3(*pts[1])
-            pt3 = Point3(*pts[-1])
-            xAxis = Vector3(*(pt1 - pt0)).normalized()
-            yAxis = Vector3(*(pt3 - pt0)).normalized()
-            srfWidth = pt0.distance(pt1)
-            srfHeight = pt0.distance(pt3)
-
-            assert srfWidth > width, \
-                'Opening width [{}] should be smaller than ' \
-                'HBSurface width [{}].'.format(srfWidth, width)
-
-            assert srfHeight > height + sillHeight, \
-                'Opening height plus sill height [{}] should be smaller than ' \
-                'HBSurface height [{}].'.format(srfHeight + sillHeight, height)
-
-            # create fenestration surface
-            xGap = (srfWidth - width) / 2.0
-            glzPt0 = pt0 + (xGap * xAxis) + (sillHeight * yAxis)
-            glzPt1 = pt0 + ((xGap + width) * xAxis) + (sillHeight * yAxis)
-            glzPt2 = pt0 + ((xGap + width) * xAxis) + ((sillHeight + height) * yAxis)
-            glzPt3 = pt0 + (xGap * xAxis) + ((sillHeight + height) * yAxis)
-
-            glzsrf = HBFenSurface(name, [glzPt0, glzPt1, glzPt2, glzPt3])
-
-            if radianceMaterial:
-                glzsrf.radianceMaterial = radianceMaterial
-
-            self.addFenestrationSurface(glzsrf)
-
-    def addFenestrationSurface(self, fenestrationSurface):
-        """Add a fenestration surface to HB surface."""
-        assert hasattr(fenestrationSurface, 'isHBFenSurface'), \
-            '{} is not a HBFenSurfaces'.format(type(fenestrationSurface))
-
-        self.__childSurfaces.append(fenestrationSurface)
-
-        # set up parent object if it's not set
-        fenestrationSurface.parent = self
-
-    # TODO: implement joinOutput argument
-    def toRadString(self, includeMaterials=False,
-                    includeChildrenSurfaces=True, joinOutput=True, reverse=False):
-        """Return Radiance definition for this surface as a string."""
-        surfaceString = super(HBSurface, self).toRadString(includeMaterials,
-                                                           joinOutput, reverse)
-
-        if includeChildrenSurfaces and self.hasChildSurfaces:
-            childrenSurfacesString = [
-                childSurface.toRadString(includeMaterials, joinOutput,
-                                         reverse=reverse)
-                for childSurface in self.childrenSurfaces
-            ]
-            return "%s\n%s" % (surfaceString,
-                               "\n".join(childrenSurfacesString))
-        else:
-
-            return surfaceString
-
-    def radStringToFile(self, filePath, includeMaterials=False,
-                        includeChildrenSurfaces=True, reverse=False):
-        """Write Radiance definition for this surface to a file.
-
-        Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/geo.rad)
-
-        Returns:
-            True in case of success. False in case of failure.
-        """
-        assert os.path.isdir(os.path.split(filePath)[0]), \
-            "Cannot find %s." % os.path.split(filePath)[0]
-
-        with open(filePath, "w") as outf:
-            try:
-                outf.write(self.toRadString(
-                    includeMaterials, includeChildrenSurfaces, reverse=reverse))
-                return True
-            except Exception as e:
-                print "Failed to write %s to file:\n%s" % (self.name, e)
-                return False
 </code></pre>
   </div>
 </div>
@@ -1532,14 +1295,14 @@ print hbsrf.toRadString(includeMaterials=True)
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.hbsurface.HBSurface">HBSurface</a></li>
+          <li><a href="#honeybee.hbfensurface.HBFenSurface">HBFenSurface</a></li>
           <li>honeybee._hbanalysissurface.HBAnalysisSurface</li>
           <li>honeybee.hbobject.HBObject</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.absolutePoints" class="name">var <span class="ident">absolutePoints</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.absolutePoints" class="name">var <span class="ident">absolutePoints</span></p>
             
 
             
@@ -1552,18 +1315,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.childrenSurfaces" class="name">var <span class="ident">childrenSurfaces</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Get children surfaces.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.energyPlusConstruction" class="name">var <span class="ident">energyPlusConstruction</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.energyPlusConstruction" class="name">var <span class="ident">energyPlusConstruction</span></p>
             
 
             
@@ -1574,7 +1326,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.energyPlusMaterials" class="name">var <span class="ident">energyPlusMaterials</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.energyPlusMaterials" class="name">var <span class="ident">energyPlusMaterials</span></p>
             
 
             
@@ -1585,7 +1337,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.epProperties" class="name">var <span class="ident">epProperties</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.epProperties" class="name">var <span class="ident">epProperties</span></p>
             
 
             
@@ -1596,7 +1348,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.hasBSDFRadianceMaterial" class="name">var <span class="ident">hasBSDFRadianceMaterial</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.hasBSDFRadianceMaterial" class="name">var <span class="ident">hasBSDFRadianceMaterial</span></p>
             
 
             
@@ -1607,18 +1359,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.hasChildSurfaces" class="name">var <span class="ident">hasChildSurfaces</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Return True if Honeybee surface has Fenestration surrfaces.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.hasRadianceGlassMaterial" class="name">var <span class="ident">hasRadianceGlassMaterial</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.hasRadianceGlassMaterial" class="name">var <span class="ident">hasRadianceGlassMaterial</span></p>
             
 
             
@@ -1629,7 +1370,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isCeiling" class="name">var <span class="ident">isCeiling</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isCeiling" class="name">var <span class="ident">isCeiling</span></p>
             
 
             
@@ -1640,18 +1381,18 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isChildSurface" class="name">var <span class="ident">isChildSurface</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isChildSurface" class="name">var <span class="ident">isChildSurface</span></p>
             
 
             
   
-    <div class="desc"><p>Return False for HBSurface.</p></div>
+    <div class="desc"><p>Return True if Honeybee surface is Fenestration Surface.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isFloor" class="name">var <span class="ident">isFloor</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isFloor" class="name">var <span class="ident">isFloor</span></p>
             
 
             
@@ -1662,7 +1403,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isHBAnalysisSurface" class="name">var <span class="ident">isHBAnalysisSurface</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isHBAnalysisSurface" class="name">var <span class="ident">isHBAnalysisSurface</span></p>
             
 
             
@@ -1673,18 +1414,18 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isHBFenSurface" class="name">var <span class="ident">isHBFenSurface</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isHBFenSurface" class="name">var <span class="ident">isHBFenSurface</span></p>
             
 
             
   
-    <div class="desc"><p>Return True for HBFenSurfaces.</p></div>
+    <div class="desc"><p>Return True for HBFenSurface.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isHBObject" class="name">var <span class="ident">isHBObject</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isHBObject" class="name">var <span class="ident">isHBObject</span></p>
             
 
             
@@ -1695,18 +1436,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isHBSurface" class="name">var <span class="ident">isHBSurface</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Return True for HBSurface.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isRelativeSystem" class="name">var <span class="ident">isRelativeSystem</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isRelativeSystem" class="name">var <span class="ident">isRelativeSystem</span></p>
             
 
             
@@ -1717,7 +1447,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isTypeSetByUser" class="name">var <span class="ident">isTypeSetByUser</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isTypeSetByUser" class="name">var <span class="ident">isTypeSetByUser</span></p>
             
 
             
@@ -1728,7 +1458,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isWall" class="name">var <span class="ident">isWall</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isWall" class="name">var <span class="ident">isWall</span></p>
             
 
             
@@ -1739,7 +1469,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.isWindow" class="name">var <span class="ident">isWindow</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.isWindow" class="name">var <span class="ident">isWindow</span></p>
             
 
             
@@ -1750,7 +1480,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.name" class="name">var <span class="ident">name</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.name" class="name">var <span class="ident">name</span></p>
             
 
             
@@ -1761,7 +1491,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.normal" class="name">var <span class="ident">normal</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.normal" class="name">var <span class="ident">normal</span></p>
             
 
             
@@ -1772,7 +1502,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.origin" class="name">var <span class="ident">origin</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.origin" class="name">var <span class="ident">origin</span></p>
             
 
             
@@ -1784,7 +1514,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.parent" class="name">var <span class="ident">parent</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.parent" class="name">var <span class="ident">parent</span></p>
             
 
             
@@ -1795,7 +1525,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.points" class="name">var <span class="ident">points</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.points" class="name">var <span class="ident">points</span></p>
             
 
             
@@ -1806,7 +1536,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.radProperties" class="name">var <span class="ident">radProperties</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.radProperties" class="name">var <span class="ident">radProperties</span></p>
             
 
             
@@ -1817,7 +1547,7 @@ as self.points.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.radianceMaterial" class="name">var <span class="ident">radianceMaterial</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.radianceMaterial" class="name">var <span class="ident">radianceMaterial</span></p>
             
 
             
@@ -1836,7 +1566,7 @@ HBSrf.radianceMaterial = radianceMaterial
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.radianceMaterials" class="name">var <span class="ident">radianceMaterials</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.radianceMaterials" class="name">var <span class="ident">radianceMaterials</span></p>
             
 
             
@@ -1852,7 +1582,7 @@ material for the surface itself.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.surfaceType" class="name">var <span class="ident">surfaceType</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.surfaceType" class="name">var <span class="ident">surfaceType</span></p>
             
 
             
@@ -1863,7 +1593,7 @@ material for the surface itself.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.surfaceTypes" class="name">var <span class="ident">surfaceTypes</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.surfaceTypes" class="name">var <span class="ident">surfaceTypes</span></p>
             
 
             
@@ -1874,7 +1604,7 @@ material for the surface itself.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.hbsurface.HBSurface.upnormal" class="name">var <span class="ident">upnormal</span></p>
+            <p id="honeybee.hbfensurface.HBFenSurface.upnormal" class="name">var <span class="ident">upnormal</span></p>
             
 
             
@@ -1888,8 +1618,8 @@ material for the surface itself.</p></div>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, sortedPoints=[], surfaceType=None, isNameSetByUser=False, isTypeSetByUser=False, radProperties=None, epProperties=None)</p>
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, sortedPoints=None, isNameSetByUser=False, radProperties=None, epProperties=None)</p>
     </div>
     
 
@@ -1897,20 +1627,22 @@ material for the surface itself.</p></div>
   
     <div class="desc"><p>Init honeybee surface.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.__init__" class="source">
-    <pre><code>def __init__(self, name, sortedPoints=[], surfaceType=None,
-             isNameSetByUser=False, isTypeSetByUser=False,
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.__init__" class="source">
+    <pre><code>def __init__(self, name, sortedPoints=None, isNameSetByUser=False,
              radProperties=None, epProperties=None):
     """Init honeybee surface."""
+    _surfaceType = 5
+    _isTypeSetByUser = True
+    sortedPoints = sortedPoints or []
     HBAnalysisSurface.__init__(self, name, sortedPoints=sortedPoints,
-                               surfaceType=surfaceType,
+                               surfaceType=_surfaceType,
                                isNameSetByUser=isNameSetByUser,
-                               isTypeSetByUser=isTypeSetByUser,
+                               isTypeSetByUser=_isTypeSetByUser,
                                radProperties=radProperties,
                                epProperties=epProperties)
+    self.__isChildSurface = True
     self.__parent = None
-    self.__childSurfaces = []
 </code></pre>
   </div>
 </div>
@@ -1919,7 +1651,7 @@ material for the surface itself.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.ToString">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.ToString">
     <p>def <span class="ident">ToString</span>(</p><p>self)</p>
     </div>
     
@@ -1928,8 +1660,8 @@ material for the surface itself.</p></div>
   
     <div class="desc"><p>Overwrite .NET ToString method.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.ToString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.ToString" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.ToString" class="source">
     <pre><code>def ToString(self):
     """Overwrite .NET ToString method."""
     return self.__repr__()
@@ -1941,91 +1673,7 @@ material for the surface itself.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.addFenestrationSurface">
-    <p>def <span class="ident">addFenestrationSurface</span>(</p><p>self, fenestrationSurface)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Add a fenestration surface to HB surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.addFenestrationSurface', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.addFenestrationSurface" class="source">
-    <pre><code>def addFenestrationSurface(self, fenestrationSurface):
-    """Add a fenestration surface to HB surface."""
-    assert hasattr(fenestrationSurface, 'isHBFenSurface'), \
-        '{} is not a HBFenSurfaces'.format(type(fenestrationSurface))
-    self.__childSurfaces.append(fenestrationSurface)
-    # set up parent object if it's not set
-    fenestrationSurface.parent = self
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.addFenestrationSurfaceBySize">
-    <p>def <span class="ident">addFenestrationSurfaceBySize</span>(</p><p>self, name, width, height, sillHeight=1, radianceMaterial=None)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Add rectangular fenestration surface to surface.</p>
-<p>Args:
-    width: Opening width. Opening will be centered in HBSurface.
-    height: Opening height.
-    sillHeight: Sill height (default: 1).
-    radianceMaterial: Optional radiance material for this fenestration.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.addFenestrationSurfaceBySize', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.addFenestrationSurfaceBySize" class="source">
-    <pre><code>def addFenestrationSurfaceBySize(self, name, width, height, sillHeight=1,
-                                 radianceMaterial=None):
-    """Add rectangular fenestration surface to surface.
-    Args:
-        width: Opening width. Opening will be centered in HBSurface.
-        height: Opening height.
-        sillHeight: Sill height (default: 1).
-        radianceMaterial: Optional radiance material for this fenestration.
-    """
-    for pts in self.points:
-        assert len(pts) == 4, 'Length of points should be 4.'
-        pt0 = Point3(*pts[0])
-        pt1 = Point3(*pts[1])
-        pt3 = Point3(*pts[-1])
-        xAxis = Vector3(*(pt1 - pt0)).normalized()
-        yAxis = Vector3(*(pt3 - pt0)).normalized()
-        srfWidth = pt0.distance(pt1)
-        srfHeight = pt0.distance(pt3)
-        assert srfWidth > width, \
-            'Opening width [{}] should be smaller than ' \
-            'HBSurface width [{}].'.format(srfWidth, width)
-        assert srfHeight > height + sillHeight, \
-            'Opening height plus sill height [{}] should be smaller than ' \
-            'HBSurface height [{}].'.format(srfHeight + sillHeight, height)
-        # create fenestration surface
-        xGap = (srfWidth - width) / 2.0
-        glzPt0 = pt0 + (xGap * xAxis) + (sillHeight * yAxis)
-        glzPt1 = pt0 + ((xGap + width) * xAxis) + (sillHeight * yAxis)
-        glzPt2 = pt0 + ((xGap + width) * xAxis) + ((sillHeight + height) * yAxis)
-        glzPt3 = pt0 + (xGap * xAxis) + ((sillHeight + height) * yAxis)
-        glzsrf = HBFenSurface(name, [glzPt0, glzPt1, glzPt2, glzPt3])
-        if radianceMaterial:
-            glzsrf.radianceMaterial = radianceMaterial
-        self.addFenestrationSurface(glzsrf)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.addPoint">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.addPoint">
     <p>def <span class="ident">addPoint</span>(</p><p>self, pt, subsurfaceNumber=-1)</p>
     </div>
     
@@ -2038,8 +1686,8 @@ material for the surface itself.</p></div>
     subsurfaceNumber: An optional input to indicate the subsurface that
     point should be added to (Default is -1)</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.addPoint', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.addPoint" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.addPoint', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.addPoint" class="source">
     <pre><code>def addPoint(self, pt, subsurfaceNumber=-1):
     """Add a single point to current surface points.
     Args:
@@ -2064,7 +1712,7 @@ material for the surface itself.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.addPointList">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.addPointList">
     <p>def <span class="ident">addPointList</span>(</p><p>self, pts, removeCurrentPoints=False)</p>
     </div>
     
@@ -2079,8 +1727,8 @@ material for the surface itself.</p></div>
     removeCurrentPoints: Set to True to remove current points.
         (Default: False)</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.addPointList', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.addPointList" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.addPointList', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.addPointList" class="source">
     <pre><code>def addPointList(self, pts, removeCurrentPoints=False):
     """Add new list of points to surface points.
     Args:
@@ -2119,7 +1767,7 @@ material for the surface itself.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.duplicate">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.duplicate">
     <p>def <span class="ident">duplicate</span>(</p><p>self)</p>
     </div>
     
@@ -2128,8 +1776,8 @@ material for the surface itself.</p></div>
   
     <div class="desc"><p>Copy honeybee surface.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.duplicate', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.duplicate" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.duplicate', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.duplicate" class="source">
     <pre><code>def duplicate(self):
     """Copy honeybee surface."""
     return copy.deepcopy(self)
@@ -2141,7 +1789,7 @@ material for the surface itself.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.duplicateVertices">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.duplicateVertices">
     <p>def <span class="ident">duplicateVertices</span>(</p><p>self)</p>
     </div>
     
@@ -2150,8 +1798,8 @@ material for the surface itself.</p></div>
   
     <div class="desc"><p>Duplicate surface vertices.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.duplicateVertices', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.duplicateVertices" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.duplicateVertices', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.duplicateVertices" class="source">
     <pre><code>def duplicateVertices(self):
     """Duplicate surface vertices."""
     if self.isChildSurface or not self.hasChildSurfaces:
@@ -2170,31 +1818,29 @@ material for the surface itself.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.fromEPString">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.fromEPString">
     <p>def <span class="ident">fromEPString</span>(</p><p>cls, EPString)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Init Honeybee surface from an EPString.</p>
+    <div class="desc"><p>Init Honeybee fenestration surface from an EPString.</p>
 <p>Args:
-    EPString: The full EPString for an EnergyPlus surface.</p></div>
+    EPString: The full EPString for an EnergyPlus fenestration.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.fromEPString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.fromEPString" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.fromEPString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.fromEPString" class="source">
     <pre><code>@classmethod
 def fromEPString(cls, EPString):
-    """Init Honeybee surface from an EPString.
+    """Init Honeybee fenestration surface from an EPString.
     Args:
-        EPString: The full EPString for an EnergyPlus surface.
+        EPString: The full EPString for an EnergyPlus fenestration.
     """
-    _types = {'Wall': 0, 'Roof': 1, 'Floor': 2, 'Ceiling': 3}
     # clean input EPString - split based on comma
     _segments = EPString.replace("\t", "") \
         .replace(" ", "").replace(";", "").split(",")
     name = _segments[1]
-    _type = _types[_segments[2].capitalize()]
     _pts = range((len(_segments) - 11) / 3)
     # create points
     for count, i in enumerate(xrange(11, len(_segments), 3)):
@@ -2205,8 +1851,7 @@ def fromEPString(cls, EPString):
                 "%s is an invalid value for points." % _segments[i: i + 3]
             )
     # create the surfaceString
-    return cls(name, sortedPoints=_pts, surfaceType=_type,
-               isNameSetByUser=True, isTypeSetByUser=True)
+    return cls(name, sortedPoints=_pts, isNameSetByUser=True)
 </code></pre>
   </div>
 </div>
@@ -2215,7 +1860,7 @@ def fromEPString(cls, EPString):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.isNameSetByUser">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.isNameSetByUser">
     <p>def <span class="ident">isNameSetByUser</span>(</p><p>self)</p>
     </div>
     
@@ -2225,8 +1870,8 @@ def fromEPString(cls, EPString):
     <div class="desc"><p>Return if name is set by user.</p>
 <p>If name is set by user the surface will never be renamed automatically.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.isNameSetByUser', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.isNameSetByUser" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.isNameSetByUser', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.isNameSetByUser" class="source">
     <pre><code>def isNameSetByUser(self):
     """Return if name is set by user.
     If name is set by user the surface will never be renamed automatically.
@@ -2240,8 +1885,8 @@ def fromEPString(cls, EPString):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.radStringToFile">
-    <p>def <span class="ident">radStringToFile</span>(</p><p>self, filePath, includeMaterials=False, includeChildrenSurfaces=True, reverse=False)</p>
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.radStringToFile">
+    <p>def <span class="ident">radStringToFile</span>(</p><p>self, filePath, includeMaterials=False, reverse=False)</p>
     </div>
     
 
@@ -2253,10 +1898,9 @@ def fromEPString(cls, EPString):
 <p>Returns:
     True in case of success. False in case of failure.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.radStringToFile', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.radStringToFile" class="source">
-    <pre><code>def radStringToFile(self, filePath, includeMaterials=False,
-                    includeChildrenSurfaces=True, reverse=False):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.radStringToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.radStringToFile" class="source">
+    <pre><code>def radStringToFile(self, filePath, includeMaterials=False, reverse=False):
     """Write Radiance definition for this surface to a file.
     Args:
         filePath: Full path for a valid file path (e.g. c:/ladybug/geo.rad)
@@ -2267,8 +1911,8 @@ def fromEPString(cls, EPString):
         "Cannot find %s." % os.path.split(filePath)[0]
     with open(filePath, "w") as outf:
         try:
-            outf.write(self.toRadString(
-                includeMaterials, includeChildrenSurfaces, reverse=reverse))
+            outf.write(self.toRadString(includeMaterials=includeMaterials,
+                                        reverse=reverse))
             return True
         except Exception as e:
             print "Failed to write %s to file:\n%s" % (self.name, e)
@@ -2281,7 +1925,7 @@ def fromEPString(cls, EPString):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.toEPString">
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.toEPString">
     <p>def <span class="ident">toEPString</span>(</p><p>self, includeConstruction=False, includeMaterials=False)</p>
     </div>
     
@@ -2290,8 +1934,8 @@ def fromEPString(cls, EPString):
   
     <div class="desc"><p>Return EnergyPlus definition for this surface.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.toEPString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.toEPString" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.toEPString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.toEPString" class="source">
     <pre><code>def toEPString(self, includeConstruction=False, includeMaterials=False):
     """Return EnergyPlus definition for this surface."""
     raise NotImplementedError
@@ -2303,32 +1947,53 @@ def fromEPString(cls, EPString):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.toRadString">
-    <p>def <span class="ident">toRadString</span>(</p><p>self, includeMaterials=False, includeChildrenSurfaces=True, joinOutput=True, reverse=False)</p>
+    <div class="name def" id="honeybee.hbfensurface.HBFenSurface.toRadString">
+    <p>def <span class="ident">toRadString</span>(</p><p>self, includeMaterials=False, joinOutput=True, reverse=False)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Return Radiance definition for this surface as a string.</p></div>
+    <div class="desc"><p>Return Radiance definition for this surface as a string.</p>
+<p>reverse: Set to True to reverse surface direction.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.toRadString" class="source">
-    <pre><code>def toRadString(self, includeMaterials=False,
-                includeChildrenSurfaces=True, joinOutput=True, reverse=False):
-    """Return Radiance definition for this surface as a string."""
-    surfaceString = super(HBSurface, self).toRadString(includeMaterials,
-                                                       joinOutput, reverse)
-    if includeChildrenSurfaces and self.hasChildSurfaces:
-        childrenSurfacesString = [
-            childSurface.toRadString(includeMaterials, joinOutput,
-                                     reverse=reverse)
-            for childSurface in self.childrenSurfaces
-        ]
-        return "%s\n%s" % (surfaceString,
-                           "\n".join(childrenSurfacesString))
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbfensurface.HBFenSurface.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbfensurface.HBFenSurface.toRadString" class="source">
+    <pre><code>def toRadString(self, includeMaterials=False, joinOutput=True, reverse=False):
+    """Return Radiance definition for this surface as a string.
+    reverse: Set to True to reverse surface direction.
+    """
+    # prepare points for surface.
+    if self.isChildSurface or not self.hasChildSurfaces:
+        __pts = self.absolutePoints
     else:
-        return surfaceString
+        # get points for first glass face
+        __glassPoints = [childSrf.absolutePoints[0]
+                         for childSrf in self.childrenSurfaces]
+        __facePoints = self.absolutePoints[0]
+        __pts = AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
+        __pts = (__pts,)
+    if reverse:
+        __pts = tuple(tuple(reversed(pts)) for pts in __pts)
+    __numPtGroups = len(__pts)
+    # create a place holder for each point group (face)
+    # for a planar surface __numPtGroups is only one
+    __pgStrings = range(__numPtGroups)
+    for ptCount, pts in enumerate(__pts):
+        # modify name for each sub_surface
+        _name = self.name if __numPtGroups == 1 else self.name + "_{}".format(ptCount)
+        # collect definition for each subsurface
+        __pgStrings[ptCount] = polygon(
+            name=_name, materialName=self.radianceMaterial.name, pts=pts
+        )
+    if joinOutput:
+        return "%s\n%s" % (self.radianceMaterial, "\n".join(__pgStrings)) \
+            if includeMaterials \
+            else "\n".join(__pgStrings)
+    else:
+        return self.radianceMaterial.toRadString(), __pgStrings \
+            if includeMaterials \
+            else __pgStrings
 </code></pre>
   </div>
 </div>

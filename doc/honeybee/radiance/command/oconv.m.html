@@ -1540,8 +1540,8 @@ later during the process.</p>
     """
     # make sure wea file is provided
     _msg = "To generate a valid %s command you need to specify the path" \
-        " to inpt files:" \
-        "\nCurrent command won't work: %s" \
+        " to input files:" \
+        "\nCurrent command won't work:\n%s" \
         % (self.__class__.__name__, radString)
     if self.inputFiles is None:
         return

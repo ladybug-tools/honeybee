@@ -1002,6 +1002,7 @@ table {
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.addRadiancePath">addRadiancePath</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.addRadianceTuple">addRadianceTuple</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.addRadianceValue">addRadianceValue</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.checkIncompatibleInputs">checkIncompatibleInputs</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.freeze">freeze</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.importParameterValuesFromString">importParameterValuesFromString</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.removeParameter">removeParameter</a></li>
@@ -1962,6 +1963,45 @@ attributeName: Optional. A string the will be used as the attribute
                                       None, isJoined),
                         attributeName
                         )
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.oconv.OconvParameters.checkIncompatibleInputs">
+    <p>def <span class="ident">checkIncompatibleInputs</span>(</p><p>self, *args)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This method maybe used to check for inputs that are mutually incompatible.
+For example, a sky cannot be cloudy and clear at the same time. So, the idea is
+to specify those inputs as args and then check that no more than one of them
+is set during runtime.</p>
+<p>A recommended way to use this method is to call it by reimplementing toRadString.</p>
+<p>One usecase can be found in gendaylit.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.oconv.OconvParameters.checkIncompatibleInputs', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.oconv.OconvParameters.checkIncompatibleInputs" class="source">
+    <pre><code>@classmethod
+def checkIncompatibleInputs(self,*args):
+    """This method maybe used to check for inputs that are mutually incompatible.
+    For example, a sky cannot be cloudy and clear at the same time. So, the idea is
+    to specify those inputs as args and then check that no more than one of them
+    is set during runtime.
+    A recommended way to use this method is to call it by reimplementing toRadString.
+    One usecase can be found in gendaylit.
+    """
+    if any(args):
+        inputValues = ['"%s"'%value for value in args if value]
+        assert len(inputValues)<2,\
+            'Only one of these inputs can be specified at any given time: ' \
+            '%s'%", ".join(map(str,inputValues))
+    return None
 </code></pre>
   </div>
 </div>

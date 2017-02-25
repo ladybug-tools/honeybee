@@ -994,6 +994,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.view.View.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.addForeClip">addForeClip</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.calculateViewGrid">calculateViewGrid</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.saveToFile">saveToFile</a></li>
@@ -1050,7 +1051,7 @@ class View(object):
                 5: Planisphere [stereographic] projection (s)
             For more detailed description about view types check rpict manual
             page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-        viewHSize: Set the view horizontal size (-vs). For a perspective
+        viewHSize: Set the view horizontal size (-vh). For a perspective
             projection (including fisheye views), val is the horizontal field
             of view (in degrees). For a parallel projection, val is the view
             width in world coordinates.
@@ -1128,10 +1129,13 @@ class View(object):
     __viewType = RadianceNumber('vt', 'view type', numType=int, validRange=[0, 5],
                                 defaultValue=0)
 
-    def __init__(self, viewPoint=None, viewDirection=None, viewUpVector=None,
+    def __init__(self, name, viewPoint=None, viewDirection=None, viewUpVector=None,
                  viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
                  viewShift=0, viewLift=0):
         u"""Init view."""
+        self.name = name
+        """View name."""
+
         self.viewPoint = viewPoint
         """Set the view point (-vp) to (x, y, z)."""
 
@@ -1178,6 +1182,11 @@ class View(object):
         """
 
     @property
+    def isView(self):
+        """Return True for view."""
+        return True
+
+    @property
     def viewType(self):
         """Set and get view type (-vt) to one of the choices below (0-5).
 
@@ -1197,6 +1206,14 @@ class View(object):
             self.viewHSize = 180
             self.viewVSize = 180
             print "Changed viewHSize and viewVSize to 180 for fisheye view type."
+
+        elif self.viewType == 0:
+            assert self.viewHSize < 180, ValueError(
+                '\n{} is an invalid horizontal view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.viewHSize))
+            assert self.viewVSize < 180, ValueError(
+                '\n{} is an invalid vertical view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.viewVSize))
 
     def calculateViewGrid(self, xDivCount=1, yDivCount=1):
         """Return a list of views for grid of views.
@@ -1321,6 +1338,10 @@ class View(object):
         """Save view to a file."""
         pass
 
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
+
     def __repr__(self):
         """View representation."""
         return self.toRadString()
@@ -1357,7 +1378,7 @@ class View(object):
             5: Planisphere [stereographic] projection (s)
         For more detailed description about view types check rpict manual
         page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-    viewHSize: Set the view horizontal size (-vs). For a perspective
+    viewHSize: Set the view horizontal size (-vh). For a perspective
         projection (including fisheye views), val is the horizontal field
         of view (in degrees). For a parallel projection, val is the view
         width in world coordinates.
@@ -1432,7 +1453,7 @@ for g in gridViews:
                 5: Planisphere [stereographic] projection (s)
             For more detailed description about view types check rpict manual
             page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-        viewHSize: Set the view horizontal size (-vs). For a perspective
+        viewHSize: Set the view horizontal size (-vh). For a perspective
             projection (including fisheye views), val is the horizontal field
             of view (in degrees). For a parallel projection, val is the view
             width in world coordinates.
@@ -1510,10 +1531,13 @@ for g in gridViews:
     __viewType = RadianceNumber('vt', 'view type', numType=int, validRange=[0, 5],
                                 defaultValue=0)
 
-    def __init__(self, viewPoint=None, viewDirection=None, viewUpVector=None,
+    def __init__(self, name, viewPoint=None, viewDirection=None, viewUpVector=None,
                  viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
                  viewShift=0, viewLift=0):
         u"""Init view."""
+        self.name = name
+        """View name."""
+
         self.viewPoint = viewPoint
         """Set the view point (-vp) to (x, y, z)."""
 
@@ -1560,6 +1584,11 @@ for g in gridViews:
         """
 
     @property
+    def isView(self):
+        """Return True for view."""
+        return True
+
+    @property
     def viewType(self):
         """Set and get view type (-vt) to one of the choices below (0-5).
 
@@ -1579,6 +1608,14 @@ for g in gridViews:
             self.viewHSize = 180
             self.viewVSize = 180
             print "Changed viewHSize and viewVSize to 180 for fisheye view type."
+
+        elif self.viewType == 0:
+            assert self.viewHSize < 180, ValueError(
+                '\n{} is an invalid horizontal view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.viewHSize))
+            assert self.viewVSize < 180, ValueError(
+                '\n{} is an invalid vertical view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.viewVSize))
 
     def calculateViewGrid(self, xDivCount=1, yDivCount=1):
         """Return a list of views for grid of views.
@@ -1702,6 +1739,10 @@ for g in gridViews:
     def saveToFile(self, working):
         """Save view to a file."""
         pass
+
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
 
     def __repr__(self):
         """View representation."""
@@ -1809,6 +1850,28 @@ for g in gridViews:
 
             </div>
           <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.view.View.isView" class="name">var <span class="ident">isView</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return True for view.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.view.View.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>View name.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
             <div class="item">
             <p id="honeybee.radiance.view.View.viewDirection" class="name">var <span class="ident">viewDirection</span></p>
             
@@ -1935,7 +1998,7 @@ coordinates.</p></div>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.view.View.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, viewPoint=None, viewDirection=None, viewUpVector=None, viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64, viewShift=0, viewLift=0)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, viewPoint=None, viewDirection=None, viewUpVector=None, viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64, viewShift=0, viewLift=0)</p>
     </div>
     
 
@@ -1945,10 +2008,12 @@ coordinates.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.view.View.__init__" class="source">
-    <pre><code>def __init__(self, viewPoint=None, viewDirection=None, viewUpVector=None,
+    <pre><code>def __init__(self, name, viewPoint=None, viewDirection=None, viewUpVector=None,
              viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
              viewShift=0, viewLift=0):
     u"""Init view."""
+    self.name = name
+    """View name."""
     self.viewPoint = viewPoint
     """Set the view point (-vp) to (x, y, z)."""
     self.viewDirection = viewDirection
@@ -1984,6 +2049,28 @@ coordinates.</p></div>
     4: Angular fisheye (a),
     5: Planisphere [stereographic] projection (s)
     """
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.view.View.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.ToString" class="source">
+    <pre><code>def ToString(self):
+    """Overwrite .NET ToString."""
+    return self.__repr__()
 </code></pre>
   </div>
 </div>

@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>honeybee.radiance.recipe.gridbased API documentation</title>
+    <title>honeybee.radiance.recipe.imagebased API documentation</title>
     <meta name="description" content="Radiance Grid-based Analysis Recipe." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -989,30 +989,28 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe">GridBasedAnalysisRecipe</a></span>
+        <span class="class_name"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe">ImageBasedAnalysisRecipe</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.analysisGridsFromPointsAndVectors">analysisGridsFromPointsAndVectors</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.relpath">relpath</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.ToString">ToString</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.fromPointsAndVectors">fromPointsAndVectors</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.header">header</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.populateSubFolders">populateSubFolders</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.prepareSubFolder">prepareSubFolder</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.results">results</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.run">run</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadString">toRadString</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringGeometries">toRadStringGeometries</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterials">toRadStringMaterials</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterialsAndGeometries">toRadStringMaterialsAndGeometries</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringPoints">toRadStringPoints</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.write">write</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeGeometriesToFile">writeGeometriesToFile</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile">writeMaterialsAndGeometriesToFile</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMatrialsToFile">writeMatrialsToFile</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writePointsToFile">writePointsToFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.relpath">relpath</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.ToString">ToString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.header">header</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.populateSubFolders">populateSubFolders</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.prepareSubFolder">prepareSubFolder</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.results">results</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.run">run</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringGeometries">toRadStringGeometries</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterials">toRadStringMaterials</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterialsAndGeometries">toRadStringMaterialsAndGeometries</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringViews">toRadStringViews</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.write">write</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeGeometriesToFile">writeGeometriesToFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile">writeMaterialsAndGeometriesToFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMatrialsToFile">writeMatrialsToFile</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeViewsToFile">writeViewsToFile</a></li>
   </ul>
 
         </li>
@@ -1030,32 +1028,32 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">honeybee.radiance.recipe.gridbased</span> module</h1>
+  <h1 class="title"><span class="name">honeybee.radiance.recipe.imagebased</span> module</h1>
   <p>Radiance Grid-based Analysis Recipe.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased" class="source">
     <pre><code>"""Radiance Grid-based Analysis Recipe."""
 
-from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
-from ._gridbasedbase import GenericGridBasedAnalysisRecipe
-from ..parameters.gridbased import LowQuality
+# from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
+from ._imagebasedbase import GenericImageBasedAnalysisRecipe
+from ..parameters.imagebased import ImageBasedParameters
 from ..command.oconv import Oconv
-from ..command.rtrace import Rtrace
+from ..command.rpict import Rpict
 from ...helper import writeToFile
 import os
 
 
-class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
     """Grid base analysis base class.
 
     Attributes:
         sky: A honeybee sky for the analysis
-        analysisGrids: List of analysis grids.
+        views: List of views.
         simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         radParameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.LowQuality)
+            (Default: imagebased.LowQualityImage)
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
 
@@ -1064,8 +1062,8 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = GridBasedAnalysisRecipe(
-            sky, testPoints, ptsVectors, simType
+        analysisRecipe = ImageBasedAnalysisRecipe(
+            sky, views, simType
             )
 
         # add honeybee object
@@ -1083,18 +1081,18 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
     # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
-    def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
-                 hbObjects=None, subFolder="gridbased"):
+    def __init__(self, sky, views, simulationType=2, radParameters=None,
+                 hbObjects=None, subFolder="imagebased"):
         """Create grid-based recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
-            self, analysisGrids, hbObjects, subFolder)
+        GenericImageBasedAnalysisRecipe.__init__(
+            self, views, hbObjects, subFolder)
 
         self.sky = sky
         """A honeybee sky for the analysis."""
 
         self.radianceParameters = radParameters
         """Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.LowQuality)"""
+            (Default: imagebased.LowQualityImage)"""
 
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
@@ -1102,35 +1100,8 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         """
 
         # create a result loader to load the results once the analysis is done.
-        self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-                                                     self.resultsFile)
-
-    @classmethod
-    def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
-                             simulationType=0, radParameters=None,
-                             hbObjects=None, subFolder="gridbased"):
-        """Create grid based recipe from points and vectors.
-
-        Args:
-            sky: A honeybee sky for the analysis
-            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
-                test points. Each list of test points will be converted to a
-                TestPointGroup. If testPts is a single flattened list only one
-                TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector
-                represents direction of corresponding point in testPts. If the
-                vector is not provided (0, 0, 1) will be assigned.
-            simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance
-                (Candela) (Default: 0).
-            radParameters: Radiance parameters for grid based analysis (rtrace).
-                (Default: gridbased.LowQuality)
-            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-            subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
-        """
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
-        return cls(sky, analysisGrids, simulationType, radParameters, hbObjects,
-                   subFolder)
+        # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
+        #                                              self.resultsFile)
 
     @property
     def simulationType(self):
@@ -1175,7 +1146,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     @radianceParameters.setter
     def radianceParameters(self, radParameters):
         if not radParameters:
-            radParameters = LowQuality()
+            radParameters = ImageBasedParameters.LowQuality()
         assert hasattr(radParameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(radParameters)
         self.__radianceParameters = radParameters
@@ -1183,8 +1154,8 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
-        Files for a grid based analysis are:
-            test points <projectName.pts>: List of analysis points.
+        Files for an image based analysis are:
+            views <*.vf>: A radiance view.
             sky file <*.sky>: Radiance sky for this analysis.
             material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
             geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
@@ -1192,7 +1163,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             batch file <*.bat>: An executable batch file which has the list of commands.
                 oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles> > <projectName.oct>
                 rtrace <radianceParameters> <projectName.oct> > <projectName.res>
-            results file <*.res>: Results file once the analysis is over.
+            results file <*.hdr>: Results file once the analysis is over.
 
         Args:
             targetFolder: Path to parent folder. Files will be created under
@@ -1205,11 +1176,15 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+            ImageBasedAnalysisRecipe, self).populateSubFolders(
                 targetFolder, projectName)
 
-        # 1.write points
-        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
+        # add view folder
+        self.prepareSubFolder(os.path.join(targetFolder, projectName),
+                              subFolders=('views',))
+
+        # 1.write views
+        viewFiles = self.writeViewsToFile(sceneFiles.path + '\\views')
 
         # 2.write sky file
         skyFile = self.sky.writeToFile(sceneFiles.path + '\\skies')
@@ -1229,22 +1204,25 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
                               for f in octSceneFiles)
 
-        # # 4.2.prepare rtrace
-        rt = Rtrace('results\\' + projectName,
-                    simulationType=self.simulationType,
-                    radianceParameters=self.radianceParameters)
-        rt.radianceParameters.h = True
-        rt.octreeFile = str(oc.outputFile)
-        rt.pointsFile = self.relpath(pointsFile, sceneFiles.path)
+        self.commands.append(oc.toRadString())
+
+        # # 4.2.prepare rpict
+        # TODO: Add overtrue
+        for view, f in zip(self.views, viewFiles):
+            rp = Rpict('results\\' + view.name,
+                       simulationType=self.simulationType,
+                       rpictParameters=self.radianceParameters)
+            rp.octreeFile = str(oc.outputFile)
+            rp.viewFile = self.relpath(f, sceneFiles.path)
+
+            self.commands.append(rp.toRadString())
+            self.resultsFile.append(
+                os.path.join(sceneFiles.path, str(rp.outputFile)))
 
         # # 4.3 write batch file
-        self.commands.append(oc.toRadString())
-        self.commands.append(rt.toRadString())
         batchFile = os.path.join(sceneFiles.path, "commands.bat")
 
         writeToFile(batchFile, "\n".join(self.commands))
-
-        self.resultFiles = (os.path.join(sceneFiles.path, str(rt.outputFile)),)
 
         print "Files are written to: %s" % sceneFiles.path
         return batchFile
@@ -1255,9 +1233,10 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.simulationType = self.simulationType
-        self.loader.resultFiles = self.resultFiles
-        return self.loader.results
+        # self.loader.simulationType = self.simulationType
+        # self.loader.resultFiles = self.resultsFile
+        # return self.loader.results
+        return self.resultsFile
 
     def ToString(self):
         """Overwrite .NET ToString method."""
@@ -1268,11 +1247,10 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         _analysisType = {
             0: "Illuminance", 1: "Radiation", 2: "Luminance"
         }
-        return "%s: %s\n#PointGroups: %d #Points: %d" % \
+        return "%s: %s\n#Views: %d" % \
             (self.__class__.__name__,
              _analysisType[self.simulationType],
-             self.numOfAnalysisGrids,
-             self.numOfTotalPoints)
+             self.numOfViews)
 </code></pre>
   </div>
 
@@ -1284,25 +1262,25 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe" class="name">class <span class="ident">GridBasedAnalysisRecipe</span></p>
+      <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe" class="name">class <span class="ident">ImageBasedAnalysisRecipe</span></p>
       
   
     <div class="desc"><p>Grid base analysis base class.</p>
 <p>Attributes:
     sky: A honeybee sky for the analysis
-    analysisGrids: List of analysis grids.
+    views: List of views.
     simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
         (Default: 0)
     radParameters: Radiance parameters for grid based analysis (rtrace).
-        (Default: gridbased.LowQuality)
+        (Default: imagebased.LowQualityImage)
     hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
     subFolder: Analysis subfolder for this recipe. (Default: "gridbased")</p>
 <p>Usage:
     # create the sky
     sky = SkyWithCertainIlluminanceLevel(2000)</p>
 <pre><code># initiate analysisRecipe
-analysisRecipe = GridBasedAnalysisRecipe(
-    sky, testPoints, ptsVectors, simType
+analysisRecipe = ImageBasedAnalysisRecipe(
+    sky, views, simType
     )
 
 # add honeybee object
@@ -1318,18 +1296,18 @@ analysisRecipe.run(debaug=False)
 print analysisRecipe.results()
 </code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe" class="source">
-    <pre><code>class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe" class="source">
+    <pre><code>class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
     """Grid base analysis base class.
 
     Attributes:
         sky: A honeybee sky for the analysis
-        analysisGrids: List of analysis grids.
+        views: List of views.
         simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         radParameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.LowQuality)
+            (Default: imagebased.LowQualityImage)
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
 
@@ -1338,8 +1316,8 @@ print analysisRecipe.results()
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = GridBasedAnalysisRecipe(
-            sky, testPoints, ptsVectors, simType
+        analysisRecipe = ImageBasedAnalysisRecipe(
+            sky, views, simType
             )
 
         # add honeybee object
@@ -1357,18 +1335,18 @@ print analysisRecipe.results()
 
     # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
-    def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
-                 hbObjects=None, subFolder="gridbased"):
+    def __init__(self, sky, views, simulationType=2, radParameters=None,
+                 hbObjects=None, subFolder="imagebased"):
         """Create grid-based recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
-            self, analysisGrids, hbObjects, subFolder)
+        GenericImageBasedAnalysisRecipe.__init__(
+            self, views, hbObjects, subFolder)
 
         self.sky = sky
         """A honeybee sky for the analysis."""
 
         self.radianceParameters = radParameters
         """Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.LowQuality)"""
+            (Default: imagebased.LowQualityImage)"""
 
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
@@ -1376,35 +1354,8 @@ print analysisRecipe.results()
         """
 
         # create a result loader to load the results once the analysis is done.
-        self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-                                                     self.resultsFile)
-
-    @classmethod
-    def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
-                             simulationType=0, radParameters=None,
-                             hbObjects=None, subFolder="gridbased"):
-        """Create grid based recipe from points and vectors.
-
-        Args:
-            sky: A honeybee sky for the analysis
-            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
-                test points. Each list of test points will be converted to a
-                TestPointGroup. If testPts is a single flattened list only one
-                TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector
-                represents direction of corresponding point in testPts. If the
-                vector is not provided (0, 0, 1) will be assigned.
-            simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance
-                (Candela) (Default: 0).
-            radParameters: Radiance parameters for grid based analysis (rtrace).
-                (Default: gridbased.LowQuality)
-            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-            subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
-        """
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
-        return cls(sky, analysisGrids, simulationType, radParameters, hbObjects,
-                   subFolder)
+        # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
+        #                                              self.resultsFile)
 
     @property
     def simulationType(self):
@@ -1449,7 +1400,7 @@ print analysisRecipe.results()
     @radianceParameters.setter
     def radianceParameters(self, radParameters):
         if not radParameters:
-            radParameters = LowQuality()
+            radParameters = ImageBasedParameters.LowQuality()
         assert hasattr(radParameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(radParameters)
         self.__radianceParameters = radParameters
@@ -1457,8 +1408,8 @@ print analysisRecipe.results()
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
-        Files for a grid based analysis are:
-            test points <projectName.pts>: List of analysis points.
+        Files for an image based analysis are:
+            views <*.vf>: A radiance view.
             sky file <*.sky>: Radiance sky for this analysis.
             material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
             geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
@@ -1466,7 +1417,7 @@ print analysisRecipe.results()
             batch file <*.bat>: An executable batch file which has the list of commands.
                 oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles> > <projectName.oct>
                 rtrace <radianceParameters> <projectName.oct> > <projectName.res>
-            results file <*.res>: Results file once the analysis is over.
+            results file <*.hdr>: Results file once the analysis is over.
 
         Args:
             targetFolder: Path to parent folder. Files will be created under
@@ -1479,11 +1430,15 @@ print analysisRecipe.results()
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+            ImageBasedAnalysisRecipe, self).populateSubFolders(
                 targetFolder, projectName)
 
-        # 1.write points
-        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
+        # add view folder
+        self.prepareSubFolder(os.path.join(targetFolder, projectName),
+                              subFolders=('views',))
+
+        # 1.write views
+        viewFiles = self.writeViewsToFile(sceneFiles.path + '\\views')
 
         # 2.write sky file
         skyFile = self.sky.writeToFile(sceneFiles.path + '\\skies')
@@ -1503,22 +1458,25 @@ print analysisRecipe.results()
         oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
                               for f in octSceneFiles)
 
-        # # 4.2.prepare rtrace
-        rt = Rtrace('results\\' + projectName,
-                    simulationType=self.simulationType,
-                    radianceParameters=self.radianceParameters)
-        rt.radianceParameters.h = True
-        rt.octreeFile = str(oc.outputFile)
-        rt.pointsFile = self.relpath(pointsFile, sceneFiles.path)
+        self.commands.append(oc.toRadString())
+
+        # # 4.2.prepare rpict
+        # TODO: Add overtrue
+        for view, f in zip(self.views, viewFiles):
+            rp = Rpict('results\\' + view.name,
+                       simulationType=self.simulationType,
+                       rpictParameters=self.radianceParameters)
+            rp.octreeFile = str(oc.outputFile)
+            rp.viewFile = self.relpath(f, sceneFiles.path)
+
+            self.commands.append(rp.toRadString())
+            self.resultsFile.append(
+                os.path.join(sceneFiles.path, str(rp.outputFile)))
 
         # # 4.3 write batch file
-        self.commands.append(oc.toRadString())
-        self.commands.append(rt.toRadString())
         batchFile = os.path.join(sceneFiles.path, "commands.bat")
 
         writeToFile(batchFile, "\n".join(self.commands))
-
-        self.resultFiles = (os.path.join(sceneFiles.path, str(rt.outputFile)),)
 
         print "Files are written to: %s" % sceneFiles.path
         return batchFile
@@ -1529,9 +1487,10 @@ print analysisRecipe.results()
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.simulationType = self.simulationType
-        self.loader.resultFiles = self.resultFiles
-        return self.loader.results
+        # self.loader.simulationType = self.simulationType
+        # self.loader.resultFiles = self.resultsFile
+        # return self.loader.results
+        return self.resultsFile
 
     def ToString(self):
         """Overwrite .NET ToString method."""
@@ -1542,11 +1501,10 @@ print analysisRecipe.results()
         _analysisType = {
             0: "Illuminance", 1: "Radiation", 2: "Luminance"
         }
-        return "%s: %s\n#PointGroups: %d #Points: %d" % \
+        return "%s: %s\n#Views: %d" % \
             (self.__class__.__name__,
              _analysisType[self.simulationType],
-             self.numOfAnalysisGrids,
-             self.numOfTotalPoints)
+             self.numOfViews)
 </code></pre>
   </div>
 </div>
@@ -1555,59 +1513,15 @@ print analysisRecipe.results()
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe">GridBasedAnalysisRecipe</a></li>
-          <li>honeybee.radiance.recipe._gridbasedbase.GenericGridBasedAnalysisRecipe</li>
+          <li><a href="#honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe">ImageBasedAnalysisRecipe</a></li>
+          <li>honeybee.radiance.recipe._imagebasedbase.GenericImageBasedAnalysisRecipe</li>
           <li>honeybee.radiance.recipe._recipebase.DaylightAnalysisRecipe</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Static methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.analysisGridsFromPointsAndVectors">
-    <p>def <span class="ident">analysisGridsFromPointsAndVectors</span>(</p><p>pointGroups, vectorGroups=None)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Create analysisGrid classes from points and vectors.</p>
-<p>Args:
-    pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
-        test points. Each list of test points will be converted to a TestPointGroup.
-        If testPts is a single flattened list only one TestPointGroup will be created.
-    vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
-        of corresponding point in testPts. If the vector is not provided (0, 0, 1)
-        will be assigned.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.analysisGridsFromPointsAndVectors', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.analysisGridsFromPointsAndVectors" class="source">
-    <pre><code>@staticmethod
-def analysisGridsFromPointsAndVectors(pointGroups, vectorGroups=None):
-    """Create analysisGrid classes from points and vectors.
-    Args:
-        pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
-            test points. Each list of test points will be converted to a TestPointGroup.
-            If testPts is a single flattened list only one TestPointGroup will be created.
-        vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
-            of corresponding point in testPts. If the vector is not provided (0, 0, 1)
-            will be assigned.
-    """
-    vectorGroups = vectorGroups or ((),)
-    vectorGroups = tuple(vectorGroups[i] if i < len(vectorGroups) else vectorGroups[-1]
-                         for i in range(len(pointGroups)))
-    print zip(pointGroups, vectorGroups)
-    analysisGrids = (AnalysisGrid.fromPointsAndVectors(pts, vectors)
-                     for pts, vectors in zip(pointGroups, vectorGroups))
-    return analysisGrids
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.relpath">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.relpath">
     <p>def <span class="ident">relpath</span>(</p><p>path, start)</p>
     </div>
     
@@ -1616,8 +1530,8 @@ def analysisGridsFromPointsAndVectors(pointGroups, vectorGroups=None):
   
     <div class="desc"><p>Return a relative path.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.relpath', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.relpath" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.relpath', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.relpath" class="source">
     <pre><code>@staticmethod
 def relpath(path, start):
     """Return a relative path."""
@@ -1630,18 +1544,7 @@ def relpath(path, start):
   
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.analysisGrids" class="name">var <span class="ident">analysisGrids</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Return analysis grids.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.hbObjects" class="name">var <span class="ident">hbObjects</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.hbObjects" class="name">var <span class="ident">hbObjects</span></p>
             
 
             
@@ -1652,7 +1555,7 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.isAnalysisRecipe" class="name">var <span class="ident">isAnalysisRecipe</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.isAnalysisRecipe" class="name">var <span class="ident">isAnalysisRecipe</span></p>
             
 
             
@@ -1663,17 +1566,7 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.loader" class="name">var <span class="ident">loader</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.numOfAnalysisGrids" class="name">var <span class="ident">numOfAnalysisGrids</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.numOfViews" class="name">var <span class="ident">numOfViews</span></p>
             
 
             
@@ -1684,29 +1577,7 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.numOfTotalPoints" class="name">var <span class="ident">numOfTotalPoints</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Number of total points.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.points" class="name">var <span class="ident">points</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Return nested list of points.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.radianceMaterials" class="name">var <span class="ident">radianceMaterials</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.radianceMaterials" class="name">var <span class="ident">radianceMaterials</span></p>
             
 
             
@@ -1717,19 +1588,19 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.radianceParameters" class="name">var <span class="ident">radianceParameters</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.radianceParameters" class="name">var <span class="ident">radianceParameters</span></p>
             
 
             
   
     <div class="desc"><p>Radiance parameters for grid based analysis (rtrace).
-(Default: gridbased.LowQuality)</p></div>
+(Default: imagebased.LowQualityImage)</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.scene" class="name">var <span class="ident">scene</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.scene" class="name">var <span class="ident">scene</span></p>
             
 
             
@@ -1740,7 +1611,7 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.simulationType" class="name">var <span class="ident">simulationType</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.simulationType" class="name">var <span class="ident">simulationType</span></p>
             
 
             
@@ -1752,7 +1623,7 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.sky" class="name">var <span class="ident">sky</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.sky" class="name">var <span class="ident">sky</span></p>
             
 
             
@@ -1763,7 +1634,7 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.subFolder" class="name">var <span class="ident">subFolder</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.subFolder" class="name">var <span class="ident">subFolder</span></p>
             
 
             
@@ -1774,12 +1645,12 @@ def relpath(path, start):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.vectors" class="name">var <span class="ident">vectors</span></p>
+            <p id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.views" class="name">var <span class="ident">views</span></p>
             
 
             
   
-    <div class="desc"><p>Nested list of vectors.</p></div>
+    <div class="desc"><p>Return views.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1787,8 +1658,8 @@ def relpath(path, start):
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, sky, analysisGrids, simulationType=0, radParameters=None, hbObjects=None, subFolder=&#39;gridbased&#39;)</p>
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, sky, views, simulationType=2, radParameters=None, hbObjects=None, subFolder=&#39;imagebased&#39;)</p>
     </div>
     
 
@@ -1796,25 +1667,22 @@ def relpath(path, start):
   
     <div class="desc"><p>Create grid-based recipe.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.__init__" class="source">
-    <pre><code>def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
-             hbObjects=None, subFolder="gridbased"):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.__init__" class="source">
+    <pre><code>def __init__(self, sky, views, simulationType=2, radParameters=None,
+             hbObjects=None, subFolder="imagebased"):
     """Create grid-based recipe."""
-    GenericGridBasedAnalysisRecipe.__init__(
-        self, analysisGrids, hbObjects, subFolder)
+    GenericImageBasedAnalysisRecipe.__init__(
+        self, views, hbObjects, subFolder)
     self.sky = sky
     """A honeybee sky for the analysis."""
     self.radianceParameters = radParameters
     """Radiance parameters for grid based analysis (rtrace).
-        (Default: gridbased.LowQuality)"""
+        (Default: imagebased.LowQualityImage)"""
     self.simulationType = simulationType
     """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
        2: Luminance (Candela) (Default: 0)
     """
-    # create a result loader to load the results once the analysis is done.
-    self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-                                                 self.resultsFile)
 </code></pre>
   </div>
 </div>
@@ -1823,7 +1691,7 @@ def relpath(path, start):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.ToString">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.ToString">
     <p>def <span class="ident">ToString</span>(</p><p>self)</p>
     </div>
     
@@ -1832,8 +1700,8 @@ def relpath(path, start):
   
     <div class="desc"><p>Overwrite .NET ToString method.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.ToString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.ToString" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.ToString" class="source">
     <pre><code>def ToString(self):
     """Overwrite .NET ToString method."""
     return self.__repr__()
@@ -1845,66 +1713,7 @@ def relpath(path, start):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.fromPointsAndVectors">
-    <p>def <span class="ident">fromPointsAndVectors</span>(</p><p>cls, sky, pointGroups, vectorGroups=None, simulationType=0, radParameters=None, hbObjects=None, subFolder=&#39;gridbased&#39;)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Create grid based recipe from points and vectors.</p>
-<p>Args:
-    sky: A honeybee sky for the analysis
-    pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
-        test points. Each list of test points will be converted to a
-        TestPointGroup. If testPts is a single flattened list only one
-        TestPointGroup will be created.
-    vectorGroups: An optional list of (x, y, z) vectors. Each vector
-        represents direction of corresponding point in testPts. If the
-        vector is not provided (0, 0, 1) will be assigned.
-    simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance
-        (Candela) (Default: 0).
-    radParameters: Radiance parameters for grid based analysis (rtrace).
-        (Default: gridbased.LowQuality)
-    hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-    subFolder: Analysis subfolder for this recipe. (Default: "gridbased")</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.fromPointsAndVectors', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.fromPointsAndVectors" class="source">
-    <pre><code>@classmethod
-def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
-                         simulationType=0, radParameters=None,
-                         hbObjects=None, subFolder="gridbased"):
-    """Create grid based recipe from points and vectors.
-    Args:
-        sky: A honeybee sky for the analysis
-        pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
-            test points. Each list of test points will be converted to a
-            TestPointGroup. If testPts is a single flattened list only one
-            TestPointGroup will be created.
-        vectorGroups: An optional list of (x, y, z) vectors. Each vector
-            represents direction of corresponding point in testPts. If the
-            vector is not provided (0, 0, 1) will be assigned.
-        simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance
-            (Candela) (Default: 0).
-        radParameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.LowQuality)
-        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
-    """
-    analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                          vectorGroups)
-    return cls(sky, analysisGrids, simulationType, radParameters, hbObjects,
-               subFolder)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.header">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.header">
     <p>def <span class="ident">header</span>(</p><p>self, targetFolder, includRadPath=True)</p>
     </div>
     
@@ -1913,8 +1722,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Get the header for bat file.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.header', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.header" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.header', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.header" class="source">
     <pre><code>def header(self, targetFolder, includRadPath=True):
     """Get the header for bat file."""
     dirLine = "%s\ncd %s\n" % (os.path.splitdrive(targetFolder)[0], targetFolder)
@@ -1930,7 +1739,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.populateSubFolders">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.populateSubFolders">
     <p>def <span class="ident">populateSubFolders</span>(</p><p>self, targetFolder, projectName=&#39;untitled&#39;, subFolders=(&#39;objects&#39;, &#39;skies&#39;, &#39;results&#39;), removeSubFoldersContent=True)</p>
     </div>
     
@@ -1941,8 +1750,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
 <p>Returns:
     studyFolder, Materil files, geometry files, octree files</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.populateSubFolders', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.populateSubFolders" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.populateSubFolders', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.populateSubFolders" class="source">
     <pre><code>def populateSubFolders(self, targetFolder, projectName='untitled',
                        subFolders=('objects', 'skies', 'results'),
                        removeSubFoldersContent=True):
@@ -2006,7 +1815,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.prepareSubFolder">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.prepareSubFolder">
     <p>def <span class="ident">prepareSubFolder</span>(</p><p>self, targetFolder, subFolders=(&#39;.tmp&#39;, &#39;objects&#39;, &#39;skies&#39;, &#39;results&#39;), removeContent=True)</p>
     </div>
     
@@ -2029,8 +1838,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
             ..hdr (<em>.hdr)  # only for view-based analysis
             ..ill (</em>.ill)  # illuminance values for annual analysis</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.prepareSubFolder', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.prepareSubFolder" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.prepareSubFolder', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.prepareSubFolder" class="source">
     <pre><code>def prepareSubFolder(self, targetFolder,
                      subFolders=('.tmp', 'objects', 'skies', 'results'),
                      removeContent=True):
@@ -2061,7 +1870,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.results">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.results">
     <p>def <span class="ident">results</span>(</p><p>self, flattenResults=True)</p>
     </div>
     
@@ -2070,16 +1879,17 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Return results for this analysis.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.results', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.results" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.results', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.results" class="source">
     <pre><code>def results(self, flattenResults=True):
     """Return results for this analysis."""
     assert self.isCalculated, \
         "You haven't run the Recipe yet. Use self.run " + \
         "to run the analysis before loading the results."
-    self.loader.simulationType = self.simulationType
-    self.loader.resultFiles = self.resultFiles
-    return self.loader.results
+    # self.loader.simulationType = self.simulationType
+    # self.loader.resultFiles = self.resultsFile
+    # return self.loader.results
+    return self.resultsFile
 </code></pre>
   </div>
 </div>
@@ -2088,7 +1898,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.run">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.run">
     <p>def <span class="ident">run</span>(</p><p>self, commandFile, debug=False)</p>
     </div>
     
@@ -2097,8 +1907,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Run the analysis.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.run', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.run" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.run', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.run" class="source">
     <pre><code>def run(self, commandFile, debug=False):
     """Run the analysis."""
     assert os.path.isfile(commandFile), \
@@ -2118,7 +1928,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadString">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadString">
     <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
     </div>
     
@@ -2127,8 +1937,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Radiance representation of the recipe.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadString" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadString" class="source">
     <pre><code>def toRadString(self):
     """Radiance representation of the recipe."""
     return '\n'.join(self.commands)
@@ -2140,7 +1950,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringGeometries">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringGeometries">
     <p>def <span class="ident">toRadStringGeometries</span>(</p><p>self)</p>
     </div>
     
@@ -2149,8 +1959,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Return geometries radiance definition as a single multiline string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringGeometries', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringGeometries" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringGeometries', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringGeometries" class="source">
     <pre><code>def toRadStringGeometries(self):
     """Return geometries radiance definition as a single multiline string."""
     print 'Number of Honeybee objects: %d' % len(self.hbObjects)
@@ -2165,7 +1975,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterials">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterials">
     <p>def <span class="ident">toRadStringMaterials</span>(</p><p>self)</p>
     </div>
     
@@ -2174,8 +1984,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Return radiance definition of materials as a single multiline string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterials', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterials" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterials', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterials" class="source">
     <pre><code>def toRadStringMaterials(self):
     """Return radiance definition of materials as a single multiline string."""
     print 'Number of radiance materials: %d' % len(self.radianceMaterials)
@@ -2188,7 +1998,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterialsAndGeometries">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterialsAndGeometries">
     <p>def <span class="ident">toRadStringMaterialsAndGeometries</span>(</p><p>self)</p>
     </div>
     
@@ -2197,8 +2007,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Return geometries radiance definition as a single multiline string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterialsAndGeometries', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringMaterialsAndGeometries" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterialsAndGeometries', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringMaterialsAndGeometries" class="source">
     <pre><code>def toRadStringMaterialsAndGeometries(self):
     """Return geometries radiance definition as a single multiline string."""
     _mat = self.toRadStringMaterials()
@@ -2212,20 +2022,20 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringPoints">
-    <p>def <span class="ident">toRadStringPoints</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringViews">
+    <p>def <span class="ident">toRadStringViews</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Return points radiance definition as a single multiline string.</p></div>
+    <div class="desc"><p>Return radiance definition of each view as a single multiline string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringPoints', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.toRadStringPoints" class="source">
-    <pre><code>def toRadStringPoints(self):
-    """Return points radiance definition as a single multiline string."""
-    return '\n'.join((ag.toRadString() for ag in self.analysisGrids))
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringViews', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.toRadStringViews" class="source">
+    <pre><code>def toRadStringViews(self):
+    """Return radiance definition of each view as a single multiline string."""
+    return '\n'.join((v.toRadString() for v in self.views))
 </code></pre>
   </div>
 </div>
@@ -2234,7 +2044,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.write">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.write">
     <p>def <span class="ident">write</span>(</p><p>self, targetFolder, projectName=&#39;untitled&#39;, header=True)</p>
     </div>
     
@@ -2242,16 +2052,16 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
     
   
     <div class="desc"><p>Write analysis files to target folder.</p>
-<p>Files for a grid based analysis are:
-    test points <projectName.pts>: List of analysis points.
-    sky file &lt;<em>.sky&gt;: Radiance sky for this analysis.
-    material file &lt;</em>.mat&gt;: Radiance materials. Will be empty if HBObjects is None.
-    geometry file &lt;<em>.rad&gt;: Radiance geometries. Will be empty if HBObjects is None.
+<p>Files for an image based analysis are:
+    views &lt;<em>.vf&gt;: A radiance view.
     sky file &lt;</em>.sky&gt;: Radiance sky for this analysis.
-    batch file &lt;<em>.bat&gt;: An executable batch file which has the list of commands.
-        oconve &lt;</em>.sky&gt; <projectName.mat> <projectName.rad> <additional radFiles> &gt; <projectName.oct>
+    material file &lt;<em>.mat&gt;: Radiance materials. Will be empty if HBObjects is None.
+    geometry file &lt;</em>.rad&gt;: Radiance geometries. Will be empty if HBObjects is None.
+    sky file &lt;<em>.sky&gt;: Radiance sky for this analysis.
+    batch file &lt;</em>.bat&gt;: An executable batch file which has the list of commands.
+        oconve &lt;<em>.sky&gt; <projectName.mat> <projectName.rad> <additional radFiles> &gt; <projectName.oct>
         rtrace <radianceParameters> <projectName.oct> &gt; <projectName.res>
-    results file &lt;*.res&gt;: Results file once the analysis is over.</p>
+    results file &lt;</em>.hdr&gt;: Results file once the analysis is over.</p>
 <p>Args:
     targetFolder: Path to parent folder. Files will be created under
         targetFolder/gridbased. use self.subFolder to change subfolder name.
@@ -2259,12 +2069,12 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
 <p>Returns:
     Full path to command.bat</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.write', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.write" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.write', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.write" class="source">
     <pre><code>def write(self, targetFolder, projectName='untitled', header=True):
     """Write analysis files to target folder.
-    Files for a grid based analysis are:
-        test points <projectName.pts>: List of analysis points.
+    Files for an image based analysis are:
+        views <*.vf>: A radiance view.
         sky file <*.sky>: Radiance sky for this analysis.
         material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
         geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
@@ -2272,7 +2082,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
         batch file <*.bat>: An executable batch file which has the list of commands.
             oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles> > <projectName.oct>
             rtrace <radianceParameters> <projectName.oct> > <projectName.res>
-        results file <*.res>: Results file once the analysis is over.
+        results file <*.hdr>: Results file once the analysis is over.
     Args:
         targetFolder: Path to parent folder. Files will be created under
             targetFolder/gridbased. use self.subFolder to change subfolder name.
@@ -2283,10 +2093,13 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
     # 0.prepare target folder
     # create main folder targetFolder\projectName
     sceneFiles = super(
-        GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+        ImageBasedAnalysisRecipe, self).populateSubFolders(
             targetFolder, projectName)
-    # 1.write points
-    pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
+    # add view folder
+    self.prepareSubFolder(os.path.join(targetFolder, projectName),
+                          subFolders=('views',))
+    # 1.write views
+    viewFiles = self.writeViewsToFile(sceneFiles.path + '\\views')
     # 2.write sky file
     skyFile = self.sky.writeToFile(sceneFiles.path + '\\skies')
     # 3.write batch file
@@ -2300,19 +2113,21 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
     oc = Oconv(projectName)
     oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
                           for f in octSceneFiles)
-    # # 4.2.prepare rtrace
-    rt = Rtrace('results\\' + projectName,
-                simulationType=self.simulationType,
-                radianceParameters=self.radianceParameters)
-    rt.radianceParameters.h = True
-    rt.octreeFile = str(oc.outputFile)
-    rt.pointsFile = self.relpath(pointsFile, sceneFiles.path)
-    # # 4.3 write batch file
     self.commands.append(oc.toRadString())
-    self.commands.append(rt.toRadString())
+    # # 4.2.prepare rpict
+    # TODO: Add overtrue
+    for view, f in zip(self.views, viewFiles):
+        rp = Rpict('results\\' + view.name,
+                   simulationType=self.simulationType,
+                   rpictParameters=self.radianceParameters)
+        rp.octreeFile = str(oc.outputFile)
+        rp.viewFile = self.relpath(f, sceneFiles.path)
+        self.commands.append(rp.toRadString())
+        self.resultsFile.append(
+            os.path.join(sceneFiles.path, str(rp.outputFile)))
+    # # 4.3 write batch file
     batchFile = os.path.join(sceneFiles.path, "commands.bat")
     writeToFile(batchFile, "\n".join(self.commands))
-    self.resultFiles = (os.path.join(sceneFiles.path, str(rt.outputFile)),)
     print "Files are written to: %s" % sceneFiles.path
     return batchFile
 </code></pre>
@@ -2323,7 +2138,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeGeometriesToFile">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeGeometriesToFile">
     <p>def <span class="ident">writeGeometriesToFile</span>(</p><p>self, targetDir, fileName, mkdir=False)</p>
     </div>
     
@@ -2340,8 +2155,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
 <p>Exceptions:
     ValueError if targetDir doesn't exist and mkdir is False.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeGeometriesToFile', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeGeometriesToFile" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeGeometriesToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeGeometriesToFile" class="source">
     <pre><code>def writeGeometriesToFile(self, targetDir, fileName, mkdir=False):
     """Write geometries to file.
     Args:
@@ -2366,7 +2181,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile">
     <p>def <span class="ident">writeMaterialsAndGeometriesToFile</span>(</p><p>self, targetDir, fileName, mkdir=False)</p>
     </div>
     
@@ -2383,8 +2198,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
 <p>Exceptions:
     ValueError if targetDir doesn't exist and mkdir is False.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMaterialsAndGeometriesToFile" class="source">
     <pre><code>def writeMaterialsAndGeometriesToFile(self, targetDir, fileName, mkdir=False):
     """Write geometries to file.
     Args:
@@ -2410,7 +2225,7 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMatrialsToFile">
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMatrialsToFile">
     <p>def <span class="ident">writeMatrialsToFile</span>(</p><p>self, targetDir, fileName, mkdir=False)</p>
     </div>
     
@@ -2427,8 +2242,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
 <p>Exceptions:
     ValueError if targetDir doesn't exist and mkdir is False.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMatrialsToFile', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writeMatrialsToFile" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMatrialsToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeMatrialsToFile" class="source">
     <pre><code>def writeMatrialsToFile(self, targetDir, fileName, mkdir=False):
     """Write materials to file.
     Args:
@@ -2453,8 +2268,8 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writePointsToFile">
-    <p>def <span class="ident">writePointsToFile</span>(</p><p>self, targetDir, fileName, mkdir=False)</p>
+    <div class="name def" id="honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeViewsToFile">
+    <p>def <span class="ident">writeViewsToFile</span>(</p><p>self, targetDir, mkdir=False)</p>
     </div>
     
 
@@ -2462,32 +2277,27 @@ def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
   
     <div class="desc"><p>Write point groups to file.</p>
 <p>Args:
-    targetDir: Path to project directory (e.g. c:/ladybug)
-    fileName: File name as string. Points will be saved as
-        fileName.pts</p>
+    targetDir: Path to project directory (e.g. c:/ladybug)</p>
 <p>Returns:
     Path to file in case of success.</p>
 <p>Exceptions:
     ValueError if targetDir doesn't exist and mkdir is False.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writePointsToFile', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.gridbased.GridBasedAnalysisRecipe.writePointsToFile" class="source">
-    <pre><code>def writePointsToFile(self, targetDir, fileName, mkdir=False):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeViewsToFile', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.imagebased.ImageBasedAnalysisRecipe.writeViewsToFile" class="source">
+    <pre><code>def writeViewsToFile(self, targetDir, mkdir=False):
     """Write point groups to file.
     Args:
         targetDir: Path to project directory (e.g. c:/ladybug)
-        fileName: File name as string. Points will be saved as
-            fileName.pts
     Returns:
         Path to file in case of success.
     Exceptions:
         ValueError if targetDir doesn't exist and mkdir is False.
     """
-    assert type(fileName) is str, 'fileName should be a string.'
-    fileName = fileName if fileName.lower().endswith('.pts') \
-        else fileName + '.pts'
-    return writeToFile(os.path.join(targetDir, fileName),
-                       self.toRadStringPoints() + "\n", mkdir)
+    for v in self.views:
+        writeToFile(os.path.join(targetDir, v.name + '.vf'),
+                    'rvu ' + v.toRadString() + '\n', mkdir)
+    return tuple(os.path.join(targetDir, v.name + '.vf') for v in self.views)
 </code></pre>
   </div>
 </div>

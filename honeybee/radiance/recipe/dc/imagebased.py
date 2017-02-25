@@ -179,8 +179,9 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
             # calculate view dimensions
             vwrDimFile = os.path.join(sceneFiles.path,
                                       r'views\\{}.dimensions'.format(view.name))
+            x, y = view.getViewDimension()
             with open(vwrDimFile, 'wb') as vdfile:
-                vdfile.write('-x %d -y %d -ld-\n' % (view.xRes, view.yRes))
+                vdfile.write('-x %d -y %d -ld-\n' % (x, y))
 
             # calculate sampling for each view
             vwrParaSamp = VwraysParameters()
@@ -284,12 +285,16 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
                     os.remove(tf)
                 except:
                     print "Failed to remove %s." % tf
-                else:
-                    os.rename(f, tf)
-            else:
-                os.rename(f, tf)
 
-            names.append(tf)
+            try:
+                os.rename(f, tf)
+            except WindowsError:
+                msg = 'Failed to rename (%s) to (%s)\n\t' \
+                    'Access is denied. Do you have the file open?' % (f, tf)
+                print msg
+                names.append(f)
+            else:
+                names.append(tf)
 
         self.resultsFile = names
         return self.resultsFile

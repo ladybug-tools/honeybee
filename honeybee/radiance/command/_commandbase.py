@@ -12,7 +12,7 @@ class RadianceCommand(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self,executableName=None):
+    def __init__(self, executableName=None):
         """Initialize Radiance command."""
         self.executableName = executableName
         self.radbinPath = config.radbinPath

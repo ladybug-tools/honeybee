@@ -179,7 +179,7 @@ class View(object):
         self.__viewType = value
 
         # set view size to 180 degrees for fisheye views
-        if self.viewType in [1, 4, 5]:
+        if self.viewType in (1, 4, 5):
             self.viewHSize = 180
             self.viewVSize = 180
             print "Changed viewHSize and viewVSize to 180 for fisheye view type."
@@ -191,6 +191,43 @@ class View(object):
             assert self.viewVSize < 180, ValueError(
                 '\n{} is an invalid vertical view size for Perspective view.\n'
                 'The size should be smaller than 180.'.format(self.viewVSize))
+
+    def getViewDimension(self, maxX=None, maxY=None):
+        """Get dimensions for this view as x, y.
+
+        This method is same as vwrays -d
+        """
+        maxX = maxX or self.xRes
+        maxY = maxY or self.yRes
+
+        if self.viewType in (1, 4, 5):
+            return min(maxX, maxY), min(maxX, maxY)
+
+        vh = self.viewHSize
+        vv = self.viewVSize
+
+        if self.viewType == 0:
+            hvRatio = math.tan(math.radians(vh / 2)) / math.tan(math.radians(vv / 2))
+        else:
+            hvRatio = vh / vv
+
+        # radiance keeps the larges max size and tries to scale the other size
+        # to fit the aspect ratio. In case the size doesn't match it reverses
+        # the process.
+        if maxY <= maxX:
+            newx = int(hvRatio * maxY)
+            if newx <= maxX:
+                return newx, maxY
+            else:
+                newy = int(maxX / hvRatio)
+                return maxX, newy
+        else:
+            newy = int(maxX / hvRatio)
+            if newy <= maxY:
+                return maxX, newy
+            else:
+                newx = int(hvRatio * maxY)
+                return newx, maxY
 
     def calculateViewGrid(self, xDivCount=1, yDivCount=1):
         """Return a list of views for grid of views.
