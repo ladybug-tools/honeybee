@@ -1,6 +1,6 @@
 # honeybee
 
-#### [API Documentation](http://ladybug-analysis-tools.github.io/honeybee/doc/)
+#### [API Documentation](http://ladybug-tools.github.io/honeybee/doc/)
 
 ```python
 # here is an example that shows how to put a grid-based analysis together using honeybee
