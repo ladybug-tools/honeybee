@@ -24,7 +24,7 @@ from honeybee.radiance.command.dctimestep import Dctimestep
 from honeybee.radiance.command.genskyvec import Genskyvec
 from honeybee.radiance.command.gensky import Gensky, GenskyParameters
 from honeybee.radiance.command.pcomb import PcombImage, PcombParameters, Pcomb
-
+from honeybee.radiance.command.rmtxop import Rmtxop,RmtxopParameters
 
 os.chdir(r'../tests/room')
 
@@ -53,8 +53,7 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
         xfr.xformParameters = xfrPara
         xfr.radFile = 'glazing.rad'
         xfr.outputFile = 'glazingI.rad'
-        print xfr.toRadString()
-        # xfr.execute()
+        xfr.execute()
 
         rflux = Rfluxmtx()
         rflux.sender = '-'
@@ -68,8 +67,8 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
         rflux.rfluxmtxParameters = rfluxPara
         rflux.pointsFile = 'indoor_points.pts'
         rflux.outputMatrix = r'temp/vmatrix.vmx'
-        rflux.radFiles = ['room.mat', 'room.rad', 'glazing.rad']
-        # rflux.execute()
+        rflux.radFiles = ['room.mat', 'room.rad']
+        rflux.execute()
 
     vMatrix = r'temp/vmatrix.vmx'
 
@@ -86,16 +85,14 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
 
         rflux2 = Rfluxmtx()
         rflux2.samplingRaysCount = 1000
-        rflux2.sender = 'glazingI.rad_m'
-        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r4')
+        rflux2.sender = 'glazingI_m.rad'
+        skyFile = rflux2.defaultSkyGround(r'temp/rfluxSky.rad', skyType='r1')
         rflux2.receiverFile = skyFile
         rflux2.rfluxmtxParameters = rfluxPara
         rflux2.radFiles = [r"room.mat",
-                          r"room.rad",
-                          'glazing.rad']
+                          r"room.rad"]
         rflux2.outputMatrix = r"temp/dmatrix.dmx"
         rflux2.execute()
-
     dMatrix = r"temp/dmatrix.dmx"
 
     # Step4a: Create the sky vector.
@@ -108,11 +105,11 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
             weaFile.execute()
 
             gendayParam = GendaymtxParameters()
-            gendayParam.skyDensity = 4
+            gendayParam.skyDensity = 1
 
             genday = Gendaymtx(weaFile=r'temp/test.wea', outputName=r'temp/day.smx')
             genday.gendaymtxParameters = gendayParam
-            # genday.execute()
+            genday.execute()
 
             skyVector = r'temp/day.smx'
         else:
@@ -124,7 +121,7 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
             genskv = Genskyvec()
             genskv.inputSkyFile = r'temp/sky.rad'
             genskv.outputFile = r'temp/sky.vec'
-            genskv.skySubdivision = 4
+            genskv.skySubdivision = 1
             genskv.execute()
             skyVector = r'temp/sky.vec'
     else:
@@ -136,11 +133,21 @@ def run3phase(phasesToCalculate={'v': True, 't': True, 'd': True, 's': True},
     dct.vmatrixSpec = vMatrix
     dct.dmatrixFile = dMatrix
     dct.skyVectorFile = skyVector
-    dct.outputFileName = r'temp/results.txt'
+    dct.outputFileName = r'temp/results3p.tmp'
     dct.execute()
 
-    return 'temp/results.txt'
 
+
+
+    mtx2Param = RmtxopParameters()
+    mtx2Param.outputFormat = 'a'
+    mtx2Param.combineValues = (47.4, 119.9, 11.6)
+    mtx2Param.transposeMatrix = True
+    mtx2 = Rmtxop(matrixFiles=[r'temp/results3p.tmp'], outputFile=r'temp/illuminance3p.ill')
+    mtx2.rmtxopParameters = mtx2Param
+    mtx2.execute()
+
+    return  'temp/illuminance3p.ill'
 phases = {'v': True, 't': True, 'd': True, 's': True}
 tmatrices = ('xmls/clear.xml', 'xmls/diffuse50.xml',
              'xmls/ExtVenetianBlind_17tilt.xml')
@@ -150,7 +157,7 @@ epwFiles = ['epws/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw',
             'epws/USA_MA_Boston-City.WSO_TMY.epw',
             'epws/USA_NC_Charlotte-Douglas.Intl.AP.723140_TMY3.epw',
             'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
-            'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
+            'epws/philly.epw']
 
 for matrix in tmatrices[:1]:
     resultsFile = run3phase(calculationType='annual', tmatrixFile=matrix,
@@ -158,4 +165,9 @@ for matrix in tmatrices[:1]:
 
     with open(resultsFile) as results:
         for lines in results:
-            print(lines)
+            try:
+                lineVal = [round(val,2)for val in map(float,lines.split())]
+                print(" ".join(map(str,lineVal)))
+            except ValueError:
+                print(lines.strip())
+    assert 0

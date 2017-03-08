@@ -191,7 +191,7 @@ if __name__ == '__main__':
                 'epws/USA_MA_Boston-City.WSO_TMY.epw',
                 'epws/USA_NC_Charlotte-Douglas.Intl.AP.723140_TMY3.epw',
                 'epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw',
-                'epws/USA_PA_Philadelphia.Intl.AP.724080_TMY3.epw']
+                'epws/philly.epw']
 
     timeStamps = [(11, 11, idx) for idx in range(8, 18)]
 
