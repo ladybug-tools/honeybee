@@ -7,7 +7,6 @@ for lib in __dependencies:
     if lib not in sys.modules:
         sys.path.insert(
             0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-        sys.path.insert(0,'/home/sarith/scripts/ladybug')
     try:
 
         __import__(lib)
