@@ -1,6 +1,9 @@
 # honeybee
 
-#### [API Documentation](http://ladybug-analysis-tools.github.io/honeybee/doc/)
+A python library to create, run and visualize the results of daylight (RADIANCE) and energy analysis (OpenStudio). For Grasshopper/Rhino and Dynamo/Revit plugins check [honeybee[+] repository](https://github.com/ladybug-tools/honeybee-plus).
+
+
+#### [API Documentation](http://ladybug-tools.github.io/honeybee/doc/)
 
 ```python
 # here is an example that shows how to put a grid-based analysis together using honeybee
