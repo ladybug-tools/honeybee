@@ -31,7 +31,7 @@ class Folders(object):
     __defaultPath = {
         "path_to_radiance": r'',
         "path_to_energyplus": r'',
-        "path_to_openstudio": r'C:\Program Files\OpenStudio 1.12.5',
+        "path_to_openstudio": r'',
         "path_to_perl": r''
     }
 
