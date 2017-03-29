@@ -73,11 +73,11 @@ def directSunCalcs(epwFile, materialFile, geometryFiles, pointsFile,
     annualResultsFile=os.path.join(dirName,'illum.ill')
 
     if not repeatValidationOnly:
-        preCalcFiles = (sunList,sunDiscRadFile,radiationMatrix,annualResultsFile)
-        for files in preCalcFiles:
-            assert os.path.exists(files),'Precalculated data cannot be used as the file ' \
-                                         '%s, which is required for calculations cannot be' \
-                                         'found.'
+        # preCalcFiles = (sunList,sunDiscRadFile,radiationMatrix,annualResultsFile)
+        # for files in preCalcFiles:
+        #     assert os.path.exists(files),'Precalculated data cannot be used as the file ' \
+        #                                  '%s, which is required for calculations cannot be' \
+        #                                  'found.'
 
 
 
@@ -319,8 +319,9 @@ def directSunCalcs(epwFile, materialFile, geometryFiles, pointsFile,
 
     print(statusMsg('Done!'))
 
+os.chdir(os.path.dirname(os.getcwd()))
 
-epwFile = r'tests/assets/oakland.epw'
+epwFile = r'tests/assets/phoenix.epw'
 materialFile = r'tests/assets/material.rad'
 geometryFiles = r'tests/assets/geoSouth.rad'
 pointsFile = r'tests/assets/2x2.pts'

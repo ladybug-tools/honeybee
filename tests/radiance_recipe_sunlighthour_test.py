@@ -19,7 +19,7 @@ class SunlighthoursTestCase(unittest.TestCase):
                            (-0.033196, 0.885943, -0.462605), (0.20517, 0.871705, -0.445013),
                            (0.429563, 0.819156, -0.380077), (0.624703, 0.731875, -0.272221),
                            (0.777301, 0.615806, -0.128788))
-
+        self.sunVectors = []
         self.baseFolder = os.path.abspath("./tests/room/testrun")
         self.runFolder = os.path.abspath("./tests/room/testrun/test/sunlighthour")
         self.epwfile = os.path.abspath("./tests/room/test.epw")
@@ -29,9 +29,9 @@ class SunlighthoursTestCase(unittest.TestCase):
         """Cleaning up after the test."""
         files = [self.runFolder + "/" + f for f in os.listdir(self.runFolder)]
 
-        for f in files:
-            # remove the file which is just created
-            os.remove(f)
+        # for f in files:
+        #     # remove the file which is just created
+        #     os.remove(f)
 
     # test default values
     def test_init_func(self):
@@ -75,4 +75,5 @@ class SunlighthoursTestCase(unittest.TestCase):
 if __name__ == '__main__':
     # You can run the test module from the root folder by using
     # python -m unittest -v tests.radiance_recipe_gridbased_test
+    os.chdir(os.pardir)
     unittest.main()
