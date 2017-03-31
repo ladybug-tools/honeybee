@@ -15,8 +15,9 @@ class PcombImage(RadianceCommand):
                                        tupleSize=3)
     inputImageFile = RadiancePath('inputImageFile','input image file')
 
-    def __int__(self,originalPixelUse=None,scalingFactor=None,
+    def __init__(self,originalPixelUse=None,scalingFactor=None,
                 rgbColorMultiplier=None,inputImageFile=None):
+
         RadianceCommand.__init__(self,'pcomb')
         self.originalPixelUse = originalPixelUse
         self.scalingFactor = scalingFactor

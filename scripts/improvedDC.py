@@ -11,12 +11,14 @@ from honeybee.radiance.parameters.rfluxmtx import RfluxmtxParameters
 from honeybee.radiance.command.rfluxmtx import Rfluxmtx
 from honeybee.radiance.command.epw2wea import Epw2wea
 from honeybee.radiance.command.gendaymtx import Gendaymtx,GendaymtxParameters
-from honeybee.radiance.command.rmtxop import Rmtxop, RmtxopParameters
+from honeybee.radiance.command.rmtxop import Rmtxop, RmtxopParameters,RmtxopMatrix
 import time,warnings
 import os
 from sunPathIlluminance import calcDirectIlluminance
 from honeybee.radiance.command.dctimestep import Dctimestep,DctimestepParameters
 from itertools import izip
+
+
 
 def improvedDCcalc(epwFile,materialFile, geometryFiles, pointsFile,folderForCalculations, outputIllFilePath,
                    reinhartPatches=1, calcDict={'skyVectors':True,'DirectDCCoeff':True,'DCCoeff':True,'DirectSun':True}):
@@ -174,26 +176,33 @@ def improvedDCcalc(epwFile,materialFile, geometryFiles, pointsFile,folderForCalc
                                            sunMatrixPath=sunMatrixPath,materialFile=materialFile,geometryFiles=geometryFiles,
                                            pointsFile=pointsFile, folderForCalculations=folderForCalculations,
                                            outputIllFilePath=directSunIll)
-    count = 0
-    with open(ill) as illData, open(illDirect) as illDirectData, open(directSunIll) as illSunOnly,open(outputIllFilePath,'w') as finalIll:
-        for line1,line2,line3 in izip(illData,illDirectData,illSunOnly):
-            if line1.strip():
-                try:
-                    line1 = map(float,line1.strip().split())
-                    line2 = map(float,line2.strip().split())
-                    line3 = map(float,line3.strip().split())
-                    outputLine =[]
-                    for DC,DCdirect,Sun in zip(line1,line2,line3):
-                        if (DC-DCdirect+Sun)<0:
-                            warnings.warn("The value for illuminance is below zero for line# %s"%count)
-                        outputLine.append(DC-DCdirect+Sun)
-                    lineStr = map(str,outputLine)
-                    finalIll.write(" ".join(lineStr)+'\n')
-                    count+=1
-                except ValueError:
-                    pass
 
-    return finalIll
+    #Instantiate matrices for subtraction and addition.
+    finalMatrix = Rmtxop()
+
+    #std. dc matrix.
+    dcMatrix = RmtxopMatrix()
+    dcMatrix.matrixFile = ill
+
+    #direct dc matrix. -1 indicates that this one is being subtracted from dc matrix.
+    dcDirectMatrix = RmtxopMatrix()
+    dcDirectMatrix.matrixFile = illDirect
+    dcDirectMatrix.scalarFactors = [-1]
+
+    #Sun coefficient matrix.
+    sunCoeffMatrix = RmtxopMatrix()
+    sunCoeffMatrix.matrixFile = directSunIll
+
+    #combine the matrices together. Sequence is extremely important
+    finalMatrix.rmtxopMatrices  = [dcMatrix,dcDirectMatrix,sunCoeffMatrix]
+    finalMatrix.outputFile = outputIllFilePath
+
+    #Done!
+    finalMatrix.execute()
+
+
+
+    return outputIllFilePath
 
 
 if __name__ == "__main__":
@@ -212,6 +221,10 @@ if __name__ == "__main__":
     calcFolder = r'tests/ASEtest'
     outputFilePath = r'tests/ASEtest/test.ill'
 
+
+
+
+
     improvedDCcalc(epwFile=epw,  materialFile=materialFile, geometryFiles=geometryFiles, pointsFile=pointsFile,
                    folderForCalculations=calcFolder, outputIllFilePath=outputFilePath,
-                   calcDict={'skyVectors': True, 'DirectDCCoeff': True, 'DCCoeff': True, 'DirectSun': False})
+                   calcDict={'skyVectors': False, 'DirectDCCoeff': False, 'DCCoeff': False, 'DirectSun': False})
