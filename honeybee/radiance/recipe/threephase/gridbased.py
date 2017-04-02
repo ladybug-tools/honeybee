@@ -12,7 +12,7 @@ from ....helper import writeToFile, copyFilesToFolder
 import os
 
 
-# TODO: implement simulationType
+# TODO(): implement simulationType
 class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
     """Grid based three phase analysis recipe.
 
@@ -109,8 +109,9 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             with open(pointsFile, "rb") as inf:
                 pointGroups = tuple(line.split()[:3] for line in inf.readline())
                 vectorGroups = tuple(line.split()[3:] for line in inf.readline())
-        except:
-            raise ValueError("Couldn't import points from {}".format(pointsFile))
+        except Exception as e:
+            raise ValueError("Couldn't import points from {}:\n\t{}".format(
+                pointsFile, e))
 
         return cls.fromWeatherFilePointsAndVectors(
             epwFile, pointGroups, vectorGroups, skyDensity, simulationType,
@@ -139,7 +140,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
 
         self.__windowSurfaces = hbWindowSurfaces
 
-    # TODO: Create windowGroups as classes
+    # TODO(): Create windowGroups as classes
     @property
     def windowGroups(self):
         """Get window groups as a dictionary {'windowGroupName': [srf1, srf2,...]}.
@@ -164,7 +165,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                         '{} from {} does not match {} from {}.'.format(
                             srf.normal, srf, _wgroups[wgn]['normal'], _wgroups[wgn]['surfaces'][0]
                         ))
-                # TODO: Check radiance matrials and alternateMaterials to match.
+                # TODO(): Check radiance matrials and alternateMaterials to match.
                 assert (srf.radianceMaterial,) + tuple(srf.radProperties.alternateMaterials) \
                     == _wgroups[wgn]['states'], \
                     '{} has a different radiance material than windowgroup material.'.format(srf)
@@ -216,24 +217,15 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
-    # TODO: docstring should be modified
+    # TODO(): docstring should be modified
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
-
-        Files for sunlight hours analysis are:
-            test points <projectName.pts>: List of analysis points.
-            material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
-            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
-            batch file <*.bat>: An executable batch file which has the list of commands.
-                oconv [material file] [geometry file] [sun materials file] [sun geometries file] > [octree file]
-                rcontrib -ab 0 -ad 10000 -I -M [sunlist.txt] -dc 1 [octree file]< [pts file] > [rcontrib results file]
 
         Args:
             targetFolder: Path to parent folder. Files will be created under
                 targetFolder/gridbased. use self.subFolder to change subfolder name.
             projectName: Name of this project as a string.
-            radFiles: A list of additional .rad files to be added to the scene
-            useRelativePath: Set to True to use relative path in bat file <NotImplemented!>.
+            header: A boolean to include path to radiance folder in commands file.
 
         Returns:
             True in case of success.
@@ -250,7 +242,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             ThreePhaseGridBasedAnalysisRecipe, self).populateSubFolders(
                 targetFolder, projectName,
                 subFolders=('.tmp', 'bsdfs', 'objects', 'skies', 'results',
-                            'objects\\windowGroups', 'results\\matrix'),
+                            'objects\\windowgroups', 'results\\matrix'),
                 removeSubFoldersContent=False)
 
         # 0.write points
@@ -282,19 +274,19 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             wdir = os.path.join(sceneFiles.path, 'skies')
             if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)):
                 self.skyMatrix.execute(wdir)
-                # TODO: adding this line to command line didn't work on windows
+                # TODO(): adding this line to command line didn't work on windows
                 # self.commands.append(self.skyMatrix.toRadString(wdir, sceneFiles.path))
 
         # 3.1. find glazing items with .xml material, write them to a separate
         # file and invert them
-        print 'Number of window groups: %d' % (len(windowGroups))
+        print('Number of window groups: %d' % (len(windowGroups)))
 
         glowM = GlowMaterial('vmtx_glow', 1, 1, 1)
 
         # write calculations for each window group
         for count, (windowGroup, attr) in enumerate(windowGroups.iteritems()):
-            print '    [{}] {} (number of states: {})'.format(
-                count, windowGroup, len(attr['states']))
+            print('    [{}] {} (number of states: {})'.format(
+                count, windowGroup, len(attr['states'])))
 
             # copy all the state materials to bsdfs folder
             _xmlFiles = copyFilesToFolder(
@@ -319,8 +311,6 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             vMatrix = 'results\\matrix\\{}.vmx'.format(windowGroup)
             if not os.path.isfile(os.path.join(sceneFiles.path, vMatrix)) \
                     or not self.reuseViewMtx:
-                # TODO: @sariths is checking for this to make sure we don't need
-                # to include rest of the window groups in the scene
                 viewMtxFiles = (sceneFiles.matFile, sceneFiles.geoFile)
 
                 vMtxRflux = Rfluxmtx()
@@ -399,7 +389,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         writeToFile(batchFile, "\n".join(self.commands))
         self.__batchFile = batchFile
 
-        print "Files are written to: %s" % sceneFiles.path
+        print("Files are written to: %s" % sceneFiles.path)
         return batchFile
 
     def results(self, flattenResults=True):
