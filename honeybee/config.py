@@ -99,10 +99,11 @@ class Folders(object):
             path = self.__findOpenStudioFolder()
 
         self.__openStudioPath = path
-        assert os.path.isfile(os.path.join(path, 'bin\\openstudio.exe')), \
-            '{} is not a valid path to openstudio installation.'.format(path)
-        if not self.mute and self.__openStudioPath:
-            print "Path to OpenStudio is set to: %s" % self.__openStudioPath
+        if os.name == 'nt':
+            assert os.path.isfile(os.path.join(path, 'bin\\openstudio.exe')), \
+                '{} is not a valid path to openstudio installation.'.format(path)
+            if not self.mute and self.__openStudioPath:
+                print "Path to OpenStudio is set to: %s" % self.__openStudioPath
 
     @staticmethod
     def __findOpenStudioFolder():
