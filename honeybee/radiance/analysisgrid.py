@@ -1,76 +1,10 @@
 """Honeybee PointGroup and TestPointGroup."""
-from ..vectormath.euclid import Point3, Vector3
+from __future__ import division
 from ..dataoperation import matchData
+from analysispoint import AnalysisPoint
 
+import os
 from itertools import izip
-
-
-# TODO(mostapha): Implement values, UDI, DA, etc.
-class AnalysisPoint(object):
-    """A radiance analysis point.
-
-    Attributes:
-        location: Location of analysis points as (x, y, z).
-        direction: Direction of analysis point as (x, y, z).
-        values: List of values for this analysis point.
-        sources:
-        states:
-    """
-
-    __slots__ = ('_loc', '_dir', '_values', '_sources')
-
-    def __init__(self, location, direction, values=None, sources=None):
-        """Create an analysis point."""
-        self.location = location
-        self.direction = direction
-        self._sources = sources
-        self._values = values
-
-    @property
-    def location(self):
-        """Location of analysis points as Point3."""
-        return self._loc
-
-    @location.setter
-    def location(self, location):
-        try:
-            self._loc = Point3(*location)
-        except TypeError:
-            raise TypeError(
-                'Failed to convert {} to location.\n'
-                'location should be a list or a tuple with 3 values.'.format(location))
-
-    @property
-    def direction(self):
-        """Direction of analysis points as Point3."""
-        return self._dir
-
-    @direction.setter
-    def direction(self, direction):
-        try:
-            self._dir = Vector3(*direction)
-        except TypeError:
-            raise TypeError(
-                'Failed to convert {} to direction.\n'
-                'location should be a list or a tuple with 3 values.'.format(direction))
-
-    @property
-    def usefulDaylightIlluminance(self):
-        """Get UDI for this analysis point."""
-        raise NotImplementedError()
-
-    @property
-    def daylightAutonomy(self):
-        """Get DA for this analysis point."""
-        raise NotImplementedError()
-
-    def toRadString(self):
-        """Return Radiance string for a test point."""
-        return "%s %s" % (self.location, self.direction)
-
-    def __repr__(self):
-        """Print and analysis point."""
-        return self.toRadString()
 
 
 class AnalysisGrid(object):
@@ -82,6 +16,7 @@ class AnalysisGrid(object):
 
     __slots__ = ('_analysisPoints')
 
+    # TODO(mostapha): Add sources.
     def __init__(self, analysisPoints):
         """Initialize a AnalysisPointGroup."""
         for ap in analysisPoints:
@@ -102,6 +37,20 @@ class AnalysisGrid(object):
         aps = tuple(AnalysisPoint(pt, v) for pt, v in izip(points, vectors))
         return cls(aps)
 
+    @classmethod
+    def fromFile(cls, filePath):
+        """Create an analysis grid from a pts file.
+
+        Args:
+            filePath: Full path to points file
+        """
+        assert os.path.isfile(filePath), IOError("Can't find {}.".format(filePath))
+        ap = AnalysisPoint  # load analysis point locally for better performance
+        with open(filePath, 'rb') as inf:
+            points = tuple(ap.fromrawValues(*l.split()) for l in inf)
+
+        return cls(points)
+
     @property
     def isAnalysisGrid(self):
         """Return True for AnalysisGrid."""
@@ -109,18 +58,67 @@ class AnalysisGrid(object):
 
     @property
     def points(self):
-        """A list of points as x, y, z."""
+        """A generator of points as x, y, z."""
         return (ap.location for ap in self._analysisPoints)
 
     @property
     def vectors(self):
-        """Get list of vectors as x, y , z."""
+        """Get generator of vectors as x, y , z."""
         return (ap.direction for ap in self._analysisPoints)
 
     @property
     def analysisPoints(self):
         """Return a list of analysis points."""
         return self._analysisPoints
+
+    def setValues(self, hoys, values, source=None, state=None, isDirect=False):
+
+        pass
+        # assign the values to points
+        for count, hourlyValues in enumerate(values):
+            self.analysisPoints[count].setValues(
+                hourlyValues, hoys, source, state, isDirect)
+
+    def setValuesFromFile(self, filePath, hoys=None, source=None, state=None,
+                          isDirect=False):
+        """Load values for test points from a file.
+
+        Args:
+            filePath: Full file path to the result file.
+            hoys: A collection of hours of the year for the results. If None the
+                default will be range(0, len(results)).
+            source: Name of the source.
+            state: Name of the state.
+        """
+        with open(filePath, 'rb') as inf:
+            # read the header
+            for i in xrange(7):
+                if i == 2:
+                    pointsCount = int(inf.next().split('=')[-1])
+                    assert len(self._analysisPoints) == pointsCount, \
+                        "Length of points [%d] doesn't match length of the results [%d]." \
+                        .format(len(self._analysisPoints), pointsCount)
+                elif i == 3:
+                    hoursCount = int(inf.next().split('=')[-1])
+                    if hoys:
+                        assert hoursCount == len(hoys), \
+                            "Number of hours [%d] doesn't match length of the results [%d]." \
+                            .format(len(hoys), hoursCount)
+                    else:
+                        hoys = xrange(0, hoursCount)
+                else:
+                    inf.next()
+
+            values = (tuple(int(float(r)) for r in line.split()) for line in inf)
+
+            # assign the values to points
+            for count, hourlyValues in enumerate(values):
+                self.analysisPoints[count].setValues(
+                    hourlyValues, hoys, source, state, isDirect)
+
+    def setCoupledValuesFromFile(self, totalFilePath, directFilePath, source=None,
+                                 state=None):
+        pass
 
     def toRadString(self):
         """Return analysis points group as a Radiance string."""
@@ -148,4 +146,4 @@ class AnalysisGrid(object):
 
     def __repr__(self):
         """Return analysis points and directions."""
-        return 'AnalysisGrid::#AnalysisPoints::{}'.format(len(self._analysisPoints))
+        return 'AnalysisGrid::#{}'.format(len(self._analysisPoints))
