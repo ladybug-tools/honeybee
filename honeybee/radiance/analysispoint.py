@@ -1,9 +1,6 @@
 """Honeybee PointGroup and TestPointGroup."""
 from __future__ import division
 from ..vectormath.euclid import Point3, Vector3
-from ..dataoperation import matchData
-
-import os
 from collections import defaultdict
 from itertools import izip
 import types
@@ -27,8 +24,10 @@ class AnalysisPoint(object):
         """Create an analysis point."""
         self.location = location
         self.direction = direction
+
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
+        # It is set inside _createDataStructure method on setting values.
         self._sources = {}
 
         # an empty list for values
@@ -596,8 +595,8 @@ class AnalysisPoint(object):
         UDI_m = 0
         totalHourCount = len(hours)
         values = tuple(v[0] for v in self.combinedValuesById(hours, blindsStateIds))
-        for v in values:
-            if v not in schedule:
+        for h, v in izip(hours, values):
+            if h not in schedule:
                 totalHourCount -= 1
                 continue
             if v >= DAThreshhold:
@@ -639,8 +638,8 @@ class AnalysisPoint(object):
         UDI_m = 0
         totalHourCount = len(hours)
         values = tuple(v[0] for v in self.combinedValuesById(hours, blindsStateIds))
-        for v in values:
-            if v not in schedule:
+        for h, v in izip(hours, values):
+            if h not in schedule:
                 totalHourCount -= 1
                 continue
             if v < udiMin:
@@ -665,15 +664,15 @@ class AnalysisPoint(object):
         Returns:
             Daylight autonomy, Continious daylight autonomy
         """
-        DAThreshhold = DAThreshhold or 300.0
+        DAThreshhold = DAThreshhold or 300
         hours = self.hoys
         schedule = occSchedule or set(hours)
         DA = 0
         CDA = 0
         totalHourCount = len(hours)
         values = tuple(v[0] for v in self.combinedValuesById(hours, blindsStateIds))
-        for v in values:
-            if v not in schedule:
+        for h, v in izip(hours, values):
+            if h not in schedule:
                 totalHourCount -= 1
                 continue
             if v >= DAThreshhold:
@@ -683,6 +682,46 @@ class AnalysisPoint(object):
                 CDA += v / DAThreshhold
 
         return DA / totalHourCount, CDA / totalHourCount
+
+    def annualSolarExposure(self, threshhold=None, blindsStateIds=None,
+                            occSchedule=None, targetHours=None):
+        """Annual Solar Exposure (ASE).
+
+        Calculate number of hours that this point is exposed to more than 1000lux
+        of direct sunlight. The point meets the traget in the number of hours is
+        less than 250 hours per year.
+
+        Args:
+            threshhold: Threshhold for daylight autonomy in lux (default: 1000).
+            blindsStateIds: List of state ids for all the sources for input hoys.
+                If you want a source to be removed set the state to -1. ASE must
+                be calculated without dynamic blinds but you can use this option
+                to study the effect of different blind states.
+            occSchedule: An annual occupancy schedule.
+            targetHours: Target minimum hours (default: 250).
+
+        Returns:
+            Success as a Boolean, Number of hours, Problematic hours
+        """
+        if not self.hasDirectValues:
+            raise ValueError('Direct values are not loaded to calculate ASE.')
+
+        threshhold = threshhold or 1000
+        targetHours = targetHours or 250
+        hours = self.hoys
+        schedule = occSchedule or set(hours)
+        ASE = 0
+        problematicHours = []
+        values = tuple(v[1] for v in self.combinedValuesById(hours, blindsStateIds))
+        for h, v in izip(hours, values):
+            if h not in schedule:
+                continue
+            if v > threshhold:
+                print(v)
+                ASE += 1
+                problematicHours.append(h)
+
+        return ASE > targetHours, ASE, problematicHours
 
     def ToString(self):
         """Overwrite .NET ToString."""
@@ -694,4 +733,4 @@ class AnalysisPoint(object):
 
     def __repr__(self):
         """Print and analysis point."""
-        return self.toRadString()
+        return 'AnalysisPoint::(%s)::(%s)' % (self.location, self.direction)
