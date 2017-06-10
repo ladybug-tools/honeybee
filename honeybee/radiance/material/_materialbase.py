@@ -5,8 +5,7 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Materials
 
 
 class RadianceMaterial(object):
-    """
-    Base class for Radiance materials.
+    """Base class for Radiance materials.
 
     Attributes:
         name: Material name as a string. Do not use white space and special character.
@@ -15,8 +14,8 @@ class RadianceMaterial(object):
     """
 
     # list of Radiance material types
-    __types = ("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
-               "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF")
+    __types = set("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
+                  "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF")
 
     def __init__(self, name, materialType, modifier="void"):
         """Create material base."""
@@ -48,6 +47,9 @@ class RadianceMaterial(object):
 
     @name.setter
     def name(self, name):
+        assert name not in self.__types, \
+            '%s is a radiance material type and' \
+            ' should not be used as a material name.' % name
         self.__name = name.rstrip().replace(" ", "_")
 
     @property
