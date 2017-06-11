@@ -14,8 +14,8 @@ class RadianceMaterial(object):
     """
 
     # list of Radiance material types
-    __types = set("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
-                  "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF")
+    __types = set(("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
+                   "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF"))
 
     def __init__(self, name, materialType, modifier="void"):
         """Create material base."""

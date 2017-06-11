@@ -612,6 +612,9 @@ class AnalysisPoint(object):
             else:
                 UDI += 1
 
+        if totalHourCount == 0:
+            raise ValueError('There is 0 hours available in the schedule.')
+
         return DA / totalHourCount, CDA / totalHourCount, UDI / totalHourCount, \
             UDI_l / totalHourCount, UDI_m / totalHourCount
 
@@ -649,6 +652,9 @@ class AnalysisPoint(object):
             else:
                 UDI += 1
 
+        if totalHourCount == 0:
+            raise ValueError('There is 0 hours available in the schedule.')
+
         return UDI / totalHourCount, UDI_l / totalHourCount, UDI_m / totalHourCount
 
     def daylightAutonomy(self, DAThreshhold=None, blindsStateIds=None,
@@ -680,6 +686,9 @@ class AnalysisPoint(object):
                 CDA += 1
             else:
                 CDA += v / DAThreshhold
+
+        if totalHourCount == 0:
+            raise ValueError('There is 0 hours available in the schedule.')
 
         return DA / totalHourCount, CDA / totalHourCount
 
