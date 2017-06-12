@@ -1,4 +1,4 @@
-"""Radiance raytracing Parameters."""
+"""Radiance rpict Parameters."""
 from ._advancedparametersbase import AdvancedRadianceParameters
 from ._defaultset import rpict_number_parameters, rpict_boolean_parameters
 from ._frozen import frozen
@@ -8,60 +8,40 @@ from ._frozen import frozen
 class ImageBasedParameters(AdvancedRadianceParameters):
     u"""Radiance Parameters for generating images.
 
+    For the full list of attributes try self.keys
+
     Attributes:
         quality: An integer between 0-2 (0:low, 1: medium or 2: high quality)
-        ambientBounces: Number of ambient bounces. This is the maximum number of diffuse
-            bounces computed by the indirect calculation. A value of zero
-            implies no indirect calculation.
-        ambientDivisions: Number of ambient divisions. The error in the Monte Carlo calculation
-            of indirect illuminance will be inversely proportional to the square
-            root of this number. A value of zero implies no indirect calculation.
-        ambientSupersamples: Number of ambient super-samples. Super-samples are applied only to
-            the ambient divisions which show a significant change.
-        ambientResolution: Number of ambient resolution. This number will determine the maximum
-            density of ambient values used in interpolation. Error will start to
-            increase on surfaces spaced closer than the scene size divided by the
-            ambient resolution. The maximum ambient value density is the scene
-            size times the ambient accuracy.
-        ambientAccuracy: Number of ambient accuracy. This value will approximately equal the
-            error from indirect illuminance interpolation. A value of zero
-            implies no interpolation
 
-        for the full list of attributes try self.keys
 
     Usage:
 
         rp = ImageBasedParameters(0)
         print rp.toRadString()
 
-        > -aa 0.25 -ab 2 -ad 512 -dc 0.25 -st 0.85 -lw 0.05 -as 128 -ar 16 -lr 4 -dt 0.5 -dr 0 -ds 0.5 -dp 64
+        > -aa 0.25 -ab 2 -ad 512 -dc 0.25 -st 0.85 -lw 0.05 -as 128 -ar 16 -lr 4 -dt 0.5
+          -dr 0 -ds 0.5 -dp 64
 
         rp = ImageBasedParameters(1)
         print rp.toRadString()
 
-        > -aa 0.2 -ab 3 -ad 2048 -dc 0.5 -st 0.5 -lw 0.01 -as 2048 -ar 64 -lr 6 -dt 0.25 -dr 1 -ds 0.25 -dp 256
+        > -aa 0.2 -ab 3 -ad 2048 -dc 0.5 -st 0.5 -lw 0.01 -as 2048 -ar 64 -lr 6 -dt 0.25
+          -dr 1 -ds 0.25 -dp 256
 
         rp = ImageBasedParameters(2)
         print rp.toRadString()
-        > -aa 0.1 -ab 6 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512
+        > -aa 0.1 -ab 6 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8
+          -dt 0.15 -dr 3 -ds 0.05 -dp 512
 
         rp.ab = 5
         rp.u = True
         print rp.toRadString()
 
-        > -aa 0.1 -ab 5 -dj 0.7 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512 -u
+        > -aa 0.1 -ab 5 -dj 0.7 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128
+          -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512 -u
     """
 
-    def __init__(self, quality=None, ambientBounces=None, ambientDivisions=None,
-                 ambientSupersamples=None, ambientResolution=None, ambientAccuracy=None,
-                 directJitter=None, directSampling=None, directThreshold=None,
-                 directCertainty=None, directSecRelays=None, directPresampDensity=None,
-                 specularThreshold=None, limitWeight=None, limitReflections=None,
-                 specularSampling=None, irradianceCalc=None, uncorRandSamp=None,
-                 pixelSampling=None, pixelJitter=None, pixelTolerance=None,
-                 pixelAspectRatio=None, pixelMotionBlur=None, pixelDepthOfField=None,
-                 ambientValue=None, ambientWeight=None, directVisibility=None,
-                 backFaceVisibility=None):
+    def __init__(self, quality=None):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
         self.quality = quality
@@ -69,14 +49,14 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('ab', descriptiveName='ambient bounces',
                                attributeName="ambientBounces", numType=int)
-        self.ambientBounces = ambientBounces
+        self.ambientBounces = None
         """ Number of ambient bounces. This is the maximum number of diffuse
             bounces computed by the indirect calculation. A value of zero
             implies no indirect calculation."""
 
         self.addRadianceNumber('ad', descriptiveName='ambient divisions',
                                attributeName="ambientDivisions", numType=int)
-        self.ambientDivisions = ambientDivisions
+        self.ambientDivisions = None
         """ Number of ambient divisions. The error in the Monte Carlo calculation
             of indirect illuminance will be inversely proportional to the square
             root of this number. A value of zero implies no indirect calculation.
@@ -84,14 +64,14 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('as', descriptiveName='ambient super samples',
                                attributeName='ambientSupersamples', numType=int)
-        self.ambientSupersamples = ambientSupersamples
+        self.ambientSupersamples = None
         """ Number of ambient super-samples. Super-samples are applied only to
             the ambient divisions which show a significant change.
         """
 
         self.addRadianceNumber('ar', descriptiveName='ambient resolution',
                                attributeName='ambientResolution', numType=int)
-        self.ambientResolution = ambientResolution
+        self.ambientResolution = None
         """ Number of ambient resolution. This number will determine the maximum
             density of ambient values used in interpolation. Error will start to
             increase on surfaces spaced closer than the scene size divided by the
@@ -100,14 +80,14 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('aa', descriptiveName='ambient accuracy',
                                attributeName='ambientAccuracy', numType=float)
-        self.ambientAccuracy = ambientAccuracy
+        self.ambientAccuracy = None
         """Number of ambient accuracy. This value will approximately equal the
         error from indirect illuminance interpolation. A value of zero implies
         no interpolation."""
 
         self.addRadianceNumber('dj', descriptiveName='direct source jitter',
                                attributeName='directJitter', numType=float)
-        self.directJitter = directJitter
+        self.directJitter = None
         """
         -dj frac
         Set the direct jittering to frac. A value of zero samples each source
@@ -123,7 +103,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('ds', descriptiveName='direct sampling',
                                attributeName='directSampling', numType=float)
-        self.directSampling = directSampling
+        self.directSampling = None
         """
         -ds frac
         Set the direct sampling ratio to frac. A light source will be subdivided
@@ -136,7 +116,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('dt', descriptiveName='direct thresholding',
                                numType=float, attributeName='directThreshold')
-        self.directThreshold = directThreshold
+        self.directThreshold = None
         """
         -dt frac
 
@@ -150,7 +130,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('dc', descriptiveName='direct certainty',
                                numType=float, attributeName='directCertainty')
-        self.directCertainty = directCertainty
+        self.directCertainty = None
         """
         -dc frac
 
@@ -163,7 +143,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('dr', descriptiveName='direct relays',
                                numType=float, attributeName='directSecRelays')
-        self.directSecRelays = directSecRelays
+        self.directSecRelays = None
         """
         -dr N
 
@@ -176,7 +156,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('dp', descriptiveName='direct presampling density',
                                numType=int, attributeName='directPresampDensity')
-        self.directPresampDensity = directPresampDensity
+        self.directPresampDensity = None
         """
         -dp D
 
@@ -190,7 +170,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('st', descriptiveName='specular threshold', numType=float,
                                attributeName='specularThreshold')
-        self.specularThreshold = specularThreshold
+        self.specularThreshold = None
         """
         -st frac
 
@@ -206,7 +186,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('lw', descriptiveName='limit weight', numType=float,
                                attributeName='limitWeight')
-        self.limitWeight = limitWeight
+        self.limitWeight = None
         """
         -lw frac
 
@@ -220,7 +200,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('lr', descriptiveName='limit reflections', numType=int,
                                attributeName='limitReflections')
-        self.limitReflections = limitReflections
+        self.limitReflections = None
         """
         -lr N
         Limit reflections to a maximum of N, if N is a positive integer. If N
@@ -233,7 +213,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('ss', descriptiveName='specular sampling', numType=float,
                                attributeName='specularSampling')
-        self.specularSampling = specularSampling
+        self.specularSampling = None
         """
         -ss samp
 
@@ -249,7 +229,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         self.addRadianceNumber('ps', descriptiveName='pixel sampling rate',
                                numType=int, attributeName='pixelSampling')
 
-        self.pixelSampling = pixelSampling
+        self.pixelSampling = None
         """
         -ps size
 
@@ -258,7 +238,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
         self.addRadianceNumber('pt', descriptiveName='pixel sampling tolerance',
                                numType=float, attributeName='pixelTolerance')
-        self.pixelTolerance = pixelTolerance
+        self.pixelTolerance = None
         """
         -pt frac
 
@@ -268,7 +248,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('pj', descriptiveName='anti-aliazing jitter',
                                numType=float, attributeName='pixelJitter')
-        self.pixelJitter = pixelJitter
+        self.pixelJitter = None
         """-pj frac
 
         Set the pixel sample jitter to frac. Distributed ray-tracing performs
@@ -280,7 +260,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('pa', descriptiveName='pixel aspect ratio',
                                numType=float, attributeName='pixelAspectRatio')
-        self.pixelAspectRatio = pixelAspectRatio
+        self.pixelAspectRatio = None
         """
         -pa rat
 
@@ -292,7 +272,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('pm', descriptiveName='pixel motion blur',
                                numType=float, attributeName='pixelMotionBlur')
-        self.pixelMotionBlur = pixelMotionBlur
+        self.pixelMotionBlur = None
         """
         -pm frac
 
@@ -310,7 +290,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('pd', descriptiveName='pixel depth-of-field',
                                numType=float, attributeName='pixelDepthOfField')
-        self.pixelDepthOfField = pixelDepthOfField
+        self.pixelDepthOfField = None
         """
         -pd dia
 
@@ -326,7 +306,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceTuple('av', descriptiveName='ambient value', tupleSize=3,
                               attributeName='ambientValue', numType=float)
-        self.ambientValue = ambientValue
+        self.ambientValue = None
         """
         -av red grn blu
 
@@ -339,7 +319,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceNumber('aw', descriptiveName='ambient weight', numType=int,
                                attributeName='ambientWeight')
-        self.ambientWeight = ambientWeight
+        self.ambientWeight = None
         """
         -aw N
 
@@ -355,7 +335,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceBoolFlag('dv', descriptiveName='light source visibility',
                                  attributeName='directVisibility')
-        self.directVisibility = directVisibility
+        self.directVisibility = None
         """
         -dv
 
@@ -368,7 +348,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceBoolFlag('bv', descriptiveName='back face visibility',
                                  attributeName='backFaceVisibility')
-        self.backFaceVisibility = backFaceVisibility
+        self.backFaceVisibility = None
         """
          -bv
 
@@ -384,7 +364,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceBoolFlag('i', descriptiveName='irradiance calculation',
                                  attributeName='irradianceCalc')
-        self.irradianceCalc = irradianceCalc
+        self.irradianceCalc = None
         u"""
         -i
 
@@ -398,7 +378,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.addRadianceBoolFlag('u', descriptiveName='uncorrelated random sampling',
                                  attributeName='uncorRandSamp')
-        self.uncorRandSamp = uncorRandSamp
+        self.uncorRandSamp = None
         """
         -u
 
@@ -434,39 +414,31 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         An integer between 0-2 (0:low, 1: medium or 2: high quality)
         """
-        return self.__quality
+        return self._quality
 
     @quality.setter
     def quality(self, value):
-        if value is None:
-            self.__quality = None
 
-            # add all numeric parameters
-            for name, data in rpict_number_parameters.iteritems():
-                self.addRadianceNumber(data['name'], data['dscrip'], numType=data['type'],
-                                       attributeName=name)
+        value = value or 0
 
-            # add boolean parameters
-            for name, data in rpict_boolean_parameters.iteritems():
-                self.addRadianceBoolFlag(data['name'], data['dscrip'],
-                                         attributeName=name)
-        else:
-            assert (0 <= int(value) <= 2), \
-                "Quality can only be 0:low, 1: medium or 2: high quality"
+        assert (0 <= int(value) <= 2), \
+            "Quality can only be 0:low, 1: medium or 2: high quality"
 
-            self.__quality = int(value)
-            """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
+        self._quality = int(value)
+        """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
-            # add all numeric parameters
-            for name, data in rpict_number_parameters.iteritems():
-                self.addRadianceNumber(data['name'], data['dscrip'], numType=data['type'],
-                                       attributeName=name)
-                setattr(self, name, data['values'][self.quality])
+        # add all numeric parameters
+        for name, data in rpict_number_parameters.iteritems():
+            self.addRadianceNumber(data['name'], data['dscrip'],
+                                   numType=data['type'],
+                                   attributeName=name)
+            setattr(self, name, data['values'][self.quality])
 
-            # add boolean parameters
-            for name, data in rpict_boolean_parameters.iteritems():
-                self.addRadianceBoolFlag(data['name'], data['dscrip'], attributeName=name)
-                setattr(self, name, data['values'][self.quality])
+        # add boolean parameters
+        for name, data in rpict_boolean_parameters.iteritems():
+            self.addRadianceBoolFlag(data['name'], data['dscrip'],
+                                     attributeName=name)
+            setattr(self, name, data['values'][self.quality])
 
     def getParameterDefaultValueBasedOnQuality(self, parameter):
         """Get parameter value based on quality.
@@ -486,9 +458,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
             print "Quality is not set! use self.quality to set the value."
             return None
 
-        __key = str(parameter)
+        _key = str(parameter)
 
-        assert __key in self.keys, \
+        assert _key in self.keys, \
             "%s is not a valid radiance parameter" % str(parameter)
 
-        return rpict_boolean_parameters[__key]["values"][self.quality]
+        return rpict_boolean_parameters[_key]["values"][self.quality]
