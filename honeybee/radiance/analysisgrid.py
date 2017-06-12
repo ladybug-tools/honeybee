@@ -1,7 +1,7 @@
 """Honeybee PointGroup and TestPointGroup."""
 from __future__ import division
 from ..dataoperation import matchData
-from analysispoint import AnalysisPoint
+from .analysispoint import AnalysisPoint
 
 import os
 from itertools import izip
