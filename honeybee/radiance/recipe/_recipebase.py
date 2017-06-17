@@ -51,7 +51,9 @@ class DaylightAnalysisRecipe(object):
                 self.__radianceMaterials = \
                     set(mat for hbo in hbObjects for mat in hbo.radianceMaterials)
             except AttributeError:
-                raise TypeError('At the minimum one of the inputs is not a Honeybee object.')
+                raise TypeError(
+                    'At the minimum one of the inputs is not a Honeybee object.'
+                )
 
             self.__hbObjs = hbObjects
 
@@ -84,9 +86,11 @@ class DaylightAnalysisRecipe(object):
                 'Scene should be an instance from the type Scene.'.format(sc)
             self.__scene = sc
 
-    # TODO: This should be cross platform and also support cloud-based modeling.
     def header(self, targetFolder, includRadPath=True):
-        """Get the header for bat file."""
+        """Get the header for bat file.
+
+        IncludeRadPath is only useful for Windows.
+        """
         dirLine = "%s\ncd %s\n" % (os.path.splitdrive(targetFolder)[0], targetFolder)
 
         if includRadPath:
@@ -290,6 +294,11 @@ class DaylightAnalysisRecipe(object):
         self.isCalculated = True
         # self.isChanged = False
         return True
+
+    @property
+    def legendParameters(self):
+        """Returns suggested legend parameters for this recipe."""
+        return None  # for image-based analysis it will be None.
 
     def write(self):
         """Write files for this recipe to folder."""
