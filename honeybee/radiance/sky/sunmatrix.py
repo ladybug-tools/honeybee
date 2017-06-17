@@ -1,11 +1,12 @@
 from ladybug.wea import Wea
-from ..command.gendaylit import Gendaylit,GendaylitParameters
+from ..command.gendaylit import Gendaylit, GendaylitParameters
 from ladybug.wea import Wea
-from ladybug.dt import LBDateTime
-from subprocess import PIPE,Popen
+from ladybug.dt import DateTime
+from subprocess import PIPE, Popen
 
 import os
 import tempfile
+
 
 # TODO: Add checks for input files
 class SunMatrix(object):
@@ -20,43 +21,43 @@ class SunMatrix(object):
         hoys: The list of hours for generating the sky matrix (Default: 0..8759)
     """
 
-    def __init__(self, wea,destinationDirectory=None,useExisting=True):
+    def __init__(self, wea, destinationDirectory=None, useExisting=True):
 
         assert hasattr(wea, 'isWea'), '{} is not an instance of Wea.'.format(wea)
         self.wea = wea
 
         if destinationDirectory and os.path.exists(destinationDirectory):
-            sunMatrixFile = os.path.join(destinationDirectory,'sunMatrix.mtx')
-            sunRadFile = os.path.join(destinationDirectory,'sunRadFile.rad')
-            sunlist = os.path.join(destinationDirectory,'sunList.txt')
+            sunMatrixFile = os.path.join(destinationDirectory, 'sunMatrix.mtx')
+            sunRadFile = os.path.join(destinationDirectory, 'sunRadFile.rad')
+            sunlist = os.path.join(destinationDirectory, 'sunList.txt')
         else:
             sunMatrixFile = tempfile.mktemp(suffix='sunMatrix.mtx')
             sunRadFile = tempfile.mktemp(suffix='sunRadFile.rad')
             sunlist = tempfile.mktemp(suffix='sunList.txt')
 
         if useExisting:
-            for fileName in sunMatrixFile,sunRadFile,sunlist:
-                assert os.path.exists(fileName),'The files required for reuse do not exist.'
+            for fileName in sunMatrixFile, sunRadFile, sunlist:
+                assert os.path.exists(fileName), \
+                    'The files required for reuse do not exist.'
 
-        self.sunMatrixFile=sunMatrixFile
-        self.sunRadFile=sunRadFile
-        self.sunList=sunlist
-
+        self.sunMatrixFile = sunMatrixFile
+        self.sunRadFile = sunRadFile
+        self.sunList = sunlist
 
     @property
     def wea(self):
         return self._wea
 
     @wea.setter
-    def wea(self,weaObject):
-        assert hasattr(weaObject, 'isWea'), '{} is not an instance of Wea.'.format(weaObject)
+    def wea(self, weaObject):
+        assert hasattr(weaObject, 'isWea'), \
+            '{} is not an instance of Wea.'.format(weaObject)
         self._wea = weaObject
 
     @property
     def isSunMatrix(self):
         """Return True."""
         return True
-
 
     @property
     def name(self):
@@ -68,9 +69,6 @@ class SunMatrix(object):
             self.wea.location.longitude
         )
 
-
-
-
     def execute(self):
         """Generate sky matrix.
 
@@ -78,18 +76,17 @@ class SunMatrix(object):
             workingDir: Folder to execute and write the output.
             reuse: Reuse the matrix if already existed in the folder.
         """
-        monthDateTime = [LBDateTime.fromHOY(idx) for idx in xrange(8760)]
+        monthDateTime = [DateTime.fromHoy(idx) for idx in xrange(8760)]
 
         latitude, longitude = self.wea.location.latitude, -self.wea.location.longitude
         meridian = -(15 * self.wea.location.timezone)
 
         genParam = GendaylitParameters()
-        genParam.meridian=meridian
-        genParam.longitude=longitude
-        genParam.latitude=latitude
+        genParam.meridian = meridian
+        genParam.longitude = longitude
+        genParam.latitude = latitude
 
         genDay = Gendaylit()
-
 
         sunValues = []
         sunValuesHour = []
@@ -105,10 +102,12 @@ class SunMatrix(object):
                 gendayCmd = genDay.toRadString().split('|')[0]
 
                 # run cmd, get results in the form of a list of lines.
-                cmdRun = Popen(gendayCmd.split(), stdout=PIPE, stderr=warningDump,shell=True)
+                cmdRun = Popen(gendayCmd.split(), stdout=PIPE, stderr=warningDump,
+                               shell=True)
                 data = cmdRun.stdout.read().split('\n')
 
-                # clean the output by throwing out comments as well as brightness functions.
+                # clean the output by throwing out comments as well as brightness
+                # functions.
                 sunCurrentValue = []
                 for lines in data:
                     if not lines.strip().startswith("#"):
@@ -127,7 +126,8 @@ class SunMatrix(object):
         numOfSuns = len(sunValues)
 
         with open(self.sunList, 'w') as sunList:
-            sunList.write("\n".join(["solar%s" % (idx + 1) for idx in xrange(numOfSuns)]))
+            sunList.write("\n".join(["solar%s" % (idx + 1)
+                                     for idx in xrange(numOfSuns)]))
 
         # create solar discs.
         with open(self.sunRadFile, 'w') as solarDiscFile:

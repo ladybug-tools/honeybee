@@ -202,7 +202,8 @@ class HBAnalysisSurface(HBObject):
     def __surfaceTypeFromPoints(self):
         normal = go.calculateNormalFromPoints(self.points[0])
         __angleToZAxis = go.calculateVectorAngleToZAxis(normal)
-        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis, self.points[0])()
+        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis,
+                                                               self.points[0])()
 
     @property
     def isTypeSetByUser(self):
@@ -297,7 +298,7 @@ class HBAnalysisSurface(HBObject):
         elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], 'X'):
             # list of points list in Dynamo
             self.__pts.extend(tuple(tuple((pt.X, pt.Y, pt.Z) for pt in ptGroup)
-                              for ptGroup in pts))
+                                    for ptGroup in pts))
 
         elif hasattr(pts[0], '__iter__') and not hasattr(pts[0][0], '__iter__'):
             # a list of tuples as x, y, z
@@ -383,10 +384,10 @@ class HBAnalysisSurface(HBObject):
 
         Usage:
 
-            radianceMaterial = PlasticMaterial.bySingleReflectValue("wall_material", 0.55)
-            HBSrf.radianceMaterial = (radianceMaterial, True)
+            radMat = PlasticMaterial.bySingleReflectValue("wall_material", 0.55)
+            HBSrf.radianceMaterial = (radMat, True)
             # or
-            HBSrf.radianceMaterial = radianceMaterial
+            HBSrf.radianceMaterial = radMat
         """
         if self.radProperties.radianceMaterial is None:
             if self.surfaceType is not None:
@@ -443,7 +444,8 @@ class HBAnalysisSurface(HBObject):
 
         for ptCount, pts in enumerate(__pts):
             # modify name for each sub_surface
-            _name = self.name if __numPtGroups == 1 else self.name + "_{}".format(ptCount)
+            _name = self.name if __numPtGroups == 1 \
+                else self.name + "_{}".format(ptCount)
 
             # collect definition for each subsurface
             __pgStrings[ptCount] = polygon(
@@ -545,9 +547,9 @@ class AnalsysiSurfacePolyline(object):
     @staticmethod
     def distance(pt1, pt2):
         """calculate distance between two points."""
-        return math.sqrt((pt2[0] - pt1[0])**2 +
-                         (pt2[1] - pt1[1])**2 +
-                         (pt2[2] - pt1[2])**2)
+        return math.sqrt((pt2[0] - pt1[0]) ** 2 +
+                         (pt2[1] - pt1[1]) ** 2 +
+                         (pt2[2] - pt1[2]) ** 2)
 
     def __shortestDistance(self, ptList1, ptList2):
         dist = float('inf')
@@ -579,8 +581,8 @@ class AnalsysiSurfacePolyline(object):
     def __calculatePolyline(self, source, targets):
         """calculate single polyline for HBSurface with Fenestration."""
         # sort point groups
-        sortedTargets = sorted(targets,
-                               key=lambda target: self.__shortestDistance(source, target)[0])
+        sortedTargets = sorted(
+            targets, key=lambda target: self.__shortestDistance(source, target)[0])
 
         self.__addPoints(source, sortedTargets[0])
 

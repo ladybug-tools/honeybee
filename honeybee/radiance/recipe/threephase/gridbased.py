@@ -63,7 +63,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         self.reuseViewMtx = reuseViewMtx
         self.reuseDaylightMtx = reuseDaylightMtx
         # create a result loader to load the results once the analysis is done.
-        self.loader = LoadAnnualsResults(self.resultsFile)
+        # self.loader = LoadAnnualsResults(self.resultsFile)
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
@@ -379,7 +379,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                                   outputFile=outputName)
                 finalmtx.rmtxopParameters.outputFormat = 'a'
                 finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
-                finalmtx.rmtxopParameters.transposeMatrix = True
+                finalmtx.rmtxopParameters.transposeMatrix = False
                 self.commands.append(finalmtx.toRadString())
 
                 self.resultsFile.append(os.path.join(sceneFiles.path, outputName))
@@ -398,5 +398,9 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.resultFiles = self.resultsFile
-        return self.loader.results
+        # self.loader.resultFiles = self.resultsFile
+        for r in self.resultsFile:
+            source, state = os.path.split(r)[-1][:-4].split("..")
+            self.analysisGrids[0].setValuesFromFile(r, self.skyMatrix.hoys,
+                                                    source, state)
+        return self.analysisGrids
