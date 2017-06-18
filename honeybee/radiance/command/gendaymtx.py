@@ -30,12 +30,11 @@ class Gendaymtx(RadianceCommand):
         gmtx.onlyDirect = True
 
         # create gendaymtx
-        dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                         gendaymtxParameters=gmtx)
+        dmtx = Gendaymtx(weaFile="C:/IZMIR_TUR.wea", gendaymtxParameters=gmtx)
 
         # run gendaymtx
         dmtx.execute()
-        > c:/radiance/bin/gendaymtx: reading weather tape 'C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea'
+        > c:/radiance/bin/gendaymtx: reading weather tape 'C:/ladybug/IZMIR_TUR.wea'
         > c:/radiance/bin/gendaymtx: location 'IZMIR_TUR'
         > c:/radiance/bin/gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west
         > c:/radiance/bin/gendaymtx: 146 sky patches per time step

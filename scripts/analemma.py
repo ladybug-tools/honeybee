@@ -9,7 +9,7 @@ Keywords: Radiance, Grid-Based, Illuminance
 from __future__ import division, print_function
 from honeybee.radiance.command.gendaylit import Gendaylit, GendaylitParameters
 from ladybug.epw import EPW
-from ladybug.analysisperiod import LBDateTime
+from ladybug.analysisperiod import DateTime
 from subprocess import Popen, PIPE
 import os
 import logging
@@ -57,7 +57,7 @@ def analemma(epwFile, sunDiscRadPath, sunListPath=None, solarRadiationMatrixPath
 
     logger.info('Starting calculations')
 
-    monthDateTime = (LBDateTime.fromHOY(idx) for idx in HOYlist)
+    monthDateTime = (DateTime.fromHoy(idx) for idx in HOYlist)
 
     epw = EPW(epwFile)
     latitude, longitude = epw.location.latitude, -epw.location.longitude
@@ -104,7 +104,8 @@ def analemma(epwFile, sunDiscRadPath, sunListPath=None, solarRadiationMatrixPath
             # run cmd, get results in the form of a list of lines.
             cmdRun = Popen(gendayCmd, stdout=PIPE, stderr=warningDump)
             data = cmdRun.stdout.read().split('\n')
-
+            print(data)
+            assert False
             # clean the output by throwing out comments and brightness functions.
             sunCurrentValue = []
             for lines in data:
@@ -164,10 +165,9 @@ def analemma(epwFile, sunDiscRadPath, sunListPath=None, solarRadiationMatrixPath
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.getcwd()))
-    epw = './tests/room/epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw'
-    sunRad = './tests/assets/phoenixSunPath.rad'
-    # analemma(epw, sunRad)
-    #
-    sunList = './tests/assets/sunList.txt'
-    sunMtx = './tests/assets/skyMtx.mtx'
+    epw = os.path.join(os.getcwd(), 'honeybee/tests/room', 'test.epw')
+    # epw = './tests/room/epws/USA_OH_Cleveland-Burke.Lakefront.AP.725245_TMY3.epw'
+    sunRad = os.path.join(os.getcwd(), 'honeybee/tests/assets/phoenixSunPath.rad')
+    sunList = os.path.join(os.getcwd(), 'honeybee/tests/assets/sunList.txt')
+    sunMtx = os.path.join(os.getcwd(), 'honeybee/tests/assets/skyMtx.mtx')
     analemma(epw, sunRad, sunListPath=sunList, solarRadiationMatrixPath=sunMtx)
