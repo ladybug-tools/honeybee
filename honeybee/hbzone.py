@@ -1,8 +1,8 @@
 from hbobject import HBObject
 from vectormath.euclid import Point3
+from radiance.radfile import RadFile
 from energyplus.geometryrules import GlobalGeometryRules
 
-from collections import namedtuple
 import os
 
 
@@ -36,7 +36,7 @@ class HBZone(HBObject):
 
         self.zoneProgram = zoneProgram
 
-        self.__surfaces = []
+        self._surfaces = []
 
     @classmethod
     def fromEPString(cls, EPString, geometryRules=None, buildingProgram=None,
@@ -47,13 +47,13 @@ class HBZone(HBObject):
             EPString: The full EPString for an EnergyPlus Zone.
         """
         # clean input EPString - split based on comma
-        _segments = EPString.replace("\t", "") \
+        segments = EPString.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
-        name = _segments[1]
+        name = segments[1]
         try:
-            north, x, y, z = _segments[2:6]
-        except:
+            north, x, y, z = segments[2:6]
+        except Exception:
             x, y, z = 0, 0, 0
 
         try:
@@ -72,26 +72,26 @@ class HBZone(HBObject):
     @property
     def origin(self):
         """Get set origin of the zone."""
-        return self.__origin
+        return self._origin
 
     @origin.setter
     def origin(self, value):
         try:
-            self.__origin = Point3(*value)
-        except:
-            raise Exception("Failed to set zone origin.")
+            self._origin = Point3(*value)
+        except Exception as e:
+            raise ValueError("Failed to set zone origin: {}".format(e))
 
     @property
     def geometryRules(self):
         """Get and set global geometry rules for this zone."""
-        return self.__geometryRules
+        return self._geometryRules
 
     @geometryRules.setter
     def geometryRules(self, geometryRules):
         if not geometryRules:
             geometryRules = GlobalGeometryRules()
 
-        self.__geometryRules = geometryRules
+        self._geometryRules = geometryRules
 
     @property
     def isRelativeSystem(self):
@@ -120,7 +120,7 @@ class HBZone(HBObject):
     @property
     def surfaces(self):
         """Get list of HBSurfaces for this zone."""
-        return self.__surfaces
+        return self._surfaces
 
     @property
     def childrenSurfaces(self):
@@ -135,93 +135,63 @@ class HBZone(HBObject):
         assert hasattr(HBSurface, "isHBSurface"), \
             "%s input is not a Honeybee surface." % str(HBSurface)
 
-        self.__surfaces.append(HBSurface)
+        self._surfaces.append(HBSurface)
+
         # update surface parent
-        HBSurface.parent = self
+        HBSurface._parent = self
 
     @property
     def radianceMaterials(self):
         """Get list of Radiance materials for zone including fenestration."""
         return set(tuple(material for srf in self.surfaces
-                   for material in srf.radianceMaterials))
+                         for material in srf.radianceMaterials))
 
-    def toRadString(self, includeMaterials=False, includeChildrenSurfaces=True,
-                    joinOutput=True):
-        """Return geometries and materials as a tuple of multiline string.
+    def toRadFile(self):
+        """Return a RadFile like object.
 
-        Returns:
-            if includeMaterials == False:
-                A namedTuple of multiline data. Keys are: materials, geometries
-            else:
-                A multiline string for geometries
-
-        Usage:
-
-            s = self.toRadString()
-            geoString = s.geometries
-            matString = s.materials
-            or
-            s = self.toRadString()
-            matString, geoString = s
+        Use this method to get easy access to radiance geometries and materials for this
+        zone. For a full definition as a string use toRadString method.
         """
-        _radDefinition = namedtuple("RadString", "materials geometries")
-        _matStr = ""
-        _geoStr = ""
+        return RadFile((srf for srf in self.surfaces))
 
-        if len(self.surfaces) > 0:
-            _materials = []
-            _geos = []
-            for hbsurface in self.surfaces:
-                # Both surface and fenestration material
-                _materials.extend(hbsurface.radianceMaterials)
-                _geos.append(hbsurface.toRadString(
-                    includeMaterials=False,
-                    includeChildrenSurfaces=includeChildrenSurfaces
-                )
-                )
-
-            # remove duplicated materials
-            _materials = set([mat.toRadString() for mat in _materials])
-
-            if joinOutput:
-                _matStr = "\n".join(_materials) + "\n"
-                # joing geometries
-                _geoStr = "\n".join(_geos) + "\n"
-            else:
-                _matStr = _materials
-                _geoStr = _geos
-        else:
-            print "Warning: Found no Honeybee objects."
-
-        if includeMaterials:
-            if joinOutput:
-                return "\n".join(_radDefinition(_matStr, _geoStr))
-            else:
-                return _radDefinition(_matStr, _geoStr)
-        else:
-            if joinOutput:
-                return "\n".join(_radDefinition("", _geoStr))
-            else:
-                return _radDefinition("", _geoStr)
-
-    def radStringToFile(self, filePath, includeMaterials=False,
-                        includeChildrenSurfaces=True):
-        """Write HBZone Radiance definition to a file.
+    def toRadString(self, mode=1, includeMaterials=False, flipped=False, blacked=False):
+        """Get full radiance file as a string.
 
         Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/geo.rad)
-
-        Returns:
-            True in case of success. False in case of failure.
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+            includeMaterials: Set to False if you only want the geometry definition
+             (default:True).
+            flipped: Flip the surface geometry.
+            blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
+        mode = mode or 1
+        return self.toRadFile().toRadString(mode, includeMaterials, flipped, blacked)
+
+    def radStringToFile(self, filePath, mode=1, includeMaterials=False, flipped=False,
+                        blacked=False):
+        """Write Radiance definition for this surface to a file.
+
+        Args:
+            filepath: Full filepath (e.g c:/ladybug/geo.rad).
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+            includeMaterials: Set to False if you only want the geometry definition
+             (default:True).
+            flipped: Flip the surface geometry.
+            blacked: If True materials will all be set to plastic 0 0 0 0 0.
+        """
+        mode = mode or 1
         assert os.path.isdir(os.path.split(filePath)[0]), \
             "Cannot find %s." % os.path.split(filePath)[0]
 
-        with open(filePath, "w") as outf:
+        with open(filePath, "wb") as outf:
             try:
-                # The output of toRadString for a zone is a tuple
-                outf.write(self.toRadString(includeMaterials,
-                                            includeChildrenSurfaces))
+                outf.write(self.toRadString(mode, includeMaterials, flipped, blacked))
                 return True
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)

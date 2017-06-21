@@ -1,25 +1,26 @@
 """Radiance Properties for HBSurfaces."""
-from material._materialbase import RadianceMaterial
+from radfile import RadFile
 
 
 class RadianceProperties(object):
     """Radiance properties for HBSurface.
 
     Args:
-        radianceMaterial: Radiance material for this surfcae.Use honeybee.radiace.material
-            to create a radiance material (Default: None).
+        radianceMaterial: Radiance material for this surfcae.Use
+            honeybee.radiace.material to create a radiance material (Default: None).
         isMaterialSetByUser: Set to True if you don't want material automatically
             overwritten by honeybee in cases like solve adjacencies.
+        hbSurfaces: Optional honeybee surfaces.Use this input to assign geometries like
+            external shadings to a window.
     """
 
-    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False,
-                 alternateMaterials=None, windowGroupName=None):
+    __slots__ = ('_radianceMaterial', '_isMaterialSetByUser', '_hbSurfaces')
+
+    def __init__(self, radianceMaterial, isMaterialSetByUser=False,
+                 hbSurfaces=None):
         """Create radiance properties for surface."""
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
-        # TODO: Clarify how alternate materials works. Is it only for 3-phase
-        # analysis or is it an option to set-up any parameteric study.
-        self.alternateMaterials = alternateMaterials or ()
-        self.windowGroupName = windowGroupName
+        self.hbSurfaces = hbSurfaces or ()
 
     @property
     def isRadianceProperties(self):
@@ -29,11 +30,8 @@ class RadianceProperties(object):
     @property
     def radianceMaterial(self):
         """Return Radiance Material."""
-        return self.__radianceMaterial
+        return self._radianceMaterial
 
-    # TODO: Add support for parsing materials from string
-    # check helper.py for useful methods - if NotImplemented implement it based
-    # on current honeybee for grasshopper.
     @radianceMaterial.setter
     def radianceMaterial(self, values):
         """Set Radiance material and if it is set by user.
@@ -42,40 +40,60 @@ class RadianceProperties(object):
             values: A name or a tuple as (radianceMaterial, isSetByUser)
 
         Usage:
-            radianceMaterial = PlasticMaterial.bySingleReflectValue("wall_material", 0.55)
+
+            radianceMaterial = PlasticMaterial.bySingleReflectValue(
+                'wall_material', 0.55)
             HBSrf.radianceMaterial = (radianceMaterial, True)
         """
         try:
             # check if user passed a tuple
-            if isinstance(values, RadianceMaterial):
+            if hasattr(values, 'isRadianceMaterial'):
                 raise TypeError  # The user passed only Radiance Material
-            __newMaterial, __isMaterialSetByUser = values
+            _newMaterial, _isMaterialSetByUser = values
         except ValueError:
             # user is passing a list or tuple with one ValueError
-            __newMaterial = values[0]
-            __isMaterialSetByUser = False  # if not indicated assume it is not set by user.
+            _newMaterial = values[0]
+            _isMaterialSetByUser = False  # if not indicated assume it is not set by user
         except TypeError:
             # user just passed a single value which is the material
-            __newMaterial = values
-            __isMaterialSetByUser = False  # if not indicated assume it is not set by user.
+            _newMaterial = values
+            _isMaterialSetByUser = False  # if not indicated assume it is not set by user
         finally:
+            # chek if radiance material is radiance material
+            assert hasattr(_newMaterial, 'isRadianceMaterial'), \
+                TypeError('Expected RadianceMaterial not {}'.format(_newMaterial))
+
             # set new material
-            self.__name = __newMaterial
-            self.__isMaterialSetByUser = __isMaterialSetByUser
+            self._radianceMaterial = _newMaterial
+            self._isMaterialSetByUser = _isMaterialSetByUser
 
-        # chek if radiance material is radiance material
-        if __newMaterial is None:
-            self.__radianceMaterial = None
-        else:
-            assert hasattr(__newMaterial, 'isRadianceMaterial'), \
-                "%s is not a valid Radiance material" % __newMaterial
+    @property
+    def hbSurfaces(self):
+        """Optional honeybee surfaces.
 
-            self.__radianceMaterial = __newMaterial
+        Use this input to assign geometries like external shadings to a window.
+        """
+        return self._hbSurfaces
+
+    @hbSurfaces.setter
+    def hbSurfaces(self, srfs):
+        for srf in srfs:
+            assert hasattr(srf, 'isHBSurface'), \
+                TypeError('Expected HBSurface not {}'.format(type(srf)))
+        self._hbSurfaces = srfs
 
     @property
     def isMaterialSetByUser(self):
         """Check if material is set by user."""
-        return self.__isMaterialSetByUser
+        return self._isMaterialSetByUser
+
+    def toRadString(self):
+        """Get radianace definition for honeybee surfaces if any."""
+        if not self.hbSurfaces:
+            return ''
+        else:
+            rf = RadFile.fromHBSurfaces(self.hbSurfaces)
+            return rf.toRadString()
 
     def ToString(self):
         """Overwrite .NET ToString method."""
@@ -84,11 +102,12 @@ class RadianceProperties(object):
     def __repr__(self):
         """Represnt Radiance properties."""
         if not self.radianceMaterial:
-            return "Radiance Properties > Material.Unset"
+            return 'RadianceProp::Material.Unset'
         else:
-            return "Radiance Properties > %s" % self.radianceMaterial.name
+            return 'RadianceProp::%s' % self.radianceMaterial.name
+
 
 if __name__ == "__main__":
-    rp = RadianceProperties()
+    rp = RadianceProperties('material')
     print rp
     print rp.isMaterialSetByUser

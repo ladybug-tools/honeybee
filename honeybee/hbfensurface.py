@@ -1,4 +1,5 @@
 from _hbanalysissurface import HBAnalysisSurface
+from surfaceproperties import SurfaceProperties
 
 
 class HBFenSurface(HBAnalysisSurface):
@@ -34,28 +35,31 @@ class HBFenSurface(HBAnalysisSurface):
         hbsrf.addFenestrationSurface(glzsrf)
 
         # get full definiion of the surface including the fenestration
-        print hbsrf.toRadString(includeMaterials=True,
-                                includeChildrenSurfaces=True)
+        print hbsrf.toRadString(includeMaterials=True)
 
         # save the definiion to a .rad file
-        hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", True, True)
+        hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", includeMaterials=True)
     """
 
     def __init__(self, name, sortedPoints=None, isNameSetByUser=False,
-                 radProperties=None, epProperties=None):
+                 radProperties=None, epProperties=None, srfPropCollection=None):
         """Init honeybee surface."""
         _surfaceType = 5
         _isTypeSetByUser = True
         sortedPoints = sortedPoints or []
 
-        HBAnalysisSurface.__init__(self, name, sortedPoints=sortedPoints,
-                                   surfaceType=_surfaceType,
-                                   isNameSetByUser=isNameSetByUser,
-                                   isTypeSetByUser=_isTypeSetByUser,
-                                   radProperties=radProperties,
-                                   epProperties=epProperties)
+        srfPropCollection = srfPropCollection or ()
+        HBAnalysisSurface.__init__(self, name, sortedPoints, _surfaceType,
+                                   isNameSetByUser, _isTypeSetByUser)
+
+        self._srfPropCollection[0] = SurfaceProperties(
+            'default', self.surfaceType, radProperties, epProperties)
+        for state in srfPropCollection:
+            self.addSurfaceState(state)
+
         self.__isChildSurface = True
-        self.__parent = None
+        # Parent will be set once the fen surface is added to a prent surface
+        self._parent = None
 
     # TODO: Parse EnergyPlus properties
     @classmethod
@@ -96,11 +100,5 @@ class HBFenSurface(HBAnalysisSurface):
 
     @property
     def parent(self):
-        """Get or set parent zone."""
-        return self.__parent
-
-    @parent.setter
-    def parent(self, parent):
-        """Set parent zone."""
-        if hasattr(parent, 'isHBSurface'):
-            self.__parent = parent
+        """Return parent surface for this fenestration surface."""
+        return self._parent

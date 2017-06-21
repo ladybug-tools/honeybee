@@ -16,6 +16,7 @@ from honeybee.hbsurface import HBSurface
 from honeybee.hbfensurface import HBFenSurface
 from honeybee.hbshadesurface import HBShadingSurface
 from honeybee.hbzone import HBZone
+from honeybee.radiance.radfile import RadFile
 import os
 
 
@@ -45,13 +46,15 @@ def idfToRadString(idfFilePath):
     # create surfaces
     for surfaceName, surfaceData in objects['buildingsurface:detailed'].iteritems():
         surface = HBSurface.fromEPString(",".join(surfaceData))
-        surface.parent = hbObjects['zone'][surfaceData[4]]
+        parent = hbObjects['zone'][surfaceData[4]]
+        parent.addSurface(surface)
         hbObjects['buildingsurface'][surfaceName] = surface
 
     # create fenestration surfaces
     for surfaceName, surfaceData in objects['fenestrationsurface:detailed'].iteritems():
         surface = HBFenSurface.fromEPString(",".join(surfaceData))
-        surface.parent = hbObjects['buildingsurface'][surfaceData[4]]
+        parent = hbObjects['buildingsurface'][surfaceData[4]]
+        parent.addFenestrationSurface(surface)
 
     # create shading surfaces
     shdkeys = ["shading:site:detailed", "shading:building:detailed",
@@ -66,41 +69,38 @@ def idfToRadString(idfFilePath):
 
     # export zones to rad files
     zones = hbObjects['zone'].values()
-    materials = []
-    geometries = []
+    hbSrfs = []
     for zone in zones:
-        mat, geo = zone.toRadString(includeMaterials=True, joinOutput=False)
-        materials.extend(mat)
-        geometries.extend(geo)
+        hbSrfs.extend(zone.surfaces)
 
     # add shading surfaces
-    for shading in hbObjects['shading'].values():
-        mat, geo = shading.toRadString(includeMaterials=True, joinOutput=False)
-        materials.append(mat)
-        geometries.extend(geo)
+    # hbSrfs.extend(hbObjects['shading'].values())
 
-    return "\n".join(set(materials)), "\n".join(geometries)
+    # create a radiance file
+    rf = RadFile(hbSrfs)
+    return rf.toRadString()
 
 
 if __name__ == "__main__":
 
-    epFolder = r"C:\\EnergyPlusV8-3-0\\ExampleFiles\\"
+    epFolder = r"C:\\EnergyPlusV8-6-0\\ExampleFiles\\"
     targetFolder = r"c:\\ladybug\\idfFiles\\"
 
-    epFiles = [f for f in os.listdir(epFolder) if f.lower().endswith(".idf")]
-    # epFiles = ["HospitalLowEnergy.idf"]
+    # epFiles = [f for f in os.listdir(epFolder) if f.lower().endswith(".idf")]
+    epFiles = ["HospitalLowEnergy.idf"]
 
     for f in epFiles:
         fullpath = os.path.join(epFolder, f)
+
         try:
             print "Exporting %s..." % f
-            matString, geoString = idfToRadString(fullpath)
+            string = idfToRadString(fullpath)
         except Exception as e:
             print "***Failed to convert %s.\n%s***" % (f, e)
         else:
             targetFile = os.path.join(targetFolder, f.replace('.idf', '.rad'))
             try:
                 with open(targetFile, "w") as radFile:
-                    radFile.write("\n\n".join((matString, geoString)))
+                    radFile.write(string)
             except IOError as e:
                 print "***Failed to write %s.\n%s***" % (targetFile, e)

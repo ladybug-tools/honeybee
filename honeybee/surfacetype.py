@@ -15,6 +15,10 @@ class surfaceTypeBase(object):
     energyPlusConstruction = None
     """Default EnergyPlus Construction."""
 
+    def isSurfaceType(self):
+        """Return True for surface types."""
+        return True
+
     def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
@@ -161,7 +165,7 @@ class SurfaceTypes(object):
     6.0: Context
     """
 
-    __types = {
+    _types = {
         0.0: Wall,
         0.5: UndergroundWall,
         1.0: Roof,
@@ -193,11 +197,13 @@ class SurfaceTypes(object):
         Usage:
             srfType = SurfaceTypes.getTypeByKey(6)
         """
+        if hasattr(key, 'isSurfaceType'):
+            return key
         try:
-            return cls.__types[key]
+            return cls._types[key]
         except KeyError as e:
             _msg = "%s is  invalid." % str(e) + \
-                " Use one of the valid values: %s" % str(cls.__types.keys())
+                " Use one of the valid values: %s" % str(cls._types.keys())
 
             raise KeyError(_msg)
 
@@ -213,12 +219,12 @@ class SurfaceTypes(object):
         Returns:
             Surface type as surfaceTypeBase object.
         """
-        __srfType = cls.getBaseTypeByNormalAngle(normalAngle)
+        _srfType = cls.getBaseTypeByNormalAngle(normalAngle)
 
         # if len(points) > 3:
-        #     __srfType = cls.reEvaluateSurfaceType(__srfType, points)
+        #     _srfType = cls.reEvaluateSurfaceType(_srfType, points)
 
-        return cls.__types[__srfType]
+        return cls._types[_srfType]
 
     @staticmethod
     def getBaseTypeByNormalAngle(angleToZAxis, maximumRoofAngle=30):
@@ -280,4 +286,4 @@ class SurfaceTypes(object):
 
     def __repr__(self):
         """Return types dictionary."""
-        return self.__types
+        return self._types

@@ -1,7 +1,7 @@
 from _hbanalysissurface import HBAnalysisSurface
 from hbfensurface import HBFenSurface
+from surfaceproperties import SurfaceProperties
 from vectormath.euclid import Vector3, Point3
-import os
 
 
 class HBSurface(HBAnalysisSurface):
@@ -54,16 +54,19 @@ class HBSurface(HBAnalysisSurface):
 
     def __init__(self, name, sortedPoints=[], surfaceType=None,
                  isNameSetByUser=False, isTypeSetByUser=False,
-                 radProperties=None, epProperties=None):
+                 radProperties=None, epProperties=None, srfPropCollection=None):
         """Init honeybee surface."""
-        HBAnalysisSurface.__init__(self, name, sortedPoints=sortedPoints,
-                                   surfaceType=surfaceType,
-                                   isNameSetByUser=isNameSetByUser,
-                                   isTypeSetByUser=isTypeSetByUser,
-                                   radProperties=radProperties,
-                                   epProperties=epProperties)
-        self.__parent = None
-        self.__childSurfaces = []
+        srfPropCollection = srfPropCollection or ()
+        HBAnalysisSurface.__init__(self, name, sortedPoints, surfaceType,
+                                   isNameSetByUser, isTypeSetByUser)
+
+        self._srfPropCollection[0] = SurfaceProperties(
+            'default', self.surfaceType, radProperties, epProperties)
+        for state in srfPropCollection:
+            self.addSurfaceState(state)
+
+        self._parent = None
+        self._childSurfaces = []
 
     # TODO: Parse EnergyPlus properties
     @classmethod
@@ -73,28 +76,27 @@ class HBSurface(HBAnalysisSurface):
         Args:
             EPString: The full EPString for an EnergyPlus surface.
         """
-        _types = {'Wall': 0, 'Roof': 1, 'Floor': 2, 'Ceiling': 3}
+        types = {'Wall': 0, 'Roof': 1, 'Floor': 2, 'Ceiling': 3}
 
         # clean input EPString - split based on comma
-        _segments = EPString.replace("\t", "") \
+        segments = EPString.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
-        name = _segments[1]
-        _type = _types[_segments[2].capitalize()]
-        _pts = range((len(_segments) - 11) / 3)
+        name = segments[1]
+        srfType = types[segments[2].capitalize()]
+        pts = range((len(segments) - 11) / 3)
 
         # create points
-        for count, i in enumerate(xrange(11, len(_segments), 3)):
+        for count, i in enumerate(xrange(11, len(segments), 3)):
             try:
-                _pts[count] = [float(c) for c in _segments[i: i + 3]]
+                pts[count] = [float(c) for c in segments[i: i + 3]]
             except ValueError:
                 raise ValueError(
-                    "%s is an invalid value for points." % _segments[i: i + 3]
+                    "%s is an invalid value for points." % segments[i: i + 3]
                 )
 
         # create the surfaceString
-        return cls(name, sortedPoints=_pts, surfaceType=_type,
-                   isNameSetByUser=True, isTypeSetByUser=True)
+        return cls(name, pts, srfType, isNameSetByUser=True, isTypeSetByUser=True)
 
     @property
     def isHBSurface(self):
@@ -109,23 +111,17 @@ class HBSurface(HBAnalysisSurface):
     @property
     def hasChildSurfaces(self):
         """Return True if Honeybee surface has Fenestration surrfaces."""
-        return len(self.__childSurfaces) != 0
+        return len(self._childSurfaces) != 0
 
     @property
     def parent(self):
         """Get or set parent zone."""
-        return self.__parent
-
-    @parent.setter
-    def parent(self, parent):
-        """Set parent zone."""
-        if hasattr(parent, 'isHBZone'):
-            self.__parent = parent
+        return self._parent
 
     @property
     def childrenSurfaces(self):
         """Get children surfaces."""
-        return self.__childSurfaces
+        return self._childSurfaces
 
     def addFenestrationSurfaceBySize(self, name, width, height, sillHeight=1,
                                      radianceMaterial=None):
@@ -174,48 +170,7 @@ class HBSurface(HBAnalysisSurface):
         assert hasattr(fenestrationSurface, 'isHBFenSurface'), \
             '{} is not a HBFenSurfaces'.format(type(fenestrationSurface))
 
-        self.__childSurfaces.append(fenestrationSurface)
+        self._childSurfaces.append(fenestrationSurface)
 
         # set up parent object if it's not set
-        fenestrationSurface.parent = self
-
-    # TODO: implement joinOutput argument
-    def toRadString(self, includeMaterials=False,
-                    includeChildrenSurfaces=True, joinOutput=True, reverse=False):
-        """Return Radiance definition for this surface as a string."""
-        surfaceString = super(HBSurface, self).toRadString(includeMaterials,
-                                                           joinOutput, reverse)
-
-        if includeChildrenSurfaces and self.hasChildSurfaces:
-            childrenSurfacesString = [
-                childSurface.toRadString(includeMaterials, joinOutput,
-                                         reverse=reverse)
-                for childSurface in self.childrenSurfaces
-            ]
-            return "%s\n%s" % (surfaceString,
-                               "\n".join(childrenSurfacesString))
-        else:
-
-            return surfaceString
-
-    def radStringToFile(self, filePath, includeMaterials=False,
-                        includeChildrenSurfaces=True, reverse=False):
-        """Write Radiance definition for this surface to a file.
-
-        Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/geo.rad)
-
-        Returns:
-            True in case of success. False in case of failure.
-        """
-        assert os.path.isdir(os.path.split(filePath)[0]), \
-            "Cannot find %s." % os.path.split(filePath)[0]
-
-        with open(filePath, "w") as outf:
-            try:
-                outf.write(self.toRadString(
-                    includeMaterials, includeChildrenSurfaces, reverse=reverse))
-                return True
-            except Exception as e:
-                print "Failed to write %s to file:\n%s" % (self.name, e)
-                return False
+        fenestrationSurface._parent = self
