@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractproperty
+import utilcol as util
 from hbobject import HBObject
-from surfaceproperties import SurfaceProperties
+from surfaceproperties import SurfaceProperties, SurfaceState
 import surfacetype
 import geometryoperation as go
 from surfacetype import Floor, Wall, Window, Ceiling
@@ -34,8 +35,9 @@ class HBAnalysisSurface(HBObject):
         isNameSetByUser: If you want the name to be changed by honeybee any case
             set isNameSetByUser to True. Default is set to False which let Honeybee
             to rename the surface in cases like creating a newHBZone.
-        srfPropCollection: A collection of SurfaceProperties. SurfaceProperties includes
-            the data for RadianceProperties and EPProperties for a single state. Each
+        states: A collection of SurfaceStates. SurfaceStates includes SurfaceProperties
+            which includes the data for RadianceProperties and EPProperties and optional
+            HBSurfaces. Each
             item in this collection stands for a different stae of the materials. Use
             the properties to model dynamic bahaviors such as dynamic blinds.
     """
@@ -48,10 +50,13 @@ class HBAnalysisSurface(HBObject):
                      6.0: 'Context'}
 
     def __init__(self, name, sortedPoints, surfaceType=None, isNameSetByUser=False,
-                 isTypeSetByUser=False, srfPropCollection=None):
+                 isTypeSetByUser=False, states=None):
         """Initialize Honeybee Surface."""
         self._childSurfaces = ()
-        self._srfPropCollection = []
+        self._states = []
+        if not name:
+            name = util.randomName()
+            isNameSetByUser = False
         self.name = (name, isNameSetByUser)
         """Surface name."""
         self.points = sortedPoints
@@ -63,28 +68,28 @@ class HBAnalysisSurface(HBObject):
         """Surface type."""
         self.state = 0
         """Current state of the surface."""
-        srfPropCollection = srfPropCollection or \
-            (SurfaceProperties('0', self.surfaceType),)
-        for srfprop in srfPropCollection:
-            self.addSurfaceProperties(srfprop)
+        states = states or \
+            (SurfaceState('default', SurfaceProperties(self.surfaceType)),)
+        for state in states:
+            self.addSurfaceState(state)
 
     @classmethod
     def fromRadEPProperties(
         cls, name, sortedPoints, surfaceType=None, isNameSetByUser=False,
             isTypeSetByUser=False, radProperties=None, epProperties=None,
-            srfPropCollection=None):
+            states=None):
         """Initialize Honeybee Surface.
 
         RadianceProperties and EPProperties will be used to create the initial state.
         """
-        srfPropCollection = srfPropCollection or ()
+        states = states or ()
         # create the surface first to get the surface type if not available
         _cls = cls(name, sortedPoints, surfaceType, isNameSetByUser, isTypeSetByUser)
         # replace the default properties for the initial state
-        _cls._srfPropCollection[0] = SurfaceProperties(
-            'default', _cls.surfaceType, radProperties, epProperties)
+        sp = SurfaceProperties(_cls.surfaceType, radProperties, epProperties)
+        _cls._states[0] = SurfaceState('default', sp)
 
-        for state in srfPropCollection:
+        for state in states:
             _cls.addSurfaceState(state)
 
         return _cls
@@ -152,7 +157,7 @@ class HBAnalysisSurface(HBObject):
     @property
     def numOfStates(self):
         """Number of states for this surface."""
-        return len(self.srfPropCollection)
+        return len(self.states)
 
     @property
     def state(self):
@@ -172,24 +177,24 @@ class HBAnalysisSurface(HBObject):
         self._state = count
 
     @property
-    def srfPropCollection(self):
-        return self._srfPropCollection
+    def states(self):
+        """List of states for this surface."""
+        return self._states
 
-    def addSurfaceProperties(self, surfaceProperties):
-        if not surfaceProperties:
+    def addSurfaceState(self, srfState):
+        if not srfState:
             return
-        assert hasattr(surfaceProperties, 'isSurfaceProperties'), \
-            TypeError(
-                'Expected SurfaceProperties not {}'.format(type(surfaceProperties))
-        )
-        self._srfPropCollection.append(surfaceProperties)
+
+        assert hasattr(srfState, 'isSurfaceState'), \
+            TypeError('Expected SurfaceState not {}'.format(type(srfState)))
+
+        self._states.append(srfState)
 
     @property
     def name(self):
         """Retuen surface name."""
         return self._name
 
-    # TODO: name should be checked not to have illegal charecters for ep and radiance
     @name.setter
     def name(self, values):
         """Set name and isSetByUser property.
@@ -219,6 +224,7 @@ class HBAnalysisSurface(HBObject):
             # set new name
             self._name = str(newName)
             self._isNameSetByUser = isNameSetByUser
+            util.checkName(self._name)
 
     @property
     def isNameSetByUser(self):
@@ -408,11 +414,11 @@ class HBAnalysisSurface(HBObject):
     @property
     def radProperties(self):
         """Get and set Radiance properties."""
-        return self.srfPropCollection[self.state].radProperties
+        return self.states[self.state].radProperties
 
     @radProperties.setter
     def radProperties(self, radProperties):
-        self.srfPropCollection[self.state].radProperties = radProperties
+        self.states[self.state].radProperties = radProperties
 
     @property
     def radianceMaterial(self):
@@ -428,11 +434,19 @@ class HBAnalysisSurface(HBObject):
             # or
             HBSrf.radianceMaterial = radMat
         """
-        return self.srfPropCollection[self.state].radProperties.radianceMaterial
+        if self.states[self.state].radianceMaterial:
+            return self.states[self.state].radianceMaterial
+        else:
+            # if state doesn't have a radianceMaterial use the original radiance material
+            return self.states[0].radianceMaterial
 
     @radianceMaterial.setter
     def radianceMaterial(self, value):
-        self.srfPropCollection[self.state].radProperties.radianceMaterial = value
+        try:
+            self.states[self.state].radProperties.radianceMaterial = value
+        except AttributeError:
+            raise AttributeError('Failed to assign new Radiance material.'
+                                 ' Current state does not have a RadianceProperties!')
 
     def radianceMaterials(self, toRadString=False):
         """Get the full list of materials including child surfaces if any."""

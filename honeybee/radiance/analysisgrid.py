@@ -1,6 +1,6 @@
 """Honeybee PointGroup and TestPointGroup."""
 from __future__ import division
-from ..utilities import randomName
+from ..utilcol import randomName
 from ..dataoperation import matchData
 from .analysispoint import AnalysisPoint
 

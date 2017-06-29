@@ -16,7 +16,7 @@ class RadianceProperties(object):
 
     __slots__ = ('_radianceMaterial', '_isMaterialSetByUser', '_hbSurfaces')
 
-    def __init__(self, radianceMaterial, isMaterialSetByUser=False,
+    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False,
                  hbSurfaces=None):
         """Create radiance properties for surface."""
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
@@ -59,13 +59,18 @@ class RadianceProperties(object):
             _newMaterial = values
             _isMaterialSetByUser = False  # if not indicated assume it is not set by user
         finally:
-            # chek if radiance material is radiance material
-            assert hasattr(_newMaterial, 'isRadianceMaterial'), \
-                TypeError('Expected RadianceMaterial not {}'.format(_newMaterial))
 
-            # set new material
-            self._radianceMaterial = _newMaterial
-            self._isMaterialSetByUser = _isMaterialSetByUser
+            if _newMaterial:
+                # chek if radiance material is radiance material
+                assert hasattr(_newMaterial, 'isRadianceMaterial'), \
+                    TypeError('Expected RadianceMaterial not {}'.format(_newMaterial))
+
+                # set new material
+                self._radianceMaterial = _newMaterial
+                self._isMaterialSetByUser = _isMaterialSetByUser
+            else:
+                self._radianceMaterial = None
+                self._isMaterialSetByUser = False
 
     @property
     def hbSurfaces(self):
@@ -108,6 +113,6 @@ class RadianceProperties(object):
 
 
 if __name__ == "__main__":
-    rp = RadianceProperties('material')
+    rp = RadianceProperties()
     print rp
     print rp.isMaterialSetByUser

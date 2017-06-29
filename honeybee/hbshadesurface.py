@@ -1,5 +1,5 @@
 from _hbanalysissurface import HBAnalysisSurface
-from surfaceproperties import SurfaceProperties
+from surfaceproperties import SurfaceProperties, SurfaceState
 
 
 class HBShadingSurface(HBAnalysisSurface):
@@ -22,18 +22,18 @@ class HBShadingSurface(HBAnalysisSurface):
 
     # TODO: Separate Zone:Detailed:Sahding
     def __init__(self, name, sortedPoints=[], isNameSetByUser=False,
-                 radProperties=None, epProperties=None, srfPropCollection=None):
+                 radProperties=None, epProperties=None, states=None):
         """Init honeybee surface."""
         _surfaceType = 6
         _isTypeSetByUser = True
 
-        srfPropCollection = srfPropCollection or ()
+        states = states or ()
         HBAnalysisSurface.__init__(self, name, sortedPoints, _surfaceType,
                                    isNameSetByUser, _isTypeSetByUser)
 
-        self._srfPropCollection[0] = SurfaceProperties(
-            'default', self.surfaceType, radProperties, epProperties)
-        for state in srfPropCollection:
+        sp = SurfaceProperties(self.surfaceType, radProperties, epProperties)
+        self._states[0] = SurfaceState('default', sp)
+        for state in states:
             self.addSurfaceState(state)
 
         self.__isChildSurface = True

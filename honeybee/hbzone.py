@@ -1,3 +1,4 @@
+import utilcol as util
 from hbobject import HBObject
 from vectormath.euclid import Point3
 from radiance.radfile import RadFile
@@ -21,7 +22,7 @@ class HBZone(HBObject):
             (default: True)
     """
 
-    def __init__(self, name, origin=(0, 0, 0), geometryRules=None,
+    def __init__(self, name=None, origin=(0, 0, 0), geometryRules=None,
                  buildingProgram=None, zoneProgram=None, isConditioned=True):
         """Init Honeybee Zone."""
         self.name = name
@@ -68,6 +69,22 @@ class HBZone(HBObject):
     def isHBZone(self):
         """Return True if a HBZone."""
         return True
+
+    @property
+    def name(self):
+        """Retuen surface name."""
+        return self._name
+
+    @name.setter
+    def name(self, newName):
+        """Set name and isSetByUser property.
+
+        Args:
+            newName: A name.
+        """
+        newName = newName or util.randomName()
+        self._name = str(newName)
+        util.checkName(self._name)
 
     @property
     def origin(self):

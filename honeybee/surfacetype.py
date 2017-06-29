@@ -135,7 +135,7 @@ class Window(surfaceTypeBase):
 
     typeId = 5
     """Surface type id."""
-    radianceMaterial = GlassMaterial.bySingleTransValue("generic_glass", 0.65)
+    radianceMaterial = GlassMaterial.bySingleTransValue("generic_glass", 0.60)
     """Default Radiance material."""
 
 

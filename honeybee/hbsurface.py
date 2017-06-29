@@ -1,6 +1,6 @@
 from _hbanalysissurface import HBAnalysisSurface
 from hbfensurface import HBFenSurface
-from surfaceproperties import SurfaceProperties
+from surfaceproperties import SurfaceProperties, SurfaceState
 from vectormath.euclid import Vector3, Point3
 
 
@@ -54,15 +54,15 @@ class HBSurface(HBAnalysisSurface):
 
     def __init__(self, name, sortedPoints=[], surfaceType=None,
                  isNameSetByUser=False, isTypeSetByUser=False,
-                 radProperties=None, epProperties=None, srfPropCollection=None):
+                 radProperties=None, epProperties=None, states=None):
         """Init honeybee surface."""
-        srfPropCollection = srfPropCollection or ()
+        states = states or ()
         HBAnalysisSurface.__init__(self, name, sortedPoints, surfaceType,
                                    isNameSetByUser, isTypeSetByUser)
 
-        self._srfPropCollection[0] = SurfaceProperties(
-            'default', self.surfaceType, radProperties, epProperties)
-        for state in srfPropCollection:
+        sp = SurfaceProperties(self.surfaceType, radProperties, epProperties)
+        self._states[0] = SurfaceState('default', sp)
+        for state in states:
             self.addSurfaceState(state)
 
         self._parent = None
