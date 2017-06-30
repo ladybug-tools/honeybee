@@ -31,11 +31,11 @@ class RadianceParameters(object):
         # place holder for default parameter names
         # use radiance.datatype classes to create default parameters
         # self.
-        self.__defaultParameters = {}
+        self._defaultParameters = {}
 
         # static parameters are the parameters which are set from a string.
         # static parameters are collected here
-        self.__additionalParameters = []
+        self._additionalParameters = []
 
         setattr(self, 'is{}'.format(self.__class__.__name__), True)
 
@@ -47,21 +47,21 @@ class RadianceParameters(object):
     @property
     def parameters(self):
         """Return list of current parameters."""
-        return set(self.__defaultParameters.keys() + self.__additionalParameters)
+        return set(self._defaultParameters.keys() + self._additionalParameters)
 
     @property
     def defaultParameters(self):
         """Return list of default parameters."""
-        return set(self.__defaultParameters.keys())
+        return set(self._defaultParameters.keys())
 
     @property
     def additionalParameters(self):
         """Return list of default parameters."""
-        return set(self.__additionalParameters)
+        return set(self._additionalParameters)
 
     @additionalParameters.setter
     def additionalParameters(self, values):
-        self.__additionalParameters = values
+        self._additionalParameters = values
 
     @property
     def values(self):
@@ -84,37 +84,40 @@ class RadianceParameters(object):
         used otherwise.
 
         Args:
-            parameter: The radiance parameter name (e.g. ab, aa, f, c)
-            alias: The alias name that will be used to create the attribute
+            parameter:
+                The radiance parameter name(e.g. ab, aa, f, c)
+            alias:
+                The alias name that will be used to create the attribute
                 (e.g. ambientBounces, ambientAccuracy, freeze, color)
         """
         assert hasattr(self.__class__, alias), \
             "Can't find '%s' in %s attributes." % (alias, self.__class__.__name__)
-        self.__defaultParameters[alias] = parameter
+        self._defaultParameters[alias] = parameter
 
     def removeParameters(self):
-        """Remove all the current parameters."""
+        """Remove all t"
+        "he current parameters."""
         for name in self.defaultParameters:
             delattr(self.__class__, name)
         for name in self.additionalParameters:
             delattr(self, name)
-        self.__defaultParameters = {}
-        self.__additionalParameters = []
+        self._defaultParameters = {}
+        self._additionalParameters = []
 
     def removeParameter(self, name):
         """Remove a single parameter by name."""
         if name in self.defaultParameters:
             delattr(self.__class__, name)
-            del self.__defaultParameters[name]
+            del self._defaultParameters[name]
             print "Removed %s from default parameters." % str(name)
-        elif name in self.__defaultParameters.values():
-            _i = self.__defaultParameters.values().index(name)
-            aliasName = self.__defaultParameters.keys()[_i]
-            del self.__defaultParameters[aliasName]
+        elif name in self._defaultParameters.values():
+            _i = self._defaultParameters.values().index(name)
+            aliasName = self._defaultParameters.keys()[_i]
+            del self._defaultParameters[aliasName]
             print "Removed %s from default parameters." % str(aliasName)
         elif name in self.additionalParameters:
             delattr(self, name)
-            self.__additionalParameters.remove(name)
+            self._additionalParameters.remove(name)
             print "Removed %s from additional parameters." % str(name)
         else:
             warnings.warn("Couldn't find %s in parameters!" % str(name))
@@ -139,9 +142,9 @@ class RadianceParameters(object):
             raise ValueError("Invalid name {}. Name should be a string.".format(name))
 
         # check if the name is in default values change the name to the alias
-        if name in self.__defaultParameters.values():
-            i = self.__defaultParameters.values().index(name)
-            aliasName = self.__defaultParameters.keys()[i]
+        if name in self._defaultParameters.values():
+            i = self._defaultParameters.values().index(name)
+            aliasName = self._defaultParameters.keys()[i]
             if name != aliasName:
                 raise ValueError(
                     "'{0}' is already set as an attribute by the name of {1}. "
@@ -150,13 +153,15 @@ class RadianceParameters(object):
 
         if name in self.parameters:
             raise Exception(
-                "'{0}' is already set as a parameter. Use 'self.{0}' to change the value".format(name)
+                "'{0}' is already set as a parameter."
+                " Use 'self.{0}' to change the value".format(
+                    name)
             )
 
         try:
             self.tryToUnfreeze()
             setattr(self, name, str(value))
-            self.__additionalParameters.append(name)
+            self._additionalParameters.append(name)
         except TypeError:
             raise ValueError("Value should be a string or convertable to a string.")
         else:
@@ -168,18 +173,19 @@ class RadianceParameters(object):
         This will update the value for the parameter if the parameter already exist.
 
         Args:
-            parametersString: A standard radiance parameter string (e.g. -ab 5 -aa 0.05 -ar 128)
+            parametersString: A standard radiance parameter string
+                (e.g. -ab 5 -aa 0.05 -ar 128)
         """
-        __params = self.__parseRadParameters(parametersString)
+        params = self._parseRadParameters(parametersString)
 
-        for key, value in __params.items():
+        for key, value in params.items():
             try:
                 self.addAdditionalParameterByNameAndValue(key, value)
             except ValueError:
                 # paramter already exists under an alias name
                 # find alias name and update the value
-                _i = self.__defaultParameters.values().index(key)
-                aliasName = self.__defaultParameters.keys()[_i]
+                _i = self._defaultParameters.values().index(key)
+                aliasName = self._defaultParameters.keys()[_i]
                 setattr(self, aliasName, value)
                 print "Updated value for %s to %s" % (aliasName, value)
             except Exception:
@@ -188,7 +194,7 @@ class RadianceParameters(object):
                 print "Updated value for %s to %s" % (key, value)
 
     # TODO: Enhance the parser using regX
-    def __parseRadParameters(self, parametersString):
+    def _parseRadParameters(self, parametersString):
         """Parse radiance parameters.
 
         Args:
@@ -213,10 +219,10 @@ class RadianceParameters(object):
             # convert the value to number
             try:
                 value = int(value)
-            except:
+            except ValueError:
                 try:
                     value = float(value)
-                except:
+                except ValueError:
                     # case for parameters with no input values -u, -i
                     if key.strip() == "":
                         continue
@@ -226,7 +232,7 @@ class RadianceParameters(object):
                         # case for tuples
                         try:
                             value = value.strip().split(" ")
-                        except:
+                        except Exception:
                             value = ""
 
             radPar[key.strip()] = value

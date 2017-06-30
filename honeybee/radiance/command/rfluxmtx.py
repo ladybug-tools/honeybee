@@ -323,10 +323,7 @@ class Rfluxmtx(RadianceCommand):
                     numberOfPoints = len(pointsFile.read().split()) / 6
                     self.pointsFileData += '-y %s' % numberOfPoints
 
-                # TODO: Find a better solution to keep the path relative
-                # Currently the start folder is assumed to be the same folder
-                # as where the point is. This can break the code.
-                self._pointsFile = os.path.split(value)[-1]
+                self._pointsFile = os.path.relpath(value)
             else:
                 raise ValueError('Failed to find pointsFile: {}.'.format(value))
         else:

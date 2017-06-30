@@ -4,14 +4,6 @@ from ..datatype import RadiancePath, RadianceNumber, RadianceBoolFlag, \
     RadianceTuple, RadianceValue
 
 
-# TODO: Add __new__ to create a new class for each instance. After that the
-# new paramters will be added only and only to that instance of the class since
-# that is the only instance that uses that unique copy of the class.
-# for now I'm using setattr(self.__class__, name, RadianceNumber(name,...))
-# to minimize the damage (e.g. make sure the parameter won't be added to
-# RadianceParameters). If user make a subclass from this class then it should
-# work as expected.
-
 class AdvancedRadianceParameters(RadianceParameters):
     """Radiance Parameters Base class with methods to add descriptor type parameters.
 
@@ -49,7 +41,7 @@ class AdvancedRadianceParameters(RadianceParameters):
             self.addDefaultParameterName(_attrname, name)
         except Exception as e:
             if hasattr(self.__class__, _attrname):
-                    self.addDefaultParameterName(_attrname, name)
+                self.addDefaultParameterName(_attrname, name)
             # this is useful for cases that the environment caches the classes
             # Grasshopper and Dynamo included
             else:
@@ -269,7 +261,7 @@ class AdvancedRadianceParameters(RadianceParameters):
                             )
 
     @classmethod
-    def checkIncompatibleInputs(self,*args):
+    def checkIncompatibleInputs(self, *args):
         """This method maybe used to check for inputs that are mutually incompatible.
         For example, a sky cannot be cloudy and clear at the same time. So, the idea is
         to specify those inputs as args and then check that no more than one of them
@@ -280,10 +272,9 @@ class AdvancedRadianceParameters(RadianceParameters):
         One usecase can be found in gendaylit.
         """
         if any(args):
-            inputValues = ['"%s"'%value for value in args if value]
-            assert len(inputValues)<2,\
+            inputValues = ['"%s"' % value for value in args if value]
+            assert len(inputValues) < 2,\
                 'Only one of these inputs can be specified at any given time: ' \
-                '%s'%", ".join(map(str,inputValues))
-
+                '%s' % ", ".join(map(str, inputValues))
 
         return None
