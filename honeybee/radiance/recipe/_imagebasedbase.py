@@ -4,7 +4,7 @@ This class is base class for common imagebased analysis recipes.
 """
 
 from abc import ABCMeta, abstractmethod
-from ...helper import writeToFile
+from ...futil import writeToFile
 from ._recipebase import DaylightAnalysisRecipe
 
 import os

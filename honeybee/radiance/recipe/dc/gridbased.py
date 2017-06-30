@@ -6,7 +6,7 @@ from ...command.gendaymtx import Gendaymtx
 from ...command.dctimestep import Dctimestep
 from ...command.rmtxop import Rmtxop
 from ...sky.skymatrix import SkyMatrix
-from ....helper import writeToFile
+from ....futil import writeToFile
 
 import os
 
@@ -107,7 +107,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             with open(pointsFile, "rb") as inf:
                 pointGroups = tuple(line.split()[:3] for line in inf.readline())
                 vectorGroups = tuple(line.split()[3:] for line in inf.readline())
-        except:
+        except Exception:
             raise ValueError("Couldn't import points from {}".format(pointsFile))
 
         return cls.fromWeatherFilePointsAndVectors(
@@ -176,7 +176,8 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             skyMtx = 'skies\\{}.smx'.format(self.skyMatrix.name)
             hoursFile = os.path.join(
                 sceneFiles.path, 'skies\\{}.hrs'.format(self.skyMatrix.name))
-            if not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)) \
+            if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)) \
+                or not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)) \
                     or not self.skyMatrix.hoursMatch(hoursFile):
                 self.skyMatrix.writeWea(
                     os.path.join(sceneFiles.path, 'skies'), writeHours=True)
@@ -223,7 +224,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
                           outputFile='results\\illuminance.ill')
         finalmtx.rmtxopParameters.outputFormat = 'a'
         finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
-        finalmtx.rmtxopParameters.transposeMatrix = True
+        finalmtx.rmtxopParameters.transposeMatrix = False
         self.commands.append(finalmtx.toRadString())
 
         # # 2.3 write batch file
@@ -242,5 +243,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.resultFiles = self.resultsFile
-        return self.loader.results
+        for r in self.resultsFile:
+            # source, state = os.path.split(r)[-1][:-4].split("..")
+            self.analysisGrids[0].setValuesFromFile(r, self.skyMatrix.hoys)
+        return self.analysisGrids

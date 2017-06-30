@@ -5,7 +5,7 @@ from ..parameters.gridbased import LowQuality
 from ..command.oconv import Oconv
 from ..command.rtrace import Rtrace
 from ..command.rcalc import Rcalc
-from ...helper import writeToFile
+from ...futil import writeToFile
 
 from ladybug.dt import DateTime
 

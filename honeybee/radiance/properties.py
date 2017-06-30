@@ -1,5 +1,4 @@
 """Radiance Properties for HBSurfaces."""
-from radfile import RadFile
 
 
 class RadianceProperties(object):
@@ -10,17 +9,13 @@ class RadianceProperties(object):
             honeybee.radiace.material to create a radiance material (Default: None).
         isMaterialSetByUser: Set to True if you don't want material automatically
             overwritten by honeybee in cases like solve adjacencies.
-        hbSurfaces: Optional honeybee surfaces.Use this input to assign geometries like
-            external shadings to a window.
     """
 
     __slots__ = ('_radianceMaterial', '_isMaterialSetByUser', '_hbSurfaces')
 
-    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False,
-                 hbSurfaces=None):
+    def __init__(self, radianceMaterial=None, isMaterialSetByUser=False):
         """Create radiance properties for surface."""
         self.radianceMaterial = (radianceMaterial, isMaterialSetByUser)
-        self.hbSurfaces = hbSurfaces or ()
 
     @property
     def isRadianceProperties(self):
@@ -73,32 +68,13 @@ class RadianceProperties(object):
                 self._isMaterialSetByUser = False
 
     @property
-    def hbSurfaces(self):
-        """Optional honeybee surfaces.
-
-        Use this input to assign geometries like external shadings to a window.
-        """
-        return self._hbSurfaces
-
-    @hbSurfaces.setter
-    def hbSurfaces(self, srfs):
-        for srf in srfs:
-            assert hasattr(srf, 'isHBSurface'), \
-                TypeError('Expected HBSurface not {}'.format(type(srf)))
-        self._hbSurfaces = srfs
-
-    @property
     def isMaterialSetByUser(self):
         """Check if material is set by user."""
         return self._isMaterialSetByUser
 
     def toRadString(self):
         """Get radianace definition for honeybee surfaces if any."""
-        if not self.hbSurfaces:
-            return ''
-        else:
-            rf = RadFile.fromHBSurfaces(self.hbSurfaces)
-            return rf.toRadString()
+        raise NotImplementedError()
 
     def ToString(self):
         """Overwrite .NET ToString method."""

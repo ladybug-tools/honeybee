@@ -21,7 +21,7 @@ def getRadiancePathLines():
         msg = 'Radiance path {} has a whitespace. Some of the radiance ' \
             'commands may fail.\nWe strongly suggest you to install radiance ' \
             'under a path with no withspace (e.g. c:/radiance)'.format(
-                self.radbinPath
+                config.radbinPath
             )
         print msg
     if os.name == 'nt':
@@ -74,14 +74,39 @@ def nukedir(targetDir, rmdir=False):
         else:
             try:
                 os.remove(path)
-            except:
+            except Exception:
                 print "Failed to remove %s" % path
 
     if rmdir:
         try:
             os.rmdir(d)
-        except:
+        except Exception:
             print "Failed to remove %s" % d
+
+
+def writeToFileByName(folder, fname, data, mkdir=False):
+    """Write a string of data to file by filename and folder.
+
+    Args:
+        folder: Target folder (e.g. c:/ladybug).
+        fname: File name (e.g. testPts.pts).
+        data: Any data as string.
+        mkdir: Set to True to create the directory if doesn't exist (Default: False).
+    """
+    if not os.path.isdir(folder):
+        if mkdir:
+            preparedir(folder)
+        else:
+            raise ValueError("Failed to find %s." % folder)
+
+    filePath = os.path.join(folder, fname)
+
+    with open(filePath, "w") as outf:
+        try:
+            outf.write(str(data))
+            return filePath
+        except Exception as e:
+            raise IOError("Failed to write %s to file:\n\t%s" % (fname, str(e)))
 
 
 def writeToFile(filePath, data, mkdir=False):
@@ -92,20 +117,8 @@ def writeToFile(filePath, data, mkdir=False):
         data: Any data as string
         mkdir: Set to True to create the directory if doesn't exist (Default: False)
     """
-    __dir, __name = os.path.split(filePath)
-
-    if not os.path.isdir(__dir):
-        if mkdir:
-            preparedir(__dir)
-        else:
-            raise ValueError("Failed to find %s." % __dir)
-
-    with open(filePath, "w") as outf:
-        try:
-            outf.write(str(data))
-            return filePath
-        except Exception as e:
-            raise IOError("Failed to write %s to file:\n\t%s" % (__name, str(e)))
+    folder, fname = os.path.split(filePath)
+    return writeToFileByName(folder, fname, data, mkdir)
 
 
 def copyFilesToFolder(files, targetFolder, overwrite=True):
@@ -129,7 +142,7 @@ def copyFilesToFolder(files, targetFolder, overwrite=True):
                 # remove the file before copying
                 try:
                     os.remove(target)
-                except:
+                except Exception:
                     raise IOError("Failed to remove %s" % f)
                 else:
                     shutil.copy(f, target)

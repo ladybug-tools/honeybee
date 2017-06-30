@@ -8,7 +8,7 @@ from ...command.rfluxmtx import Rfluxmtx
 from ...command.gendaymtx import Gendaymtx
 from ...command.dctimestep import Dctimestep
 from ...command.vwrays import Vwrays, VwraysParameters
-from ....helper import writeToFile
+from ....futil import writeToFile
 import os
 
 

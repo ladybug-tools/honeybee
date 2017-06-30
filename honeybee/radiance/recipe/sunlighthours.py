@@ -3,7 +3,7 @@ from ..postprocess.sunlighthourresults import LoadSunlighthoursResults
 from ..parameters.rcontrib import RcontribParameters
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
-from ...helper import writeToFile
+from ...futil import writeToFile
 from ...vectormath.euclid import Vector3
 
 from ladybug.sunpath import LBSunpath

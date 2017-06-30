@@ -6,7 +6,7 @@ sunlighthours recipe and annual analysis recipe.
 
 from abc import ABCMeta, abstractmethod
 from ..analysisgrid import AnalysisGrid
-from ...helper import writeToFile
+from ...futil import writeToFile
 from ._recipebase import DaylightAnalysisRecipe
 
 from ladybug.legendparameters import LegendParameters

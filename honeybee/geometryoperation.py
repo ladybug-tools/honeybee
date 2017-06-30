@@ -14,7 +14,7 @@ def stripPointList(pts):
         return stripPointList(pts[0])
 
 
-def calculateNormalFromPoints(pts):
+def normalFromPoints(pts):
     """Calculate normal vector for a list of points.
 
     This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
@@ -50,18 +50,18 @@ def calculateNormalFromPoints(pts):
         return tuple(v1.cross(v2).normalize())
 
 
-def calculateUpVectorFromPoints(pts):
+def upVectorFromPoints(pts):
     """Calculate up vector for a surface from points."""
     xAxis = Vector3(pts[1][0] - pts[0][0],
                     pts[1][1] - pts[0][1],
                     pts[1][2] - pts[0][2])
 
-    normal = Vector3(*calculateNormalFromPoints(pts))
+    normal = Vector3(*normalFromPoints(pts))
 
     return tuple(normal.cross(xAxis).normalize())
 
 
-def calculateCenterPointFromPoints(pts):
+def centerPointFromPoints(pts):
     """Calculate center point.
 
     This method finds the center point by averging x, y and z values.
@@ -82,7 +82,7 @@ def calculateCenterPointFromPoints(pts):
     return x / ptCount, y / ptCount, z / ptCount
 
 
-def calculateVectorAngleToZAxis(vector):
+def vectorAngleToZAxis(vector):
     """Calculate angle between vectoe and (0, 0, 1) in degrees."""
     zAxis = Vector3(0, 0, 1)
     try:
@@ -92,9 +92,23 @@ def calculateVectorAngleToZAxis(vector):
         return math.degrees(zAxis.angle(Vector3(vector.X, vector.Y, vector.Z)))
 
 
+def vectorAngle(vector1, vector2):
+    """Calculate vector angle between two vectors."""
+    try:
+        v1 = Vector3(*vector1)
+    except TypeError:
+        v1 = Vector3(vector1.X, vector1.Y, vector1.Z)
+
+    try:
+        return math.degrees(v1.angle(Vector3(*vector2)))
+    except TypeError:
+        # Vectors from Dynamo are not iterable!
+        return math.degrees(v1.angle(Vector3(vector2.X, vector2.Y, vector2.Z)))
+
+
 if __name__ == "__main__":
     pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))
-    srfVector = calculateNormalFromPoints(pts)
+    srfVector = normalFromPoints(pts)
 
-    print calculateVectorAngleToZAxis(srfVector)
-    print calculateCenterPointFromPoints(pts)
+    print vectorAngleToZAxis(srfVector)
+    print centerPointFromPoints(pts)

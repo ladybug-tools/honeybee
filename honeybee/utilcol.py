@@ -15,7 +15,7 @@ def randomName(shorten=True):
         return str(uuid.uuid4())
 
 
-# TODO(-): Not sure about non-ascii stuff. I should check if it is possible.
+# TODO(-): Not sure what should happen with non-ascii stuff. for now they are not valid.
 def checkName(name):
     """Check if a name is a valid honeybee name.
 
@@ -26,5 +26,6 @@ def checkName(name):
     else:
         raise ValueError(
             'Invalid input name: ({}).'
-            ' Name can only contain letters, numbers, underscores and dashes.'
+            ' Name can only contain letters, numbers,'
+            ' underscores and dashes.'.format(name)
         )

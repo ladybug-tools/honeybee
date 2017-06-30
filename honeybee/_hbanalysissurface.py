@@ -269,8 +269,8 @@ class HBAnalysisSurface(HBObject):
         self._isTypeSetByUser = isTypeSetByUser
 
     def _surfaceTypeFromPoints(self):
-        normal = go.calculateNormalFromPoints(self.points[0])
-        angleToZAxis = go.calculateVectorAngleToZAxis(normal)
+        normal = go.normalFromPoints(self.points[0])
+        angleToZAxis = go.vectorAngleToZAxis(normal)
         return surfacetype.SurfaceTypes.byNormalAngleAndPoints(angleToZAxis,
                                                                self.points[0])()
 
@@ -401,7 +401,26 @@ class HBAnalysisSurface(HBObject):
     @property
     def normal(self):
         """Return surface normal for the first face."""
-        return go.calculateNormalFromPoints(self.points[0])
+        return go.normalFromPoints(self.points[0])
+
+    @property
+    def normals(self):
+        """Return surface normals for all faces."""
+        return tuple(go.normalFromPoints(pts) for pts in self.points)
+
+    @property
+    def normalsAngleDifference(self):
+        """Maximum angle difference between normals and the first normal."""
+        maxAngle = 0
+        if len(self.points) == 1:
+            return 0
+        normals = self.normals
+        base = normals[0]
+        for norm in normals:
+            angle = go.vectorAngle(base, norm)
+            if angle > maxAngle:
+                maxAngle = angle
+        return maxAngle
 
     @property
     def upnormal(self):
@@ -409,7 +428,7 @@ class HBAnalysisSurface(HBObject):
 
         Use this value to set up rfluxmtx header.
         """
-        return go.calculateUpVectorFromPoints(self.points[0])
+        return go.upVectorFromPoints(self.points[0])
 
     @property
     def radProperties(self):

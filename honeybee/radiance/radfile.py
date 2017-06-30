@@ -2,8 +2,11 @@
 
 Create, modify and generate radiance files from a collection of hbobjects.
 """
-from geometry import polygon
-from material.plastic import BlackMaterial
+from ..futil import writeToFileByName
+from .geometry import polygon
+from .material.plastic import BlackMaterial
+
+import datetime
 
 
 class RadFile(object):
@@ -133,6 +136,16 @@ class RadFile(object):
         else:
             return self.geometries(mode, True, flipped) + '\n'
 
+    def write(self, folder, filename, mode=1, includeMaterials=True,
+              flipped=False, blacked=False, mkdir=False):
+        fmt = '%Y-%m-%d %H:%M:%S'
+        now = datetime.datetime.now()
+        header = '# Created by Honeybee[+] at %s' % now.strftime(fmt)
+        note = '# www.ladybug.tools'
+        data = str(self.toRadString(mode, includeMaterials, flipped, blacked))
+        text = header + '\n' + note + '\n\n' + data
+        return writeToFileByName(folder, filename, text, mkdir)
+
     @staticmethod
     def getSurfaceRadString(surface, flipped=False):
         """Get the polygon definition for a honeybee surface.
@@ -156,7 +169,7 @@ class RadFile(object):
             # collect definition for each subsurface
             placeHolder[ptCount] = polygon(_name, surface.radianceMaterial.name, pts)
 
-            return '\n'.join(placeHolder)
+        return '\n'.join(placeHolder)
 
     def ToString(self):
         """Overwrite .NET's ToString."""
