@@ -265,8 +265,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
     @quality.setter
     def quality(self, value):
-
-        value = value or 0
+  
+        value = value or None
 
         assert (0 <= int(value) <= 2), \
             "Quality can only be 0:low, 1: medium or 2: high quality"
