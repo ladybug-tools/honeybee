@@ -237,7 +237,7 @@ class Folders(object):
             path = cfg.read().replace('\\\\', '\\').replace('\\', '/')
             try:
                 paths = json.loads(path)
-            except:
+            except Exception:
                 print 'Failed to load paths from {}.'.format(filePath)
             else:
                 for key, p in paths.iteritems():

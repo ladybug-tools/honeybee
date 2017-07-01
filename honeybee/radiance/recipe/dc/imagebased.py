@@ -1,14 +1,14 @@
 """Radiance Daylight Coefficient Image-Based Analysis Recipe."""
 
 # from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
-from ladybug.dt import LBDateTime
+from ladybug.dt import DateTime
 from .._imagebasedbase import GenericImageBasedAnalysisRecipe
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...command.rfluxmtx import Rfluxmtx
 from ...command.gendaymtx import Gendaymtx
 from ...command.dctimestep import Dctimestep
 from ...command.vwrays import Vwrays, VwraysParameters
-from ....helper import writeToFile
+from ....futil import writeToFile
 import os
 
 
@@ -277,7 +277,7 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
 
         names = []
         for f, h in zip(self.results(), self.skyMatrix.hoys):
-            hoy = LBDateTime.fromHOY(h)
+            hoy = DateTime.fromHoy(h)
             name = '%02d_%02d_%02d.hdr' % (hoy.month, hoy.day, int(hoy.hour))
             tf = f[:-8] + name
             if os.path.isfile(tf):

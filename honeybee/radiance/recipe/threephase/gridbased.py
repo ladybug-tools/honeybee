@@ -1,5 +1,4 @@
 from ..dc.gridbased import DaylightCoeffGridBasedAnalysisRecipe
-from ...postprocess.annualresults import LoadAnnualsResults
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...command.dctimestep import Dctimestep
 from ...command.rfluxmtx import Rfluxmtx
@@ -7,7 +6,7 @@ from ...command.rmtxop import Rmtxop
 from ...command.gendaymtx import Gendaymtx
 from ...material.glow import GlowMaterial
 from ...sky.skymatrix import SkyMatrix
-from ....helper import writeToFile, copyFilesToFolder
+from ....futil import writeToFile, copyFilesToFolder
 
 import os
 
@@ -62,8 +61,6 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         self.daylightMtxParameters = daylightMtxParameters
         self.reuseViewMtx = reuseViewMtx
         self.reuseDaylightMtx = reuseDaylightMtx
-        # create a result loader to load the results once the analysis is done.
-        self.loader = LoadAnnualsResults(self.resultsFile)
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
@@ -151,25 +148,12 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         """
         _wgroups = {}
         for srf in self.windowSurfaces:
-            wgn = srf.radProperties.windowGroupName or srf.name
+            wgn = srf.name
             if wgn not in _wgroups:
+                states = tuple(st.radianceMaterial for st in srf.states)
                 _wgroups[wgn] = {
                     'normal': srf.normal, 'upnormal': srf.upnormal, 'surfaces': [srf],
-                    'states': (srf.radianceMaterial,) + tuple(srf.radProperties.alternateMaterials)}
-            else:
-                # the group is already created. check normal direction and it
-                # to surfaces.
-                assert srf.normal == _wgroups[wgn]['normal'], \
-                    ValueError(
-                        'Normal direction of Windows in a window groups should match.\n'
-                        '{} from {} does not match {} from {}.'.format(
-                            srf.normal, srf, _wgroups[wgn]['normal'], _wgroups[wgn]['surfaces'][0]
-                        ))
-                # TODO(): Check radiance matrials and alternateMaterials to match.
-                assert (srf.radianceMaterial,) + tuple(srf.radProperties.alternateMaterials) \
-                    == _wgroups[wgn]['states'], \
-                    '{} has a different radiance material than windowgroup material.'.format(srf)
-
+                    'states': states}
                 _wgroups[wgn]['surfaces'].append(srf)
 
         return _wgroups
@@ -261,7 +245,8 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             skyMtx = 'skies\\{}.smx'.format(self.skyMatrix.name)
             hoursFile = os.path.join(
                 sceneFiles.path, 'skies\\{}.hrs'.format(self.skyMatrix.name))
-            if not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)) \
+            if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)) \
+                    or not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)) \
                     or not self.skyMatrix.hoursMatch(hoursFile):
                 self.skyMatrix.writeWea(
                     os.path.join(sceneFiles.path, 'skies'), writeHours=True)
@@ -305,7 +290,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             with open(windowGroupPath, 'wb') as outf:
                 outf.write(surfaces[0].radianceMaterial.toRadString() + '\n')
                 for srf in surfaces:
-                    outf.write(srf.toRadString(reverse=True) + '\n')
+                    outf.write(srf.toRadString(flipped=True) + '\n')
 
             # 3.2.Generate view matrix
             vMatrix = 'results\\matrix\\{}.vmx'.format(windowGroup)
@@ -379,7 +364,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                                   outputFile=outputName)
                 finalmtx.rmtxopParameters.outputFormat = 'a'
                 finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
-                finalmtx.rmtxopParameters.transposeMatrix = True
+                finalmtx.rmtxopParameters.transposeMatrix = False
                 self.commands.append(finalmtx.toRadString())
 
                 self.resultsFile.append(os.path.join(sceneFiles.path, outputName))
@@ -398,5 +383,9 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.resultFiles = self.resultsFile
-        return self.loader.results
+        # self.loader.resultFiles = self.resultsFile
+        for r in self.resultsFile:
+            source, state = os.path.split(r)[-1][:-4].split("..")
+            self.analysisGrids[0].setValuesFromFile(r, self.skyMatrix.hoys,
+                                                    source, state)
+        return self.analysisGrids

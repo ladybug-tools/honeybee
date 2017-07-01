@@ -1,10 +1,10 @@
 from ladybug.wea import Wea
 from ._skyBase import RadianceSky
 from ..command.gendaymtx import Gendaymtx
+from ..parameters.gendaymtx import GendaymtxParameters
 import os
 
 
-# TODO: Add checks for input files
 class SkyMatrix(RadianceSky):
     """Radiance sky matrix based on an epw weather file.
 
@@ -14,22 +14,25 @@ class SkyMatrix(RadianceSky):
             [2] Reinhart Sky, etc. (Default: 1)
         north: An angle in degrees between 0-360 to indicate north direction
             (Default: 0).
-        hoys: The list of hours for generating the sky matrix (Default: 0..8759)
+        hoys: The list of hours for generating the sky matrix (Default: 0..8759).
+        mode: Sky mode 0: total, 1: direct-only, 2: diffuse-only (Default: 0).
     """
 
-    def __init__(self, wea, skyDensity, north=0, hoys=None):
+    def __init__(self, wea, skyDensity=1, north=0, hoys=None, mode=0):
         """Create sky."""
         RadianceSky.__init__(self)
-        assert hasattr(wea, 'isWea'), '{} is not an instance of Wea.'.format(wea)
         self.wea = wea
-        self.skyDensity = skyDensity or 1
         self.hoys = hoys or range(8760)
-        self.north = float(north)
+        skyDensity = skyDensity or 1
+        self._skyMatrixParameters = GendaymtxParameters()
+        self.north = north
+        self.skyDensity = skyDensity
+        self.mode = mode
 
     @classmethod
-    def fromEpwFile(cls, epwFile, skyDensity=1, north=0):
+    def fromEpwFile(cls, epwFile, skyDensity=1, north=0, hoys=None, mode=0):
         """Create sky from an epw file."""
-        return cls(Wea.fromEpwFile(epwFile), skyDensity, north)
+        return cls(Wea.fromEpwFile(epwFile), skyDensity, north, hoys, mode)
 
     @property
     def isSkyMatrix(self):
@@ -42,14 +45,60 @@ class SkyMatrix(RadianceSky):
         return True
 
     @property
+    def wea(self):
+        """An instance of ladybug Wea."""
+        return self._wea
+
+    @wea.setter
+    def wea(self, w):
+        assert hasattr(w, 'isWea'), \
+            TypeError('wea must be a WEA object not a {}'.format(type(w)))
+        self._wea = w
+
+    @property
+    def skyDensity(self):
+        """A positive intger for sky density. [1] Tregenza Sky, [2] Reinhart Sky, etc."""
+        return self._skyMatrixParameters.skyDensity
+
+    @skyDensity.setter
+    def skyDensity(self, s):
+        skyDensity = s or 1
+        self._skyMatrixParameters.skyDensity = skyDensity
+
+    @property
+    def north(self):
+        """An angle in degrees between 0-360 to indicate north direction (Default: 0)."""
+        return self._skyMatrixParameters.rotation
+
+    @north.setter
+    def north(self, n):
+        north = n or 0
+        self._skyMatrixParameters.rotation = north
+
+    @property
+    def mode(self):
+        """Sky mode 0: total, 1: direct-only, 2: diffuse-only (Default: 0)."""
+        return self._mode
+
+    @mode.setter
+    def mode(self, m):
+        self._mode = m or 0
+        if self._mode == 0:
+            self._skyMatrixParameters.onlyDirect = False
+            self._skyMatrixParameters.onlySky = False
+        elif self._mode == 1:
+            self._skyMatrixParameters.onlyDirect = True
+            self._skyMatrixParameters.onlySky = False
+        elif self._mode == 2:
+            self._skyMatrixParameters.onlyDirect = False
+            self._skyMatrixParameters.onlySky = True
+
+    @property
     def name(self):
         """Sky default name."""
-        return "SKYMTX_r{}_{}_{}_{}_{}_{}".format(
-            self.skyDensity, self.wea.location.stationId,
-            self.wea.location.city.replace(' ', ''),
-            self.wea.location.latitude,
-            self.wea.location.longitude,
-            self.north
+        return "skymtx_r{}_{}_{}_{}_{}_{}".format(
+            self.skyDensity, self.mode, self.wea.location.stationId,
+            self.wea.location.latitude, self.wea.location.longitude, self.north
         )
 
     @property
@@ -99,7 +148,9 @@ class SkyMatrix(RadianceSky):
         """
         outfilepath = os.path.join(workingDir, '{}.smx'.format(self.name))
         weafilepath = os.path.join(workingDir, '{}.wea'.format(self.name))
-        if reuse and os.path.isfile(outfilepath):
+        hoursfilepath = weafilepath[:-4] + '.hrs'
+
+        if reuse and os.path.isfile(outfilepath) and self.hoursMatch(hoursfilepath):
             return outfilepath
         else:
             outfilepath = os.path.join(workingDir, '{}.smx'.format(self.name))

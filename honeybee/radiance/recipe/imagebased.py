@@ -5,7 +5,7 @@ from ._imagebasedbase import GenericImageBasedAnalysisRecipe
 from ..parameters.imagebased import ImageBasedParameters
 from ..command.oconv import Oconv
 from ..command.rpict import Rpict
-from ...helper import writeToFile
+from ...futil import writeToFile
 import os
 
 

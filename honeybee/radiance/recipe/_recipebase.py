@@ -1,6 +1,7 @@
-"""Base ckass for RADIANCE Analysis Recipes."""
-from ...helper import preparedir, writeToFile, copyFilesToFolder, \
+"""Base class for RADIANCE Analysis Recipes."""
+from ...futil import preparedir, writeToFile, copyFilesToFolder, \
     getRadiancePathLines
+from ..radfile import RadFile
 
 from collections import namedtuple
 import os
@@ -26,6 +27,10 @@ class DaylightAnalysisRecipe(object):
         self.scene = scene
         """Additional Radiance files other than honeybee objects."""
 
+        self._radFile = None
+        self._hbObjs = ()
+        self._radianceMaterials = ()
+
         self.resultsFile = []
         self.commands = []
         self.isCalculated = False
@@ -39,54 +44,59 @@ class DaylightAnalysisRecipe(object):
     @property
     def hbObjects(self):
         """Get and set Honeybee objects for this recipe."""
-        return self.__hbObjs
+        return self._hbObjs
 
     @hbObjects.setter
     def hbObjects(self, hbObjects):
         if not hbObjects:
-            self.__hbObjs = ()
-            self.__radianceMaterials = ()
+            self._hbObjs = ()
+            self._radianceMaterials = ()
         else:
             try:
-                self.__radianceMaterials = \
-                    set(mat for hbo in hbObjects for mat in hbo.radianceMaterials)
+                self._radianceMaterials = \
+                    set(mat for hbo in hbObjects for mat in hbo.radianceMaterials())
             except AttributeError:
-                raise TypeError('At the minimum one of the inputs is not a Honeybee object.')
+                raise TypeError(
+                    'At the minimum one of the inputs is not a Honeybee object.'
+                )
 
-            self.__hbObjs = hbObjects
+            self._hbObjs = hbObjects
+            self._radFile = RadFile(hbObjects)
 
     @property
     def radianceMaterials(self):
         """Get list of radiance materials for Honeybee objects in this recipe."""
-        return self.__radianceMaterials
+        return self._radianceMaterials
 
     @property
     def subFolder(self):
         """Sub-folder for Grid-based analysis."""
-        return self.__subFolder
+        return self._subFolder
 
     @subFolder.setter
     def subFolder(self, value):
         """Sub-folder for Grid-based analysis."""
-        self.__subFolder = str(value)
+        self._subFolder = str(value)
 
     @property
     def scene(self):
         """A base scene for the recipe."""
-        return self.__scene
+        return self._scene
 
     @scene.setter
     def scene(self, sc):
         if not sc:
-            self.__scene = None
+            self._scene = None
         else:
             assert hasattr(sc, 'files'), '{} is not a Radiance Scene. ' \
                 'Scene should be an instance from the type Scene.'.format(sc)
-            self.__scene = sc
+            self._scene = sc
 
-    # TODO: This should be cross platform and also support cloud-based modeling.
     def header(self, targetFolder, includRadPath=True):
-        """Get the header for bat file."""
+        """Get the header for bat file.
+
+        IncludeRadPath is only useful for Windows.
+        """
         dirLine = "%s\ncd %s\n" % (os.path.splitdrive(targetFolder)[0], targetFolder)
 
         if includRadPath:
@@ -121,10 +131,7 @@ class DaylightAnalysisRecipe(object):
     def toRadStringGeometries(self):
         """Return geometries radiance definition as a single multiline string."""
         print 'Number of Honeybee objects: %d' % len(self.hbObjects)
-        _geos = (hbo.toRadString(includeMaterials=False, joinOutput=True)
-                 for hbo in self.hbObjects)
-
-        return "\n".join(_geos)
+        return "\n".join(self._radFile.geometries())
 
     def toRadStringMaterials(self):
         """Return radiance definition of materials as a single multiline string."""
@@ -133,10 +140,7 @@ class DaylightAnalysisRecipe(object):
 
     def toRadStringMaterialsAndGeometries(self):
         """Return geometries radiance definition as a single multiline string."""
-        _mat = self.toRadStringMaterials()
-        _geo = self.toRadStringGeometries()
-
-        return "\n".join((_mat, _geo))
+        return str(self._radFile.toRadString())
 
     # TODO: Get commands without running write method.
     def toRadString(self):
@@ -290,6 +294,11 @@ class DaylightAnalysisRecipe(object):
         self.isCalculated = True
         # self.isChanged = False
         return True
+
+    @property
+    def legendParameters(self):
+        """Returns suggested legend parameters for this recipe."""
+        return None  # for image-based analysis it will be None.
 
     def write(self):
         """Write files for this recipe to folder."""

@@ -43,6 +43,7 @@ class GridBasedParameters(AdvancedRadianceParameters):
     def __init__(self, quality=None):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
+
         self.quality = quality
         """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
@@ -264,7 +265,7 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
     @quality.setter
     def quality(self, value):
-
+  
         value = value or None
 
         assert (0 <= int(value) <= 2), \

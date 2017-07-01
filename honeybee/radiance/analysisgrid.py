@@ -1,15 +1,14 @@
 """Honeybee PointGroup and TestPointGroup."""
 from __future__ import division
+from ..utilcol import randomName
 from ..dataoperation import matchData
 from .analysispoint import AnalysisPoint
 
 import os
 from itertools import izip
-import uuid
+
 
 # TODO(mostapha): Implement sources from windowGroups
-
-
 class AnalysisGrid(object):
     """A grid of analysis points.
 
@@ -30,7 +29,7 @@ class AnalysisGrid(object):
             and multi-phase studies that the contribution of each source will be
             calculated separately (default: None).
         """
-        self._name = name or str(uuid.uuid4())
+        self.name = name
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
         self._sources = {}
@@ -43,7 +42,7 @@ class AnalysisGrid(object):
         self._analysisPoints = analysisPoints
 
     @classmethod
-    def fromPointsAndVectors(cls, points, vectors=None):
+    def fromPointsAndVectors(cls, points, vectors=None, name=None, windowGroups=None):
         """Create an analysis grid from points and vectors.
 
         Args:
@@ -54,7 +53,7 @@ class AnalysisGrid(object):
         vectors = vectors or ()
         points, vectors = matchData(points, vectors, (0, 0, 1))
         aps = tuple(AnalysisPoint(pt, v) for pt, v in izip(points, vectors))
-        return cls(aps)
+        return cls(aps, name, windowGroups)
 
     @classmethod
     def fromFile(cls, filePath):
@@ -74,6 +73,15 @@ class AnalysisGrid(object):
     def isAnalysisGrid(self):
         """Return True for AnalysisGrid."""
         return True
+
+    @property
+    def name(self):
+        """AnalysisGrid name."""
+        return self._name
+
+    @name.setter
+    def name(self, n):
+        self._name = n or randomName()
 
     @property
     def points(self):
@@ -119,6 +127,11 @@ class AnalysisGrid(object):
         """Return hours of the year for results if any."""
         return self.analysisPoints[0].hoys
 
+    @property
+    def isResultsPointInTime(self):
+        """Return True if the grid has the results only for an hour."""
+        return len(self.hoys) == 1
+
     def setValues(self, hoys, values, source=None, state=None, isDirect=False):
 
         pass
@@ -128,7 +141,7 @@ class AnalysisGrid(object):
                 hourlyValues, hoys, source, state, isDirect)
 
     def setValuesFromFile(self, filePath, hoys=None, source=None, state=None,
-                          isDirect=False):
+                          startLine=None, isDirect=False, header=True):
         """Load values for test points from a file.
 
         Args:
@@ -137,27 +150,40 @@ class AnalysisGrid(object):
                 default will be range(0, len(results)).
             source: Name of the source.
             state: Name of the state.
+            startLine: Number of start lines after the header from 0 (default: 0).
+            isDirect: A Boolean to declare if the results is direct illuminance
+                (default: False).
+            header: A Boolean to declare if the file has header (default: True).
         """
         with open(filePath, 'rb') as inf:
-            # read the header
-            for i in xrange(7):
-                if i == 2:
-                    pointsCount = int(inf.next().split('=')[-1])
-                    assert len(self._analysisPoints) == pointsCount, \
-                        "Length of points [%d] doesn't match length of the results [%d]." \
-                        .format(len(self._analysisPoints), pointsCount)
-                elif i == 3:
-                    hoursCount = int(inf.next().split('=')[-1])
-                    if hoys:
-                        assert hoursCount == len(hoys), \
-                            "Number of hours [%d] doesn't match length of the results [%d]." \
-                            .format(len(hoys), hoursCount)
+            if header:
+                # read the header
+                for i in xrange(7):
+                    if startLine == 0 and i == 2:
+                        pointsCount = int(inf.next().split('=')[-1])
+                        assert len(self._analysisPoints) == pointsCount, \
+                            "Length of points [%d] doesn't match length " \
+                            "of the results [%d]." \
+                            .format(len(self._analysisPoints), pointsCount)
+                    elif startLine == 0 and i == 3:
+                        hoursCount = int(inf.next().split('=')[-1])
+                        if hoys:
+                            assert hoursCount == len(hoys), \
+                                "Number of hours [%d] doesn't match length " \
+                                "of the results [%d]." \
+                                .format(len(hoys), hoursCount)
+                        else:
+                            hoys = xrange(0, hoursCount)
                     else:
-                        hoys = xrange(0, hoursCount)
-                else:
-                    inf.next()
+                        inf.next()
 
-            values = (tuple(int(float(r)) for r in line.split()) for line in inf)
+            st = startLine or 0
+            for i in xrange(st):
+                inf.next()
+
+            end = len(self._analysisPoints)
+            values = (tuple(int(float(r)) for r in inf.next().split())
+                      for count in xrange(end))
 
             # assign the values to points
             for count, hourlyValues in enumerate(values):
@@ -307,6 +333,12 @@ class AnalysisGrid(object):
             100 * problematicPointCount / len(ap), problematicPoints, \
             problematicHours
 
+    def duplicate(self):
+        """Duplicate AnalysisGrid."""
+        dup = AnalysisGrid(self._analysisPoints, self._name)
+        dup._sources = self.sources
+        return dup
+
     def toRadString(self):
         """Return analysis points group as a Radiance string."""
         return "\n".join((ap.toRadString() for ap in self._analysisPoints))
@@ -314,6 +346,33 @@ class AnalysisGrid(object):
     def ToString(self):
         """Overwrite ToString .NET method."""
         return self.__repr__()
+
+    def __add__(self, other):
+        """Add two analysis grids and create a new one.
+
+        This method won't duplicate the analysis points.
+        """
+        assert isinstance(other, AnalysisGrid), \
+            TypeError('Expected an AnalysisGrid not {}.'.format(type(other)))
+
+        assert self.hoys == other.hoys, \
+            ValueError('Two analysis grid must have the same hoys.')
+
+        if not self.hasValues:
+            sources = self._sources.update(other._sources)
+        else:
+            assert self._sources == other._sources, \
+                ValueError(
+                    'Two analysis grid with values must have the same windowGroups.'
+                )
+            sources = self._sources
+
+        points = self.analysisPoints + other.analysisPoints
+        name = '{}+{}'.format(self.name, other.name)
+        addition = AnalysisGrid(points, name)
+        addition._sources = sources
+
+        return addition
 
     def __len__(self):
         """Number of points in this group."""
@@ -331,6 +390,17 @@ class AnalysisGrid(object):
         """String repr."""
         return self.toRadString()
 
+    @property
+    def _sign(self):
+        if not self.hasValues:
+            return '[.]'
+        elif self.isResultsPointInTime:
+            return '[+]'
+        else:
+            return '[*]'
+
     def __repr__(self):
         """Return analysis points and directions."""
-        return 'AnalysisGrid::#{}'.format(len(self._analysisPoints))
+        return 'AnalysisGrid::{}::#{}::{}'.format(
+            self._name, len(self._analysisPoints), self._sign
+        )

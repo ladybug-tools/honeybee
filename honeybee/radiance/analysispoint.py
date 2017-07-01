@@ -150,8 +150,11 @@ class AnalysisPoint(object):
 
     def blindStateId(self, source, state):
         """Get state id if available."""
-        if str(state).isdigit():
+        try:
             return int(state)
+        except ValueError:
+            pass
+
         try:
             return self._sources[source]['state'].index(state)
         except ValueError:

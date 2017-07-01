@@ -2,6 +2,7 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Materials
 """
+from ...utilcol import checkName
 
 
 class RadianceMaterial(object):
@@ -14,8 +15,8 @@ class RadianceMaterial(object):
     """
 
     # list of Radiance material types
-    __types = set(("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
-                   "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF"))
+    TYPES = set(("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
+                 "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF"))
 
     def __init__(self, name, materialType, modifier="void"):
         """Create material base."""
@@ -43,36 +44,37 @@ class RadianceMaterial(object):
     @property
     def name(self):
         """Get/set material name."""
-        return self.__name
+        return self._name
 
     @name.setter
     def name(self, name):
-        assert name not in self.__types, \
+        assert name not in self.TYPES, \
             '%s is a radiance material type and' \
             ' should not be used as a material name.' % name
-        self.__name = name.rstrip().replace(" ", "_")
+        self._name = name.rstrip().replace(" ", "_")
+        checkName(self._name)
 
     @property
     def modifier(self):
         """Get/set material modifier."""
-        return self.__modifier
+        return self._modifier
 
     @modifier.setter
     def modifier(self, modifier):
-        self.__modifier = modifier.rstrip().replace(" ", "_")
+        self._modifier = modifier.rstrip().replace(" ", "_")
 
     @property
     def type(self):
         """Get/set material type."""
-        return self.__type
+        return self._type
 
     @type.setter
     def type(self, materialType):
-        assert materialType in self.__types, \
+        assert materialType in self.TYPES, \
             "%s is not a supported material type." % materialType + \
-            "Try one of these materials:\n%s" % str(self.__types)
+            "Try one of these materials:\n%s" % str(self.TYPES)
 
-        self.__type = materialType
+        self._type = materialType
 
     @property
     def headLine(self):

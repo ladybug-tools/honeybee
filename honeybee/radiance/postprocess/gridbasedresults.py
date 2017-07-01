@@ -54,7 +54,7 @@ class LoadGridBasedDLAnalysisResults(object):
     def simulationType(self, value):
         try:
             value = int(value)
-        except:
+        except TypeError:
             raise ValueError("invaid input value for simulation type: {}".format(value))
 
         assert 0 <= value <= 4, \
@@ -133,7 +133,7 @@ class LoadGridBasedDLAnalysisResults(object):
         try:
             with open(resultFile, "r") as resFile:
                 for line in resFile:
-                        yield float(line.split('	')[0])
+                    yield float(line.split('	')[0])
         except Exception as e:
             "Failed to load the results from {}: {}".format(resultFile, e)
 
