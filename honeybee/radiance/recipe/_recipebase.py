@@ -95,7 +95,15 @@ class DaylightAnalysisRecipe(object):
     def header(self, targetFolder, includRadPath=True):
         """Get the header for bat file.
 
+        The header changes the path into project path and also add lines to set PATH and
+        PATHRAY for Radiance.
+
         IncludeRadPath is only useful for Windows.
+
+        Args:
+            targetFolder: Full path to working directory.
+            includRadPath: At the Boolean to True to include path to radiance
+                installation folder.
         """
         dirLine = "%s\ncd %s\n" % (os.path.splitdrive(targetFolder)[0], targetFolder)
 
