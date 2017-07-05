@@ -14,11 +14,15 @@ class GlassMaterial(RadianceMaterial):
         """Create glass material.
 
         Attributes:
-            name: Material name as a string. Do not use white space and special character.
-            rTransmittance: Transmittance for red. The value should be between 0 and 1 (Default: 0).
-            gTransmittance: Transmittance for green. The value should be between 0 and 1 (Default: 0).
-            bTransmittance: Transmittance for blue. The value should be between 0 and 1 (Default: 0).
-            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE (Default: 1.52).
+            name: Material name as a string. Do not use white space and special character
+            rTransmittance: Transmittance for red. The value should be between 0 and 1
+                (Default: 0).
+            gTransmittance: Transmittance for green. The value should be between 0 and 1
+                (Default: 0).
+            bTransmittance: Transmittance for blue. The value should be between 0 and 1
+                (Default: 0).
+            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
+                (Default: 1.52).
             modifier: Material modifier (Default: "void").
 
         Usage:
@@ -41,18 +45,21 @@ class GlassMaterial(RadianceMaterial):
         """Create glass material with single transmittance value.
 
         Attributes:
-            name: Material name as a string. Do not use white space and special character.
+            name: Material name as a string. Do not use white space and special
+                character.
             rgbTransmittance: Transmittance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
-            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE (Default: 1.52).
+            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
+                (Default: 1.52).
             modifier: Material modifier (Default: "void").
 
         Usage:
             glassMaterial = GlassMaterial.bySingleTransValue("generic glass", .65)
             print glassMaterial
         """
-        return cls(name, rTransmittance=rgbTransmittance, gTransmittance=rgbTransmittance,
-                   bTransmittance=rgbTransmittance, refraction=1.52, modifier="void")
+        return cls(
+            name, rTransmittance=rgbTransmittance, gTransmittance=rgbTransmittance,
+            bTransmittance=rgbTransmittance, refraction=1.52, modifier="void")
 
     @property
     def isGlassMaterial(self):
@@ -107,6 +114,8 @@ class GlassMaterial(RadianceMaterial):
         the material. Transmittance -- the value usually measured - is the total
         light transmitted through the pane including multiple reflections."
         """
+        if transmittance == 0:
+            return 0
         return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
                 0.9166530661) / 0.0036261119 / transmittance
 

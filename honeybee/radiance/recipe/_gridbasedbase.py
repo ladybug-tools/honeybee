@@ -7,14 +7,14 @@ sunlighthours recipe and annual analysis recipe.
 from abc import ABCMeta, abstractmethod
 from ..analysisgrid import AnalysisGrid
 from ...futil import writeToFile
-from ._recipebase import DaylightAnalysisRecipe
+from ._recipebase import AnalysisRecipe
 
 from ladybug.legendparameters import LegendParameters
 
 import os
 
 
-class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
+class GenericGridBased(AnalysisRecipe):
     """Honeybee generic grid base analysis base class.
 
     This class is base class for common gridbased analysis recipes as well as
@@ -32,8 +32,7 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     def __init__(self, analysisGrids, hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
         # keep track of original points for re-structuring them later on
-        DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
-                                        subFolder=subFolder)
+        AnalysisRecipe.__init__(self, hbObjects=hbObjects, subFolder=subFolder)
         self.analysisGrids = analysisGrids
 
     @classmethod
@@ -59,14 +58,14 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     @property
     def analysisGrids(self):
         """Return analysis grids."""
-        return self.__analysisGrids
+        return self._analysisGrids
 
     @analysisGrids.setter
     def analysisGrids(self, ags):
         """Set analysis grids."""
-        self.__analysisGrids = tuple(ags)
+        self._analysisGrids = tuple(ag.duplicate() for ag in ags)
 
-        for ag in self.__analysisGrids:
+        for ag in self._analysisGrids:
             assert hasattr(ag, 'isAnalysisGrid'), \
                 '{} is not an AnalysisGrid.'.format(ag)
 

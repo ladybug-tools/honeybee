@@ -23,7 +23,7 @@ from sarith.results.dayIll import Dayill
 from sarith.results.pts import RoomGrid
 from sarith.radiance.radbin import  *
 from sarith.calcs.weather.wea import Wea
-from sarith.utilities.files.paths import UserPath
+from sarith.utilcol.files.paths import UserPath
 import os
 
 from honeybee.radiance.parameters.rfluxmtx import RfluxmtxParameters

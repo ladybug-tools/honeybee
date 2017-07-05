@@ -8,7 +8,7 @@ import os
 import subprocess
 
 
-class DaylightAnalysisRecipe(object):
+class AnalysisRecipe(object):
     """Analysis Recipe Base class.
 
     Attributes:
@@ -267,25 +267,25 @@ class DaylightAnalysisRecipe(object):
                     self.scene.numberOfFiles
 
             if self.scene.copyLocal:
-                matFilesAdd = copyFilesToFolder(
+                sceneMatFiles = copyFilesToFolder(
                     self.scene.files.mat, _path + '\\scene', self.scene.overwrite)
-                radFilesAdd = copyFilesToFolder(
+                sceneRadFiles = copyFilesToFolder(
                     self.scene.files.rad, _path + '\\scene', self.scene.overwrite)
-                octFilesAdd = copyFilesToFolder(
+                sceneOctFiles = copyFilesToFolder(
                     self.scene.files.oct, _path + '\\scene', self.scene.overwrite)
             else:
-                matFilesAdd = self.scene.files.mat
-                radFilesAdd = self.scene.files.rad
-                octFilesAdd = self.scene.files.oct
+                sceneMatFiles = self.scene.files.mat
+                sceneRadFiles = self.scene.files.rad
+                sceneOctFiles = self.scene.files.oct
         else:
-            matFilesAdd, radFilesAdd, octFilesAdd = [], [], []
+            sceneMatFiles, sceneRadFiles, sceneOctFiles = [], [], []
 
         files = namedtuple(
-            'Files', 'path geoFile matFile radFilesAdd matFilesAdd octFilesAdd'
+            'Files', 'path geoFile matFile sceneRadFiles sceneMatFiles sceneOctFiles'
         )
 
-        return files(_path, geoFile, matFile, radFilesAdd, matFilesAdd,
-                     octFilesAdd)
+        return files(_path, geoFile, matFile, sceneRadFiles, sceneMatFiles,
+                     sceneOctFiles)
 
     # TODO: Write a runmanager class to handle runs
     def run(self, commandFile, debug=False):

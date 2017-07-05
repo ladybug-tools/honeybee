@@ -1,6 +1,6 @@
 from ..radrecutil import coeffMatrixCommands, skyReceiver, \
     matrixCalculation, convertMatrixResults, skymtxToGendaymtx
-from .._gridbasedbase import GenericGridBasedAnalysisRecipe
+from .._gridbasedbase import GenericGridBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...sky.skymatrix import SkyMatrix
 from ....futil import writeToFile
@@ -9,7 +9,7 @@ import os
 
 
 # TODO: implement simulationType
-class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+class DaylightCoeffGridBased(GenericGridBased):
     """Grid based daylight coefficient analysis recipe.
 
     Attributes:
@@ -28,7 +28,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     Usage:
 
         # initiate analysisRecipe
-        analysisRecipe = DaylightCoeffGridBasedAnalysisRecipe(
+        analysisRecipe = DaylightCoeffGridBased(
             skyMtx, analysisGrids, radParameters
             )
 
@@ -49,7 +49,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
                  radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
                  subFolder="gridbased_daylightcoeff"):
         """Create an annual recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBased.__init__(
             self, analysisGrids, hbObjects, subFolder
         )
 
@@ -150,7 +150,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+            GenericGridBased, self).populateSubFolders(
                 targetFolder, projectName,
                 subFolders=('.tmp', 'objects', 'skies', 'results', 'results\\matrix'),
                 removeSubFoldersContent=False)
@@ -178,7 +178,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
         rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
 
         dMatrix = 'results\\matrix\\{}_{}_{}.dc'.format(
             projectName, self.skyMatrix.skyDensity, self.numOfTotalPoints)

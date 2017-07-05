@@ -2,7 +2,7 @@
 
 # from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
 from ladybug.dt import DateTime
-from .._imagebasedbase import GenericImageBasedAnalysisRecipe
+from .._imagebasedbase import GenericImageBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...command.rfluxmtx import Rfluxmtx
 from ...command.gendaymtx import Gendaymtx
@@ -12,7 +12,7 @@ from ....futil import writeToFile
 import os
 
 
-class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
+class DaylightCoeffImageBased(GenericImageBased):
     """Daylight Coefficient Image-Based.
 
     Attributes:
@@ -30,13 +30,13 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
 
     """
 
-    # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
+    # TODO: implemnt isChanged at AnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
     def __init__(self, skyMtx, views, simulationType=2, daylightMtxParameters=None,
                  vwraysParameters=None, reuseDaylightMtx=True, hbObjects=None,
                  subFolder="imagebased_dyalightcoeff"):
         """Create grid-based recipe."""
-        GenericImageBasedAnalysisRecipe.__init__(
+        GenericImageBased.__init__(
             self, views, hbObjects, subFolder)
 
         self.skyMatrix = skyMtx
@@ -129,7 +129,7 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            DaylightCoeffImageBasedAnalysisRecipe, self).populateSubFolders(
+            DaylightCoeffImageBased, self).populateSubFolders(
                 targetFolder, projectName,
                 subFolders=('.tmp', 'objects', 'skies', 'results',
                             'results\\matrix', 'views'),
@@ -170,7 +170,7 @@ class DaylightCoeffImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
         rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
 
         # # 4.2.prepare rpict
         for view, f in zip(self.views, viewFiles):

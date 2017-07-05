@@ -335,7 +335,8 @@ class AnalysisGrid(object):
 
     def duplicate(self):
         """Duplicate AnalysisGrid."""
-        dup = AnalysisGrid(self._analysisPoints, self._name)
+        aps = tuple(ap.duplicate() for ap in self._analysisPoints)
+        dup = AnalysisGrid(aps, self._name)
         dup._sources = self.sources
         return dup
 

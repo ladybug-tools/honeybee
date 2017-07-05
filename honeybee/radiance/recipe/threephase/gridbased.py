@@ -1,6 +1,6 @@
 from ..radrecutil import windowGroupToReceiver, coeffMatrixCommands, skyReceiver, \
     matrixCalculation, convertMatrixResults, skymtxToGendaymtx
-from ..dc.gridbased import DaylightCoeffGridBasedAnalysisRecipe
+from ..dc.gridbased import DaylightCoeffGridBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...material.glow import GlowMaterial
 from ...sky.skymatrix import SkyMatrix
@@ -10,7 +10,7 @@ import os
 
 
 # TODO(): implement simulationType
-class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
+class ThreePhaseGridBased(DaylightCoeffGridBased):
     """Grid based three phase analysis recipe.
 
     Attributes:
@@ -28,7 +28,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
     Usage:
 
         # initiate analysisRecipe
-        analysisRecipe = ThreePhaseGridBasedAnalysisRecipe(
+        analysisRecipe = ThreePhaseGridBased(
             skyMtx, analysisGrids, radParameters
             )
 
@@ -50,7 +50,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                  reuseViewMtx=True, reuseDaylightMtx=True, hbWindowSurfaces=None,
                  hbObjects=None, subFolder="gridbased_threephase"):
         """Create an annual recipe."""
-        DaylightCoeffGridBasedAnalysisRecipe.__init__(
+        DaylightCoeffGridBased.__init__(
             self, skyMtx, analysisGrids, hbObjects=hbObjects, subFolder=subFolder
         )
 
@@ -221,7 +221,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            ThreePhaseGridBasedAnalysisRecipe, self).populateSubFolders(
+            ThreePhaseGridBased, self).populateSubFolders(
                 targetFolder, projectName,
                 subFolders=('.tmp', 'bsdfs', 'objects', 'skies', 'results',
                             'objects\\windowgroups', 'results\\matrix'),
@@ -306,8 +306,8 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                     or not self.reuseDaylightMtx:
 
                 daylightMtxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
-                    sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + \
-                    sceneFiles.octFilesAdd
+                    sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
+                    sceneFiles.sceneOctFiles
 
                 try:
                     # This line fails in case of not re-using daylight matrix

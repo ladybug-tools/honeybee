@@ -1,6 +1,6 @@
 """Radiance Grid-based Analysis Recipe."""
 
-from ._gridbasedbase import GenericGridBasedAnalysisRecipe
+from ._gridbasedbase import GenericGridBased
 from ..parameters.gridbased import LowQuality
 from ..command.oconv import Oconv
 from ..command.rtrace import Rtrace
@@ -12,7 +12,7 @@ from ladybug.dt import DateTime
 import os
 
 
-class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+class GridBased(GenericGridBased):
     """Grid base analysis base class.
 
     Attributes:
@@ -30,7 +30,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = GridBasedAnalysisRecipe(
+        analysisRecipe = GridBased(
             sky, testPoints, ptsVectors, simType
             )
 
@@ -47,12 +47,12 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
+    # TODO: implemnt isChanged at AnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
     def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
                  hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBased.__init__(
             self, analysisGrids, hbObjects, subFolder)
 
         self.sky = sky
@@ -171,7 +171,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+            GenericGridBased, self).populateSubFolders(
                 targetFolder, projectName)
 
         # 1.write points
@@ -188,7 +188,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
         # # 4.1.prepare oconv
         octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)

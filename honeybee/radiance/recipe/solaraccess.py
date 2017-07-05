@@ -1,4 +1,4 @@
-from ._gridbasedbase import GenericGridBasedAnalysisRecipe
+from ._gridbasedbase import GenericGridBased
 from ..postprocess.sunlighthourresults import LoadSunlighthoursResults
 from ..parameters.rcontrib import RcontribParameters
 from ..command.oconv import Oconv
@@ -6,13 +6,15 @@ from ..command.rcontrib import Rcontrib
 from ...futil import writeToFile
 from ...vectormath.euclid import Vector3
 
-from ladybug.sunpath import LBSunpath
+from ladybug.sunpath import Sunpath
+from ladybug.legendparameters import LegendParameters
+from ladybug.color import Colorset
 
 import os
 
 
-class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
-    """Sunlight hour analysis.
+class SolarAccess(GenericGridBased):
+    """Solar access recipe.
 
     This class calculates number of sunlight hours for a group of test points.
 
@@ -28,7 +30,7 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
     Usage:
         # initiate analysisRecipe
-        analysisRecipe = SunlightHoursAnalysisRecipe(sunVectors, analysisGrids)
+        analysisRecipe = SolarAccess(sunVectors, analysisGrids)
 
         # add honeybee object
         analysisRecipe.hbObjects = HBObjs
@@ -44,21 +46,21 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     """
 
     def __init__(self, sunVectors, analysisGrids, timestep=1, hbObjects=None,
-                 subFolder='sunlighthour'):
+                 subFolder='solaraccess'):
         """Create sunlighthours recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBased.__init__(
             self, analysisGrids, hbObjects, subFolder
         )
 
         self.sunVectors = sunVectors
         self.timestep = timestep
 
-        self.__radianceParameters = RcontribParameters()
-        self.__radianceParameters.irradianceCalc = True
-        self.__radianceParameters.ambientBounces = 0
-        self.__radianceParameters.directCertainty = 1
-        self.__radianceParameters.directThreshold = 0
-        self.__radianceParameters.directJitter = 0
+        self._radianceParameters = RcontribParameters()
+        self._radianceParameters.irradianceCalc = True
+        self._radianceParameters.ambientBounces = 0
+        self._radianceParameters.directCertainty = 1
+        self._radianceParameters.directThreshold = 0
+        self._radianceParameters.directJitter = 0
 
         # create a result loader to load the results once the analysis is done.
         self.loader = LoadSunlighthoursResults(self.timestep, self.resultsFile)
@@ -88,8 +90,8 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         return cls(sunVectors, analysisGrids, timestep, hbObjects, subFolder)
 
     @classmethod
-    def fromLBSuns(cls, suns, pointGroups, vectorGroups=[], timestep=1,
-                   hbObjects=None, subFolder='sunlighthour'):
+    def fromSuns(cls, suns, pointGroups, vectorGroups=[], timestep=1,
+                 hbObjects=None, subFolder='sunlighthour'):
         """Create sunlighthours recipe from LB sun objects.
 
         Attributes:
@@ -120,7 +122,7 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     def fromLocationAndHoys(cls, location, HOYs, pointGroups, vectorGroups=[],
                             timestep=1, hbObjects=None, subFolder='sunlighthour'):
         """Create sunlighthours recipe from Location and hours of year."""
-        sp = LBSunpath.fromLocation(location)
+        sp = Sunpath.fromLocation(location)
 
         suns = (sp.calculateSunFromHOY(HOY) for HOY in HOYs)
 
@@ -138,7 +140,7 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         """Create sunlighthours recipe from Location and analysis period."""
         vectorGroups = vectorGroups or ()
 
-        sp = LBSunpath.fromLocation(location)
+        sp = Sunpath.fromLocation(location)
 
         suns = (sp.calculateSunFromHOY(HOY) for HOY in analysisPeriod.floatHOYs)
 
@@ -152,16 +154,16 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     @property
     def sunVectors(self):
         """A list of ladybug sun vectors as (x, y, z) values."""
-        return self.__sunVectors
+        return self._sunVectors
 
     @sunVectors.setter
     def sunVectors(self, vectors):
         try:
-            self.__sunVectors = tuple(Vector3(*v).flipped() for v in vectors
-                                      if v[2] < 0)
+            self._sunVectors = tuple(Vector3(*v).flipped() for v in vectors
+                                     if v[2] < 0)
         except TypeError:
-            self.__sunVectors = tuple(Vector3(v.X, v.Y, v.Z).flipped()
-                                      for v in vectors if v.Z < 0)
+            self._sunVectors = tuple(Vector3(v.X, v.Y, v.Z).flipped()
+                                     for v in vectors if v.Z < 0)
         except IndexError:
             raise ValueError("Failed to create the sun vectors!")
 
@@ -175,16 +177,22 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
         This number should be smaller than 60 and divisible by 60.
         """
-        return self.__timestep
+        return self._timestep
 
     @timestep.setter
     def timestep(self, ts):
         try:
-            self.__timestep = int(ts)
-        except:
-            self.__timestep = 1
+            self._timestep = int(ts)
+        except TypeError:
+            self._timestep = 1
 
-        assert self.__timestep != 0, 'ValueError: TimeStep cannot be 0.'
+        assert self._timestep != 0, 'ValueError: TimeStep cannot be 0.'
+
+    @property
+    def legendParameters(self):
+        """Legend parameters for solar access analysis."""
+        col = Colorset.Ecotect()
+        return LegendParameters([0, 'max'], colors=col)
 
     def writeSunsToFile(self, targetDir, projectName, mkdir=False):
         """Write sunlist, sun geometry and sun material files.
@@ -235,11 +243,15 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             suns file <*.sun>: list of sun sources .
             suns material file <*_suns.mat>: Radiance materials for sun sources.
             suns geometry file <*_suns.rad>: Radiance geometries for sun sources.
-            material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
-            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
+            material file <*.mat>: Radiance materials. Will be empty if HBObjects is
+                None.
+            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is
+                None.
             batch file <*.bat>: An executable batch file which has the list of commands.
-                oconv [material file] [geometry file] [sun materials file] [sun geometries file] > [octree file]
-                rcontrib -ab 0 -ad 10000 -I -M [sunlist.txt] -dc 1 [octree file]< [pts file] > [rcontrib results file]
+                oconv [material file] [geometry file] [sun materials file] [sun
+                    geometries file] > [octree file]
+                rcontrib -ab 0 -ad 10000 -I -M [sunlist.txt] -dc 1 [octree file]< [pts
+                    file] > [rcontrib results file]
 
         Args:
             targetFolder: Path to parent folder. Files will be created under
@@ -252,7 +264,7 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+            GenericGridBased, self).populateSubFolders(
                 targetFolder, projectName)
 
         # 1.write points
@@ -263,7 +275,7 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             sceneFiles.path + '\\skies', projectName)
 
         # 2.1.add sun list to modifiers
-        self.__radianceParameters.modFile = self.relpath(sunsList, sceneFiles.path)
+        self._radianceParameters.modFile = self.relpath(sunsList, sceneFiles.path)
 
         # 3.write batch file
         self.commands = []
@@ -274,7 +286,8 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
         # # 4.1.prepare oconv
         octSceneFiles = [sceneFiles.matFile, sceneFiles.geoFile, sunsMat, sunsGeo] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
+            sceneFiles.sceneOctFiles
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
@@ -282,7 +295,7 @@ class SunlightHoursAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
         # # 4.2.prepare Rcontrib
         rct = Rcontrib('results\\' + projectName,
-                       rcontribParameters=self.__radianceParameters)
+                       rcontribParameters=self._radianceParameters)
         rct.octreeFile = str(oc.outputFile)
         rct.pointsFile = self.relpath(pointsFile, sceneFiles.path)
 
