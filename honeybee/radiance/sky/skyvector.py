@@ -5,7 +5,7 @@ from ..command.gendaylit import Gendaylit
 from ..parameters.gendaylit import GendaylitParameters
 
 from ladybug.epw import EPW
-from ladybug.dt import LBDateTime
+from ladybug.dt import DateTime
 import os
 
 
@@ -71,7 +71,7 @@ class SkyVector(RadianceSky):
         """
         epw = EPW(epwFile)
         location = epw.location
-        HOY = LBDateTime(month, day, hour).HOY
+        HOY = DateTime(month, day, hour).HOY
         dnr = epw.directNormalRadiation.values()[HOY]
         dhr = epw.diffuseHorizontalRadiation.values()[HOY]
 

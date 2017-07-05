@@ -1,15 +1,18 @@
 """Radiance Grid-based Analysis Recipe."""
 
-from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
-from ._gridbasedbase import GenericGridBasedAnalysisRecipe
+from ._gridbasedbase import GenericGridBased
 from ..parameters.gridbased import LowQuality
 from ..command.oconv import Oconv
 from ..command.rtrace import Rtrace
-from ...helper import writeToFile
+from ..command.rcalc import Rcalc
+from ...futil import writeToFile
+
+from ladybug.dt import DateTime
+
 import os
 
 
-class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+class GridBased(GenericGridBased):
     """Grid base analysis base class.
 
     Attributes:
@@ -27,7 +30,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = GridBasedAnalysisRecipe(
+        analysisRecipe = GridBased(
             sky, testPoints, ptsVectors, simType
             )
 
@@ -44,12 +47,12 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
+    # TODO: implemnt isChanged at AnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
     def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
                  hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBased.__init__(
             self, analysisGrids, hbObjects, subFolder)
 
         self.sky = sky
@@ -63,10 +66,6 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
            2: Luminance (Candela) (Default: 0)
         """
-
-        # create a result loader to load the results once the analysis is done.
-        self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-                                                     self.resultsFile)
 
     @classmethod
     def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
@@ -107,7 +106,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     def simulationType(self, value):
         try:
             value = int(value)
-        except:
+        except TypeError:
             value = 0
 
         assert 0 <= value <= 2, \
@@ -127,7 +126,8 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
     @sky.setter
     def sky(self, newSky):
-        assert hasattr(newSky, "isRadianceSky"), "%s is not a valid Honeybee sky." % type(newSky)
+        assert hasattr(newSky, "isRadianceSky"), "%s is not a valid Honeybee sky." \
+            % type(newSky)
         self.__sky = newSky
 
     @property
@@ -149,11 +149,14 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         Files for a grid based analysis are:
             test points <projectName.pts>: List of analysis points.
             sky file <*.sky>: Radiance sky for this analysis.
-            material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
-            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
+            material file <*.mat>: Radiance materials. Will be empty if HBObjects
+                is None.
+            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects
+                is None.
             sky file <*.sky>: Radiance sky for this analysis.
             batch file <*.bat>: An executable batch file which has the list of commands.
-                oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles> > <projectName.oct>
+                oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles>
+                    > <projectName.oct>
                 rtrace <radianceParameters> <projectName.oct> > <projectName.res>
             results file <*.res>: Results file once the analysis is over.
 
@@ -168,7 +171,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+            GenericGridBased, self).populateSubFolders(
                 targetFolder, projectName)
 
         # 1.write points
@@ -179,14 +182,13 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
         # 3.write batch file
         self.commands = []
-        self.resultsFile = []
 
         if header:
             self.commands.append(self.header(sceneFiles.path))
 
         # # 4.1.prepare oconv
         octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
@@ -200,14 +202,24 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         rt.octreeFile = str(oc.outputFile)
         rt.pointsFile = self.relpath(pointsFile, sceneFiles.path)
 
-        # # 4.3 write batch file
+        # # 4.3. add rcalc to convert rgb values to irradiance
+        rc = Rcalc('results\\{}.ill'.format(projectName), str(rt.outputFile))
+
+        if os.name == 'nt':
+            rc.rcalcParameters.expression = '"$1=(0.265*$1+0.67*$2+0.065*$3)*179"'
+        else:
+            rc.rcalcParameters.expression = "'$1=(0.265*$1+0.67*$2+0.065*$3)*179'"
+
+        # # 4.4 write batch file
         self.commands.append(oc.toRadString())
         self.commands.append(rt.toRadString())
+        self.commands.append(rc.toRadString())
+
         batchFile = os.path.join(sceneFiles.path, "commands.bat")
 
         writeToFile(batchFile, "\n".join(self.commands))
 
-        self.resultFiles = (os.path.join(sceneFiles.path, str(rt.outputFile)),)
+        self.resultsFile = os.path.join(sceneFiles.path, str(rc.outputFile))
 
         print "Files are written to: %s" % sceneFiles.path
         return batchFile
@@ -218,9 +230,21 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.simulationType = self.simulationType
-        self.loader.resultFiles = self.resultFiles
-        return self.loader.results
+        sky = self.sky
+        dt = DateTime(sky.month, sky.day, int(sky.hour),
+                      int(60 * (sky.hour - int(sky.hour))))
+
+        rf = self.resultsFile
+        startLine = 0
+        for count, analysisGrid in enumerate(self.analysisGrids):
+            if count:
+                startLine += len(self.analysisGrids[count - 1])
+
+            analysisGrid.setValuesFromFile(
+                rf, (int(dt.hoy),), startLine=startLine, header=False
+            )
+
+        return self.analysisGrids
 
     def ToString(self):
         """Overwrite .NET ToString method."""

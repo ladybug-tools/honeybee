@@ -6,13 +6,15 @@ sunlighthours recipe and annual analysis recipe.
 
 from abc import ABCMeta, abstractmethod
 from ..analysisgrid import AnalysisGrid
-from ...helper import writeToFile
-from ._recipebase import DaylightAnalysisRecipe
+from ...futil import writeToFile
+from ._recipebase import AnalysisRecipe
+
+from ladybug.legendparameters import LegendParameters
 
 import os
 
 
-class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
+class GenericGridBased(AnalysisRecipe):
     """Honeybee generic grid base analysis base class.
 
     This class is base class for common gridbased analysis recipes as well as
@@ -30,8 +32,7 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     def __init__(self, analysisGrids, hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
         # keep track of original points for re-structuring them later on
-        DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
-                                        subFolder=subFolder)
+        AnalysisRecipe.__init__(self, hbObjects=hbObjects, subFolder=subFolder)
         self.analysisGrids = analysisGrids
 
     @classmethod
@@ -41,11 +42,13 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
 
         Args:
             pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
-                test points. Each list of test points will be converted to a TestPointGroup.
-                If testPts is a single flattened list only one TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
-                of corresponding point in testPts. If the vector is not provided (0, 0, 1)
-                will be assigned.
+                test points. Each list of test points will be converted to a
+                    TestPointGroup.
+                If testPts is a single flattened list only one TestPointGroup will be
+                    created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector represents
+                direction of corresponding point in testPts. If the vector is not
+                provided (0, 0, 1) will be assigned.
             hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
             subFolder: Analysis subfolder for this recipe. (Default: "gridbased").
         """
@@ -55,14 +58,14 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     @property
     def analysisGrids(self):
         """Return analysis grids."""
-        return self.__analysisGrids
+        return self._analysisGrids
 
     @analysisGrids.setter
     def analysisGrids(self, ags):
         """Set analysis grids."""
-        self.__analysisGrids = tuple(ags)
+        self._analysisGrids = tuple(ag.duplicate() for ag in ags)
 
-        for ag in self.__analysisGrids:
+        for ag in self._analysisGrids:
             assert hasattr(ag, 'isAnalysisGrid'), \
                 '{} is not an AnalysisGrid.'.format(ag)
 
@@ -86,22 +89,29 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
         """Number of total points."""
         return sum(len(tuple(pts)) for pts in self.points)
 
+    @property
+    def legendParameters(self):
+        """Legend parameters for grid based analysis."""
+        return LegendParameters([0, 3000])
+
     @staticmethod
     def analysisGridsFromPointsAndVectors(pointGroups, vectorGroups=None):
         """Create analysisGrid classes from points and vectors.
 
         Args:
             pointGroups: A list of (x, y, z) test points or lists of list of (x, y, z)
-                test points. Each list of test points will be converted to a TestPointGroup.
-                If testPts is a single flattened list only one TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector represents direction
-                of corresponding point in testPts. If the vector is not provided (0, 0, 1)
-                will be assigned.
+                test points. Each list of test points will be converted to a
+                    TestPointGroup.
+                If testPts is a single flattened list only one TestPointGroup will be
+                    created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector represents
+                direction of corresponding point in testPts. If the vector is not
+                provided (0, 0, 1) will be assigned.
         """
         vectorGroups = vectorGroups or ((),)
 
-        vectorGroups = tuple(vectorGroups[i] if i < len(vectorGroups) else vectorGroups[-1]
-                             for i in range(len(pointGroups)))
+        vectorGroups = tuple(vectorGroups[i] if i < len(vectorGroups)
+                             else vectorGroups[-1] for i in range(len(pointGroups)))
 
         print zip(pointGroups, vectorGroups)
         analysisGrids = (AnalysisGrid.fromPointsAndVectors(pts, vectors)

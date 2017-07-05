@@ -150,8 +150,11 @@ class AnalysisPoint(object):
 
     def blindStateId(self, source, state):
         """Get state id if available."""
-        if str(state).isdigit():
+        try:
             return int(state)
+        except ValueError:
+            pass
+
         try:
             return self._sources[source]['state'].index(state)
         except ValueError:
@@ -731,6 +734,17 @@ class AnalysisPoint(object):
                 problematicHours.append(h)
 
         return ASE > targetHours, ASE, problematicHours
+
+    def duplicate(self):
+        """Duplicate the analysis point."""
+        ap = AnalysisPoint(self._loc, self._dir)
+        ap._sources = self._sources
+        # This should be good enough as most of the time an analysis point will be
+        # copied with no values assigned.
+        ap._values = list(self._values)
+        ap._isDirectLoaded = bool(self._isDirectLoaded)
+        ap.logic = copy.copy(self.logic)
+        return ap
 
     def ToString(self):
         """Overwrite .NET ToString."""

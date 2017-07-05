@@ -6,22 +6,26 @@ Subject: Script for calculating illuminance from sunpath
 Purpose: This can be used for ASE and improved Daylight Coefficient simulations.
 Keywords: Radiance, Grid-Based, Illuminance
 """
-from __future__ import division,print_function
-from analemma import analemma
+from __future__ import division, print_function
+from analemma import analemma as analemmacalculator
 import time
 import os
 from ladybug.analysisperiod import AnalysisPeriod
 from honeybee.radiance.command.oconv import Oconv
-from honeybee.radiance.command.rcontrib import Rcontrib,RcontribParameters
+from honeybee.radiance.command.rcontrib import Rcontrib, RcontribParameters
 from honeybee.radiance.command.dctimestep import Dctimestep
-from honeybee.radiance.command.rmtxop import RmtxopParameters,Rmtxop
+from honeybee.radiance.command.rmtxop import RmtxopParameters, Rmtxop
 import warnings
 
-HOYList = AnalysisPeriod(stMonth=1,endMonth=12,stDay=1,endDay=31,stHour=8,endHour=17)
+HOYList = AnalysisPeriod(stMonth=1, endMonth=12, stDay=1,
+                         endDay=31, stHour=8, endHour=17)
 
 
-def calcDirectIlluminance(epwFile, solarDiscPath, sunListPath, sunMatrixPath, materialFile, geometryFiles, pointsFile,
-                          folderForCalculations, outputIllFilePath, HOYList = range(8760), overWriteExistingFiles=True):
+def calcDirectIlluminance(
+        epwFile, analemmaPath, sunListPath, sunMatrixPath,
+        materialFile, geometryFiles, pointsFile, folderForCalculations,
+        outputIllFilePath, HOYList=range(8760),
+        overWriteExistingFiles=True):
     """
     Calculate direct illuminance from the Sun.
     Args:
@@ -41,52 +45,47 @@ def calcDirectIlluminance(epwFile, solarDiscPath, sunListPath, sunMatrixPath, ma
 
     """
 
-    #a sad logging hack
-    statusMsg = lambda msg: "\n%s:%s\n%s\n" % (time.ctime(),msg ,"*~"*25)
+    # a sad logging hack
+    statusMsg = lambda msg: "\n%s:%s\n%s\n" % (time.ctime(), msg, "*~" * 25)
 
-    #over-write warning.
-    def overWriteWarning(filePath,overWriteExistingFiles=overWriteExistingFiles):
+    # over-write warning.
+    def overWriteWarning(filePath, overWriteExistingFiles=overWriteExistingFiles):
         if os.path.exists(filePath):
             if not overWriteExistingFiles:
-                raise Exception("The file %s already exists. Set the variable overWriteExistingFiles to True to"
-                                "overWrite this and other files."%filePath)
+                raise Exception(
+                    "The file %s already exists. Set the variable overWriteExistingFiles"
+                    "to True to overWrite this and other files." % filePath)
             else:
-                msg = "The file %s already existed and was overwritten"%filePath
+                msg = "The file %s already existed and was overwritten" % filePath
                 warnings.warn(msg)
 
-
-
-
     statusMsg('Generating sunpath and sunmatrix')
-    solarDiscPath,sunListPath,sunMatrixPath = analemma(epwFile=epwFile,sunDiscRadPath=solarDiscPath,
-                                                       sunListPath=sunListPath,solarRadiationMatrixPath=sunMatrixPath,
-                                                       HOYlist=HOYList)
+    analemmaPath, sunListPath, sunMatrixPath = analemmacalculator(
+        epwFile=epwFile, sunDiscRadPath=analemmaPath, sunListPath=sunListPath,
+        solarRadiationMatrixPath=sunMatrixPath, HOYlist=HOYList)
 
-
-
-    sceneData=[materialFile]
-    #Append if single, extend if multiple
-    if isinstance(geometryFiles,basestring):
+    sceneData = [materialFile]
+    # Append if single, extend if multiple
+    if isinstance(geometryFiles, basestring):
         sceneData.append(geometryFiles)
-    elif isinstance(geometryFiles,(tuple,list)):
+    elif isinstance(geometryFiles, (tuple, list)):
         sceneData.extend(geometryFiles)
 
-    octreeFile = os.path.join(folderForCalculations,'solar.oct')
+    octreeFile = os.path.join(folderForCalculations, 'solar.oct')
     # overWriteWarning(octreeFile)
 
     statusMsg('Creating octree')
     octree = Oconv()
-    octree.sceneFiles = sceneData + [solarDiscPath]
+    octree.sceneFiles = sceneData + [analemmaPath]
     octree.outputFile = octreeFile
     octree.execute()
 
     statusMsg('Creating sun coefficients')
-    dcFile = os.path.join(folderForCalculations,'sunCoeff.dc')
+    dcFile = os.path.join(folderForCalculations, 'sunCoeff.dc')
     overWriteWarning(dcFile)
 
-    tmpIllFile = os.path.join(folderForCalculations,'illum.tmp')
+    tmpIllFile = os.path.join(folderForCalculations, 'illum.tmp')
     overWriteWarning(tmpIllFile)
-
 
     rctPara = RcontribParameters()
     rctPara.ambientBounces = 0
@@ -104,7 +103,8 @@ def calcDirectIlluminance(epwFile, solarDiscPath, sunListPath, sunMatrixPath, ma
 
     rctb.execute()
 
-    statusMsg('Performing matrix multiplication between the coefficients and the sun matrix.')
+    statusMsg('Performing matrix multiplication between the coefficients'
+              ' and the sun matrix.')
     dct = Dctimestep()
     dct.daylightCoeffSpec = dcFile
     dct.skyVectorFile = sunMatrixPath
@@ -121,6 +121,7 @@ def calcDirectIlluminance(epwFile, solarDiscPath, sunListPath, sunMatrixPath, ma
     mtx2.execute()
 
     return outputIllFilePath
+
 
 if __name__ == "__main__":
 
@@ -139,6 +140,8 @@ if __name__ == "__main__":
     calcFolder = r'tests/ASEtest'
     outputFilePath = r'tests/ASEtest/test.ill'
 
-    calcDirectIlluminance(epwFile=epw, solarDiscPath=sunRad, sunListPath=sunList, sunMatrixPath=sunMtx, materialFile=materialFile,
-                          geometryFiles=geometryFiles, pointsFile=pointsFile, folderForCalculations=calcFolder,
-                          outputIllFilePath=outputFilePath)
+    calcDirectIlluminance(
+        epwFile=epw, analemmaPath=sunRad, sunListPath=sunList, sunMatrixPath=sunMtx,
+        materialFile=materialFile, geometryFiles=geometryFiles, pointsFile=pointsFile,
+        folderForCalculations=calcFolder, outputIllFilePath=outputFilePath
+    )

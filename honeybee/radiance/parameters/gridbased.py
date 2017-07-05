@@ -43,7 +43,8 @@ class GridBasedParameters(AdvancedRadianceParameters):
     def __init__(self, quality=None):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
-        self.quality = quality
+
+        self.quality = quality or 0
         """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
         self.addRadianceNumber('ab', descriptiveName='ambient bounces',
@@ -265,25 +266,25 @@ class GridBasedParameters(AdvancedRadianceParameters):
     @quality.setter
     def quality(self, value):
 
-        value = value or None
+        value = int(value) or 0
 
-        assert (0 <= int(value) <= 2), \
+        assert 0 <= value <= 2, \
             "Quality can only be 0:low, 1: medium or 2: high quality"
 
-        self._quality = int(value)
+        self._quality = value
         """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
         # add all numeric parameters
         for name, data in rtrace_number_parameters.iteritems():
             self.addRadianceNumber(data['name'], data['dscrip'], numType=data['type'],
                                    attributeName=name)
-            setattr(self, name, data['values'][self.quality])
+            setattr(self, name, data['values'][value])
 
         # add boolean parameters
         for name, data in rtrace_boolean_parameters.iteritems():
             self.addRadianceBoolFlag(data['name'], data['dscrip'],
                                      attributeName=name)
-            setattr(self, name, data['values'][self.quality])
+            setattr(self, name, data['values'][value])
 
     def getParameterDefaultValueBasedOnQuality(self, parameter):
         """Get parameter value based on quality.

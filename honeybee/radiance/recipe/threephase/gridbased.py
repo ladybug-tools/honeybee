@@ -1,19 +1,16 @@
-from ..dc.gridbased import DaylightCoeffGridBasedAnalysisRecipe
-from ...postprocess.annualresults import LoadAnnualsResults
+from ..radrecutil import windowGroupToReceiver, coeffMatrixCommands, skyReceiver, \
+    matrixCalculation, convertMatrixResults, skymtxToGendaymtx
+from ..dc.gridbased import DaylightCoeffGridBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
-from ...command.dctimestep import Dctimestep
-from ...command.rfluxmtx import Rfluxmtx
-from ...command.rmtxop import Rmtxop
-from ...command.gendaymtx import Gendaymtx
 from ...material.glow import GlowMaterial
 from ...sky.skymatrix import SkyMatrix
-from ....helper import writeToFile, copyFilesToFolder
+from ....futil import writeToFile, copyFilesToFolder
 
 import os
 
 
 # TODO(): implement simulationType
-class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
+class ThreePhaseGridBased(DaylightCoeffGridBased):
     """Grid based three phase analysis recipe.
 
     Attributes:
@@ -31,7 +28,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
     Usage:
 
         # initiate analysisRecipe
-        analysisRecipe = ThreePhaseGridBasedAnalysisRecipe(
+        analysisRecipe = ThreePhaseGridBased(
             skyMtx, analysisGrids, radParameters
             )
 
@@ -53,7 +50,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                  reuseViewMtx=True, reuseDaylightMtx=True, hbWindowSurfaces=None,
                  hbObjects=None, subFolder="gridbased_threephase"):
         """Create an annual recipe."""
-        DaylightCoeffGridBasedAnalysisRecipe.__init__(
+        DaylightCoeffGridBased.__init__(
             self, skyMtx, analysisGrids, hbObjects=hbObjects, subFolder=subFolder
         )
 
@@ -62,8 +59,6 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         self.daylightMtxParameters = daylightMtxParameters
         self.reuseViewMtx = reuseViewMtx
         self.reuseDaylightMtx = reuseDaylightMtx
-        # create a result loader to load the results once the analysis is done.
-        self.loader = LoadAnnualsResults(self.resultsFile)
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
@@ -121,7 +116,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
     @property
     def windowSurfaces(self):
         """List of window surfaces."""
-        return self.__windowSurfaces
+        return self._windowSurfaces
 
     @windowSurfaces.setter
     def windowSurfaces(self, hbWindowSurfaces):
@@ -138,7 +133,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                     '{} is not a HBWindowSurface. A HBWindowSurface must be a '
                     'HBFenSurface and has a BSDF radiance material.'.format(f))
 
-        self.__windowSurfaces = hbWindowSurfaces
+        self._windowSurfaces = hbWindowSurfaces
 
     # TODO(): Create windowGroups as classes
     @property
@@ -151,25 +146,12 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         """
         _wgroups = {}
         for srf in self.windowSurfaces:
-            wgn = srf.radProperties.windowGroupName or srf.name
+            wgn = srf.name
             if wgn not in _wgroups:
+                states = tuple(st.radianceMaterial for st in srf.states)
                 _wgroups[wgn] = {
                     'normal': srf.normal, 'upnormal': srf.upnormal, 'surfaces': [srf],
-                    'states': (srf.radianceMaterial,) + tuple(srf.radProperties.alternateMaterials)}
-            else:
-                # the group is already created. check normal direction and it
-                # to surfaces.
-                assert srf.normal == _wgroups[wgn]['normal'], \
-                    ValueError(
-                        'Normal direction of Windows in a window groups should match.\n'
-                        '{} from {} does not match {} from {}.'.format(
-                            srf.normal, srf, _wgroups[wgn]['normal'], _wgroups[wgn]['surfaces'][0]
-                        ))
-                # TODO(): Check radiance matrials and alternateMaterials to match.
-                assert (srf.radianceMaterial,) + tuple(srf.radProperties.alternateMaterials) \
-                    == _wgroups[wgn]['states'], \
-                    '{} has a different radiance material than windowgroup material.'.format(srf)
-
+                    'states': states}
                 _wgroups[wgn]['surfaces'].append(srf)
 
         return _wgroups
@@ -177,40 +159,40 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
     @property
     def viewMtxParameters(self):
         """View matrix parameters."""
-        return self.__viewMtxParameters
+        return self._viewMtxParameters
 
     @viewMtxParameters.setter
     def viewMtxParameters(self, vm):
         if not vm:
-            self.__viewMtxParameters = RfluxmtxParameters()
-            self.__viewMtxParameters.irradianceCalc = True
-            self.__viewMtxParameters.ambientAccuracy = 0.1
-            self.__viewMtxParameters.ambientBounces = 10
-            self.__viewMtxParameters.ambientDivisions = 65536
-            self.__viewMtxParameters.limitWeight = 1E-5
+            self._viewMtxParameters = RfluxmtxParameters()
+            self._viewMtxParameters.irradianceCalc = True
+            self._viewMtxParameters.ambientAccuracy = 0.1
+            self._viewMtxParameters.ambientBounces = 10
+            self._viewMtxParameters.ambientDivisions = 65536
+            self._viewMtxParameters.limitWeight = 1E-5
         else:
             assert hasattr(vm, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(vm)))
-            self.__viewMtxParameters = vm
+            self._viewMtxParameters = vm
 
     @property
     def daylightMtxParameters(self):
         """View matrix parameters."""
-        return self.__daylightMtxParameters
+        return self._daylightMtxParameters
 
     @daylightMtxParameters.setter
     def daylightMtxParameters(self, dm):
         if not dm:
-            self.__daylightMtxParameters = RfluxmtxParameters()
-            self.__daylightMtxParameters.ambientAccuracy = 0.1
-            self.__daylightMtxParameters.ambientDivisions = 1024
-            self.__daylightMtxParameters.ambientBounces = 2
-            self.__daylightMtxParameters.limitWeight = 0.0000001
+            self._daylightMtxParameters = RfluxmtxParameters()
+            self._daylightMtxParameters.ambientAccuracy = 0.1
+            self._daylightMtxParameters.ambientDivisions = 1024
+            self._daylightMtxParameters.ambientBounces = 2
+            self._daylightMtxParameters.limitWeight = 0.0000001
 
         else:
             assert hasattr(dm, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(dm)))
-            self.__daylightMtxParameters = dm
+            self._daylightMtxParameters = dm
 
     @property
     def skyType(self):
@@ -239,7 +221,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            ThreePhaseGridBasedAnalysisRecipe, self).populateSubFolders(
+            ThreePhaseGridBased, self).populateSubFolders(
                 targetFolder, projectName,
                 subFolders=('.tmp', 'bsdfs', 'objects', 'skies', 'results',
                             'objects\\windowgroups', 'results\\matrix'),
@@ -247,6 +229,7 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
 
         # 0.write points
         pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
+        numberOfPoints = sum(len(ag) for ag in self.analysisGrids)
 
         # 2.write batch file
         self.commands = []
@@ -256,26 +239,15 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             self.commands.append(self.header(sceneFiles.path))
 
         # 3.0.Create sky matrix.
+        skyMtx = 'skies\\{}.smx'.format(self.skyMatrix.name)
         if hasattr(self.skyMatrix, 'isSkyMatrix'):
-            weaFilepath = 'skies\\{}.wea'.format(self.skyMatrix.name)
-            skyMtx = 'skies\\{}.smx'.format(self.skyMatrix.name)
-            hoursFile = os.path.join(
-                sceneFiles.path, 'skies\\{}.hrs'.format(self.skyMatrix.name))
-            if not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)) \
-                    or not self.skyMatrix.hoursMatch(hoursFile):
-                self.skyMatrix.writeWea(
-                    os.path.join(sceneFiles.path, 'skies'), writeHours=True)
-                gdm = Gendaymtx(outputName=skyMtx, weaFile=weaFilepath)
-                gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
+            gdm = skymtxToGendaymtx(self.skyMatrix, sceneFiles.path)
+            if gdm:
+                self.commands.append(':: sky matrix')
                 self.commands.append(gdm.toRadString())
         else:
             # sky vector
-            skyMtx = 'skies\\{}.vec'.format(self.skyMatrix.name)
-            wdir = os.path.join(sceneFiles.path, 'skies')
-            if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)):
-                self.skyMatrix.execute(wdir)
-                # TODO(): adding this line to command line didn't work on windows
-                # self.commands.append(self.skyMatrix.toRadString(wdir, sceneFiles.path))
+            raise TypeError('You must use a SkyMatrix to generate the sky.')
 
         # 3.1. find glazing items with .xml material, write them to a separate
         # file and invert them
@@ -287,6 +259,8 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
         for count, (windowGroup, attr) in enumerate(windowGroups.iteritems()):
             print('    [{}] {} (number of states: {})'.format(
                 count, windowGroup, len(attr['states'])))
+            self.commands.append('\n:: calculation for windowGroup [{}]: {}'.format(
+                count, windowGroup))
 
             # copy all the state materials to bsdfs folder
             _xmlFiles = copyFilesToFolder(
@@ -305,32 +279,24 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             with open(windowGroupPath, 'wb') as outf:
                 outf.write(surfaces[0].radianceMaterial.toRadString() + '\n')
                 for srf in surfaces:
-                    outf.write(srf.toRadString(reverse=True) + '\n')
+                    outf.write(srf.toRadString(flipped=True) + '\n')
 
             # 3.2.Generate view matrix
             vMatrix = 'results\\matrix\\{}.vmx'.format(windowGroup)
             if not os.path.isfile(os.path.join(sceneFiles.path, vMatrix)) \
                     or not self.reuseViewMtx:
+                # prepare input files
+                receiver = windowGroupToReceiver(windowGroupPath, attr['upnormal'])
                 viewMtxFiles = (sceneFiles.matFile, sceneFiles.geoFile)
+                radFiles = tuple(self.relpath(f, sceneFiles.path) for f in viewMtxFiles)
 
-                vMtxRflux = Rfluxmtx()
-                vMtxRflux.sender = '-'
-                vMtxRflux.rfluxmtxParameters = self.viewMtxParameters
+                vmtx = coeffMatrixCommands(
+                    vMatrix, self.relpath(receiver, sceneFiles.path), radFiles, '-',
+                    self.relpath(pointsFile, sceneFiles.path), numberOfPoints,
+                    None, self.viewMtxParameters)
 
-                # Klems full basis sampling
-                recCtrlPar = vMtxRflux.ControlParameters(
-                    hemiType='kf', hemiUpDirection=attr['upnormal'])
-                wg_m = vMtxRflux.addControlParameters(
-                    windowGroupPath, {'vmtx_glow': recCtrlPar})
-
-                vMtxRflux.receiverFile = self.relpath(wg_m, sceneFiles.path)
-
-                vMtxRflux.radFiles = tuple(self.relpath(f, sceneFiles.path)
-                                           for f in viewMtxFiles)
-
-                vMtxRflux.pointsFile = pointsFile
-                vMtxRflux.outputMatrix = vMatrix
-                self.commands.append(vMtxRflux.toRadString())
+                self.commands.append(':: :: 1. view matrix calculation')
+                self.commands.append(vmtx.toRadString())
 
             # 3.3 daylight matrix
             dMatrix = 'results\\matrix\\{}_{}_{}.dmx'.format(
@@ -340,54 +306,59 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
                     or not self.reuseDaylightMtx:
 
                 daylightMtxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
-                    sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+                    sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
+                    sceneFiles.sceneOctFiles
 
-                dMtxRflux = Rfluxmtx()
-                dMtxRflux.samplingRaysCount = 1000
                 try:
                     # This line fails in case of not re-using daylight matrix
-                    dMtxRflux.sender = str(vMtxRflux.receiverFile)
+                    sender = str(vmtx.receiverFile)
                 except UnboundLocalError:
-                    dMtxRflux.sender = self.relpath(
+                    sender = self.relpath(
                         windowGroupPath[:-4] + '_m' + windowGroupPath[-4:],
                         sceneFiles.path)
 
-                skyFile = dMtxRflux.defaultSkyGround(
+                receiver = skyReceiver(
                     os.path.join(sceneFiles.path, 'skies\\rfluxSky.rad'),
-                    skyType='r{}'.format(self.skyMatrix.skyDensity))
+                    self.skyMatrix.skyDensity
+                )
 
-                dMtxRflux.receiverFile = self.relpath(skyFile, sceneFiles.path)
-                dMtxRflux.rfluxmtxParameters = self.daylightMtxParameters
-                dMtxRflux.radFiles = tuple(self.relpath(f, sceneFiles.path)
-                                           for f in daylightMtxFiles)
-                dMtxRflux.outputMatrix = dMatrix
-                self.commands.append(dMtxRflux.toRadString())
+                samplingRaysCount = 1000
+                radFiles = tuple(self.relpath(f, sceneFiles.path)
+                                 for f in daylightMtxFiles)
+
+                dmtx = coeffMatrixCommands(
+                    dMatrix, self.relpath(receiver, sceneFiles.path), radFiles,
+                    sender, None, None, samplingRaysCount, self.daylightMtxParameters)
+
+                self.commands.append(':: :: 2. daylight matrix calculation')
+                self.commands.append(dmtx.toRadString())
 
             for count, state in enumerate(attr['states']):
                 # 4. matrix calculations
-                dct = Dctimestep()
-                dct.tmatrixFile = self.relpath(_xmlFiles[count], sceneFiles.path)
-                dct.vmatrixSpec = vMatrix
-                dct.dmatrixFile = dMatrix
-                dct.skyVectorFile = skyMtx
-                dct.outputFile = r'.tmp\\{}..{}.tmp'.format(windowGroup, state.name)
+                tMatrix = self.relpath(_xmlFiles[count], sceneFiles.path)
+                output = r'.tmp\\{}..{}.tmp'.format(windowGroup, state.name)
+                dct = matrixCalculation(output, vMatrix, tMatrix, dMatrix, skyMtx)
+
+                self.commands.append(
+                    ':: :: 3.1.{} final matrix calculation for {}'.format(count,
+                                                                          state.name))
                 self.commands.append(dct.toRadString())
 
                 # 5. convert r, g ,b values to illuminance
-                outputName = r'results\\{}..{}.ill'.format(windowGroup, state.name)
-                finalmtx = Rmtxop(matrixFiles=(dct.outputFile,),
-                                  outputFile=outputName)
-                finalmtx.rmtxopParameters.outputFormat = 'a'
-                finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
-                finalmtx.rmtxopParameters.transposeMatrix = True
+                finalOutput = r'results\\{}..{}.ill'.format(windowGroup, state.name)
+                finalmtx = convertMatrixResults(finalOutput, (dct.outputFile,))
+                self.commands.append(
+                    ':: :: 3.2.{} convert RGB values to illuminance for {}'.format(
+                        count, state.name)
+                )
                 self.commands.append(finalmtx.toRadString())
 
-                self.resultsFile.append(os.path.join(sceneFiles.path, outputName))
+                self.resultsFile.append(os.path.join(sceneFiles.path, finalOutput))
 
         # 5. write batch file
         batchFile = os.path.join(sceneFiles.path, "commands.bat")
         writeToFile(batchFile, "\n".join(self.commands))
-        self.__batchFile = batchFile
+        self.__batchFile = batchFile  # TODO() > What is this for?
 
         print("Files are written to: %s" % sceneFiles.path)
         return batchFile
@@ -398,5 +369,9 @@ class ThreePhaseGridBasedAnalysisRecipe(DaylightCoeffGridBasedAnalysisRecipe):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.resultFiles = self.resultsFile
-        return self.loader.results
+        # self.loader.resultFiles = self.resultsFile
+        for r in self.resultsFile:
+            source, state = os.path.split(r)[-1][:-4].split("..")
+            self.analysisGrids[0].setValuesFromFile(r, self.skyMatrix.hoys,
+                                                    source, state)
+        return self.analysisGrids

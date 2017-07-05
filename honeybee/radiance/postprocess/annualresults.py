@@ -16,7 +16,8 @@ class LoadAnnualsResults(object):
         """A list of result files."""
 
         self.flattenResults = flattenResults
-        """Set to False to get a separate list of results for each file (Default: True)."""
+        """Set to False to get a separate list of results for each file
+            (Default: True)."""
 
         self.__results = []
         self.__isLoaded = False
@@ -128,6 +129,7 @@ def getSizes(f):
         inf.readline()
         LINESIZE = inf.tell() - HEADERSIZE
         return NUMBEROFPOINTS, HEADERSIZE, LINESIZE, int(LINESIZE / 8760)
+
 
 if __name__ == '__main__':
     f = r"C:\ladybug\untitled\annualdaylight\illuminance.ill"

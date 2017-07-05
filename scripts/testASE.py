@@ -7,7 +7,7 @@ from honeybee.radiance.command.rcontrib import Rcontrib,RcontribParameters
 from honeybee.radiance.command.dctimestep import Dctimestep
 from honeybee.radiance.command.rmtxop import RmtxopParameters,Rmtxop
 from ladybug.wea import EPW
-from ladybug.dt import LBDateTime
+from ladybug.dt import DateTime
 from subprocess import Popen,PIPE
 import os
 import time
@@ -55,7 +55,7 @@ def directSunCalcs(epwFile, materialFile, geometryFiles, pointsFile,
     elif isinstance(geometryFiles,(tuple,list)):
         sceneData.extend(geometryFiles)
 
-    monthDateTime = [LBDateTime.fromHOY(idx) for idx in xrange(8760)]
+    monthDateTime = [DateTime.fromHoy(idx) for idx in xrange(8760)]
 
     epw = EPW(epwFile)
     latitude, longitude = epw.location.latitude, -epw.location.longitude

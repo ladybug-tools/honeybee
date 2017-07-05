@@ -1,18 +1,15 @@
-from .._gridbasedbase import GenericGridBasedAnalysisRecipe
-from ...postprocess.annualresults import LoadAnnualsResults
+from ..radrecutil import coeffMatrixCommands, skyReceiver, \
+    matrixCalculation, convertMatrixResults, skymtxToGendaymtx
+from .._gridbasedbase import GenericGridBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
-from ...command.rfluxmtx import Rfluxmtx
-from ...command.gendaymtx import Gendaymtx
-from ...command.dctimestep import Dctimestep
-from ...command.rmtxop import Rmtxop
 from ...sky.skymatrix import SkyMatrix
-from ....helper import writeToFile
+from ....futil import writeToFile
 
 import os
 
 
 # TODO: implement simulationType
-class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+class DaylightCoeffGridBased(GenericGridBased):
     """Grid based daylight coefficient analysis recipe.
 
     Attributes:
@@ -31,7 +28,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     Usage:
 
         # initiate analysisRecipe
-        analysisRecipe = DaylightCoeffGridBasedAnalysisRecipe(
+        analysisRecipe = DaylightCoeffGridBased(
             skyMtx, analysisGrids, radParameters
             )
 
@@ -52,7 +49,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
                  radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
                  subFolder="gridbased_daylightcoeff"):
         """Create an annual recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBased.__init__(
             self, analysisGrids, hbObjects, subFolder
         )
 
@@ -63,8 +60,6 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
 
         self.radianceParameters = radianceParameters
         self.reuseDaylightMtx = reuseDaylightMtx
-        # create a result loader to load the results once the analysis is done.
-        self.loader = LoadAnnualsResults(self.resultsFile)
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
@@ -107,7 +102,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             with open(pointsFile, "rb") as inf:
                 pointGroups = tuple(line.split()[:3] for line in inf.readline())
                 vectorGroups = tuple(line.split()[3:] for line in inf.readline())
-        except:
+        except Exception:
             raise ValueError("Couldn't import points from {}".format(pointsFile))
 
         return cls.fromWeatherFilePointsAndVectors(
@@ -117,22 +112,22 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
     @property
     def radianceParameters(self):
         """Radiance parameters for annual analysis."""
-        return self.__radianceParameters
+        return self._radianceParameters
 
     @radianceParameters.setter
     def radianceParameters(self, par):
         if not par:
             # set RfluxmtxParameters as default radiance parameter for annual analysis
-            self.__radianceParameters = RfluxmtxParameters()
-            self.__radianceParameters.irradianceCalc = True
-            self.__radianceParameters.ambientAccuracy = 0.1
-            self.__radianceParameters.ambientDivisions = 4096
-            self.__radianceParameters.ambientBounces = 6
-            self.__radianceParameters.limitWeight = 0.001
+            self._radianceParameters = RfluxmtxParameters()
+            self._radianceParameters.irradianceCalc = True
+            self._radianceParameters.ambientAccuracy = 0.1
+            self._radianceParameters.ambientDivisions = 4096
+            self._radianceParameters.ambientBounces = 6
+            self._radianceParameters.limitWeight = 0.001
         else:
             assert hasattr(par, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))
-            self.__daylightMtxParameters = par
+            self._radianceParameters = par
 
     @property
     def skyType(self):
@@ -155,7 +150,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
+            GenericGridBased, self).populateSubFolders(
                 targetFolder, projectName,
                 subFolders=('.tmp', 'objects', 'skies', 'results', 'results\\matrix'),
                 removeSubFoldersContent=False)
@@ -171,65 +166,55 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             self.commands.append(self.header(sceneFiles.path))
 
         # 2.1.Create sky matrix.
+        skyMtx = 'skies\\{}.smx'.format(self.skyMatrix.name)
         if hasattr(self.skyMatrix, 'isSkyMatrix'):
-            weaFilepath = 'skies\\{}.wea'.format(self.skyMatrix.name)
-            skyMtx = 'skies\\{}.smx'.format(self.skyMatrix.name)
-            hoursFile = os.path.join(
-                sceneFiles.path, 'skies\\{}.hrs'.format(self.skyMatrix.name))
-            if not os.path.isfile(os.path.join(sceneFiles.path, weaFilepath)) \
-                    or not self.skyMatrix.hoursMatch(hoursFile):
-                self.skyMatrix.writeWea(
-                    os.path.join(sceneFiles.path, 'skies'), writeHours=True)
-                gdm = Gendaymtx(outputName=skyMtx, weaFile=weaFilepath)
-                gdm.gendaymtxParameters.skyDensity = self.skyMatrix.skyDensity
+            gdm = skymtxToGendaymtx(self.skyMatrix, sceneFiles.path)
+            if gdm:
+                self.commands.append(':: sky matrix')
                 self.commands.append(gdm.toRadString())
         else:
             # sky vector
-            skyMtx = 'skies\\{}.vec'.format(self.skyMatrix.name)
-            wdir = os.path.join(sceneFiles.path, 'skies')
-            if not os.path.isfile(os.path.join(sceneFiles.path, skyMtx)):
-                self.skyMatrix.execute(wdir)
-                # TODO: adding this line to command line didn't work on windows
-                # self.commands.append(self.skyMatrix.toRadString(wdir, sceneFiles.path))
+            raise TypeError('You must use a SkyMatrix to generate the sky.')
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
         rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
 
         dMatrix = 'results\\matrix\\{}_{}_{}.dc'.format(
             projectName, self.skyMatrix.skyDensity, self.numOfTotalPoints)
+
         if not os.path.isfile(os.path.join(sceneFiles.path, dMatrix)) \
                 or not self.reuseDaylightMtx:
-            rflux = Rfluxmtx()
-            rflux.rfluxmtxParameters = self.radianceParameters
-            rflux.radFiles = tuple(self.relpath(f, sceneFiles.path) for f in rfluxFiles)
-            rflux.sender = '-'
-            skyFile = rflux.defaultSkyGround(
+            radFiles = tuple(self.relpath(f, sceneFiles.path) for f in rfluxFiles)
+            sender = '-'
+            receiver = skyReceiver(
                 os.path.join(sceneFiles.path, 'skies\\rfluxSky.rad'),
-                skyType=self.skyType)
-            rflux.receiverFile = self.relpath(skyFile, sceneFiles.path)
-            rflux.pointsFile = pointsFile
-            rflux.outputMatrix = dMatrix
+                self.skyMatrix.skyDensity
+            )
+            rflux = coeffMatrixCommands(
+                dMatrix, self.relpath(receiver, sceneFiles.path), radFiles, sender,
+                self.relpath(pointsFile, sceneFiles.path), self.numOfTotalPoints, None,
+                self.radianceParameters
+            )
+            self.commands.append(':: daylight matrix')
             self.commands.append(rflux.toRadString())
 
         # # 2.3. matrix calculations
-        dct = Dctimestep()
-        dct.skyVectorFile = skyMtx
-        dct.dmatrixFile = dMatrix
-        dct.outputFile = '.tmp\\illuminance.tmp'
+        dct = matrixCalculation(
+            '.tmp\\illuminance.tmp', dMatrix=dMatrix, skyMatrix=skyMtx
+        )
+
+        self.commands.append(':: final matrix calculations')
         self.commands.append(dct.toRadString())
 
-        finalmtx = Rmtxop(matrixFiles=(dct.outputFile,),
-                          outputFile='results\\illuminance.ill')
-        finalmtx.rmtxopParameters.outputFormat = 'a'
-        finalmtx.rmtxopParameters.combineValues = (47.4, 119.9, 11.6)
-        finalmtx.rmtxopParameters.transposeMatrix = True
+        finalmtx = convertMatrixResults('results\\illuminance.ill', (dct.outputFile,))
+        self.commands.append(':: convert RGB values to illuminance')
         self.commands.append(finalmtx.toRadString())
 
         # # 2.3 write batch file
-        batchFile = os.path.join(sceneFiles.path, "commands.bat")
+        batchFile = os.path.join(sceneFiles.path, 'commands.bat')
 
-        writeToFile(batchFile, "\n".join(self.commands))
+        writeToFile(batchFile, '\n'.join(self.commands))
 
         self.resultsFile = (os.path.join(sceneFiles.path, str(finalmtx.outputFile)),)
 
@@ -242,5 +227,7 @@ class DaylightCoeffGridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        self.loader.resultFiles = self.resultsFile
-        return self.loader.results
+        for r in self.resultsFile:
+            # source, state = os.path.split(r)[-1][:-4].split("..")
+            self.analysisGrids[0].setValuesFromFile(r, self.skyMatrix.hoys)
+        return self.analysisGrids

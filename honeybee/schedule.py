@@ -71,7 +71,7 @@ class Schedule(object):
         offHours = offHours or (12,)
         defaultValue = defaultValue or 1
         try:
-            hours = tuple(h for h in occPeriod.HOYs)
+            hours = tuple(h for h in occPeriod.hoys)
         except AttributeError:
             raise TypeError(
                 'occPeriod should be an AnalysisPeriod not {}'.format(type(occPeriod))

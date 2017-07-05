@@ -4,13 +4,13 @@ This class is base class for common imagebased analysis recipes.
 """
 
 from abc import ABCMeta, abstractmethod
-from ...helper import writeToFile
-from ._recipebase import DaylightAnalysisRecipe
+from ...futil import writeToFile
+from ._recipebase import AnalysisRecipe
 
 import os
 
 
-class GenericImageBasedAnalysisRecipe(DaylightAnalysisRecipe):
+class GenericImageBased(AnalysisRecipe):
     """Honeybee generic grid base analysis base class.
 
     This class is base class for common gridbased analysis recipes as well as
@@ -27,7 +27,7 @@ class GenericImageBasedAnalysisRecipe(DaylightAnalysisRecipe):
     def __init__(self, views, hbObjects=None, subFolder="imagebased"):
         """Create image-based recipe."""
         # keep track of original points for re-structuring them later on
-        DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
+        AnalysisRecipe.__init__(self, hbObjects=hbObjects,
                                         subFolder=subFolder)
         self.views = views
 

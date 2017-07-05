@@ -1,10 +1,12 @@
 from abc import ABCMeta, abstractproperty
+import utilcol as util
 from hbobject import HBObject
-from radiance.properties import RadianceProperties
-from radiance.geometry import polygon
+from surfaceproperties import SurfaceProperties, SurfaceState
 import surfacetype
 import geometryoperation as go
 from surfacetype import Floor, Wall, Window, Ceiling
+from radiance.radfile import RadFile
+
 import os
 import types
 import math
@@ -33,18 +35,28 @@ class HBAnalysisSurface(HBObject):
         isNameSetByUser: If you want the name to be changed by honeybee any case
             set isNameSetByUser to True. Default is set to False which let Honeybee
             to rename the surface in cases like creating a newHBZone.
-        radProperties: Radiance properties for this surface. If empty default
-            RADProperties will be assigned to surface by Honeybee.
-        epProperties: EnergyPlus properties for this surface. If empty default
-            epProperties will be assigned to surface by Honeybee.
+        states: A collection of SurfaceStates. SurfaceStates includes SurfaceProperties
+            which includes the data for RadianceProperties and EPProperties and optional
+            HBSurfaces. Each
+            item in this collection stands for a different stae of the materials. Use
+            the properties to model dynamic bahaviors such as dynamic blinds.
     """
 
     __metaclass__ = ABCMeta
+    _surfaceTypes = {0.0: 'Wall', 0.5: 'UndergroundWall', 1.0: 'Roof',
+                     1.5: 'UndergroundCeiling', 2.0: 'Floor',
+                     2.25: 'UndergroundSlab', 2.5: 'SlabOnGrade',
+                     2.75: 'ExposedFloor', 3.0: 'Ceiling', 4.0: 'AirWall',
+                     6.0: 'Context'}
 
-    def __init__(self, name, sortedPoints=[], surfaceType=None,
-                 isNameSetByUser=False, isTypeSetByUser=False,
-                 radProperties=None, epProperties=None):
+    def __init__(self, name, sortedPoints, surfaceType=None, isNameSetByUser=False,
+                 isTypeSetByUser=False, states=None):
         """Initialize Honeybee Surface."""
+        self._childSurfaces = ()
+        self._states = []
+        if not name:
+            name = util.randomName()
+            isNameSetByUser = False
         self.name = (name, isNameSetByUser)
         """Surface name."""
         self.points = sortedPoints
@@ -54,13 +66,33 @@ class HBAnalysisSurface(HBObject):
         """
         self.surfaceType = (surfaceType, isTypeSetByUser)
         """Surface type."""
-        self.epProperties = epProperties
-        """EnergyPlus properties for this surface. If empty default
-            EPProperties will be assigned to surface by Honeybee."""
-        self.radProperties = radProperties
-        """Radiance properties for this surface. If empty default
-            RADProperties will be assigned to surface by Honeybee.
+        self.state = 0
+        """Current state of the surface."""
+        states = states or \
+            (SurfaceState('default', SurfaceProperties(self.surfaceType)),)
+        for state in states:
+            self.addSurfaceState(state)
+
+    @classmethod
+    def fromRadEPProperties(
+        cls, name, sortedPoints, surfaceType=None, isNameSetByUser=False,
+            isTypeSetByUser=False, radProperties=None, epProperties=None,
+            states=None):
+        """Initialize Honeybee Surface.
+
+        RadianceProperties and EPProperties will be used to create the initial state.
         """
+        states = states or ()
+        # create the surface first to get the surface type if not available
+        _cls = cls(name, sortedPoints, surfaceType, isNameSetByUser, isTypeSetByUser)
+        # replace the default properties for the initial state
+        sp = SurfaceProperties(_cls.surfaceType, radProperties, epProperties)
+        _cls._states[0] = SurfaceState('default', sp)
+
+        for state in states:
+            _cls.addSurfaceState(state)
+
+        return _cls
 
     @property
     def isHBAnalysisSurface(self):
@@ -76,6 +108,16 @@ class HBAnalysisSurface(HBObject):
     def isChildSurface(self):
         """Return True if Honeybee surface is Fenestration Surface."""
         pass
+
+    @property
+    def hasChildSurfaces(self):
+        """Return True if surface has children surfaces."""
+        return False
+
+    @property
+    def childrenSurfaces(self):
+        """Get children surfaces."""
+        return self._childSurfaces
 
     @property
     def hasBSDFRadianceMaterial(self):
@@ -113,11 +155,46 @@ class HBAnalysisSurface(HBObject):
         return self.parent.origin
 
     @property
+    def numOfStates(self):
+        """Number of states for this surface."""
+        return len(self.states)
+
+    @property
+    def state(self):
+        """The current state id."""
+        return self._state
+
+    @state.setter
+    def state(self, count):
+        """The current state id."""
+        if count != 0:
+            assert count < self.numOfStates, \
+                ValueError(
+                    'This surface has only {} state. {} is an invalid state.'.format(
+                        self.numOfStates, count
+                    )
+                )
+        self._state = count
+
+    @property
+    def states(self):
+        """List of states for this surface."""
+        return self._states
+
+    def addSurfaceState(self, srfState):
+        if not srfState:
+            return
+
+        assert hasattr(srfState, 'isSurfaceState'), \
+            TypeError('Expected SurfaceState not {}'.format(type(srfState)))
+
+        self._states.append(srfState)
+
+    @property
     def name(self):
         """Retuen surface name."""
-        return self.__name
+        return self._name
 
-    # TODO: name should be checked not to have illegal charecters for ep and radiance
     @name.setter
     def name(self, values):
         """Set name and isSetByUser property.
@@ -134,80 +211,73 @@ class HBAnalysisSurface(HBObject):
             # check if user passed a tuple
             if type(values) is str:
                 raise TypeError
-            __newName, __isNameSetByUser = values
+            newName, isNameSetByUser = values
         except ValueError:
             # user is passing a list or tuple with one ValueError
-            __newName = values[0]
-            __isNameSetByUser = False  # if not indicated assume it is not set by user.
+            newName = values[0]
+            isNameSetByUser = False  # if not indicated assume it is not set by user.
         except TypeError:
             # user just passed a single value which is the name
-            __newName = values
-            __isNameSetByUser = False  # if not indicated assume it is not set by user.
+            newName = values
+            isNameSetByUser = False  # if not indicated assume it is not set by user.
         finally:
             # set new name
-            self.__name = str(__newName)
-            self.__isNameSetByUser = __isNameSetByUser
+            self._name = str(newName)
+            self._isNameSetByUser = isNameSetByUser
+            util.checkName(self._name)
 
+    @property
     def isNameSetByUser(self):
         """Return if name is set by user.
 
         If name is set by user the surface will never be renamed automatically.
         """
-        return self.__isNameSetByUser
+        return self._isNameSetByUser
 
     @property
     def surfaceTypes(self):
         """Return Honeybee valid surface types."""
-        _surfaceTypes = {0.0: 'Wall', 0.5: 'UndergroundWall', 1.0: 'Roof',
-                         1.5: 'UndergroundCeiling', 2.0: 'Floor',
-                         2.25: 'UndergroundSlab', 2.5: 'SlabOnGrade',
-                         2.75: 'ExposedFloor', 3.0: 'Ceiling', 4.0: 'AirWall',
-                         6.0: 'Context'}
-
-        return _surfaceTypes
+        return self._surfaceTypes
 
     @property
     def surfaceType(self):
         """Get and set Surface Type."""
-        return self.__surfaceType
+        return self._surfaceType
 
     @surfaceType.setter
     def surfaceType(self, values):
         # let's assume values in surfaceType and Boolean
-        __surfaceType, __isTypeSetByUser = values
+        _surfaceType, isTypeSetByUser = values
 
         # Now let's check the input for surface type
-        if __surfaceType is not None:
+        if _surfaceType is not None:
             # it is either a number or already a valid type
-            if isinstance(__surfaceType, surfacetype.surfaceTypeBase):
-                self.__surfaceType = __surfaceType
+            if isinstance(_surfaceType, surfacetype.surfaceTypeBase):
+                self._surfaceType = _surfaceType
             else:
                 try:
                     # it should be a key value
-                    self.__surfaceType = \
-                        surfacetype.SurfaceTypes.getTypeByKey(__surfaceType)()
-                except:
-                    raise ValueError('%s is not a valid surface type.' % __surfaceType)
+                    self._surfaceType = \
+                        surfacetype.SurfaceTypes.getTypeByKey(_surfaceType)()
+                except KeyError:
+                    raise ValueError('%s is not a valid surface type.' % _surfaceType)
         else:
             # try to figure it out based on points
-            if self.points == []:
-                # unless user add the points we can't find the type
-                self.__surfaceType = None
-            else:
-                self.__surfaceType = self.__surfaceTypeFromPoints()
-                __isTypeSetByUser = False
+            self._surfaceType = self._surfaceTypeFromPoints()
+            isTypeSetByUser = False
 
-        self.__isTypeSetByUser = __isTypeSetByUser
+        self._isTypeSetByUser = isTypeSetByUser
 
-    def __surfaceTypeFromPoints(self):
-        normal = go.calculateNormalFromPoints(self.points[0])
-        __angleToZAxis = go.calculateVectorAngleToZAxis(normal)
-        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(__angleToZAxis, self.points[0])()
+    def _surfaceTypeFromPoints(self):
+        normal = go.normalFromPoints(self.points[0])
+        angleToZAxis = go.vectorAngleToZAxis(normal)
+        return surfacetype.SurfaceTypes.byNormalAngleAndPoints(angleToZAxis,
+                                                               self.points[0])()
 
     @property
     def isTypeSetByUser(self):
         """Check if the type for surface is set by user."""
-        return self.__isTypeSetByUser
+        return self._isTypeSetByUser
 
     @property
     def isFloor(self):
@@ -232,7 +302,7 @@ class HBAnalysisSurface(HBObject):
     @property
     def points(self):
         """Get/set points."""
-        return self.__pts
+        return self._points
 
     @property
     def absolutePoints(self):
@@ -242,15 +312,15 @@ class HBAnalysisSurface(HBObject):
         as self.points.
         """
         if self.isRelativeSystem:
-            _ptgroups = range(len(self.points))
+            ptgroups = range(len(self.points))
             for count, ptGroup in enumerate(self.points):
-                _ptgroups[count] = [
+                ptgroups[count] = [
                     (pt[0] + self.origin[0],
                      pt[1] + self.origin[1],
                      pt[2] + self.origin[2])
                     for pt in ptGroup
                 ]
-            return _ptgroups
+            return ptgroups
         else:
             return self.points
 
@@ -267,11 +337,11 @@ class HBAnalysisSurface(HBObject):
         # surfaces which will have several subsurfaces. We don't check the structure
         # here so user can add points as needed. It will be checked once user wants
         # to write the surface to Radiance or EnergyPlus
-        self.__pts = []
+        self._points = []
         self.addPointList(pts, True)
         if hasattr(self, 'isTypeSetByUser') and not self.isTypeSetByUser:
             # re-evaluate the type if it hasn't been set by user
-            self.__surfaceType = self.__surfaceTypeFromPoints()
+            self._surfaceType = self._surfaceTypeFromPoints()
 
     def addPointList(self, pts, removeCurrentPoints=False):
         """Add new list of points to surface points.
@@ -288,24 +358,24 @@ class HBAnalysisSurface(HBObject):
         if len(pts) == 0:
             return
         if removeCurrentPoints:
-            self.__pts = []
+            self._points = []
 
         if hasattr(pts[0], 'X'):
             # a single list of points from Dynamo
-            self.__pts.append(tuple((pt.X, pt.Y, pt.Z) for pt in pts))
+            self._points.append(tuple((pt.X, pt.Y, pt.Z) for pt in pts))
 
         elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], 'X'):
             # list of points list in Dynamo
-            self.__pts.extend(tuple(tuple((pt.X, pt.Y, pt.Z) for pt in ptGroup)
-                              for ptGroup in pts))
+            self._points.extend(tuple(tuple((pt.X, pt.Y, pt.Z) for pt in ptGroup)
+                                      for ptGroup in pts))
 
         elif hasattr(pts[0], '__iter__') and not hasattr(pts[0][0], '__iter__'):
             # a list of tuples as x, y, z
-            self.__pts.append(pts)
+            self._points.append(pts)
 
         elif hasattr(pts[0], '__iter__') and hasattr(pts[0][0], '__iter__'):
             # a list of list of tuples
-            self.__pts.extend(pts)
+            self._points.extend(pts)
 
         else:
             raise ValueError('Invalid structure for input points: {}'.format(pts))
@@ -319,19 +389,38 @@ class HBAnalysisSurface(HBObject):
             point should be added to (Default is -1)
         """
         try:
-            self.__pts[subsurfaceNumber].append(pt)
+            self._points[subsurfaceNumber].append(pt)
         except IndexError:
             # pts is a flattened list
-            self.__pts.append([pt])
+            self._points.append([pt])
         except AttributeError:
             # input is a tuple or a generator
-            self.__pts[subsurfaceNumber] = list(self.__pts[subsurfaceNumber])
-            self.__pts[subsurfaceNumber].append(pt)
+            self._points[subsurfaceNumber] = list(self._points[subsurfaceNumber])
+            self._points[subsurfaceNumber].append(pt)
 
     @property
     def normal(self):
         """Return surface normal for the first face."""
-        return go.calculateNormalFromPoints(self.points[0])
+        return go.normalFromPoints(self.points[0])
+
+    @property
+    def normals(self):
+        """Return surface normals for all faces."""
+        return tuple(go.normalFromPoints(pts) for pts in self.points)
+
+    @property
+    def normalsAngleDifference(self):
+        """Maximum angle difference between normals and the first normal."""
+        maxAngle = 0
+        if len(self.points) == 1:
+            return 0
+        normals = self.normals
+        base = normals[0]
+        for norm in normals:
+            angle = go.vectorAngle(base, norm)
+            if angle > maxAngle:
+                maxAngle = angle
+        return maxAngle
 
     @property
     def upnormal(self):
@@ -339,40 +428,16 @@ class HBAnalysisSurface(HBObject):
 
         Use this value to set up rfluxmtx header.
         """
-        return go.calculateUpVectorFromPoints(self.points[0])
+        return go.upVectorFromPoints(self.points[0])
 
     @property
     def radProperties(self):
         """Get and set Radiance properties."""
-        return self.__radProperties
+        return self.states[self.state].radProperties
 
     @radProperties.setter
     def radProperties(self, radProperties):
-        if radProperties is None:
-            self.__radProperties = RadianceProperties()
-        else:
-            assert hasattr(radProperties, 'isRadianceProperties'), \
-                "%s is not a valid RadianceProperties" % str(radProperties)
-            self.__radProperties = radProperties
-
-    @property
-    def radianceMaterials(self):
-        """Get list of Radiance materials for a honeybee surface.
-
-        For a surface with no fenestration it will be a list with a single item,
-        However for a surface with fenestration it will be a list including
-        the materials of fenestration surfaces.
-
-        You may use self.radianceMaterial (with no s at the end) to only get
-        material for the surface itself.
-        """
-        surfaceMaterial = [self.radianceMaterial]
-
-        if not self.isChildSurface:
-            for fen in self.childrenSurfaces:
-                surfaceMaterial.append(fen.radianceMaterial)
-
-        return set(surfaceMaterial)
+        self.states[self.state].radProperties = radProperties
 
     @property
     def radianceMaterial(self):
@@ -383,98 +448,95 @@ class HBAnalysisSurface(HBObject):
 
         Usage:
 
-            radianceMaterial = PlasticMaterial.bySingleReflectValue("wall_material", 0.55)
-            HBSrf.radianceMaterial = (radianceMaterial, True)
+            radMat = PlasticMaterial.bySingleReflectValue("wall_material", 0.55)
+            HBSrf.radianceMaterial = (radMat, True)
             # or
-            HBSrf.radianceMaterial = radianceMaterial
+            HBSrf.radianceMaterial = radMat
         """
-        if self.radProperties.radianceMaterial is None:
-            if self.surfaceType is not None:
-                # set the material based on type
-                self.radProperties.radianceMaterial = \
-                    self.surfaceType.radianceMaterial
-
-        return self.radProperties.radianceMaterial
+        if self.states[self.state].radianceMaterial:
+            return self.states[self.state].radianceMaterial
+        else:
+            # if state doesn't have a radianceMaterial use the original radiance material
+            return self.states[0].radianceMaterial
 
     @radianceMaterial.setter
     def radianceMaterial(self, value):
-        self.radProperties.radianceMaterial = value
+        try:
+            self.states[self.state].radProperties.radianceMaterial = value
+        except AttributeError:
+            raise AttributeError('Failed to assign new Radiance material.'
+                                 ' Current state does not have a RadianceProperties!')
 
-    def duplicateVertices(self):
-        """Duplicate surface vertices."""
-        if self.isChildSurface or not self.hasChildSurfaces:
-            return self.absolutePoints
-        else:
-            # get points for first glass face
-            __glassPoints = [childSrf.absolutePoints[0]
-                             for childSrf in self.childrenSurfaces]
+    def radianceMaterials(self, toRadString=False):
+        """Get the full list of materials including child surfaces if any."""
+        mt_base = [self.radianceMaterial]
+        mt_child = [childSrf.radianceMaterial for childSrf in self.childrenSurfaces
+                    if self.hasChildSurfaces]
+        mt = set(mt_base + mt_child)
+        return '\n'.join(m.toRadString() for m in mt) if toRadString else tuple(mt)
 
-            __facePoints = self.absolutePoints[0]
+    def duplicateVertices(self, flipped=False):
+        """Duplicate surface vertices.
 
-            return AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
-
-    def toRadString(self, includeMaterials=False, joinOutput=True, reverse=False):
-        """Return Radiance definition for this surface as a string.
-
-        reverse: Set to True to reverse surface direction.
+        Args:
+            flipped: Set to True to get the vertices for the flipped surface. This is
+                useful for cases like writing rad files for window groups in multi-phase
+                modeling.
         """
-        # prepare points for surface.
         if self.isChildSurface or not self.hasChildSurfaces:
-            __pts = self.absolutePoints
+            vertices = self.absolutePoints
         else:
-
             # get points for first glass face
-            __glassPoints = [childSrf.absolutePoints[0]
-                             for childSrf in self.childrenSurfaces]
+            glassPoints = [childSrf.absolutePoints[0]
+                           for childSrf in self.childrenSurfaces]
 
-            __facePoints = self.absolutePoints[0]
+            facePoints = self.absolutePoints[0]
 
-            __pts = AnalsysiSurfacePolyline(__facePoints, __glassPoints).polyline
+            vertices = (AnalsysiSurfacePolyline(facePoints, glassPoints).polyline,)
 
-            __pts = (__pts,)
-
-        if reverse:
-            __pts = tuple(tuple(reversed(pts)) for pts in __pts)
-
-        __numPtGroups = len(__pts)
-        # create a place holder for each point group (face)
-        # for a planar surface __numPtGroups is only one
-        __pgStrings = range(__numPtGroups)
-
-        for ptCount, pts in enumerate(__pts):
-            # modify name for each sub_surface
-            _name = self.name if __numPtGroups == 1 else self.name + "_{}".format(ptCount)
-
-            # collect definition for each subsurface
-            __pgStrings[ptCount] = polygon(
-                name=_name, materialName=self.radianceMaterial.name, pts=pts
-            )
-
-        if joinOutput:
-            return "%s\n%s" % (self.radianceMaterial, "\n".join(__pgStrings)) \
-                if includeMaterials \
-                else "\n".join(__pgStrings)
+        if flipped:
+            return tuple(tuple(reversed(pts)) for pts in vertices)
         else:
-            return self.radianceMaterial.toRadString(), __pgStrings \
-                if includeMaterials \
-                else __pgStrings
+            return vertices
 
-    def radStringToFile(self, filePath, includeMaterials=False, reverse=False):
+    def toRadString(self, mode=1, includeMaterials=False, flipped=False, blacked=False):
+        """Get full radiance file as a string.
+
+        Args:
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+            includeMaterials: Set to False if you only want the geometry definition
+             (default:True).
+            flipped: Flip the surface geometry.
+            blacked: If True materials will all be set to plastic 0 0 0 0 0.
+        """
+        mode = mode or 1
+        return RadFile((self,)).toRadString(mode, includeMaterials, flipped, blacked)
+
+    def radStringToFile(self, filePath, mode=1, includeMaterials=False, flipped=False,
+                        blacked=False):
         """Write Radiance definition for this surface to a file.
 
         Args:
-            filePath: Full path for a valid file path (e.g. c:/ladybug/geo.rad)
-
-        Returns:
-            True in case of success. False in case of failure.
+            filepath: Full filepath (e.g c:/ladybug/geo.rad).
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+            includeMaterials: Set to False if you only want the geometry definition
+             (default:True).
+            flipped: Flip the surface geometry.
+            blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
+        mode = mode or 1
         assert os.path.isdir(os.path.split(filePath)[0]), \
             "Cannot find %s." % os.path.split(filePath)[0]
 
-        with open(filePath, "w") as outf:
+        with open(filePath, "wb") as outf:
             try:
-                outf.write(self.toRadString(includeMaterials=includeMaterials,
-                                            reverse=reverse))
+                outf.write(self.toRadString(mode, includeMaterials, flipped, blacked))
                 return True
             except Exception as e:
                 print "Failed to write %s to file:\n%s" % (self.name, e)
@@ -483,14 +545,14 @@ class HBAnalysisSurface(HBObject):
     @property
     def epProperties(self):
         """Get and set EnergyPlus properties."""
-        return self.__epProperties
+        raise NotImplementedError()
 
     @epProperties.setter
     def epProperties(self, epProperties):
         if epProperties is None:
             pass
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     @property
     def energyPlusMaterials(self):
@@ -518,7 +580,7 @@ class HBAnalysisSurface(HBObject):
 
     def __repr__(self):
         """Represnt Honeybee surface."""
-        return ("HBSurface :: %s :: %s" % (self.name, self.surfaceType)) \
+        return ("HBSurface::%s::%s" % (self.name, self.surfaceType)) \
             .replace('Surface Type: ', '')
 
 
@@ -545,9 +607,9 @@ class AnalsysiSurfacePolyline(object):
     @staticmethod
     def distance(pt1, pt2):
         """calculate distance between two points."""
-        return math.sqrt((pt2[0] - pt1[0])**2 +
-                         (pt2[1] - pt1[1])**2 +
-                         (pt2[2] - pt1[2])**2)
+        return math.sqrt((pt2[0] - pt1[0]) ** 2 +
+                         (pt2[1] - pt1[1]) ** 2 +
+                         (pt2[2] - pt1[2]) ** 2)
 
     def __shortestDistance(self, ptList1, ptList2):
         dist = float('inf')
@@ -579,8 +641,8 @@ class AnalsysiSurfacePolyline(object):
     def __calculatePolyline(self, source, targets):
         """calculate single polyline for HBSurface with Fenestration."""
         # sort point groups
-        sortedTargets = sorted(targets,
-                               key=lambda target: self.__shortestDistance(source, target)[0])
+        sortedTargets = sorted(
+            targets, key=lambda target: self.__shortestDistance(source, target)[0])
 
         self.__addPoints(source, sortedTargets[0])
 

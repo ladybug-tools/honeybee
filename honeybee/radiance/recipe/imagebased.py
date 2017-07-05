@@ -1,15 +1,15 @@
 """Radiance Grid-based Analysis Recipe."""
 
 # from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
-from ._imagebasedbase import GenericImageBasedAnalysisRecipe
+from ._imagebasedbase import GenericImageBased
 from ..parameters.imagebased import ImageBasedParameters
 from ..command.oconv import Oconv
 from ..command.rpict import Rpict
-from ...helper import writeToFile
+from ...futil import writeToFile
 import os
 
 
-class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
+class ImageBased(GenericImageBased):
     """Grid base analysis base class.
 
     Attributes:
@@ -27,7 +27,7 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = ImageBasedAnalysisRecipe(
+        analysisRecipe = ImageBased(
             sky, views, simType
             )
 
@@ -44,12 +44,12 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
+    # TODO: implemnt isChanged at AnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
     def __init__(self, sky, views, simulationType=2, radParameters=None,
                  hbObjects=None, subFolder="imagebased"):
         """Create grid-based recipe."""
-        GenericImageBasedAnalysisRecipe.__init__(
+        GenericImageBased.__init__(
             self, views, hbObjects, subFolder)
 
         self.sky = sky
@@ -141,7 +141,7 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            ImageBasedAnalysisRecipe, self).populateSubFolders(
+            ImageBased, self).populateSubFolders(
                 targetFolder, projectName)
 
         # add view folder
@@ -163,7 +163,7 @@ class ImageBasedAnalysisRecipe(GenericImageBasedAnalysisRecipe):
 
         # # 4.1.prepare oconv
         octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
