@@ -69,7 +69,7 @@ class DaylightCoeffImageBased(GenericImageBased):
     def simulationType(self, value):
         try:
             value = int(value)
-        except:
+        except TypeError:
             value = 2
 
         assert 0 <= value <= 2, \
@@ -170,7 +170,8 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
         rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
+            sceneFiles.sceneOctFiles
 
         # # 4.2.prepare rpict
         for view, f in zip(self.views, viewFiles):
@@ -205,7 +206,8 @@ class DaylightCoeffImageBased(GenericImageBased):
                     self.isDaylightMtxCreated(sceneFiles.path, view):
                 rflux = Rfluxmtx()
                 rflux.rfluxmtxParameters = self.radianceParameters
-                rflux.radFiles = tuple(self.relpath(f, sceneFiles.path) for f in rfluxFiles)
+                rflux.radFiles = tuple(self.relpath(f, sceneFiles.path)
+                                       for f in rfluxFiles)
                 rflux.sender = '-'
                 groundFileFormat = 'results\\matrix\\%s_%03d.hdr' % (
                     view.name, 1 + 144 * (self.skyMatrix.skyDensity ** 2))
@@ -283,8 +285,8 @@ class DaylightCoeffImageBased(GenericImageBased):
             if os.path.isfile(tf):
                 try:
                     os.remove(tf)
-                except:
-                    print "Failed to remove %s." % tf
+                except Exception as e:
+                    print "Failed to remove %s: %s" % (tf, str(e))
 
             try:
                 os.rename(f, tf)

@@ -178,7 +178,8 @@ class DaylightCoeffGridBased(GenericGridBased):
 
         # # 2.2.Generate daylight coefficients using rfluxmtx
         rfluxFiles = [sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
+            sceneFiles.sceneOctFiles
 
         dMatrix = 'results\\matrix\\{}_{}_{}.dc'.format(
             projectName, self.skyMatrix.skyDensity, self.numOfTotalPoints)

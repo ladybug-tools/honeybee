@@ -1,10 +1,10 @@
-from ._gridbasedbase import GenericGridBased
-from ..postprocess.sunlighthourresults import LoadSunlighthoursResults
-from ..parameters.rcontrib import RcontribParameters
-from ..command.oconv import Oconv
-from ..command.rcontrib import Rcontrib
-from ...futil import writeToFile
-from ...vectormath.euclid import Vector3
+from .._gridbasedbase import GenericGridBased
+from ...postprocess.sunlighthourresults import LoadSunlighthoursResults
+from ...parameters.rcontrib import RcontribParameters
+from ...command.oconv import Oconv
+from ...command.rcontrib import Rcontrib
+from ....futil import writeToFile
+from ....vectormath.euclid import Vector3
 
 from ladybug.sunpath import Sunpath
 from ladybug.legendparameters import LegendParameters
@@ -13,7 +13,7 @@ from ladybug.color import Colorset
 import os
 
 
-class SolarAccess(GenericGridBased):
+class SolarAccessGridBased(GenericGridBased):
     """Solar access recipe.
 
     This class calculates number of sunlight hours for a group of test points.

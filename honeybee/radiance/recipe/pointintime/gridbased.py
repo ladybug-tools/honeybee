@@ -1,24 +1,27 @@
 """Radiance Grid-based Analysis Recipe."""
 
-# from ..postprocess.gridbasedresults import LoadGridBasedDLAnalysisResults
-from ._imagebasedbase import GenericImageBased
-from ..parameters.imagebased import ImageBasedParameters
-from ..command.oconv import Oconv
-from ..command.rpict import Rpict
-from ...futil import writeToFile
+from .._gridbasedbase import GenericGridBased
+from ...parameters.gridbased import LowQuality
+from ...command.oconv import Oconv
+from ...command.rtrace import Rtrace
+from ...command.rcalc import Rcalc
+from ....futil import writeToFile
+
+from ladybug.dt import DateTime
+
 import os
 
 
-class ImageBased(GenericImageBased):
+class GridBased(GenericGridBased):
     """Grid base analysis base class.
 
     Attributes:
         sky: A honeybee sky for the analysis
-        views: List of views.
+        analysisGrids: List of analysis grids.
         simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         radParameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: imagebased.LowQualityImage)
+            (Default: gridbased.LowQuality)
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
 
@@ -27,8 +30,8 @@ class ImageBased(GenericImageBased):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = ImageBased(
-            sky, views, simType
+        analysisRecipe = GridBased(
+            sky, testPoints, ptsVectors, simType
             )
 
         # add honeybee object
@@ -46,27 +49,50 @@ class ImageBased(GenericImageBased):
 
     # TODO: implemnt isChanged at AnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
-    def __init__(self, sky, views, simulationType=2, radParameters=None,
-                 hbObjects=None, subFolder="imagebased"):
+    def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
+                 hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        GenericImageBased.__init__(
-            self, views, hbObjects, subFolder)
+        GenericGridBased.__init__(
+            self, analysisGrids, hbObjects, subFolder)
 
         self.sky = sky
         """A honeybee sky for the analysis."""
 
         self.radianceParameters = radParameters
         """Radiance parameters for grid based analysis (rtrace).
-            (Default: imagebased.LowQualityImage)"""
+            (Default: gridbased.LowQuality)"""
 
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
            2: Luminance (Candela) (Default: 0)
         """
 
-        # create a result loader to load the results once the analysis is done.
-        # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-        #                                              self.resultsFile)
+    @classmethod
+    def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,
+                             simulationType=0, radParameters=None,
+                             hbObjects=None, subFolder="gridbased"):
+        """Create grid based recipe from points and vectors.
+
+        Args:
+            sky: A honeybee sky for the analysis
+            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
+                test points. Each list of test points will be converted to a
+                TestPointGroup. If testPts is a single flattened list only one
+                TestPointGroup will be created.
+            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+                represents direction of corresponding point in testPts. If the
+                vector is not provided (0, 0, 1) will be assigned.
+            simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance
+                (Candela) (Default: 0).
+            radParameters: Radiance parameters for grid based analysis (rtrace).
+                (Default: gridbased.LowQuality)
+            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
+            subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
+        """
+        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
+                                                              vectorGroups)
+        return cls(sky, analysisGrids, simulationType, radParameters, hbObjects,
+                   subFolder)
 
     @property
     def simulationType(self):
@@ -80,7 +106,7 @@ class ImageBased(GenericImageBased):
     def simulationType(self, value):
         try:
             value = int(value)
-        except:
+        except TypeError:
             value = 0
 
         assert 0 <= value <= 2, \
@@ -100,7 +126,8 @@ class ImageBased(GenericImageBased):
 
     @sky.setter
     def sky(self, newSky):
-        assert hasattr(newSky, "isRadianceSky"), "%s is not a valid Honeybee sky." % type(newSky)
+        assert hasattr(newSky, "isRadianceSky"), "%s is not a valid Honeybee sky." \
+            % type(newSky)
         self.__sky = newSky
 
     @property
@@ -111,7 +138,7 @@ class ImageBased(GenericImageBased):
     @radianceParameters.setter
     def radianceParameters(self, radParameters):
         if not radParameters:
-            radParameters = ImageBasedParameters.LowQuality()
+            radParameters = LowQuality()
         assert hasattr(radParameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(radParameters)
         self.__radianceParameters = radParameters
@@ -119,16 +146,19 @@ class ImageBased(GenericImageBased):
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
-        Files for an image based analysis are:
-            views <*.vf>: A radiance view.
+        Files for a grid based analysis are:
+            test points <projectName.pts>: List of analysis points.
             sky file <*.sky>: Radiance sky for this analysis.
-            material file <*.mat>: Radiance materials. Will be empty if HBObjects is None.
-            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is None.
+            material file <*.mat>: Radiance materials. Will be empty if HBObjects
+                is None.
+            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects
+                is None.
             sky file <*.sky>: Radiance sky for this analysis.
             batch file <*.bat>: An executable batch file which has the list of commands.
-                oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles> > <projectName.oct>
+                oconve <*.sky> <projectName.mat> <projectName.rad> <additional radFiles>
+                    > <projectName.oct>
                 rtrace <radianceParameters> <projectName.oct> > <projectName.res>
-            results file <*.hdr>: Results file once the analysis is over.
+            results file <*.res>: Results file once the analysis is over.
 
         Args:
             targetFolder: Path to parent folder. Files will be created under
@@ -141,53 +171,56 @@ class ImageBased(GenericImageBased):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         sceneFiles = super(
-            ImageBased, self).populateSubFolders(
+            GenericGridBased, self).populateSubFolders(
                 targetFolder, projectName)
 
-        # add view folder
-        self.prepareSubFolder(os.path.join(targetFolder, projectName),
-                              subFolders=('views',))
-
-        # 1.write views
-        viewFiles = self.writeViewsToFile(sceneFiles.path + '\\views')
+        # 1.write points
+        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
 
         # 2.write sky file
         skyFile = self.sky.writeToFile(sceneFiles.path + '\\skies')
 
         # 3.write batch file
         self.commands = []
-        self.resultsFile = []
 
         if header:
             self.commands.append(self.header(sceneFiles.path))
 
         # # 4.1.prepare oconv
         octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + sceneFiles.sceneOctFiles
+            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
+            sceneFiles.sceneOctFiles
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
                               for f in octSceneFiles)
 
+        # # 4.2.prepare rtrace
+        rt = Rtrace('results\\' + projectName,
+                    simulationType=self.simulationType,
+                    radianceParameters=self.radianceParameters)
+        rt.radianceParameters.h = True
+        rt.octreeFile = str(oc.outputFile)
+        rt.pointsFile = self.relpath(pointsFile, sceneFiles.path)
+
+        # # 4.3. add rcalc to convert rgb values to irradiance
+        rc = Rcalc('results\\{}.ill'.format(projectName), str(rt.outputFile))
+
+        if os.name == 'nt':
+            rc.rcalcParameters.expression = '"$1=(0.265*$1+0.67*$2+0.065*$3)*179"'
+        else:
+            rc.rcalcParameters.expression = "'$1=(0.265*$1+0.67*$2+0.065*$3)*179'"
+
+        # # 4.4 write batch file
         self.commands.append(oc.toRadString())
+        self.commands.append(rt.toRadString())
+        self.commands.append(rc.toRadString())
 
-        # # 4.2.prepare rpict
-        # TODO: Add overtrue
-        for view, f in zip(self.views, viewFiles):
-            rp = Rpict('results\\' + view.name,
-                       simulationType=self.simulationType,
-                       rpictParameters=self.radianceParameters)
-            rp.octreeFile = str(oc.outputFile)
-            rp.viewFile = self.relpath(f, sceneFiles.path)
-
-            self.commands.append(rp.toRadString())
-            self.resultsFile.append(
-                os.path.join(sceneFiles.path, str(rp.outputFile)))
-
-        # # 4.3 write batch file
         batchFile = os.path.join(sceneFiles.path, "commands.bat")
 
         writeToFile(batchFile, "\n".join(self.commands))
+
+        self.resultsFile = os.path.join(sceneFiles.path, str(rc.outputFile))
 
         print "Files are written to: %s" % sceneFiles.path
         return batchFile
@@ -198,10 +231,21 @@ class ImageBased(GenericImageBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        # self.loader.simulationType = self.simulationType
-        # self.loader.resultFiles = self.resultsFile
-        # return self.loader.results
-        return self.resultsFile
+        sky = self.sky
+        dt = DateTime(sky.month, sky.day, int(sky.hour),
+                      int(60 * (sky.hour - int(sky.hour))))
+
+        rf = self.resultsFile
+        startLine = 0
+        for count, analysisGrid in enumerate(self.analysisGrids):
+            if count:
+                startLine += len(self.analysisGrids[count - 1])
+
+            analysisGrid.setValuesFromFile(
+                rf, (int(dt.hoy),), startLine=startLine, header=False
+            )
+
+        return self.analysisGrids
 
     def ToString(self):
         """Overwrite .NET ToString method."""
@@ -212,7 +256,8 @@ class ImageBased(GenericImageBased):
         _analysisType = {
             0: "Illuminance", 1: "Radiation", 2: "Luminance"
         }
-        return "%s: %s\n#Views: %d" % \
+        return "%s: %s\n#PointGroups: %d #Points: %d" % \
             (self.__class__.__name__,
              _analysisType[self.simulationType],
-             self.numOfViews)
+             self.numOfAnalysisGrids,
+             self.numOfTotalPoints)
