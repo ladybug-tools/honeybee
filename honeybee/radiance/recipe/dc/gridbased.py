@@ -222,13 +222,20 @@ class DaylightCoeffGridBased(GenericGridBased):
         print "Files are written to: %s" % sceneFiles.path
         return batchFile
 
-    def results(self, flattenResults=True):
+    def results(self):
         """Return results for this analysis."""
         assert self.isCalculated, \
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        for r in self.resultsFile:
-            # source, state = os.path.split(r)[-1][:-4].split("..")
-            self.analysisGrids[0].setValuesFromFile(r, self.skyMatrix.hoys)
+        rf = self.resultsFile[0]
+        startLine = 0
+        for count, analysisGrid in enumerate(self.analysisGrids):
+            if count:
+                startLine += len(self.analysisGrids[count - 1])
+
+            analysisGrid.setValuesFromFile(
+                rf, self.skyMatrix.hoys, startLine=startLine, header=True
+            )
+
         return self.analysisGrids

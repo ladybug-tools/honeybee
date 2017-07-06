@@ -214,6 +214,30 @@ class HBZone(HBObject):
                 print "Failed to write %s to file:\n%s" % (self.name, e)
                 return False
 
+    @property
+    def geometry(self):
+        """Return zone geometry for visualization."""
+        _geo = []
+        for surface in self.surfaces:
+            _geo.append(surface.geometry)
+            if surface.hasChildSurfaces:
+                for childSurface in surface.childrenSurfaces:
+                    _geo.append(childSurface.geometry)
+
+        return _geo
+
+    @property
+    def profile(self):
+        """Return zone profile for visualization."""
+        _profile = []
+        for surface in self.surfaces:
+            _profile.append(surface.profile)
+            if surface.hasChildSurfaces:
+                for childSurface in surface.childrenSurfaces:
+                    _profile.append(childSurface.profile)
+
+        return _profile
+
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()

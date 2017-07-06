@@ -225,7 +225,7 @@ class GridBased(GenericGridBased):
         print "Files are written to: %s" % sceneFiles.path
         return batchFile
 
-    def results(self, flattenResults=True):
+    def results(self):
         """Return results for this analysis."""
         assert self.isCalculated, \
             "You haven't run the Recipe yet. Use self.run " + \

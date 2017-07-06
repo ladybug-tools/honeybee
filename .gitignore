@@ -2,3 +2,5 @@
 test.py
 *.gh
 fullsize.py
+honeybee/plus.py
+honeybee/datatree.py
