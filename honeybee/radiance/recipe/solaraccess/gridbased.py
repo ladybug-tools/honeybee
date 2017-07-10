@@ -1,4 +1,6 @@
+"""Radiance Solar Access Grid-based Analysis Recipe."""
 from .._gridbasedbase import GenericGridBased
+from ..recipeutil import writeRadFiles, writeExtraFiles
 from ...postprocess.sunlighthourresults import LoadSunlighthoursResults
 from ...parameters.rcontrib import RcontribParameters
 from ...command.oconv import Oconv
@@ -63,7 +65,7 @@ class SolarAccessGridBased(GenericGridBased):
         self._radianceParameters.directJitter = 0
 
         # create a result loader to load the results once the analysis is done.
-        self.loader = LoadSunlighthoursResults(self.timestep, self.resultsFile)
+        self.loader = LoadSunlighthoursResults(self.timestep, self._resultFiles)
 
     def fromPointsAndVectors(cls, sunVectors, pointGroups, vectorGroups=[],
                              timestep=1, hbObjects=None, subFolder='sunlighthour'):
@@ -194,7 +196,7 @@ class SolarAccessGridBased(GenericGridBased):
         col = Colorset.Ecotect()
         return LegendParameters([0, 'max'], colors=col)
 
-    def writeSunsToFile(self, targetDir, projectName, mkdir=False):
+    def writeSuns(self, targetDir, projectName, mkdir=False):
         """Write sunlist, sun geometry and sun material files.
 
         Args:
@@ -263,60 +265,58 @@ class SolarAccessGridBased(GenericGridBased):
         """
         # 0.prepare target folder
         # create main folder targetFolder\projectName
-        sceneFiles = super(
-            GenericGridBased, self).populateSubFolders(
-                targetFolder, projectName)
+        projectFolder = \
+            super(GenericGridBased, self).writeContent(targetFolder, projectName)
+
+        # write geometry and material files
+        opqfiles, glzfiles, wgsfiles = writeRadFiles(
+            projectFolder + '/scene', projectName, self.opaqueRadFile,
+            self.glazingRadFile, self.windowGroupsRadFiles
+        )
+        # additional radiance files added to the recipe as scene
+        extrafiles = writeExtraFiles(self.scene, projectFolder + '/scene')
 
         # 1.write points
-        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
+        pointsFile = self.writeAnalysisGrids(projectFolder, projectName)
 
         # 2.write sun files
-        sunsList, sunsMat, sunsGeo = self.writeSunsToFile(
-            sceneFiles.path + '\\skies', projectName)
+        sunsList, sunsMat, sunsGeo = \
+            self.writeSuns(projectFolder + '\\sky', projectName)
 
         # 2.1.add sun list to modifiers
-        self._radianceParameters.modFile = self.relpath(sunsList, sceneFiles.path)
+        self._radianceParameters.modFile = self.relpath(sunsList, projectFolder)
 
         # 3.write batch file
-        self.commands = []
-        self.resultsFile = []
-
         if header:
-            self.commands.append(self.header(sceneFiles.path))
+            self._commands.append(self.header(projectFolder))
 
+        # TODO(Mostapha): add windowGroups here if any!
         # # 4.1.prepare oconv
-        octSceneFiles = [sceneFiles.matFile, sceneFiles.geoFile, sunsMat, sunsGeo] + \
-            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
-            sceneFiles.sceneOctFiles
+        octSceneFiles = opqfiles + glzfiles + [sunsMat, sunsGeo] + extrafiles.fp
 
         oc = Oconv(projectName)
-        oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
-                              for f in octSceneFiles)
+        oc.sceneFiles = tuple(self.relpath(f, projectFolder) for f in octSceneFiles)
 
         # # 4.2.prepare Rcontrib
-        rct = Rcontrib('results\\' + projectName,
+        rct = Rcontrib('result\\' + projectName,
                        rcontribParameters=self._radianceParameters)
         rct.octreeFile = str(oc.outputFile)
-        rct.pointsFile = self.relpath(pointsFile, sceneFiles.path)
+        rct.pointsFile = self.relpath(pointsFile, projectFolder)
 
         # # 4.3 write batch file
-        self.commands.append(oc.toRadString())
-        self.commands.append(rct.toRadString())
-        batchFile = os.path.join(sceneFiles.path, "commands.bat")
+        self._commands.append(oc.toRadString())
+        self._commands.append(rct.toRadString())
+        batchFile = os.path.join(projectFolder, "commands.bat")
 
-        writeToFile(batchFile, '\n'.join(self.commands))
-
-        self.resultsFile = (os.path.join(sceneFiles.path, str(rct.outputFile)),)
-
-        print 'Files are written to: %s' % sceneFiles.path
-        return batchFile
+        self._resultFiles = (os.path.join(projectFolder, str(rct.outputFile)),)
+        return writeToFile(batchFile, '\n'.join(self.commands))
 
     def results(self, flattenResults=True):
         """Return results for this analysis."""
-        assert self.isCalculated, \
+        assert self._isCalculated, \
             'You haven not run the Recipe yet. Use self.run ' + \
             'to run the analysis before loading the results.'
 
         self.loader.timestep = self.timestep
-        self.loader.resultFiles = self.resultsFile
+        self.loader.resultFiles = self._resultFiles
         return self.loader.results

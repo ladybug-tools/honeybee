@@ -141,7 +141,8 @@ class AnalysisGrid(object):
                 hourlyValues, hoys, source, state, isDirect)
 
     def setValuesFromFile(self, filePath, hoys=None, source=None, state=None,
-                          startLine=None, isDirect=False, header=True):
+                          startLine=None, isDirect=False, header=True,
+                          checkPointCount=True):
         """Load values for test points from a file.
 
         Args:
@@ -161,16 +162,18 @@ class AnalysisGrid(object):
                 for i in xrange(7):
                     if startLine == 0 and i == 2:
                         pointsCount = int(inf.next().split('=')[-1])
-                        assert len(self._analysisPoints) == pointsCount, \
-                            "Length of points [%d] doesn't match length " \
-                            "of the results [%d]." \
-                            .format(len(self._analysisPoints), pointsCount)
+                        if checkPointCount:
+                            assert len(self._analysisPoints) == pointsCount, \
+                                "Length of points [{}] doesn't match length " \
+                                "of the results [{}].".format(
+                                    len(self._analysisPoints), pointsCount)
+
                     elif startLine == 0 and i == 3:
                         hoursCount = int(inf.next().split('=')[-1])
                         if hoys:
                             assert hoursCount == len(hoys), \
-                                "Number of hours [%d] doesn't match length " \
-                                "of the results [%d]." \
+                                "Number of hours [{}] doesn't match length " \
+                                "of the results [{}]." \
                                 .format(len(hoys), hoursCount)
                         else:
                             hoys = xrange(0, hoursCount)

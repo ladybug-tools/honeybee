@@ -1,9 +1,7 @@
 """Base class for RADIANCE Analysis Recipes."""
-from ...futil import preparedir, writeToFile, copyFilesToFolder, \
-    getRadiancePathLines
-from ..radfile import RadFile
+from ...futil import preparedir, getRadiancePathLines
+from .recipeutil import inputSrfsToRadFiles
 
-from collections import namedtuple
 import os
 import subprocess
 
@@ -30,16 +28,30 @@ class AnalysisRecipe(object):
         self._radFile = None
         self._hbObjs = ()
         self._radianceMaterials = ()
-
-        self.resultsFile = []
-        self.commands = []
-        self.isCalculated = False
+        self._commands = []
+        self._resultFiles = []
+        self._isCalculated = False
         self.isChanged = True
 
     @property
     def isAnalysisRecipe(self):
         """Return true to indicate it is an analysis recipe."""
         return True
+
+    @property
+    def isCalculated(self):
+        """Return True if the recipe is calculated."""
+        return self._isCalculated
+
+    @property
+    def resultFiles(self):
+        """Get list of result files for this recipe."""
+        return self._resultFiles
+
+    @property
+    def commands(self):
+        """List of recipe commands."""
+        return self._commands
 
     @property
     def hbObjects(self):
@@ -50,23 +62,60 @@ class AnalysisRecipe(object):
     def hbObjects(self, hbObjects):
         if not hbObjects:
             self._hbObjs = ()
-            self._radianceMaterials = ()
+            self._opaque = None
+            self._glazing = None
+            self._wgs = ()
         else:
+            self._hbObjs = []
             try:
-                self._radianceMaterials = \
-                    set(mat for hbo in hbObjects for mat in hbo.radianceMaterials())
-            except AttributeError:
+                for obj in hbObjects:
+                    if hasattr(obj, 'isHBZone'):
+                        self._hbObjs.extend(obj.surfaces)
+                        for srf in obj.surfaces:
+                            self._hbObjs.extend(obj.childrenSurface)
+                    elif obj.isHBAnalysisSurface:
+                        self._hbObjs.append(obj)
+                        try:
+                            self._hbObjs.extend(obj.childrenSurface)
+                        except AttributeError:
+                            # HBFenSurfaces
+                            pass
+            except AttributeError as e:
                 raise TypeError(
-                    'At the minimum one of the inputs is not a Honeybee object.'
+                    'Object inputs must be Honeybee Zones or Surfaces:\n{}'.format(e)
                 )
 
-            self._hbObjs = hbObjects
-            self._radFile = RadFile(hbObjects)
+        self._opaque, self._glazing, self._wgs = inputSrfsToRadFiles(self._hbObjs)
 
     @property
-    def radianceMaterials(self):
-        """Get list of radiance materials for Honeybee objects in this recipe."""
-        return self._radianceMaterials
+    def opaqueSurfaces(self):
+        """Collection of opaque surfaces in this recipe."""
+        return self._opaque.hbSurfaces
+
+    @property
+    def glazingSurfaces(self):
+        """Collection of glazing surfaces in this recipe."""
+        return self._glazing.hbSurfaces
+
+    @property
+    def windowGroups(self):
+        """Collection of window groups in this recipe."""
+        return tuple(wg.hbSurfaces[0] for wg in self._wgs)
+
+    @property
+    def opaqueRadFile(self):
+        """A RadFile for opaque surfaces in this recipe."""
+        return self._opaque
+
+    @property
+    def glazingRadFile(self):
+        """A RadFile for glazing surfaces in this recipe."""
+        return self._glazing
+
+    @property
+    def windowGroupsRadFiles(self):
+        """Collection of RadFiles for window groups in this recipe."""
+        return self._wgs
 
     @property
     def subFolder(self):
@@ -80,7 +129,7 @@ class AnalysisRecipe(object):
 
     @property
     def scene(self):
-        """A base scene for the recipe."""
+        """A base honeybee.radiance.scene for the recipe."""
         return self._scene
 
     @scene.setter
@@ -112,180 +161,57 @@ class AnalysisRecipe(object):
         else:
             return dirLine
 
-    def prepareSubFolder(self, targetFolder,
-                         subFolders=('.tmp', 'objects', 'skies', 'results'),
-                         removeContent=True):
-        """Create subfolders under targetFolder/self.subfolder.
-
-        By default a honeybee radiance analysis folder structure is as below.
-        . taragetFolder
-            .. subfolder
-                . command.bat
-                . *.pts  # point files
-                . *.vf  # view files
-                . *.oct  # octree files
-                .. .tmp (*.tmp)  # This folder will be removed after running the analysis
-                .. objects (*.rad, *.mat)
-                .. skies (*.sky, *.wea)
-                .. results
-                    ..matrix (*.vmx, *.dmx) # only for 3-Phase analysis
-                    ..hdr (*.hdr)  # only for view-based analysis
-                    ..ill (*.ill)  # illuminance values for annual analysis
-        """
-        for f in subFolders:
-            p = os.path.join(targetFolder, self.subFolder, f)
-            preparedir(p, removeContent)
-
-    def toRadStringGeometries(self):
-        """Return geometries radiance definition as a single multiline string."""
-        print 'Number of Honeybee objects: %d' % len(self.hbObjects)
-        return "\n".join(self._radFile.geometries())
-
-    def toRadStringMaterials(self):
-        """Return radiance definition of materials as a single multiline string."""
-        print 'Number of radiance materials: %d' % len(self.radianceMaterials)
-        return "\n".join((hbo.toRadString() for hbo in self.radianceMaterials))
-
-    def toRadStringMaterialsAndGeometries(self):
-        """Return geometries radiance definition as a single multiline string."""
-        return str(self._radFile.toRadString())
-
     # TODO: Get commands without running write method.
     def toRadString(self):
         """Radiance representation of the recipe."""
+        assert len(self.commands) != 0, \
+            Exception('You must write the recipe to get the list of commands'
+                      ' as radString.')
         return '\n'.join(self.commands)
 
-    def writeGeometriesToFile(self, targetDir, fileName, mkdir=False):
-        """Write geometries to file.
+    def writeContent(self, targetFolder, projectName='untitled', removeContent=True,
+                     subfolders=[]):
+        """Write geometry and material files to folder for this recipe.
+
+        This method in recipebase creates the folder and subfolders for 'scene',
+        'result' and 'sky' which is shared between all the recipes. If there is a
+        scene added to the recipe by user a folder will be created as 'scene/extra'.
 
         Args:
-            targetDir: Path to project directory (e.g. c:/ladybug)
-            fileName: File name as string. materials will be saved as
-                fileName.rad
-
+            subfolders: List of subfolders to be added to 'scene', 'sky' and 'result'.
         Returns:
-            Path to file in case of success.
-
-        Exceptions:
-            ValueError if targetDir doesn't exist and mkdir is False.
+            Path to analysis folder.
         """
-        assert type(fileName) is str, 'fileName should be a string.'
-        fileName = fileName if fileName.lower().endswith('.rad') \
-            else fileName + '.rad'
+        self._commands = []
 
-        return writeToFile(os.path.join(targetDir, fileName),
-                           self.toRadStringGeometries() + "\n", mkdir)
-
-    def writeMatrialsToFile(self, targetDir, fileName, mkdir=False):
-        """Write materials to file.
-
-        Args:
-            targetDir: Path to project directory (e.g. c:/ladybug)
-            fileName: File name as string. materials will be saved as
-                fileName.mat
-
-        Returns:
-            Path to file in case of success.
-
-        Exceptions:
-            ValueError if targetDir doesn't exist and mkdir is False.
-        """
-        assert type(fileName) is str, 'fileName should be a string.'
-        fileName = fileName if fileName.lower().endswith('.mat') \
-            else fileName + '.mat'
-
-        return writeToFile(os.path.join(targetDir, fileName),
-                           self.toRadStringMaterials() + "\n", mkdir)
-
-    def writeMaterialsAndGeometriesToFile(self, targetDir, fileName, mkdir=False):
-        """Write geometries to file.
-
-        Args:
-            targetDir: Path to project directory (e.g. c:/ladybug)
-            fileName: File name as string. materials will be saved as
-                fileName.rad
-
-        Returns:
-            Path to file in case of success.
-
-        Exceptions:
-            ValueError if targetDir doesn't exist and mkdir is False.
-        """
-        assert type(fileName) is str, 'fileName should be a string.'
-        fileName = fileName if fileName.lower().endswith('.rad') \
-            else fileName + '.rad'
-
-        return writeToFile(os.path.join(targetDir, fileName),
-                           self.toRadStringMaterialsAndGeometries() + "\n",
-                           mkdir)
-
-    def populateSubFolders(self, targetFolder, projectName='untitled',
-                           subFolders=('objects', 'skies', 'results'),
-                           removeSubFoldersContent=True):
-        """Write geometry and material files to folder.
-
-        Returns:
-            studyFolder, Materil files, geometry files, octree files
-        """
         if not targetFolder:
             targetFolder = os.path.join(os.environ['USERPROFILE'], 'honeybee')
 
-        _ispath = preparedir(targetFolder, False)
-        assert _ispath, "Failed to create %s. Try a different path!" % targetFolder
+        iscreated = preparedir(targetFolder, False)
+        assert iscreated, "Failed to create %s. Try a different path!" % targetFolder
 
-        projectName = 'untitled' if not projectName else str(projectName)
+        projectName = projectName or 'untitled'
 
-        _basePath = os.path.join(targetFolder, projectName)
-        _ispath = preparedir(_basePath, removeContent=False)
-        assert _ispath, "Failed to create %s. Try a different path!" % _basePath
+        _basePath = os.path.join(targetFolder, projectName, self.subFolder)
+        iscreated = preparedir(_basePath, removeContent=False)
+        assert iscreated, "Failed to create %s. Try a different path!" % _basePath
 
-        print 'Preparing %s' % os.path.join(_basePath, self.subFolder)
+        print 'Writing recipe contents to: %s' % _basePath
+
         # create subfolders inside the folder
-        self.prepareSubFolder(_basePath,
-                              subFolders=subFolders,
-                              removeContent=removeSubFoldersContent)
+        subfolders += ['scene', 'sky', 'result']
+        for folder in subfolders:
+            ff = os.path.join(_basePath, folder)
+            iscreated = preparedir(ff, removeContent)
+            assert iscreated, "Failed to create %s. Try a different path!" % ff
 
+        # if there is an additional scene include the folder and copy the file if needed.
         if self.scene:
-            self.prepareSubFolder(_basePath, subFolders=('scene',),
-                                  removeContent=self.scene.overwrite)
+            ff = os.path.join(_basePath, 'scene/extra')
+            iscreated = preparedir(ff, removeContent)
+            assert iscreated, "Failed to create %s. Try a different path!" % ff
 
-        _path = os.path.join(_basePath, self.subFolder)
-        # Check if anything has changed
-        # if not self.isChanged:
-        #     print "Inputs has not changed! Check files at %s" % _path
-
-        # 3.write materials and geometry files
-        matFile = self.writeMatrialsToFile(_path + '\\objects', projectName)
-        geoFile = self.writeGeometriesToFile(_path + '\\objects', projectName)
-
-        # 3.1. copy scene files if anything
-        if self.scene:
-            if self.scene.numberOfFiles == 1:
-                print 'One file from the radiance scene is added to the analysis.'
-            else:
-                print '%d files from the radiance scene are added to the analysis.' % \
-                    self.scene.numberOfFiles
-
-            if self.scene.copyLocal:
-                sceneMatFiles = copyFilesToFolder(
-                    self.scene.files.mat, _path + '\\scene', self.scene.overwrite)
-                sceneRadFiles = copyFilesToFolder(
-                    self.scene.files.rad, _path + '\\scene', self.scene.overwrite)
-                sceneOctFiles = copyFilesToFolder(
-                    self.scene.files.oct, _path + '\\scene', self.scene.overwrite)
-            else:
-                sceneMatFiles = self.scene.files.mat
-                sceneRadFiles = self.scene.files.rad
-                sceneOctFiles = self.scene.files.oct
-        else:
-            sceneMatFiles, sceneRadFiles, sceneOctFiles = [], [], []
-
-        files = namedtuple(
-            'Files', 'path geoFile matFile sceneRadFiles sceneMatFiles sceneOctFiles'
-        )
-
-        return files(_path, geoFile, matFile, sceneRadFiles, sceneMatFiles,
-                     sceneOctFiles)
+        return _basePath
 
     # TODO: Write a runmanager class to handle runs
     def run(self, commandFile, debug=False):
@@ -299,7 +225,7 @@ class AnalysisRecipe(object):
 
         subprocess.call(commandFile)
 
-        self.isCalculated = True
+        self._isCalculated = True
         # self.isChanged = False
         return True
 
@@ -309,8 +235,8 @@ class AnalysisRecipe(object):
         return None  # for image-based analysis it will be None.
 
     def write(self):
-        """Write files for this recipe to folder."""
-        raise NotImplementedError()
+        """Write contents and commands to a local drive."""
+        raise NotImplementedError('write must be implemented in every recipe subclass.')
 
     def results(self):
         """Return results for this analysis."""

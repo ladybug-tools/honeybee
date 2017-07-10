@@ -108,7 +108,7 @@ class SunMatrix(RadianceSky):
             line = hrf.read()
         return line == ','.join(str(h) for h in self.hoys) + '\n'
 
-    def execute(self, workingDir, reuse=True):
+    def execute(self, workingDir, reuse=True, shell=False):
         """Generate sun matrix.
 
         Args:
@@ -167,8 +167,8 @@ class SunMatrix(RadianceSky):
                 cmdgd, ro = tuple(c.strip()
                                   for c in gdlit.toRadString().split('>')[0].split('|'))
                 # run cmd, get results in the form of a list of lines.
-                cmdRun = Popen(cmdgd, stdout=PIPE, stderr=warningDump)
-                gd = Popen(ro, stdin=cmdRun.stdout, stdout=PIPE)
+                cmdRun = Popen(cmdgd, shell=shell, stdout=PIPE, stderr=warningDump)
+                gd = Popen(ro, shell=shell, stdin=cmdRun.stdout, stdout=PIPE)
                 data = gd.communicate()[0].split('\n')
                 # clean the output by throwing out comments and brightness functions.
                 sunCurrentValue = []
@@ -186,7 +186,7 @@ class SunMatrix(RadianceSky):
                     sunValues.append(sunCurrentValue)
                     sunUpHours.append(timeStamp.intHOY)
 
-        numOfSuns = len(sunUpHours)
+        sunCount = len(sunUpHours)
 
         print('Writing sun positions and radiation values to {}'.format(fp))
         # create solar discs.
@@ -198,7 +198,7 @@ class SunMatrix(RadianceSky):
         # create list of suns.
         with open(lfp, 'w') as sunlist:
             sunlist.write(
-                "\n".join(("solar%s" % (idx + 1) for idx in xrange(numOfSuns)))
+                "\n".join(("solar%s" % (idx + 1) for idx in xrange(sunCount)))
             )
             sunlist.write('\n')
 
@@ -206,7 +206,7 @@ class SunMatrix(RadianceSky):
         fileHeader = ['#?RADIANCE']
         fileHeader += ['Sun matrix created by Honeybee']
         fileHeader += ['LATLONG= %s %s' % (latitude, -longitude)]
-        fileHeader += ['NROWS=%s' % numOfSuns]
+        fileHeader += ['NROWS=%s' % sunCount]
         fileHeader += ['NCOLS=%s' % len(self.hoys)]
         fileHeader += ['NCOMP=3']
         fileHeader += ['FORMAT=ascii']
@@ -221,8 +221,8 @@ class SunMatrix(RadianceSky):
                 sunMtx.write('\n'.join(sunRadList) + '\n\n')
 
             # This last one is for the ground.
-            sunRadList = ['0 0 0'] * len(self.hoys)
-            sunMtx.write('\n'.join(sunRadList))
+            # sunRadList = ['0 0 0'] * len(self.hoys)
+            # sunMtx.write('\n'.join(sunRadList))
             sunMtx.write('\n')
 
         return fp, lfp, mfp

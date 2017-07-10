@@ -7,6 +7,7 @@ sunlighthours recipe and annual analysis recipe.
 from abc import ABCMeta, abstractmethod
 from ..analysisgrid import AnalysisGrid
 from ...futil import writeToFile
+from ...utilcol import randomName
 from ._recipebase import AnalysisRecipe
 
 from ladybug.legendparameters import LegendParameters
@@ -80,12 +81,12 @@ class GenericGridBased(AnalysisRecipe):
         return tuple(ap.vectors for ap in self.analysisGrids)
 
     @property
-    def numOfAnalysisGrids(self):
+    def AnalysisGridCount(self):
         """Number of point groups."""
         return len(self.analysisGrids)
 
     @property
-    def numOfTotalPoints(self):
+    def totalPointCount(self):
         """Number of total points."""
         return sum(len(tuple(pts)) for pts in self.points)
 
@@ -119,30 +120,36 @@ class GenericGridBased(AnalysisRecipe):
 
         return analysisGrids
 
-    def toRadStringPoints(self):
-        """Return points radiance definition as a single multiline string."""
-        return '\n'.join((ag.toRadString() for ag in self.analysisGrids))
-
-    def writePointsToFile(self, targetDir, fileName, mkdir=False):
+    def writeAnalysisGrids(self, targetDir, fileName=None, merge=True, mkdir=False):
         """Write point groups to file.
 
         Args:
             targetDir: Path to project directory (e.g. c:/ladybug)
             fileName: File name as string. Points will be saved as
                 fileName.pts
-
+            merge: Merge all the grids into a single file. If the input is
+                False each file will be named based on the grid name (default: True).
         Returns:
             Path to file in case of success.
 
         Exceptions:
             ValueError if targetDir doesn't exist and mkdir is False.
         """
-        assert type(fileName) is str, 'fileName should be a string.'
-        fileName = fileName if fileName.lower().endswith('.pts') \
-            else fileName + '.pts'
+        if merge:
+            fileName = fileName or randomName()
+            assert type(fileName) is str, 'fileName should be a string.'
+            fileName = fileName if fileName.lower().endswith('.pts') \
+                else fileName + '.pts'
 
-        return writeToFile(os.path.join(targetDir, fileName),
-                           self.toRadStringPoints() + "\n", mkdir)
+            grids = '\n'.join((ag.toRadString() for ag in self.analysisGrids)) + '\n'
+            return writeToFile(os.path.join(targetDir, fileName), grids, mkdir)
+        else:
+            return tuple(
+                writeToFile(os.path.join(targetDir, ag.name + '.pts'),
+                            ag.toRadString() + '\n',
+                            mkdir)
+                for ag in self.analysisGrids
+            )
 
     @abstractmethod
     def results(self):
@@ -157,5 +164,5 @@ class GenericGridBased(AnalysisRecipe):
         """Represent grid based recipe."""
         return "%s\n#AnalysisGrids: %d #Points: %d" % \
             (self.__class__.__name__,
-             self.numOfAnalysisGrids,
-             self.numOfTotalPoints)
+             self.AnalysisGridCount,
+             self.totalPointCount)

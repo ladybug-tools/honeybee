@@ -64,6 +64,7 @@ class HBSurface(HBAnalysisSurface):
                  radProperties=None, epProperties=None, states=None):
         """Init honeybee surface."""
         states = states or ()
+
         HBAnalysisSurface.__init__(self, name, sortedPoints, surfaceType,
                                    isNameSetByUser, isTypeSetByUser)
 
@@ -120,15 +121,22 @@ class HBSurface(HBAnalysisSurface):
         name = name or util.randomName()
         srfData = plus.extractGeometryPoints(geometry)
         cls._isCreatedFromGeo = True
-
         if not group:
+            if epProperties:
+                print('epProperties.duplicate must be implemented to honeybee surface.')
             hbsrfs = []
             # create a separate surface for each geometry.
             for gcount, srf in enumerate(srfData):
                 for scount, (geo, pts) in enumerate(srf):
                     _name = '%s_%d_%d' % (name, gcount, scount)
-                    _srf = cls(_name, pts, surfaceType, isNameSetByUser, isTypeSetByUser,
-                               radProperties, epProperties, states)
+                    if radProperties:
+                        _srf = cls(_name, pts, surfaceType, isNameSetByUser,
+                                   isTypeSetByUser, radProperties.duplicate(),
+                                   epProperties, states)
+                    else:
+                        _srf = cls(_name, pts, surfaceType, isNameSetByUser,
+                                   isTypeSetByUser, radProperties, epProperties, states)
+
                     _srf.geometry = geometry
                     hbsrfs.append(_srf)
 

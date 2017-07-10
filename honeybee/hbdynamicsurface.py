@@ -7,7 +7,6 @@ class HBDynamicSurface(HBSurface):
 
     Attributes:
         name: A unique string for surface name
-        states: A list of SurfaceStates for this dynamic surface.
         sortedPoints: A list of 3 points or more as tuple or list with three items
             (x, y, z). Points should be sorted. This class won't sort the points.
             If surfaces has multiple subsurfaces you can pass lists of point lists
@@ -29,17 +28,8 @@ class HBDynamicSurface(HBSurface):
             RADProperties will be assigned to surface by Honeybee.
         epProperties: EnergyPlus properties for this surface. If empty default
             epProperties will be assigned to surface by Honeybee.
+        states: A list of SurfaceStates for this dynamic surface.
     """
-
-    def __init__(self, name, states, sortedPoints=[], surfaceType=None,
-                 isNameSetByUser=False, isTypeSetByUser=False,
-                 radProperties=None, epProperties=None):
-        """Init honeybee surface."""
-        states = states or ()
-        HBSurface.__init__(
-            self, name, sortedPoints, surfaceType, isNameSetByUser, isTypeSetByUser,
-            radProperties, epProperties, states
-        )
 
     @property
     def isHBDynamicSurface(self):

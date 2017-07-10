@@ -1,6 +1,7 @@
 """Radiance Grid-based Analysis Recipe."""
 
 from .._imagebasedbase import GenericImageBased
+from ..recipeutil import writeRadFiles, writeExtraFiles
 from ...parameters.imagebased import ImageBasedParameters
 from ...command.oconv import Oconv
 from ...command.rpict import Rpict
@@ -65,7 +66,7 @@ class ImageBased(GenericImageBased):
 
         # create a result loader to load the results once the analysis is done.
         # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-        #                                              self.resultsFile)
+        #                                              self._resultFiles)
 
     @property
     def simulationType(self):
@@ -143,69 +144,68 @@ class ImageBased(GenericImageBased):
         """
         # 0.prepare target folder
         # create main folder targetFolder\projectName
-        sceneFiles = super(
-            ImageBased, self).populateSubFolders(
-                targetFolder, projectName)
+        projectFolder = \
+            super(ImageBased, self).writeContent(
+                targetFolder, projectName, subfolders=['view'])
 
-        # add view folder
-        self.prepareSubFolder(os.path.join(targetFolder, projectName),
-                              subFolders=('views',))
+        # write geometry and material files
+        opqfiles, glzfiles, wgsfiles = writeRadFiles(
+            projectFolder + '/scene', projectName, self.opaqueRadFile,
+            self.glazingRadFile, self.windowGroupsRadFiles
+        )
+        # additional radiance files added to the recipe as scene
+        extrafiles = writeExtraFiles(self.scene, projectFolder + '/scene')
 
         # 1.write views
-        viewFiles = self.writeViewsToFile(sceneFiles.path + '\\views')
+        viewFiles = self.writeViews(projectFolder + '\\view')
 
         # 2.write sky file
-        skyFile = self.sky.writeToFile(sceneFiles.path + '\\skies')
+        skyFile = self.sky.writeToFile(projectFolder + '\\sky')
 
         # 3.write batch file
-        self.commands = []
-        self.resultsFile = []
-
         if header:
-            self.commands.append(self.header(sceneFiles.path))
+            self.commands.append(self.header(projectFolder))
 
+        # TODO(Mostapha): add windowGroups here if any!
         # # 4.1.prepare oconv
-        octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.sceneMatFiles + sceneFiles.sceneRadFiles + \
-            sceneFiles.sceneOctFiles
+        octSceneFiles = [skyFile] + opqfiles + glzfiles + extrafiles.fp
 
         oc = Oconv(projectName)
-        oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
+        oc.sceneFiles = tuple(self.relpath(f, projectFolder)
                               for f in octSceneFiles)
 
-        self.commands.append(oc.toRadString())
+        self._commands.append(oc.toRadString())
 
         # # 4.2.prepare rpict
         # TODO: Add overtrue
         for view, f in zip(self.views, viewFiles):
-            rp = Rpict('results\\' + view.name,
+            rp = Rpict('result\\' + view.name,
                        simulationType=self.simulationType,
                        rpictParameters=self.radianceParameters)
             rp.octreeFile = str(oc.outputFile)
-            rp.viewFile = self.relpath(f, sceneFiles.path)
+            rp.viewFile = self.relpath(f, projectFolder)
 
-            self.commands.append(rp.toRadString())
-            self.resultsFile.append(
-                os.path.join(sceneFiles.path, str(rp.outputFile)))
+            self._commands.append(rp.toRadString())
+            self._resultFiles.append(
+                os.path.join(projectFolder, str(rp.outputFile)))
 
         # # 4.3 write batch file
-        batchFile = os.path.join(sceneFiles.path, "commands.bat")
+        batchFile = os.path.join(projectFolder, "commands.bat")
 
         writeToFile(batchFile, "\n".join(self.commands))
 
-        print "Files are written to: %s" % sceneFiles.path
         return batchFile
 
     def results(self, flattenResults=True):
         """Return results for this analysis."""
-        assert self.isCalculated, \
+        assert self._isCalculated, \
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
         # self.loader.simulationType = self.simulationType
-        # self.loader.resultFiles = self.resultsFile
+        # self.loader.resultFiles = self._resultFiles
         # return self.loader.results
-        return self.resultsFile
+        return self._resultFiles
 
     def ToString(self):
         """Overwrite .NET ToString method."""
@@ -219,4 +219,4 @@ class ImageBased(GenericImageBased):
         return "%s: %s\n#Views: %d" % \
             (self.__class__.__name__,
              _analysisType[self.simulationType],
-             self.numOfViews)
+             self.viewCount)
