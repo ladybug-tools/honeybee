@@ -89,20 +89,19 @@ class Dctimestep(RadianceCommand):
             ' have been specified. Only one of those methods should be used for ' \
             'calculation at a given time. Please check your inputs.'
 
-        addToStr = lambda val: "%s " % val if val else ''
-
         # Creating the string this way because it might change again in the
         # future.
-        radString = "%s " % cmdPath
-        radString += addToStr(dctimestepParam)
-        radString += addToStr(outputFileNameFormat)
-        radString += addToStr(vmatrix)
-        radString += addToStr(tmatrix)
-        radString += addToStr(dmatrix)
-        radString += addToStr(daylightCoeffSpec)
-        radString += addToStr(skyVector)
-        radString += addToStr(outputFileName)
+        radString = [cmdPath]
+        radString.append(dctimestepParam or '')
+        radString.append(outputFileNameFormat or '')
+        radString.append(vmatrix or '')
+        radString.append(tmatrix or '')
+        radString.append(dmatrix or '')
+        radString.append(daylightCoeffSpec or '')
+        radString.append(skyVector or '')
+        radString.append(outputFileName or '')
 
+        radString = ' '.join(' '.join(radString).split())
         self.checkInputFiles(radString)
         return radString
 

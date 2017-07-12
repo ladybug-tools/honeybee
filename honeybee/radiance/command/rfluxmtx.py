@@ -101,10 +101,11 @@ class Rfluxmtx(RadianceCommand):
             assert value, "The modifier %s was not found in the string specified" % key
 
         if os.path.exists(inputString):
-            newOutputFile = inputString[:-4] + '_m' + inputString[-4:]
+            newOutputFile = inputString[:-4] + '_cp_added' + inputString[-4:]
             with open(newOutputFile, 'w') as newoutput:
                 newoutput.write(outputString)
             outputString = newOutputFile
+
         return outputString
 
     @staticmethod

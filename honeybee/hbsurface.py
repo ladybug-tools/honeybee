@@ -2,6 +2,13 @@ from _hbanalysissurface import HBAnalysisSurface
 from hbfensurface import HBFenSurface
 from surfaceproperties import SurfaceProperties, SurfaceState
 from vectormath.euclid import Vector3, Point3
+import utilcol as util
+import honeybee
+try:
+    import plus
+except ImportError as e:
+    if honeybee.isplus:
+        raise ImportError(e)
 
 
 class HBSurface(HBAnalysisSurface):
@@ -57,6 +64,7 @@ class HBSurface(HBAnalysisSurface):
                  radProperties=None, epProperties=None, states=None):
         """Init honeybee surface."""
         states = states or ()
+
         HBAnalysisSurface.__init__(self, name, sortedPoints, surfaceType,
                                    isNameSetByUser, isTypeSetByUser)
 
@@ -67,6 +75,7 @@ class HBSurface(HBAnalysisSurface):
 
         self._parent = None
         self._childSurfaces = []
+        self._isCreatedFromGeo = False
 
     # TODO: Parse EnergyPlus properties
     @classmethod
@@ -98,6 +107,68 @@ class HBSurface(HBAnalysisSurface):
         # create the surfaceString
         return cls(name, pts, srfType, isNameSetByUser=True, isTypeSetByUser=True)
 
+    @classmethod
+    def fromGeometry(cls, name, geometry, surfaceType=None,
+                     isNameSetByUser=False, isTypeSetByUser=False,
+                     radProperties=None, epProperties=None, states=None, group=False):
+        """Create honeybee surface[s] from a Grasshopper geometry.
+
+        If group is False it will return a list of HBSurfaces.
+        """
+        assert honeybee.isplus, \
+            '"fromGeometries" method can only be used in [+] libraries.'
+
+        name = name or util.randomName()
+        srfData = plus.extractGeometryPoints(geometry)
+        cls._isCreatedFromGeo = True
+        if not group:
+            if epProperties:
+                print('epProperties.duplicate must be implemented to honeybee surface.')
+            hbsrfs = []
+            # create a separate surface for each geometry.
+            for gcount, srf in enumerate(srfData):
+                for scount, (geo, pts) in enumerate(srf):
+                    _name = '%s_%d_%d' % (name, gcount, scount)
+                    if radProperties:
+                        _srf = cls(_name, pts, surfaceType, isNameSetByUser,
+                                   isTypeSetByUser, radProperties.duplicate(),
+                                   epProperties, states)
+                    else:
+                        _srf = cls(_name, pts, surfaceType, isNameSetByUser,
+                                   isTypeSetByUser, radProperties, epProperties, states)
+
+                    _srf.geometry = geometry
+                    hbsrfs.append(_srf)
+
+            # check naming and fix it if it's only single geometry
+            if gcount == 0 and scount == 0:
+                # this is just a single geometry. remove counter
+                hbsrfs[0].name = '_'.join(hbsrfs[0].name.split('_')[:-2])
+            elif gcount == 0:
+                # this is a single geometry with multiple sub surfaces like a polysurface
+                for hbs in hbsrfs:
+                    bname = hbs.name.split('_')
+                    hbs.name = '%s_%s' % ('_'.join(bname[:-2]), bname[-1])
+            return hbsrfs
+        else:
+            _geos = []
+            _pts = []
+            # collect all the points in a single list
+            for srf in srfData:
+                for geo, pts in srf:
+                    _pts.extend(pts)
+                    _geos.append(geo)
+
+            _srf = cls(name, _pts, surfaceType, isNameSetByUser, isTypeSetByUser,
+                       radProperties, epProperties, states)
+            _srf.geometry = _geos
+            return _srf
+
+    @property
+    def isCreatedFromGeometry(self):
+        """Return True if the surface is created from a geometry not points."""
+        return self._isCreatedFromGeo
+
     @property
     def isHBSurface(self):
         """Return True for HBSurface."""
@@ -122,6 +193,35 @@ class HBSurface(HBAnalysisSurface):
     def childrenSurfaces(self):
         """Get children surfaces."""
         return self._childSurfaces
+
+    @property
+    def geometry(self):
+        """Return geometry."""
+        assert honeybee.isplus, \
+            '"geometry" property can only be used in [+] libraries.'
+        if self.isCreatedFromGeometry:
+            return self._geometry
+        else:
+            return self.profile
+
+    @geometry.setter
+    def geometry(self, geo):
+        """Set geometry."""
+        assert honeybee.isplus, \
+            '"geometry" property can only be used in [+] libraries.'
+
+        assert honeybee.isplus, \
+            '"profile" property can only be used in [+] libraries.'
+        self._geometry = geo
+
+    @property
+    def profile(self):
+        """Get profile curve of this surface."""
+        assert honeybee.isplus, \
+            '"profile" property can only be used in [+] libraries.'
+        return plus.polygon(
+            tuple(plus.xyzToGeometricalPoints(self.absolutePoints))
+        )
 
     def addFenestrationSurfaceBySize(self, name, width, height, sillHeight=1,
                                      radianceMaterial=None):

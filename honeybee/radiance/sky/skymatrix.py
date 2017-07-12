@@ -45,6 +45,11 @@ class SkyMatrix(RadianceSky):
         return True
 
     @property
+    def skyMatrixParameters(self):
+        """Return sky matrix parameters."""
+        return self._skyMatrixParameters
+
+    @property
     def wea(self):
         """An instance of ladybug Wea."""
         return self._wea
@@ -108,7 +113,6 @@ class SkyMatrix(RadianceSky):
 
     def hoursMatch(self, hoursFile):
         """Check if hours in the hours file matches the hours of wea."""
-        print 'Checking available sky matrix in folder...'
         if not os.path.isfile(hoursFile):
             return False
 
@@ -135,8 +139,7 @@ class SkyMatrix(RadianceSky):
         weafilepath = os.path.join(workingDir, '{}.wea'.format(self.name))
         weafilepath = self.wea.write(weafilepath, self.hoys, writeHours)
         genday = Gendaymtx(weaFile=weafilepath, outputName=outfilepath)
-        genday.gendaymtxParameters.skyDensity = self.skyDensity
-        genday.gendaymtxParameters.rotation = self.north
+        genday.gendaymtxParameters = self._skyMatrixParameters
         return genday.toRadString()
 
     def execute(self, workingDir, reuse=True):
@@ -151,14 +154,14 @@ class SkyMatrix(RadianceSky):
         hoursfilepath = weafilepath[:-4] + '.hrs'
 
         if reuse and os.path.isfile(outfilepath) and self.hoursMatch(hoursfilepath):
+            print('Using the same SkyMatrix from an older run.'.format())
             return outfilepath
         else:
             outfilepath = os.path.join(workingDir, '{}.smx'.format(self.name))
             weafilepath = os.path.join(workingDir, '{}.wea'.format(self.name))
             weafilepath = self.wea.write(weafilepath)
             genday = Gendaymtx(weaFile=weafilepath, outputName=outfilepath)
-            genday.gendaymtxParameters.skyDensity = self.skyDensity
-            genday.gendaymtxParameters.rotation = self.north
+            genday.gendaymtxParameters = self._skyMatrixParameters
             return genday.execute()
 
     def ToString(self):

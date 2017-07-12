@@ -1,4 +1,5 @@
 """Radiance Properties for HBSurfaces."""
+import copy
 
 
 class RadianceProperties(object):
@@ -71,6 +72,10 @@ class RadianceProperties(object):
     def isMaterialSetByUser(self):
         """Check if material is set by user."""
         return self._isMaterialSetByUser
+
+    def duplicate(self):
+        """Duplicate RadianceProperties."""
+        return copy.copy(self)
 
     def toRadString(self):
         """Get radianace definition for honeybee surfaces if any."""

@@ -27,8 +27,7 @@ class GenericImageBased(AnalysisRecipe):
     def __init__(self, views, hbObjects=None, subFolder="imagebased"):
         """Create image-based recipe."""
         # keep track of original points for re-structuring them later on
-        AnalysisRecipe.__init__(self, hbObjects=hbObjects,
-                                        subFolder=subFolder)
+        AnalysisRecipe.__init__(self, hbObjects=hbObjects, subFolder=subFolder)
         self.views = views
 
     @property
@@ -46,15 +45,11 @@ class GenericImageBased(AnalysisRecipe):
                 '{} is not a View.'.format(v)
 
     @property
-    def numOfViews(self):
+    def viewCount(self):
         """Number of point groups."""
         return len(self.views)
 
-    def toRadStringViews(self):
-        """Return radiance definition of each view as a single multiline string."""
-        return '\n'.join((v.toRadString() for v in self.views))
-
-    def writeViewsToFile(self, targetDir, mkdir=False):
+    def writeViews(self, targetDir, mkdir=False):
         """Write point groups to file.
 
         Args:
@@ -66,11 +61,11 @@ class GenericImageBased(AnalysisRecipe):
         Exceptions:
             ValueError if targetDir doesn't exist and mkdir is False.
         """
-        for v in self.views:
-            writeToFile(os.path.join(targetDir, v.name + '.vf'),
-                        'rvu ' + v.toRadString() + '\n', mkdir)
 
-        return tuple(os.path.join(targetDir, v.name + '.vf') for v in self.views)
+        return tuple(writeToFile(os.path.join(targetDir, v.name + '.vf'),
+                                 'rvu ' + v.toRadString() + '\n',
+                                 mkdir)
+                     for v in self.views)
 
     @abstractmethod
     def results(self):
@@ -83,4 +78,4 @@ class GenericImageBased(AnalysisRecipe):
 
     def __repr__(self):
         """Represent grid based recipe."""
-        return "%s\n#Views: %d" % (self.__class__.__name__, self.numOfViews)
+        return "%s\n#Views: %d" % (self.__class__.__name__, self.viewCount)
