@@ -249,7 +249,14 @@ class AnalysisPoint(object):
 
         ind = 1 if isDirect else 0
         for hoy, value in izip(hoys, values):
-            self._values[sid][stateid][hoy][ind] = value
+            try:
+                self._values[sid][stateid][hoy][ind] = value
+            except Exception as e:
+                raise ValueError(
+                    'Failed to load {} results for window_group [{}], state[{}]'
+                    ' for hour {}.\n{}'.format('direct' if isDirect else 'total',
+                                               sid, stateid, hoy, e)
+                )
 
     def setCoupledValue(self, value, hoy, source=None, state=None):
         """Set both total and direct values for a specific hour of the year.

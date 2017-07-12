@@ -101,7 +101,7 @@ class Dctimestep(RadianceCommand):
         radString.append(skyVector or '')
         radString.append(outputFileName or '')
 
-        radString = ''.join(' '.join(radString).split())
+        radString = ' '.join(' '.join(radString).split())
         self.checkInputFiles(radString)
         return radString
 

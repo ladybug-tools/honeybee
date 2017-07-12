@@ -154,7 +154,7 @@ class DaylightCoeffGridBased(GenericGridBased):
         # create main folder targetFolder\projectName
         projectFolder = \
             super(GenericGridBased, self).writeContent(
-                targetFolder, projectName, False, subfolders=['.tmp', 'result/matrix']
+                targetFolder, projectName, False, subfolders=['tmp', 'result/matrix']
             )
 
         # write geometry and material files
@@ -173,9 +173,11 @@ class DaylightCoeffGridBased(GenericGridBased):
             self._commands.append(self.header(projectFolder))
 
         # # 2.1.Create sky matrix.
+        self.skyMatrix.mode = 0
         skyMtxTotal = 'sky\\{}.smx'.format(self.skyMatrix.name)
         self.skyMatrix.mode = 1
         skyMtxDirect = 'sky\\{}.smx'.format(self.skyMatrix.name)
+        self.skyMatrix.mode = 0
 
         # add commands for total and direct sky matrix.
         if hasattr(self.skyMatrix, 'isSkyMatrix'):
@@ -185,6 +187,7 @@ class DaylightCoeffGridBased(GenericGridBased):
                 if gdm:
                     note = ':: {} sky matrix'.format('direct' if m else 'total')
                     self._commands.extend((note, gdm))
+            self.skyMatrix.mode = 0
         else:
             # sky vector
             raise TypeError('You must use a SkyMatrix to generate the sky.')
@@ -303,7 +306,7 @@ class DaylightCoeffGridBased(GenericGridBased):
 
                 self._commands.append(':: :: 2.1.0 total daylight matrix calculations')
                 dctTotal = matrixCalculation(
-                    '.tmp\\total..{}..{}.tmp'.format(wg.name, state.name),
+                    'tmp\\total..{}..{}.rgb'.format(wg.name, state.name),
                     dMatrix=dMatrix, skyMatrix=skyMtxTotal
                 )
                 self._commands.append(dctTotal.toRadString())
@@ -317,7 +320,7 @@ class DaylightCoeffGridBased(GenericGridBased):
 
                 self._commands.append(':: :: 2.2.0 direct matrix calculations')
                 dctDirect = matrixCalculation(
-                    '.tmp\\direct..{}..{}.tmp'.format(wg.name, state.name),
+                    'tmp\\direct..{}..{}.rgb'.format(wg.name, state.name),
                     dMatrix=dMatrixDirect, skyMatrix=skyMtxDirect
                 )
                 self._commands.append(dctDirect.toRadString())
@@ -331,7 +334,7 @@ class DaylightCoeffGridBased(GenericGridBased):
 
                 self._commands.append(':: :: 2.3.1 enhanced direct matrix calculations')
                 dctSun = sunMatrixCalculation(
-                    '.tmp\\sun..{}..{}.tmp'.format(wg.name, state.name),
+                    'tmp\\sun..{}..{}.rgb'.format(wg.name, state.name),
                     dcMatrix=sunMatrix,
                     skyMatrix=self.relpath(analemmaMtx, projectFolder)
                 )
@@ -369,10 +372,13 @@ class DaylightCoeffGridBased(GenericGridBased):
         assert self._isCalculated, \
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
-        print self._resultFiles
+
         # results are merged as a single file
         for rf in self._resultFiles:
-            source, state = os.path.split(rf)[-1][:-4].split("..")
+            fn = os.path.split(rf)[-1][:-4].split("..")
+            source = fn[-2]
+            state = fn[-1]
+            print('loading restults for {}::{} from {}'.format(source, state, rf))
             startLine = 0
             for count, analysisGrid in enumerate(self.analysisGrids):
                 if count:
@@ -382,3 +388,5 @@ class DaylightCoeffGridBased(GenericGridBased):
                     rf, self.skyMatrix.hoys, source, state, startLine=startLine,
                     header=True, checkPointCount=False
                 )
+
+        return self.analysisGrids

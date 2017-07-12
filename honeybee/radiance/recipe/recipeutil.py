@@ -23,7 +23,7 @@ def glzSrfTowinGroup():
     WindowGroup = namedtuple('WindowGroup', 'name states')
 
     state = State('default')
-    wg = WindowGroup('glazSrfs', (state,))
+    wg = WindowGroup('glzSrfs', (state,))
 
     return wg
 

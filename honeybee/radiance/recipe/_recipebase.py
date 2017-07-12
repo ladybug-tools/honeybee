@@ -183,6 +183,7 @@ class AnalysisRecipe(object):
             Path to analysis folder.
         """
         self._commands = []
+        self._resultFiles = []
 
         if not targetFolder:
             targetFolder = os.path.join(os.environ['USERPROFILE'], 'honeybee')
