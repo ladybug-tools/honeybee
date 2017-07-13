@@ -93,20 +93,20 @@ class SunMatrix(RadianceSky):
         """Sun matrix file."""
         return self.name + '.mtx'
 
-    @property
-    def main(self):
-        """Generate Radiance's line for sky with certain illuminance value."""
-        return ''
-
     def hoursMatch(self, hoursFile):
         """Check if hours in the hours file matches the hours of wea."""
-        print('Checking for available sun matrix in folder...')
         if not os.path.isfile(hoursFile):
             return False
 
         with open(hoursFile, 'r') as hrf:
             line = hrf.read()
-        return line == ','.join(str(h) for h in self.hoys) + '\n'
+
+        found = line == ','.join(str(h) for h in self.hoys) + '\n'
+
+        if found:
+            print('Reusing SunMatrix: {}.'.format(self.sunmtxfile))
+
+        return found
 
     def execute(self, workingDir, reuse=True):
         """Generate sun matrix.

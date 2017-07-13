@@ -106,11 +106,6 @@ class SkyMatrix(RadianceSky):
             self.wea.location.latitude, self.wea.location.longitude, self.north
         )
 
-    @property
-    def main(self):
-        """Generate Radiance's line for sky with certain illuminance value."""
-        return ''
-
     def hoursMatch(self, hoursFile):
         """Check if hours in the hours file matches the hours of wea."""
         if not os.path.isfile(hoursFile):

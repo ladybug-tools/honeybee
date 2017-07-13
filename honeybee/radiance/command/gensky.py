@@ -57,11 +57,11 @@ class Gensky(RadianceCommand):
         """results file for sky (Default: untitled)"""
 
         self.monthDayHour = monthDayHour
-        self.rotation = 0
+        self.rotation = rotation
         self.genskyParameters = genskyParameters
 
     @classmethod
-    def fromSkyType(cls, outputName='untitled', monthDayHour=(1, 21, 12),
+    def fromSkyType(cls, outputName='untitled', monthDayHour=(9, 21, 12),
                     skyType=0, latitude=None, longitude=None, meridian=None,
                     rotation=0):
         """Create a sky by sky type.
@@ -105,11 +105,11 @@ class Gensky(RadianceCommand):
             _skyParameters.uniformCloudySky = True
 
         return cls(outputName=outputName, monthDayHour=monthDayHour,
-                   genskyParameters=_skyParameters, rotation=0)
+                   genskyParameters=_skyParameters, rotation=rotation)
 
     @classmethod
-    def createUniformSkyfromIlluminanceValue(cls, outputName="untitled",
-                                             illuminanceValue=10000):
+    def uniformSkyfromIlluminanceValue(cls, outputName="untitled",
+                                       illuminanceValue=10000, skyType=4):
         """Uniform CIE sky based on illuminance value.
 
         Attributes:
@@ -117,14 +117,21 @@ class Gensky(RadianceCommand):
             illuminanceValue: Desired illuminance value in lux
         """
         assert float(illuminanceValue) >= 0, "Illuminace value can't be negative."
+
         _skyParameters = GenskyParameters(zenithBrightHorzDiff=illuminanceValue / 179.0)
 
-        return cls(outputName=outputName, genskyParameters=_skyParameters)
+        if skyType == 4:
+            _skyParameters.cloudySky = True
+        elif skyType == 5:
+            _skyParameters.uniformCloudySky = True
+        else:
+            raise ValueError(
+                'Invalid skyType input: {}. '
+                'Sky type can only be 4 [cloudySky] or 5 [uniformSky].'.format(skyType)
+            )
 
-    @classmethod
-    def fromRadiationValues(cls):
-        """Create a sky based on sky radiation values."""
-        raise NotImplementedError()
+        return cls(outputName=outputName, monthDayHour=(9, 21, 12),
+                   genskyParameters=_skyParameters)
 
     @property
     def genskyParameters(self):
@@ -139,17 +146,24 @@ class Gensky(RadianceCommand):
         assert hasattr(self.genskyParameters, "isRadianceParameters"), \
             "input genskyParameters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
+    def toRadString(self):
         """Return full command as a string."""
         # generate the name from self.weaFile
-        radString = "%s %s %s | xform -rz %.3f > %s" % (
-            self.normspace(os.path.join(self.radbinPath, 'gensky')),
-            self.monthDayHour.toRadString().replace("-monthDayHour ", ""),
-            self.genskyParameters.toRadString(),
-            self.rotation,
-            self.normspace(self.outputFile.toRadString())
-        )
-
+        if self.rotation != 0:
+            radString = "%s %s %s | xform -rz %.3f > %s" % (
+                self.normspace(os.path.join(self.radbinPath, 'gensky')),
+                self.monthDayHour.toRadString().replace("-monthDayHour ", ""),
+                self.genskyParameters.toRadString(),
+                self.rotation,
+                self.normspace(self.outputFile.toRadString())
+            )
+        else:
+            radString = "%s %s %s > %s" % (
+                self.normspace(os.path.join(self.radbinPath, 'gensky')),
+                self.monthDayHour.toRadString().replace("-monthDayHour ", ""),
+                self.genskyParameters.toRadString(),
+                self.normspace(self.outputFile.toRadString())
+            )
         return radString
 
     @property
