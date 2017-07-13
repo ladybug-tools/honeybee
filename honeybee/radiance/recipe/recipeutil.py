@@ -6,6 +6,7 @@ from ..command.gendaymtx import Gendaymtx
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib, RcontribParameters
 from ..command.xform import Xform, XformParameters
+from ..command.vwrays import Vwrays, VwraysParameters
 from ..material.plastic import BlackMaterial
 from ..radfile import RadFile
 from ...futil import writeToFileByName, copyFilesToFolder, preparedir
@@ -26,6 +27,67 @@ def glzSrfTowinGroup():
     wg = WindowGroup('glzSrfs', (state,))
 
     return wg
+
+
+def viewSamplingCommands(projectFolder, view, viewFile, vwraysParameters=None):
+    """Return VWrays command for calculating view coefficient matrix."""
+    # calculate view dimensions
+    vwrDimFile = os.path.join(
+        projectFolder, r'view\\{}.dimensions'.format(view.name))
+    x, y = view.getViewDimension()
+    with open(vwrDimFile, 'wb') as vdfile:
+        vdfile.write('-x %d -y %d -ld-\n' % (x, y))
+
+    # calculate sampling for each view
+    if not vwraysParameters:
+        vwrParaSamp = VwraysParameters()
+        vwrParaSamp.xResolution = view.xRes
+        vwrParaSamp.yResolution = view.yRes
+        vwrParaSamp.samplingRaysCount = 6  # 9
+        vwrParaSamp.jitter = 0.7
+    else:
+        vwrParaSamp = vwraysParameters
+
+    vwrSamp = Vwrays()
+    vwrSamp.vwraysParameters = vwrParaSamp
+    vwrSamp.viewFile = os.path.relpath(viewFile, projectFolder)
+    vwrSamp.outputFile = r'view\\{}.rays'.format(view.name)
+    vwrSamp.outputDataFormat = 'f'
+
+    return vwrDimFile, vwrSamp
+
+
+def viewCoeffMatrixCommands(
+        outputName, receiver, radFiles, sender, viewInfoFile, viewFile, viewRaysFile,
+        samplingRaysCount=None, rfluxmtxParameters=None):
+    """Returns radiance commands to create coefficient matrix.
+
+    Args:
+        outputName: Output file name.
+        receiver: A radiance file to indicate the receiver. In view matrix it will be the
+        window group and in daylight matrix it will be the sky.
+        radFiles: A collection of Radiance files that should be included in the scene.
+        sender: A collection of files for senders if senders are radiance geometries
+            such as window groups (Default: '-').
+        pointsFile: Path to point file which will be used instead of sender.
+        numberOfPoints: Number of points in pointsFile as an integer.
+        samplingRaysCount: Number of sampling rays (Default: 1000).
+        rfluxmtxParameters: Radiance parameters for Rfluxmtx command using a
+            RfluxmtxParameters instance (Default: None).
+    """
+    rflux = Rfluxmtx()
+    rflux.rfluxmtxParameters = rfluxmtxParameters
+    rflux.radFiles = radFiles
+    rflux.sender = sender or '-'
+    rflux.receiverFile = receiver
+    rflux.outputDataFormat = 'fc'
+    rflux.verbose = True
+    rflux.viewInfoFile = viewInfoFile
+    rflux.viewRaysFile = viewRaysFile
+    if samplingRaysCount:
+        rflux.samplingRaysCount = samplingRaysCount  # 9
+
+    return rflux
 
 
 def coeffMatrixCommands(outputName, receiver, radFiles, sender, pointsFile=None,
@@ -98,9 +160,14 @@ def windowGroupToReceiver(filepath, upnormal, materialName='vmtx_glow'):
     return wg_m
 
 
-def skyReceiver(filepath, density):
+def skyReceiver(filepath, density, groundFileFormat=None, skyFileFormat=None):
     """Create a receiver sky for daylight coefficient studies."""
-    return Rfluxmtx.defaultSkyGround(filepath, skyType='r{}'.format(density))
+    if not (groundFileFormat and skyFileFormat):
+        return Rfluxmtx.defaultSkyGround(filepath, skyType='r{}'.format(density))
+    else:
+        Rfluxmtx.defaultSkyGround(
+            filepath, skyType=density, groundFileFormat=groundFileFormat,
+            skyFileFormat=skyFileFormat)
 
 
 def matrixCalculation(output, vMatrix=None, tMatrix=None, dMatrix=None, skyMatrix=None):
@@ -114,6 +181,33 @@ def matrixCalculation(output, vMatrix=None, tMatrix=None, dMatrix=None, skyMatri
     dct.dmatrixFile = dMatrix
     dct.skyVectorFile = skyMatrix
     dct.outputFile = output
+    return dct
+
+
+def viewMatrixCalculation(output, view, wg, state, skyMatrix, extention=''):
+    ext = extention
+    dct = Dctimestep()
+    if os.name == 'nt':
+        dct.daylightCoeffSpec = \
+            'result\\matrix\\{}_{}_{}_%%03d.hdr'.format(
+                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+    else:
+        dct.daylightCoeffSpec = \
+            'result\\matrix\\{}_{}_{}_%03d.hdr'.format(
+                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+
+    dct.skyVectorFile = skyMatrix
+
+    # sky matrix is annual
+    if os.name == 'nt':
+        dct.dctimestepParameters.outputDataFormat = \
+            ' result\\{}_{}_{}_%%04d.hdr'.format(
+                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+    else:
+        dct.dctimestepParameters.outputDataFormat = \
+            ' result\\{}_{}_{}_%04d.hdr'.format(
+                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+
     return dct
 
 
@@ -165,6 +259,11 @@ def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist):
     rctb.rcontribParameters = rctbParam
 
     return (octree, rctb)
+
+
+def viewSunCoeffMatrixCommands(output, view):
+    raise NotImplementedError()
+    return ''
 
 
 def finalMatrixAddition(skymtx, skydirmtx, sunmtx, output):

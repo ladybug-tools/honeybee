@@ -1,16 +1,17 @@
 """Radiance Daylight Coefficient Image-Based Analysis Recipe."""
-
 from ..recipeutil import writeRadFilesDaylightCoeff, writeExtraFiles
+from ..recipeutil import viewSamplingCommands, viewCoeffMatrixCommands
+from ..recipeutil import viewMatrixCalculation, viewSunCoeffMatrixCommands
+from ..recipeutil import skyReceiver, skymtxToGendaymtx, glzSrfTowinGroup
 from .._imagebasedbase import GenericImageBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
-from ...command.rfluxmtx import Rfluxmtx
-from ...command.gendaymtx import Gendaymtx
-from ...command.dctimestep import Dctimestep
-from ...command.vwrays import Vwrays, VwraysParameters
+from ...sky.sunmatrix import SunMatrix
 from ....futil import writeToFile
 
 from ladybug.dt import DateTime
 import os
+
+from itertools import izip
 
 
 class DaylightCoeffImageBased(GenericImageBased):
@@ -20,7 +21,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         sky: A honeybee sky for the analysis
         views: List of views.
         simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
+            (Default: 2)
         radParameters: Radiance parameters for grid based analysis (rtrace).
             (Default: imagebased.LowQualityImage)
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
@@ -45,7 +46,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
-           2: Luminance (Candela) (Default: 0)
+           2: Luminance (Candela) (Default: 2)
         """
 
         self.radianceParameters = daylightMtxParameters
@@ -91,29 +92,34 @@ class DaylightCoeffImageBased(GenericImageBased):
     @property
     def radianceParameters(self):
         """Get and set Radiance parameters."""
-        return self.__radianceParameters
+        return self._radianceParameters
 
     @radianceParameters.setter
     def radianceParameters(self, par):
         if not par:
             # set RfluxmtxParameters as default radiance parameter for annual analysis
-            self.__radianceParameters = RfluxmtxParameters()
-            self.__radianceParameters.ambientAccuracy = 0.1
-            self.__radianceParameters.ambientBounces = 5  # 10
-            self.__radianceParameters.ambientDivisions = 4096  # 65536
-            self.__radianceParameters.limitWeight = 0.001  # 1E-5
+            self._radianceParameters = RfluxmtxParameters()
+            self._radianceParameters.ambientAccuracy = 0.1
+            self._radianceParameters.ambientBounces = 5  # 10
+            self._radianceParameters.ambientDivisions = 4096  # 65536
+            self._radianceParameters.limitWeight = 0.001  # 1E-5
         else:
             assert hasattr(par, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))
             self.__daylightMtxParameters = par
 
-    def isDaylightMtxCreated(self, studyFolder, view):
+    def isDaylightMtxCreated(self, studyFolder, view, wg, state):
         """Check if hdr images for daylight matrix are already created."""
         for i in range(1 + 144 * (self.skyMatrix.skyDensity ** 2)):
-            if not os.path.isfile(
-                    os.path.join(studyFolder,
-                                 'results\\matrix\\%s_%03d.hdr' % (view.name, i))):
+            fp = os.path.join(
+                studyFolder, 'results\\matrix\\%s_%s_%s_%03d.hdr' % (
+                    view.name, wg.name, state.name, i)
+            )
+
+            if not os.path.isfile(fp) and os.path.getsize(fp) > 265:
+                # file exist and is larger then 265 bytes
                 return False
+
         return True
 
     def write(self, targetFolder, projectName='untitled', header=True):
@@ -150,9 +156,11 @@ class DaylightCoeffImageBased(GenericImageBased):
             self.commands.append(self.header(projectFolder))
 
         # # 2.1.Create sky matrix.
+        self.skyMatrix.mode = 0
         skyMtxTotal = 'sky\\{}.smx'.format(self.skyMatrix.name)
         self.skyMatrix.mode = 1
         skyMtxDirect = 'sky\\{}.smx'.format(self.skyMatrix.name)
+        self.skyMatrix.mode = 0
 
         # add commands for total and direct sky matrix.
         if hasattr(self.skyMatrix, 'isSkyMatrix'):
@@ -162,91 +170,172 @@ class DaylightCoeffImageBased(GenericImageBased):
                 if gdm:
                     note = ':: {} sky matrix'.format('direct' if m else 'total')
                     self._commands.extend((note, gdm))
+            self.skyMatrix.mode = 0
         else:
             # sky vector
             raise TypeError('You must use a SkyMatrix to generate the sky.')
 
         # # 2.2. Create sun matrix
         sm = SunMatrix(self.skyMatrix.wea, self.skyMatrix.north)
-        analemma, sunlist, sunMtxFile = \
-            sm.execute(os.path.join(projectFolder, 'sky'), shell=True)
+        analemma, sunlist, analemmaMtx = \
+            sm.execute(os.path.join(projectFolder, 'sky'))
+
+        # for each window group - calculate total, direct and direct-analemma results
+        # I can just add fenestration rad files here and that will work!
+
+        # calculate the contribution of glazing if any with all window groups blacked
+        # this is a hack. A better solution is to create a HBDynamicSurface from glazing
+        # surfaces. The current limitation is that HBDynamicSurface can't have several
+        # surfaces with different materials.
+        allWindowGroups = [glzSrfTowinGroup()]
+        allWindowGroups.extend(self.windowGroups)
+        allWgsFiles = [glzfiles] + list(wgsfiles)
 
         # # 4.2.prepare vwray
-        for view, f in zip(self.views, viewFiles):
+        for view, viewFile in izip(self.views, viewFiles):
             # Step1: Create the view matrix.
-
-            # calculate view dimensions
-            vwrDimFile = os.path.join(projectFolder,
-                                      r'views\\{}.dimensions'.format(view.name))
-            x, y = view.getViewDimension()
-            with open(vwrDimFile, 'wb') as vdfile:
-                vdfile.write('-x %d -y %d -ld-\n' % (x, y))
-
-            # calculate sampling for each view
-            vwrParaSamp = VwraysParameters()
-            vwrParaSamp.xResolution = view.xRes
-            vwrParaSamp.yResolution = view.yRes
-            vwrParaSamp.samplingRaysCount = 3  # 9
-            vwrParaSamp.jitter = 0.7
-
-            vwrSamp = Vwrays()
-            vwrSamp.vwraysParameters = vwrParaSamp
-            vwrSamp.viewFile = self.relpath(f, projectFolder)
-            vwrSamp.outputFile = r'views\\{}.rays'.format(view.name)
-            vwrSamp.outputDataFormat = 'f'
+            self.commands.append(':: calculation for view: {}'.format(view.name))
+            self.commands.append(':: 1 view sampling')
+            viewInfoFile, vwrSamp = viewSamplingCommands(
+                projectFolder, view, viewFile, self.vwraysParameters)
             self.commands.append(vwrSamp.toRadString())
 
-            # Daylight matrix
-            if not self.reuseDaylightMtx or not \
-                    self.isDaylightMtxCreated(projectFolder, view):
-                rflux = Rfluxmtx()
-                rflux.rfluxmtxParameters = self.radianceParameters
-                rflux.radFiles = tuple(self.relpath(f, projectFolder)
-                                       for f in rfluxFiles)
-                rflux.sender = '-'
-                groundFileFormat = 'results\\matrix\\%s_%03d.hdr' % (
-                    view.name, 1 + 144 * (self.skyMatrix.skyDensity ** 2))
-
-                rflux.receiverFile = rflux.defaultSkyGround(
-                    os.path.join(projectFolder, 'skies\\rfluxSky.rad'),
-                    skyType=self.skyType, groundFileFormat=groundFileFormat,
-                    skyFileFormat='results\\matrix\\{}_%03d.hdr'.format(view.name))
-
-                rflux.outputDataFormat = 'fc'
-                rflux.verbose = True
-                rflux.viewInfoFile = vwrDimFile
-                rflux.viewRaysFile = str(vwrSamp.outputFile)
-                rflux.samplingRaysCount = 3  # 9
-                self.commands.append(rflux.toRadString())
-
-            # Generate resultsFile
-            # TODO: This should happen separately for each skyvector
-            dct = Dctimestep()
-            if os.name == 'nt':
-                dct.daylightCoeffSpec = 'results\\matrix\\{}_%%03d.hdr'.format(view.name)
-            else:
-                dct.daylightCoeffSpec = 'results\\matrix\\{}_%03d.hdr'.format(view.name)
-
-            dct.skyVectorFile = skyMtx
-            if hasattr(self.skyMatrix, 'isSkyMatrix'):
-                # sky matrix is annual
-                if os.name == 'nt':
-                    dct.dctimestepParameters.outputDataFormat = \
-                        ' results\\{}_%%04d.hdr'.format(view.name)
+            # set up the geometries
+            for count, wg in enumerate(allWindowGroups):
+                if count == 0:
+                    if len(wgsfiles) > 0:
+                        blkmaterial = [wgsfiles[0].fpblk[0]]
+                        wgsblacked = [f.fpblk[1] for c, f in enumerate(wgsfiles)]
+                    else:
+                        blkmaterial = []
+                        wgsblacked = []
                 else:
-                    dct.dctimestepParameters.outputDataFormat = \
-                        ' results\\{}_%04d.hdr'.format(view.name)
-                self._resultFiles = tuple(os.path.join(
-                    projectFolder,
-                    'results\\{}_{}.hdr'.format(view.name, '%04d' % (count + 1)))
-                    for count, h in enumerate(self.skyMatrix.hoys))
-            else:
-                dct.outputFile = 'results\\%s_%s.hdr' % (view.name,
-                                                         self.skyMatrix.name)
-                self._resultFiles.append(
-                    os.path.join(projectFolder, str(dct.outputFile)))
+                    # add material file
+                    blkmaterial = [allWgsFiles[count].fpblk[0]]
+                    # add all the blacked window groups but the one in use
+                    # and finally add non-window group glazing as black
+                    wgsblacked = \
+                        [f.fpblk[1] for c, f in enumerate(wgsfiles)
+                         if c != count - 1] + list(glzfiles.fpblk)
 
-            self.commands.append(dct.toRadString())
+                for scount, state in enumerate(wg.states):
+                    # 2.3.Generate daylight coefficients using rfluxmtx
+                    # collect list of radiance files in the scene for both total
+                    # and direct
+                    self._commands.append(
+                        '\n:: calculation for {} window group {}'.format(wg.name,
+                                                                         state.name))
+                    if count == 0:
+                        # normal glazing
+                        nonBlackedWgfiles = allWgsFiles[count].fp
+                    else:
+                        nonBlackedWgfiles = (allWgsFiles[count].fp[scount],)
+
+                    rfluxScene = (
+                        f for fl in
+                        (nonBlackedWgfiles, opqfiles.fp, extrafiles.fp,
+                         blkmaterial, wgsblacked)
+                        for f in fl)
+
+                    rfluxSceneBlacked = (
+                        f for fl in
+                        (nonBlackedWgfiles, opqfiles.fpblk, extrafiles.fpblk,
+                         blkmaterial, wgsblacked)
+                        for f in fl)
+
+                    dMatrix = 'result\\matrix\\normal_{}_{}_{}..{}..{}.dc'.format(
+                        view.name, projectName, self.skyMatrix.skyDensity, wg.name,
+                        state.name)
+
+                    dMatrixDirect = 'result\\matrix\\black_{}_{}_{}..{}..{}.dc'.format(
+                        view.name, projectName, self.skyMatrix.skyDensity, wg.name,
+                        state.name)
+
+                    sunMatrix = 'result\\matrix\\sun_{}_{}_{}..{}..{}.dc'.format(
+                        view.name, projectName, self.skyMatrix.skyDensity, wg.name,
+                        state.name)
+
+                    # Daylight matrix
+                    if not self.reuseDaylightMtx or not \
+                            self.isDaylightMtxCreated(projectFolder, view):
+
+                        radFiles = tuple(self.relpath(f, projectFolder)
+                                         for f in rfluxScene)
+                        sender = '-'
+
+                        groundFileFormat = 'result\\matrix\\%s_%s_%s_%03d.hdr' % (
+                            view.name, wg.name, state.name,
+                            1 + 144 * (self.skyMatrix.skyDensity ** 2)
+                        )
+
+                        skyFileFormat = 'result\\matrix\\{}_{}_{}_%03d.hdr'.format(
+                            view.name, wg.name, state.name)
+
+                        receiver = skyReceiver(
+                            os.path.join(projectFolder, 'sky\\rfluxSky.rad'),
+                            self.skyMatrix.skyDensity, groundFileFormat, skyFileFormat
+                        )
+
+                        self._commands.append(
+                            ':: :: 1. daylight matrix {}, {} > state {}'.format(
+                                view.name, wg.name, state.name)
+                        )
+
+                        self._commands.append(':: :: 1.1 scene daylight matrix')
+
+                        samplingRaysCount = 6
+                        self.radianceParameters.ambientBounces = 5
+                        rflux = viewCoeffMatrixCommands(
+                            dMatrix, self.relpath(receiver, projectFolder),
+                            radFiles, sender, viewInfoFile,
+                            viewFile, str(vwrSamp.outputFile), samplingRaysCount,
+                            self.radianceParameters)
+
+                        self.commands.append(rflux.toRadString())
+
+                        radFilesBlacked = tuple(self.relpath(f, projectFolder)
+                                                for f in rfluxSceneBlacked)
+
+                        self._commands.append(':: :: 1.2 blacked scene daylight matrix')
+                        self.radianceParameters.ambientBounces = 1
+                        rfluxDirect = viewCoeffMatrixCommands(
+                            dMatrixDirect, self.relpath(receiver, projectFolder),
+                            radFilesBlacked, sender, viewInfoFile,
+                            viewFile, str(vwrSamp.outputFile), samplingRaysCount,
+                            self.radianceParameters)
+
+                        self._commands.append(rfluxDirect.toRadString())
+
+                        self._commands.append(':: :: 1.3 blacked scene analemma matrix')
+                        sunCommands = viewSunCoeffMatrixCommands()
+                        self._commands.extend(cmd.toRadString() for cmd in sunCommands)
+
+                    # Generate resultsFile
+                    self._commands.append(
+                        ':: :: 2.1.0 total daylight matrix calculations')
+                    dct = viewMatrixCalculation(view, dMatrix, 'total')
+                    self.commands.append(dct.toRadString())
+
+                    self._commands.append(':: :: 2.2.0 direct matrix calculations')
+                    dctDirect = viewMatrixCalculation(view, dMatrixDirect, 'direct')
+                    self.commands.append(dctDirect.toRadString())
+
+                    self._commands.append(
+                        ':: :: 2.3.0 enhanced direct matrix calculations')
+                    # TODO(sarith) final addition of the images
+                    dctSun = viewSunCoeffMatrixCommands(sunMatrix)
+                    self.commands.append(dctSun.toRadString())
+
+                    self._commands.append(':: :: 2.4 final matrix calculation')
+
+                    # TODO(sarith) final addition of the images
+                    resultFiles = tuple(os.path.join(
+                        projectFolder,
+                        'results\\{}_{}_{}_{}.hdr'.format(
+                            view.name, wg.name, state.name, '%04d' % (count + 1)))
+                        for count, h in enumerate(self.skyMatrix.hoys)
+                    )
+                    self._resultFiles.extend(resultFiles)
 
         # # 4.3 write batch file
         batchFile = os.path.join(projectFolder, "commands.bat")

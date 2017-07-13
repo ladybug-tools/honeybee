@@ -1,3 +1,4 @@
+"""Radiance Daylight Coefficient Grid-Based Analysis Recipe."""
 from ..recipeutil import writeRadFilesDaylightCoeff, writeExtraFiles
 from ..recipeutil import coeffMatrixCommands, matrixCalculation, RGBMatrixFileToIll
 from ..recipeutil import skyReceiver, skymtxToGendaymtx, finalMatrixAddition
@@ -195,7 +196,7 @@ class DaylightCoeffGridBased(GenericGridBased):
         # # 2.2. Create sun matrix
         sm = SunMatrix(self.skyMatrix.wea, self.skyMatrix.north)
         analemma, sunlist, analemmaMtx = \
-            sm.execute(os.path.join(projectFolder, 'sky'), shell=True)
+            sm.execute(os.path.join(projectFolder, 'sky'))
 
         # for each window group - calculate total, direct and direct-analemma results
         # I can just add fenestration rad files here and that will work!
@@ -229,7 +230,7 @@ class DaylightCoeffGridBased(GenericGridBased):
                 # 2.3.Generate daylight coefficients using rfluxmtx
                 # collect list of radiance files in the scene for both total and direct
                 self._commands.append(
-                    '\n:: calculation for {} window group'.format(wg.name, state.name)
+                    '\n:: calculation for {} window group {}'.format(wg.name, state.name)
                 )
 
                 if count == 0:

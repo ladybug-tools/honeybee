@@ -108,7 +108,7 @@ class SunMatrix(RadianceSky):
             line = hrf.read()
         return line == ','.join(str(h) for h in self.hoys) + '\n'
 
-    def execute(self, workingDir, reuse=True, shell=False):
+    def execute(self, workingDir, reuse=True):
         """Generate sun matrix.
 
         Args:
