@@ -39,6 +39,7 @@ class ClimateBased(PointInTimeSky):
         PointInTimeSky.__init__(self, location, month, day, hour, north)
         self.directRadiation = directRadiation
         self.diffuseRadiation = diffuseRadiation
+        self._skyType = 0  # set default sky type to visible radiation
 
     @classmethod
     def fromLatLong(cls, city, latitude, longitude, timezone, elevation,
@@ -66,12 +67,28 @@ class ClimateBased(PointInTimeSky):
     @property
     def name(self):
         """Sky default name."""
-        return "{}_{}_{}_{}_at_{}_{}_{}".format(
-            self.__class__.__name__,
+        return "{}_{}_{}_{}_{}_at_{}_{}_{}".format(
+            self.__class__.__name__.lower(), self.skyTypeHumanReadable,
             self.location.city.replace(' ', '_'),
             self.month, self.day, self.hour,
             self.directRadiation, self.diffuseRadiation
         )
+
+    @property
+    def skyType(self):
+        """Specify 0 for visible radiation, 1 for solar radiation and 2 for luminance."""
+        return self._skyType
+
+    @skyType.setter
+    def skyType(self, t):
+        """Specify 0 for visible radiation, 1 for solar radiation and 2 for luminance."""
+        self._skyType = t % 3
+
+    @property
+    def skyTypeHumanReadable(self):
+        """Human readable sky type."""
+        values = ('vis', 'sol', 'lum')
+        return values[self.skyType]
 
     @property
     def command(self):
@@ -82,6 +99,9 @@ class ClimateBased(PointInTimeSky):
             directRadiation=self.directRadiation,
             diffuseRadiation=self.diffuseRadiation,
             rotation=self.north)
+
+        cmd.gendaylitParameters.outputType = self.skyType
+
         return cmd
 
     def toRadString(self):

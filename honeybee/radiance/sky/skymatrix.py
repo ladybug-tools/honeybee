@@ -24,7 +24,8 @@ class SkyMatrix(RadianceSky):
         self.wea = wea
         self.hoys = hoys or range(8760)
         skyDensity = skyDensity or 1
-        self._skyMatrixParameters = GendaymtxParameters()
+        self._skyType = 0  # default to visible radiation
+        self._skyMatrixParameters = GendaymtxParameters(outputType=self._skyType)
         self.north = north
         self.skyDensity = skyDensity
         self.mode = mode
@@ -101,10 +102,27 @@ class SkyMatrix(RadianceSky):
     @property
     def name(self):
         """Sky default name."""
-        return "skymtx_r{}_{}_{}_{}_{}_{}".format(
-            self.skyDensity, self.mode, self.wea.location.stationId,
+        return "skymtx_{}_r{}_{}_{}_{}_{}_{}".format(
+            self.skyTypeHumanReadable, self.skyDensity,
+            self.mode, self.wea.location.stationId,
             self.wea.location.latitude, self.wea.location.longitude, self.north
         )
+
+    @property
+    def skyType(self):
+        """Specify 0 for visible radiation, 1 for total solar radiation."""
+        return self._skyType
+
+    @skyType.setter
+    def skyType(self, t):
+        """Specify 0 for visible radiation, 1 for total solar radiation."""
+        self._skyType = t % 2
+
+    @property
+    def skyTypeHumanReadable(self):
+        """Human readable sky type."""
+        values = ('vis', 'sol')
+        return values[self.skyType]
 
     def hoursMatch(self, hoursFile):
         """Check if hours in the hours file matches the hours of wea."""
@@ -135,6 +153,7 @@ class SkyMatrix(RadianceSky):
         weafilepath = self.wea.write(weafilepath, self.hoys, writeHours)
         genday = Gendaymtx(weaFile=weafilepath, outputName=outfilepath)
         genday.gendaymtxParameters = self._skyMatrixParameters
+        genday.gendaymtxParameters.outputType = self.skyType
         return genday.toRadString()
 
     def execute(self, workingDir, reuse=True):
@@ -157,6 +176,7 @@ class SkyMatrix(RadianceSky):
             weafilepath = self.wea.write(weafilepath)
             genday = Gendaymtx(weaFile=weafilepath, outputName=outfilepath)
             genday.gendaymtxParameters = self._skyMatrixParameters
+            genday.gendaymtxParameters.outputType = self.skyType
             return genday.execute()
 
     def ToString(self):

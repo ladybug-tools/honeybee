@@ -16,7 +16,8 @@ import math
 from datetime import datetime
 
 
-def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance, output=0):
+def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
+              outputType=0):
     """Get sun position and RGB values for sky.
 
     altitude: Sun altitude in degrees.
@@ -136,19 +137,19 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance, o
     diffnormalization = integ_lv(lv_mod, theta_o)
 
     # normalization coefficient in lumen or in watt * /
-    if output == 0:
+    if outputType == 0:
         diffnormalization = diffuseilluminance / diffnormalization / WHTEFFICACY
-    elif output == 1:
+    elif outputType == 1:
         diffnormalization = diffuseirradiance / diffnormalization
-    elif output == 2:
+    elif outputType == 2:
         diffnormalization = diffuseilluminance / diffnormalization
 
     #  calculation for the solar source * /
-    if output == 0:
+    if outputType == 0:
         solarradiance = directilluminance / \
             (2 * math.pi * (1 - math.cos(half_sun_angle * math.pi / 180))) / WHTEFFICACY
 
-    elif output == 1:
+    elif outputType == 1:
         solarradiance = directirradiance / \
             (2 * math.pi * (1 - math.cos(half_sun_angle * math.pi / 180)))
 

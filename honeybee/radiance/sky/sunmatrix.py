@@ -31,6 +31,7 @@ class SunMatrix(RadianceSky):
         self.wea = wea
         self.north = north
         self.hoys = hoys or range(8760)
+        self._skyType = 0  # set default to 0 for visible radiation
 
     @classmethod
     def fromEpwFile(cls, epwFile, north=0, hoys=None):
@@ -71,12 +72,29 @@ class SunMatrix(RadianceSky):
     @property
     def name(self):
         """Sky default name."""
-        return "sunmtx_r{}_{}_{}_{}".format(
+        return "sunmtx_{}_{}_{}_{}_{}".format(
+            self.skyTypeHumanReadable,
             self.wea.location.stationId,
             self.wea.location.latitude,
             self.wea.location.longitude,
             self.north
         )
+
+    @property
+    def skyType(self):
+        """Specify 0 for visible radiation, 1 for solar radiation and 2 for luminance."""
+        return self._skyType
+
+    @skyType.setter
+    def skyType(self, t):
+        """Specify 0 for visible radiation, 1 for solar radiation and 2 for luminance."""
+        self._skyType = t % 3
+
+    @property
+    def skyTypeHumanReadable(self):
+        """Human readable sky type."""
+        values = ('vis', 'sol', 'lum')
+        return values[self.skyType]
 
     @property
     def analemmafile(self):
@@ -122,6 +140,7 @@ class SunMatrix(RadianceSky):
         lfp = os.path.join(workingDir, self.sunlistfile)
         mfp = os.path.join(workingDir, self.sunmtxfile)
         hrf = os.path.join(workingDir, self.name + '.hrs')
+        outputType = self.skyType
 
         if reuse:
             if self.hoursMatch(hrf):
@@ -129,7 +148,6 @@ class SunMatrix(RadianceSky):
                     if not os.path.isfile(f):
                         break
                 else:
-                    print('Found the sun matrix!')
                     return fp, lfp, mfp
 
         with open(hrf, 'wb') as outf:
@@ -161,7 +179,8 @@ class SunMatrix(RadianceSky):
             if sun.altitude < 0:
                 continue
             x, y, z = sun.sunVector
-            solarradiance = int(gendaylit(sun.altitude, month, day, hour, dnr, dhr))
+            solarradiance = \
+                int(gendaylit(sun.altitude, month, day, hour, dnr, dhr, outputType))
             curSunDefinition = solarstring.format(count, solarradiance, -x, -y, -z)
             solarradiances.append(solarradiance)
             sunValues.append(curSunDefinition)
