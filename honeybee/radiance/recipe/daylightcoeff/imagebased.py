@@ -53,6 +53,8 @@ class DaylightCoeffImageBased(GenericImageBased):
         """Radiance parameters for grid based analysis (rtrace).
             (Default: imagebased.LowQualityImage)"""
 
+        self.vwraysParameters = vwraysParameters
+
         self.reuseDaylightMtx = reuseDaylightMtx
 
         # create a result loader to load the results once the analysis is done.
@@ -285,6 +287,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         samplingRaysCount = 6
                         self.radianceParameters.ambientBounces = 5
+
                         rflux = viewCoeffMatrixCommands(
                             dMatrix, self.relpath(receiver, projectFolder),
                             radFiles, sender, viewInfoFile,
@@ -297,6 +300,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                                                 for f in rfluxSceneBlacked)
 
                         self._commands.append(':: :: 1.2 blacked scene daylight matrix')
+                        samplingRaysCount = 1
                         self.radianceParameters.ambientBounces = 1
                         rfluxDirect = viewCoeffMatrixCommands(
                             dMatrixDirect, self.relpath(receiver, projectFolder),
@@ -307,24 +311,28 @@ class DaylightCoeffImageBased(GenericImageBased):
                         self._commands.append(rfluxDirect.toRadString())
 
                         self._commands.append(':: :: 1.3 blacked scene analemma matrix')
-                        sunCommands = viewSunCoeffMatrixCommands()
-                        self._commands.extend(cmd.toRadString() for cmd in sunCommands)
+                        # sunCommands = viewSunCoeffMatrixCommands()
+                        # self._commands.extend(cmd.toRadString() for cmd in sunCommands)
+                        self._commands.append(':: commands are missing here!')
 
                     # Generate resultsFile
                     self._commands.append(
                         ':: :: 2.1.0 total daylight matrix calculations')
-                    dct = viewMatrixCalculation(view, dMatrix, 'total')
+                    dct = viewMatrixCalculation(dMatrix, view, wg, state, skyMtxTotal,
+                                                'total')
                     self.commands.append(dct.toRadString())
 
                     self._commands.append(':: :: 2.2.0 direct matrix calculations')
-                    dctDirect = viewMatrixCalculation(view, dMatrixDirect, 'direct')
+                    dctDirect = viewMatrixCalculation(dMatrixDirect, view, wg, state,
+                                                      skyMtxDirect, 'direct')
                     self.commands.append(dctDirect.toRadString())
 
                     self._commands.append(
                         ':: :: 2.3.0 enhanced direct matrix calculations')
                     # TODO(sarith) final addition of the images
-                    dctSun = viewSunCoeffMatrixCommands(sunMatrix)
-                    self.commands.append(dctSun.toRadString())
+                    # dctSun = viewSunCoeffMatrixCommands(sunMatrix)
+                    # self.commands.append(dctSun.toRadString())
+                    self._commands.append(':: commands are missing here!')
 
                     self._commands.append(':: :: 2.4 final matrix calculation')
 

@@ -165,8 +165,9 @@ def skyReceiver(filepath, density, groundFileFormat=None, skyFileFormat=None):
     if not (groundFileFormat and skyFileFormat):
         return Rfluxmtx.defaultSkyGround(filepath, skyType='r{}'.format(density))
     else:
-        Rfluxmtx.defaultSkyGround(
-            filepath, skyType=density, groundFileFormat=groundFileFormat,
+        return Rfluxmtx.defaultSkyGround(
+            filepath, skyType='r{}'.format(density),
+            groundFileFormat=groundFileFormat,
             skyFileFormat=skyFileFormat)
 
 
@@ -262,7 +263,7 @@ def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist):
 
 
 def viewSunCoeffMatrixCommands(output, view):
-    raise NotImplementedError()
+    # raise NotImplementedError()
     return ''
 
 
