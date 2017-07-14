@@ -12,7 +12,6 @@ from ....futil import writeToFile
 import os
 
 
-# TODO: implement simulationType
 class DaylightCoeffGridBased(GenericGridBased):
     """Grid based daylight coefficient analysis recipe.
 
@@ -57,10 +56,12 @@ class DaylightCoeffGridBased(GenericGridBased):
             self, analysisGrids, hbObjects, subFolder
         )
 
-        assert hasattr(skyMtx, 'skyDensity'), \
-            TypeError('{} is not a SkyMatrix'.format(skyMtx))
-
         self.skyMatrix = skyMtx
+
+        self.simulationType = simulationType
+        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
+           2: Luminance (Candela) (Default: 2)
+        """
 
         self.radianceParameters = radianceParameters
         self.reuseDaylightMtx = reuseDaylightMtx
@@ -114,6 +115,45 @@ class DaylightCoeffGridBased(GenericGridBased):
             radianceParameters, reuseDaylightMtx, hbObjects, subFolder)
 
     @property
+    def simulationType(self):
+        """Get/set simulation Type.
+
+        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
+        """
+        return self._simType
+
+    @simulationType.setter
+    def simulationType(self, value):
+        try:
+            value = int(value)
+        except TypeError:
+            value = 0
+
+        assert 0 <= value <= 2, \
+            "Simulation type should be between 0-2. Current value: {}".format(value)
+
+        # If this is a radiation analysis make sure the sky is climate-based
+        if value == 1:
+            assert self.skyMatrix.isClimateBased, \
+                "The sky for radition analysis should be climate-based."
+
+        self._simType = value
+        self.skyMatrix.skyType = value
+
+    @property
+    def skyMatrix(self):
+        """Get and set sky definition."""
+        return self._skyMatrix
+
+    @skyMatrix.setter
+    def skyMatrix(self, newSky):
+        assert hasattr(newSky, 'isRadianceSky'), \
+            '%s is not a valid Honeybee sky.' % type(newSky)
+        assert not newSky.isPointInTime, \
+            TypeError('Sky for daylight coefficient recipe must be a sky matrix.')
+        self._skyMatrix = newSky
+
+    @property
     def radianceParameters(self):
         """Radiance parameters for annual analysis."""
         return self._radianceParameters
@@ -134,7 +174,7 @@ class DaylightCoeffGridBased(GenericGridBased):
             self._radianceParameters = par
 
     @property
-    def skyType(self):
+    def skyDensity(self):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
@@ -194,7 +234,8 @@ class DaylightCoeffGridBased(GenericGridBased):
             raise TypeError('You must use a SkyMatrix to generate the sky.')
 
         # # 2.2. Create sun matrix
-        sm = SunMatrix(self.skyMatrix.wea, self.skyMatrix.north)
+        sm = SunMatrix(self.skyMatrix.wea, self.skyMatrix.north,
+                       self.skyMatrix.hoys, self.simulationType)
         analemma, sunlist, analemmaMtx = \
             sm.execute(os.path.join(projectFolder, 'sky'))
 

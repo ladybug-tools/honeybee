@@ -1,5 +1,5 @@
 import os
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..parameters.gridbased import LowQuality
 from ..datatype import RadiancePath
 
@@ -32,7 +32,8 @@ class Rtrace(RadianceCommand):
 
         self.outputFile = outputName if outputName.lower().endswith(".res") \
             else outputName + ".res"
-        """oct file name which is usually the same as the project name (Default: untitled)"""
+        """oct file name which is usually the same as the project name
+        (Default: untitled)"""
 
         self.octreeFile = octreeFile
         """Full path to input oct file."""
@@ -41,7 +42,8 @@ class Rtrace(RadianceCommand):
         """Full path to input points file."""
 
         self.radianceParameters = radianceParameters
-        """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+        """Radiance parameters for this analysis
+        (Default: RadianceParameters.LowQuality)."""
 
         # add -h to parameters to get no header, True is no header
         self.radianceParameters.addRadianceBoolFlag("h", "output header switch")
@@ -64,30 +66,25 @@ class Rtrace(RadianceCommand):
 
         0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
         """
-        return self.__simType
+        return self._simType
 
     @simulationType.setter
     def simulationType(self, value):
         try:
             value = int(value)
-        except:
+        except Exception:
             value = 0
 
         assert 0 <= value <= 2, \
             "Simulation type should be between 0-2. Current value: {}".format(value)
 
-        # If this is a radiation analysis make sure the sky is climate-based
-        if value == 1:
-            assert self.sky.isClimateBased, \
-                "The sky for radition analysis should be climate-based."
-
-        self.__simType = value
+        self._simType = value
 
         # trun on/off I paramter
         # -I > Boolean switch to compute irradiance rather than radiance, with
         # the input origin and direction interpreted instead as measurement point
         # and orientation.
-        if self.__simType in (0, 1):
+        if self._simType in (0, 1):
             self.radianceParameters.irradianceCalc = True
         else:
             # luminance
@@ -96,7 +93,7 @@ class Rtrace(RadianceCommand):
     @property
     def radianceParameters(self):
         """Get and set Radiance parameters."""
-        return self.__radParameters
+        return self._radParameters
 
     @radianceParameters.setter
     def radianceParameters(self, radParameters):
@@ -104,7 +101,7 @@ class Rtrace(RadianceCommand):
             radParameters = LowQuality()
         assert hasattr(radParameters, 'isGridBasedRadianceParameters'), \
             "%s is not a radiance parameters." % type(radParameters)
-        self.__radParameters = radParameters
+        self._radParameters = radParameters
 
     # TODO: Implement relative path
     def toRadString(self, relativePath=False):

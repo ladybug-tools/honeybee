@@ -64,10 +64,6 @@ class ImageBased(GenericImageBased):
            2: Luminance (Candela) (Default: 0)
         """
 
-        # create a result loader to load the results once the analysis is done.
-        # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-        #                                              self._resultFiles)
-
     @property
     def simulationType(self):
         """Get/set simulation Type.
@@ -92,6 +88,7 @@ class ImageBased(GenericImageBased):
                 "The sky for radition analysis should be climate-based."
 
         self.__simType = value
+        self.sky.skyType = value
 
     @property
     def sky(self):
@@ -100,8 +97,11 @@ class ImageBased(GenericImageBased):
 
     @sky.setter
     def sky(self, newSky):
-        assert hasattr(newSky, "isRadianceSky"), \
-            "%s is not a valid Honeybee sky." % type(newSky)
+        assert hasattr(newSky, 'isRadianceSky'), \
+            TypeError('%s is not a valid Honeybee sky.' % type(newSky))
+        assert newSky.isPointInTime, \
+            TypeError('Sky must be one of the point-in-time skies.')
+
         self.__sky = newSky
 
     @property
@@ -159,16 +159,18 @@ class ImageBased(GenericImageBased):
         # 1.write views
         viewFiles = self.writeViews(projectFolder + '\\view')
 
-        # 2.write sky file
-        skyFile = self.sky.writeToFile(projectFolder + '\\sky')
-
-        # 3.write batch file
+        # 2.write batch file
         if header:
             self.commands.append(self.header(projectFolder))
 
+        # 3.write sky file
+        self._commands.append(self.sky.toRadString(folder='sky'))
+
         # TODO(Mostapha): add windowGroups here if any!
         # # 4.1.prepare oconv
-        octSceneFiles = [skyFile] + opqfiles + glzfiles + extrafiles.fp
+        octSceneFiles = \
+            [os.path.join(projectFolder, str(self.sky.command('sky').outputFile))] + \
+            opqfiles + glzfiles + extrafiles.fp
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, projectFolder)
@@ -202,9 +204,6 @@ class ImageBased(GenericImageBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        # self.loader.simulationType = self.simulationType
-        # self.loader.resultFiles = self._resultFiles
-        # return self.loader.results
         return self._resultFiles
 
     def ToString(self):
