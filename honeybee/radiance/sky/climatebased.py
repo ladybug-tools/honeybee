@@ -90,11 +90,15 @@ class ClimateBased(PointInTimeSky):
         values = ('vis', 'sol', 'lum')
         return values[self.skyType]
 
-    @property
-    def command(self):
+    def command(self, folder=None):
         """Gensky command."""
+        if folder:
+            outputName = folder + '/' + self.name
+        else:
+            outputName = self.name
+
         cmd = Gendaylit.fromLocationDirectAndDiffuseRadiation(
-            outputName=self.name, location=self.location,
+            outputName=outputName, location=self.location,
             monthDayHour=(self.month, self.day, self.hour),
             directRadiation=self.directRadiation,
             diffuseRadiation=self.diffuseRadiation,
@@ -103,18 +107,6 @@ class ClimateBased(PointInTimeSky):
         cmd.gendaylitParameters.outputType = self.skyType
 
         return cmd
-
-    def toRadString(self):
-        """Get sky radiance command."""
-        return self.command.toRadString()
-
-    def execute(self, output=None):
-        """Get sky radiance command.
-
-        Args:
-            folder: Optional input for output file (default: <self.name>.sky)
-        """
-        return self.command.execute()
 
     def ToString(self):
         """Overwrite .NET ToString method."""

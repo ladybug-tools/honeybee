@@ -52,7 +52,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
                  subFolder="gridbased_threephase"):
         """Create an annual recipe."""
         DaylightCoeffGridBased.__init__(
-            self, skyMtx, analysisGrids, hbObjects=hbObjects, subFolder=subFolder
+            self, skyMtx, analysisGrids, simulationType, hbObjects=hbObjects,
+            subFolder=subFolder
         )
 
         self.viewMtxParameters = viewMtxParameters
@@ -152,7 +153,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
             self._daylightMtxParameters = dm
 
     @property
-    def skyType(self):
+    def skyDensity(self):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 

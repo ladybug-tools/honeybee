@@ -48,11 +48,15 @@ class CertainIlluminanceLevel(CIE):
         assert float(value) >= 0, "Illuminace value can't be negative."
         self._illum = float(value)
 
-    @property
-    def command(self):
+    def command(self, folder=None):
         """Gensky command."""
+        if folder:
+            outputName = folder + '/' + self.name
+        else:
+            outputName = self.name
+
         cmd = Gensky.uniformSkyfromIlluminanceValue(
-            outputName=self.name, illuminanceValue=self.illuminanceValue,
+            outputName=outputName, illuminanceValue=self.illuminanceValue,
             skyType=self.skyType
         )
         return cmd

@@ -94,19 +94,24 @@ class PointInTimeSky(RadianceSky):
             self.month, self.day, self.hour
         )
 
-    def execute(self, filepath):
-        """Execute the sky and write the results to a file if desired."""
-        raise NotImplementedError(
-            '{} is a base class. Try one of the subclasses '
-            'like CIE or ClimateBased'.format(self.__class__.__name__)
-        )
-
-    def toRadString(self):
+    def command(self, folder):
         """Get sky radiance command."""
         raise NotImplementedError(
             '{} is a base class. Try one of the subclasses '
             'like CIE or ClimateBased'.format(self.__class__.__name__)
         )
+
+    def toRadString(self, folder=None):
+        """Get sky radiance command."""
+        return self.command(folder).toRadString()
+
+    def execute(self, folder=None):
+        """Get sky radiance command.
+
+        Args:
+            folder: Optional folder for output file (default: <self.name>.sky)
+        """
+        return self.command(folder).execute()
 
     def ToString(self):
         """Overwrite .NET ToString method."""

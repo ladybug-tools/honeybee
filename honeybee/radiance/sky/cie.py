@@ -65,27 +65,19 @@ class CIE(PointInTimeSky):
             self.month, self.day, self.hour
         )
 
-    @property
-    def command(self):
+    def command(self, folder=None):
         """Gensky command."""
+        if folder:
+            outputName = folder + '/' + self.name
+        else:
+            outputName = self.name
+
         cmd = Gensky.fromSkyType(
-            outputName=self.name, monthDayHour=(self.month, self.day, self.hour),
+            outputName=outputName, monthDayHour=(self.month, self.day, self.hour),
             skyType=self.skyType, latitude=self.location.latitude,
             longitude=-1 * self.location.longitude, meridian=self.location.meridian,
             rotation=self.north)
         return cmd
-
-    def toRadString(self):
-        """Get sky radiance command."""
-        return self.command.toRadString()
-
-    def execute(self, output=None):
-        """Get sky radiance command.
-
-        Args:
-            folder: Optional input for output file (default: <self.name>.sky)
-        """
-        return self.command.execute()
 
     def ToString(self):
         """Overwrite .NET ToString method."""

@@ -25,13 +25,13 @@ class SunMatrix(RadianceSky):
         analemma, sunlist, sunmtxfile = sunmtx.execute('c:/ladybug')
     """
 
-    def __init__(self, wea, north=0, hoys=None):
+    def __init__(self, wea, north=0, hoys=None, skyType=0):
         """Create sun matrix."""
         RadianceSky.__init__(self)
         self.wea = wea
         self.north = north
         self.hoys = hoys or range(8760)
-        self._skyType = 0  # set default to 0 for visible radiation
+        self.skyType = skyType  # set default to 0 for visible radiation
 
     @classmethod
     def fromEpwFile(cls, epwFile, north=0, hoys=None):

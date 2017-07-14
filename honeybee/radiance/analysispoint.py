@@ -742,13 +742,18 @@ class AnalysisPoint(object):
 
         return ASE > targetHours, ASE, problematicHours
 
+    def unload(self):
+        """Unload values and sources."""
+        self._values = []
+        self._sources = {}
+
     def duplicate(self):
         """Duplicate the analysis point."""
         ap = AnalysisPoint(self._loc, self._dir)
         ap._sources = self._sources
         # This should be good enough as most of the time an analysis point will be
         # copied with no values assigned.
-        ap._values = list(self._values)
+        ap._values = copy.copy(self._values)
         ap._isDirectLoaded = bool(self._isDirectLoaded)
         ap.logic = copy.copy(self.logic)
         return ap
