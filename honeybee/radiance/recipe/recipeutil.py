@@ -3,6 +3,7 @@ from ..command.rfluxmtx import Rfluxmtx
 from ..command.dctimestep import Dctimestep
 from ..command.rmtxop import Rmtxop, RmtxopMatrix
 from ..command.gendaymtx import Gendaymtx
+from ..sky.sunmatrix import SunMatrix
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib, RcontribParameters
 from ..command.xform import Xform, XformParameters
@@ -21,10 +22,10 @@ def glzSrfTowinGroup():
     This is neccessary to work with normal glazing just like window groups.
     """
     State = namedtuple('State', 'name')
-    WindowGroup = namedtuple('WindowGroup', 'name states')
+    WindowGroup = namedtuple('WindowGroup', 'name states stateCount')
 
     state = State('default')
-    wg = WindowGroup('glzSrfs', (state,))
+    wg = WindowGroup('scene', (state,), 1)
 
     return wg
 
@@ -549,23 +550,23 @@ def writeRadFilesMultiPhase(workingDir, projectName, opq, glz, wgs):
 
     Returns:
         A named tuple for each RadFile as (fp, fpblk)
-        fp returns the file path to the list of radiance files.
+        fp returns the file path to the list of radiance files. It will be glowed
+            files for windowGroups.
         fpblk returns the file path to the list of blacked radiance files.
-        fpglw returns the file path to the list of glowed radiance files.
     """
-    Files = namedtuple('Files', ['fp', 'fpblk', 'fpglw'])
+    Files = namedtuple('Files', ['fp', 'fpblk'])
 
     folder = os.path.join(workingDir, 'opaque')
     of = opq.writeGeometries(folder, '%s..opaque.rad' % projectName, 0, mkdir=True)
     om = opq.writeMaterials(folder, '%s..opaque.mat' % projectName, 0, blacked=False)
     bm = opq.writeMaterials(folder, '%s..blacked.mat' % projectName, 0, blacked=True)
-    opqf = Files((om, of), (bm, of), ())
+    opqf = Files((om, of), (bm, of))
 
     folder = os.path.join(workingDir, 'glazing')
     ogf = glz.writeGeometries(folder, '%s..glazing.rad' % projectName, 0, mkdir=True)
     ogm = glz.writeMaterials(folder, '%s..glazing.mat' % projectName, 0, blacked=False)
     bgm = glz.writeMaterials(folder, '%s..blacked.mat' % projectName, 0, blacked=True)
-    glzf = Files((ogm, ogf), (bgm, ogf), ())
+    glzf = Files((ogm, ogf), (bgm, ogf))
 
     wgfs = []
     folder = os.path.join(workingDir, 'wgroup')
@@ -588,8 +589,7 @@ def writeRadFilesMultiPhase(workingDir, projectName, opq, glz, wgs):
         os.remove(wggf)
         os.rename(recf, wggf)
         # add header to window files.
-        # TODO(mostapha) this structure seems to be a problem.
-        wgfs.append(Files((), (wgbm, wgbf), (wggf,)))
+        wgfs.append(Files((wggf,), (wgbm, wgbf)))
 
         # copy xml files for each state to bsdf folder
         # raise TypeError if material is not BSDF
@@ -605,3 +605,368 @@ def writeRadFilesMultiPhase(workingDir, projectName, opq, glz, wgs):
         copyFilesToFolder(bsdfs, bsdffolder)
 
     return opqf, glzf, wgfs
+
+
+def getCommandsSky(projectFolder, skyMatrix, reuse=True):
+    """Get list of commands to generate the skies.
+
+    1. total sky matrix
+    2. direct only sky matrix
+    3. sun matrix (aka analemma)
+
+    This methdo genrates sun matrix under projectFolder/sky and return the commands
+    to generate skies number 1 and 2.
+
+    Returns a namedtuple for (outputFiles, commands)
+    outputFiles in a namedtuple itself (skyMtxTotal, skyMtxDirect, analemma, sunlist,
+        analemmaMtx).
+    """
+    OutputFiles = namedtuple('OutputFiles',
+                             'skyMtxTotal skyMtxDirect analemma sunlist analemmaMtx')
+
+    SkyCommands = namedtuple('SkyCommands', 'outputFiles commands')
+
+    commands = []
+
+    # # 2.1.Create sky matrix.
+    skyMatrix.mode = 0
+    skyMtxTotal = 'sky\\{}.smx'.format(skyMatrix.name)
+    skyMatrix.mode = 1
+    skyMtxDirect = 'sky\\{}.smx'.format(skyMatrix.name)
+    skyMatrix.mode = 0
+
+    # add commands for total and direct sky matrix.
+    if hasattr(skyMatrix, 'isSkyMatrix'):
+        for m in xrange(2):
+            skyMatrix.mode = m
+            gdm = skymtxToGendaymtx(skyMatrix, projectFolder)
+            if gdm:
+                note = ':: {} sky matrix'.format('direct' if m else 'total')
+                commands.extend((note, gdm))
+        skyMatrix.mode = 0
+    else:
+        # sky vector
+        raise TypeError('You must use a SkyMatrix to generate the sky.')
+
+    # # 2.2. Create sun matrix
+    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType)
+    analemma, sunlist, analemmaMtx = \
+        sm.execute(os.path.join(projectFolder, 'sky'), reuse=reuse)
+
+    of = OutputFiles(skyMtxTotal, skyMtxDirect, analemma, sunlist, analemmaMtx)
+
+    return SkyCommands(commands, of)
+
+
+# TODO(mostapha): restructure inputs to make the method useful for a normal user.
+# It's currently structured to satisfy what we need for the recipes.
+def getCommandsSceneDaylightCoeff(
+        projectName, skyDensity, projectFolder, skyfiles, inputfiles,
+        pointsFile, totalPointCount, rfluxmtxParameters, reuseDaylightMtx=False,
+        totalCount=1):
+    """Get commands for the static windows in the scene.
+
+    Use getCommandsWGroupsDaylightCoeff to get the commands for the rest of the scene.
+
+    Args:
+        projectName: A string to generate uniqe file names for this project.
+        skyDensity: Sky density for this study.
+        projectFolder: Path to projectFolder.
+        skyfiles: Collection of path to sky files. The order must be (skyMtxTotal,
+            skyMtxDirect, analemma, sunlist, analemmaMtx). You can use getCommandsSky
+            function to generate this list.
+        inputfiles: Input files for this study. The order must be (opqfiles, glzfiles,
+            wgsfiles, extrafiles). Each files object is a namedtuple which includes
+            filepath to radiance files under fp and filepath to backed out files under
+            fpblk.
+        pointsFile: Path to pointsFile.
+        totalPointCount: Number of total points inside pointsFile.
+        rfluxmtxParameters: An instance of rfluxmtxParameters for daylight matrix.
+        reuseDaylightMtx: A boolean not to include the commands for daylight matrix
+            calculation if they already exist inside the folder.
+    """
+    # unpack inputs
+    opqfiles, glzfiles, wgsfiles, extrafiles = inputfiles
+
+    if len(wgsfiles) > 0:
+        # material is the first file
+        blkmaterial = [wgsfiles[0].fpblk[0]]
+        # collect files for blacked geometries for all window groups
+        wgsblacked = [f.fpblk[1] for c, f in enumerate(wgsfiles)]
+    else:
+        # there is no window group, return an empty tuple
+        blkmaterial = ()
+        wgsblacked = ()
+
+    windowGroup = glzSrfTowinGroup()
+    windowGroupfiles = glzfiles.fp
+
+    commands, results = _getCommandsDaylightCoeff(
+        projectName, skyDensity, projectFolder, windowGroup, skyfiles,
+        inputfiles, pointsFile, totalPointCount, blkmaterial, wgsblacked,
+        rfluxmtxParameters, 0, windowGroupfiles, reuseDaylightMtx, (1, totalCount))
+
+    return commands, results
+
+
+def getCommandsWGroupsDaylightCoeff(
+        projectName, skyDensity, projectFolder, windowGroups, skyfiles, inputfiles,
+        pointsFile, totalPointCount, rfluxmtxParameters, reuseDaylightMtx=False,
+        totalCount=1):
+    """Get commands for the static windows in the scene.
+
+    Use getCommandsWGroupsDaylightCoeff to get the commands for the rest of the scene.
+
+    Args:
+        projectName: A string to generate uniqe file names for this project.
+        skyDensity: Sky density for this study.
+        projectFolder: Path to projectFolder.
+        windowGroups: List of windowGroups.
+        skyfiles: Collection of path to sky files. The order must be (skyMtxTotal,
+            skyMtxDirect, analemma, sunlist, analemmaMtx). You can use getCommandsSky
+            function to generate this list.
+        inputfiles: Input files for this study. The order must be (opqfiles, glzfiles,
+            wgsfiles, extrafiles). Each files object is a namedtuple which includes
+            filepath to radiance files under fp and filepath to backed out files under
+            fpblk.
+        pointsFile: Path to pointsFile.
+        totalPointCount: Number of total points inside pointsFile.
+        rfluxmtxParameters: An instance of rfluxmtxParameters for daylight matrix.
+        reuseDaylightMtx: A boolean not to include the commands for daylight matrix
+            calculation if they already exist inside the folder.
+    """
+    # unpack inputs
+    opqfiles, glzfiles, wgsfiles, extrafiles = inputfiles
+    commands = []
+    results = []
+    for count, windowGroup in enumerate(windowGroups):
+        # get black material file
+        blkmaterial = [wgsfiles[count].fpblk[0]]
+        # add all the blacked window groups but the one in use
+        # and finally add non-window group glazing as black
+        wgsblacked = \
+            [f.fpblk[1] for c, f in enumerate(wgsfiles) if c != count] + \
+            list(glzfiles.fpblk)
+
+        counter = 2 + sum(wg.stateCount for wg in windowGroups[:count])
+
+        cmds, res = _getCommandsDaylightCoeff(
+            projectName, skyDensity, projectFolder, windowGroup, skyfiles,
+            inputfiles, pointsFile, totalPointCount, blkmaterial, wgsblacked,
+            rfluxmtxParameters, count, windowGroupfiles=None,
+            reuseDaylightMtx=reuseDaylightMtx, counter=(counter, totalCount))
+
+        commands.extend(cmds)
+        results.extend(res)
+    return commands, results
+
+
+# TODO(): use logging instead of print
+def _getCommandsDaylightCoeff(
+        projectName, skyDensity, projectFolder, windowGroup, skyfiles, inputfiles,
+        pointsFile, totalPointCount, blkmaterial, wgsblacked, rfluxmtxParameters,
+        windowGroupCount=0, windowGroupfiles=None, reuseDaylightMtx=False, counter=None):
+    """Get commands for the daylight coefficient recipe.
+
+    This function is used by getCommandsSceneDaylightCoeff and
+    getCommandsWGroupsDaylightCoeff. You usually don't want to use this function
+    directly.
+    """
+    commands = []
+    resultFiles = []
+    # unpack inputs
+    opqfiles, glzfiles, wgsfiles, extrafiles = inputfiles
+    skyMtxTotal, skyMtxDirect, analemma, sunlist, analemmaMtx = skyfiles
+
+    for scount, state in enumerate(windowGroup.states):
+        # 2.3.Generate daylight coefficients using rfluxmtx
+        # collect list of radiance files in the scene for both total and direct
+        if counter:
+            p = ((counter[0] + scount - 1.0) / counter[1]) * 100
+            c = int(p / 10)
+            commands.append(
+                ':: {} of {} ^|{}{}^| ({:.2f}%%)'.format(
+                    counter[0] + scount - 1, counter[1], '#' * c,
+                    '-' * (10 - c), float(p)
+                )
+            )
+        commands.append('::')
+        commands.append(
+            ':: start of calculation for {}, {}. Number of states: #{}'.format(
+                windowGroup.name, state.name, windowGroup.stateCount
+            )
+        )
+        commands.append('::')
+
+        if not windowGroupfiles:
+            # in case window group is not already provided
+            windowGroupfiles = (wgsfiles[windowGroupCount].fp[scount],)
+
+        rfluxScene = (
+            f for fl in
+            (windowGroupfiles, opqfiles.fp, extrafiles.fp,
+             blkmaterial, wgsblacked)
+            for f in fl)
+
+        rfluxSceneBlacked = (
+            f for fl in
+            (windowGroupfiles, opqfiles.fpblk, extrafiles.fpblk,
+             blkmaterial, wgsblacked)
+            for f in fl)
+
+        dMatrix = 'result\\matrix\\normal_{}..{}..{}.dc'.format(
+            projectName, windowGroup.name, state.name)
+
+        dMatrixDirect = 'result\\matrix\\black_{}..{}..{}.dc'.format(
+            projectName, windowGroup.name, state.name)
+
+        sunMatrix = 'result\\matrix\\sun_{}..{}..{}.dc'.format(
+            projectName, windowGroup.name, state.name)
+
+        if not os.path.isfile(os.path.join(projectFolder, dMatrix)) \
+                or not reuseDaylightMtx:
+            radFiles = tuple(os.path.relpath(f, projectFolder) for f in rfluxScene)
+            sender = '-'
+            receiver = skyReceiver(
+                os.path.join(projectFolder, 'sky\\rfluxSky.rad'), skyDensity
+            )
+
+            commands.append(':: :: 1. calculating daylight matrices')
+            commands.append('::')
+
+            commands.append(':: :: [1/3] scene daylight matrix')
+            commands.append(
+                ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] [scene]'
+                ' ^> [dc.mtx]'
+            )
+            commands.append('::')
+
+            # samplingRaysCount = 1 based on @sariths studies
+            rfluxmtxParameters.ambientBounces = 5
+            rflux = coeffMatrixCommands(
+                dMatrix, os.path.relpath(receiver, projectFolder), radFiles, sender,
+                os.path.relpath(pointsFile, projectFolder), totalPointCount,
+                1, rfluxmtxParameters
+            )
+            commands.append(rflux.toRadString())
+
+            radFilesBlacked = tuple(os.path.relpath(f, projectFolder)
+                                    for f in rfluxSceneBlacked)
+
+            commands.append(':: :: [2/3] black scene daylight matrix')
+            commands.append(
+                ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] '
+                '[blacked scene] ^> [black dc.mtx]'
+            )
+            commands.append('::')
+
+            rfluxmtxParameters.ambientBounces = 1
+            rfluxDirect = coeffMatrixCommands(
+                dMatrixDirect, os.path.relpath(receiver, projectFolder),
+                radFilesBlacked, sender, os.path.relpath(pointsFile, projectFolder),
+                totalPointCount, None, rfluxmtxParameters
+            )
+            commands.append(rfluxDirect.toRadString())
+
+            commands.append(':: :: [3/3] black scene analemma daylight matrix')
+            commands.append(
+                ':: :: rcontrib - [sunMatrix] [points] [wgroup] [blacked wgroups] '
+                '[blacked scene] ^> [analemma dc.mtx]'
+            )
+            commands.append('::')
+            sunCommands = sunCoeffMatrixCommands(
+                sunMatrix, os.path.relpath(pointsFile, projectFolder),
+                radFilesBlacked, os.path.relpath(analemma, projectFolder),
+                os.path.relpath(sunlist, projectFolder)
+            )
+
+            commands.extend(cmd.toRadString() for cmd in sunCommands)
+        else:
+            commands.append(':: :: 1. reusing daylight matrices')
+            commands.append('::')
+
+        commands.append(':: :: 2. matrix multiplication')
+        commands.append('::')
+        commands.append(':: :: [1/3] calculating daylight mtx * total sky')
+        commands.append(':: :: dctimestep [dc.mtx] [total sky] ^> [total results.rgb]')
+        dctTotal = matrixCalculation(
+            'tmp\\total..{}..{}.rgb'.format(windowGroup.name, state.name),
+            dMatrix=dMatrix, skyMatrix=skyMtxTotal
+        )
+        commands.append(dctTotal.toRadString())
+
+        commands.append(
+            ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [total results.ill]'
+        )
+        finalmtx = RGBMatrixFileToIll(
+            (dctTotal.outputFile,),
+            'result\\total..{}..{}.ill'.format(windowGroup.name, state.name)
+        )
+        commands.append('::')
+        commands.append(finalmtx.toRadString())
+
+        commands.append(':: :: [2/3] calculating black daylight mtx * direct only sky')
+        commands.append(
+            ':: :: dctimestep [black dc.mtx] [direct only sky] ^> [direct results.rgb]')
+
+        dctDirect = matrixCalculation(
+            'tmp\\direct..{}..{}.rgb'.format(windowGroup.name, state.name),
+            dMatrix=dMatrixDirect, skyMatrix=skyMtxDirect
+        )
+        commands.append(dctDirect.toRadString())
+        commands.append(
+            ':: :: rmtxop -c 47.4 119.9 11.6 [direct results.rgb] ^> '
+            '[direct results.ill]'
+        )
+        commands.append('::')
+        finalmtx = RGBMatrixFileToIll(
+            (dctTotal.outputFile,),
+            'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name)
+        )
+        commands.append(finalmtx.toRadString())
+
+        commands.append(':: :: [3/3] calculating black daylight mtx * analemma')
+        commands.append(
+            ':: :: dctimestep [black dc.mtx] [analemma only sky] ^> [sun results.rgb]')
+        dctSun = sunMatrixCalculation(
+            'tmp\\sun..{}..{}.rgb'.format(windowGroup.name, state.name),
+            dcMatrix=sunMatrix,
+            skyMatrix=os.path.relpath(analemmaMtx, projectFolder)
+        )
+        commands.append(dctSun.toRadString())
+
+        commands.append(
+            ':: :: rmtxop -c 47.4 119.9 11.6 [sun results.rgb] ^> '
+            '[sun results.ill]'
+        )
+        commands.append('::')
+        finalmtx = RGBMatrixFileToIll(
+            (dctSun.outputFile,),
+            'result\\sun..{}..{}.ill'.format(windowGroup.name, state.name)
+        )
+        commands.append(finalmtx.toRadString())
+
+        commands.append(':: :: 3. calculating final results')
+        commands.append(
+            ':: :: rmtxop [total results.ill] - [direct results.ill] + [sun results.ill]'
+            ' ^> [final results.ill]'
+        )
+        commands.append('::')
+        fmtx = finalMatrixAddition(
+            'result\\total..{}..{}.ill'.format(windowGroup.name, state.name),
+            'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name),
+            'result\\sun..{}..{}.ill'.format(windowGroup.name, state.name),
+            'result\\{}..{}.ill'.format(windowGroup.name, state.name)
+        )
+        commands.append(fmtx.toRadString())
+        commands.append(
+            ':: end of calculation for {}, {}'.format(windowGroup.name, state.name))
+        commands.append('::')
+        commands.append('::')
+        commands.append('::')
+
+        resultFiles.append(
+            os.path.join(projectFolder, str(fmtx.outputFile))
+        )
+
+    return commands, resultFiles
