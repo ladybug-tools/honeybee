@@ -1,18 +1,18 @@
 """Radiance Grid-based Analysis Recipe."""
-
-from ._gridbasedbase import GenericGridBasedAnalysisRecipe
-from ..parameters.gridbased import LowQuality
-from ..command.oconv import Oconv
-from ..command.rtrace import Rtrace
-from ..command.rcalc import Rcalc
-from ...futil import writeToFile
+from .._gridbasedbase import GenericGridBased
+from ..recipeutil import writeRadFiles, writeExtraFiles
+from ...parameters.gridbased import LowQuality
+from ...command.oconv import Oconv
+from ...command.rtrace import Rtrace
+from ...command.rcalc import Rcalc
+from ....futil import writeToFile
 
 from ladybug.dt import DateTime
 
 import os
 
 
-class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
+class GridBased(GenericGridBased):
     """Grid base analysis base class.
 
     Attributes:
@@ -30,7 +30,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         sky = SkyWithCertainIlluminanceLevel(2000)
 
         # initiate analysisRecipe
-        analysisRecipe = GridBasedAnalysisRecipe(
+        analysisRecipe = GridBased(
             sky, testPoints, ptsVectors, simType
             )
 
@@ -47,12 +47,12 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         print analysisRecipe.results()
     """
 
-    # TODO: implemnt isChanged at DaylightAnalysisRecipe level to reload the results
+    # TODO: implemnt isChanged at AnalysisRecipe level to reload the results
     # if there has been no changes in inputs.
     def __init__(self, sky, analysisGrids, simulationType=0, radParameters=None,
                  hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
-        GenericGridBasedAnalysisRecipe.__init__(
+        GenericGridBased.__init__(
             self, analysisGrids, hbObjects, subFolder)
 
         self.sky = sky
@@ -170,40 +170,44 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         """
         # 0.prepare target folder
         # create main folder targetFolder\projectName
-        sceneFiles = super(
-            GenericGridBasedAnalysisRecipe, self).populateSubFolders(
-                targetFolder, projectName)
+        projectFolder = \
+            super(GenericGridBased, self).writeContent(targetFolder, projectName)
+
+        # write geometry and material files
+        opqfiles, glzfiles, wgsfiles = writeRadFiles(
+            projectFolder + '/scene', projectName, self.opaqueRadFile,
+            self.glazingRadFile, self.windowGroupsRadFiles
+        )
+        # additional radiance files added to the recipe as scene
+        extrafiles = writeExtraFiles(self.scene, projectFolder + '/scene')
 
         # 1.write points
-        pointsFile = self.writePointsToFile(sceneFiles.path, projectName)
+        pointsFile = self.writeAnalysisGrids(projectFolder, projectName)
 
         # 2.write sky file
-        skyFile = self.sky.writeToFile(sceneFiles.path + '\\skies')
+        skyFile = self.sky.writeToFile(projectFolder + '\\sky')
 
         # 3.write batch file
-        self.commands = []
-
         if header:
-            self.commands.append(self.header(sceneFiles.path))
+            self.commands.append(self.header(projectFolder))
 
+        # TODO(Mostapha): add windowGroups here if any!
         # # 4.1.prepare oconv
-        octSceneFiles = [skyFile, sceneFiles.matFile, sceneFiles.geoFile] + \
-            sceneFiles.matFilesAdd + sceneFiles.radFilesAdd + sceneFiles.octFilesAdd
+        octSceneFiles = [skyFile] + opqfiles + glzfiles + extrafiles.fp
 
         oc = Oconv(projectName)
-        oc.sceneFiles = tuple(self.relpath(f, sceneFiles.path)
-                              for f in octSceneFiles)
+        oc.sceneFiles = tuple(self.relpath(f, projectFolder) for f in octSceneFiles)
 
         # # 4.2.prepare rtrace
-        rt = Rtrace('results\\' + projectName,
+        rt = Rtrace('result\\' + projectName,
                     simulationType=self.simulationType,
                     radianceParameters=self.radianceParameters)
         rt.radianceParameters.h = True
         rt.octreeFile = str(oc.outputFile)
-        rt.pointsFile = self.relpath(pointsFile, sceneFiles.path)
+        rt.pointsFile = self.relpath(pointsFile, projectFolder)
 
         # # 4.3. add rcalc to convert rgb values to irradiance
-        rc = Rcalc('results\\{}.ill'.format(projectName), str(rt.outputFile))
+        rc = Rcalc('result\\{}.ill'.format(projectName), str(rt.outputFile))
 
         if os.name == 'nt':
             rc.rcalcParameters.expression = '"$1=(0.265*$1+0.67*$2+0.065*$3)*179"'
@@ -211,22 +215,21 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
             rc.rcalcParameters.expression = "'$1=(0.265*$1+0.67*$2+0.065*$3)*179'"
 
         # # 4.4 write batch file
-        self.commands.append(oc.toRadString())
-        self.commands.append(rt.toRadString())
-        self.commands.append(rc.toRadString())
+        self._commands.append(oc.toRadString())
+        self._commands.append(rt.toRadString())
+        self._commands.append(rc.toRadString())
 
-        batchFile = os.path.join(sceneFiles.path, "commands.bat")
+        batchFile = os.path.join(projectFolder, "commands.bat")
 
         writeToFile(batchFile, "\n".join(self.commands))
 
-        self.resultsFile = os.path.join(sceneFiles.path, str(rc.outputFile))
+        self._resultFiles = os.path.join(projectFolder, str(rc.outputFile))
 
-        print "Files are written to: %s" % sceneFiles.path
         return batchFile
 
-    def results(self, flattenResults=True):
+    def results(self):
         """Return results for this analysis."""
-        assert self.isCalculated, \
+        assert self._isCalculated, \
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
@@ -234,7 +237,7 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         dt = DateTime(sky.month, sky.day, int(sky.hour),
                       int(60 * (sky.hour - int(sky.hour))))
 
-        rf = self.resultsFile
+        rf = self._resultFiles
         startLine = 0
         for count, analysisGrid in enumerate(self.analysisGrids):
             if count:
@@ -258,5 +261,5 @@ class GridBasedAnalysisRecipe(GenericGridBasedAnalysisRecipe):
         return "%s: %s\n#PointGroups: %d #Points: %d" % \
             (self.__class__.__name__,
              _analysisType[self.simulationType],
-             self.numOfAnalysisGrids,
-             self.numOfTotalPoints)
+             self.AnalysisGridCount,
+             self.totalPointCount)

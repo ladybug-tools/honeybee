@@ -22,7 +22,7 @@ class Scene(object):
         self.overwrite = overwrite
 
     @property
-    def numberOfFiles(self):
+    def fileCount(self):
         """Number of total files in the scene."""
         return sum(len(f) for f in self.files)
 

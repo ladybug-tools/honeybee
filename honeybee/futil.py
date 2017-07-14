@@ -149,7 +149,8 @@ def copyFilesToFolder(files, targetFolder, overwrite=True):
             else:
                 continue
         else:
-            print 'copying %s to %s' % (os.path.split(f)[-1], targetFolder)
+            print 'Copying %s to %s' % (os.path.split(f)[-1],
+                                        os.path.normpath(targetFolder))
             shutil.copy(f, targetFolder)
 
     return [os.path.join(targetFolder, os.path.split(f)[-1]) for f in files]

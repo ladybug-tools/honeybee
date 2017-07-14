@@ -35,125 +35,13 @@ class Rfluxmtx(RadianceCommand):
     4 0 0 1 180
     """
 
-    class ControlParameters(object):
-        """Rfluxmtx ControlParameters.
+    @staticmethod
+    def controlParameters(hemiType='u', hemiUpDirection='Y', outputFile=''):
+        """Rfluxmtx ControlParameters."""
+        return RfluxmtxControlParameters(hemiType, hemiUpDirection, outputFile)
 
-        Set the values for hemispheretype, hemisphere up direction
-        and output file location(optional).
-        """
-
-        def __init__(self, hemiType='u', hemiUpDirection='Y', outputFile=''):
-            """Init class."""
-            self.hemisphereType = hemiType
-            """
-                The acceptable inputs for hemisphere type are:
-                    u for uniform.(Usually applicable for ground).
-                    kf for klems full.
-                    kh for klems half.
-                    kq for klems quarter.
-                    rN for Reinhart - Tregenza type skies. N stands for subdivisions and defaults to 1.
-                    scN for shirley-chiu subdivisions."""
-            self.hemisphereUpDirection = hemiUpDirection
-            """The acceptable inputs for hemisphere direction are %s""" % \
-                (",".join(('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
-                           '-Z', '-x', '-y', '-z')))
-            self.outputFile = outputFile
-
-        @property
-        def hemisphereType(self):
-            return self._hemisphereType
-
-        @hemisphereType.setter
-        def hemisphereType(self, value):
-            """Hemisphere type.
-
-            The acceptable inputs for hemisphere type are:
-                u for uniform.(Usually applicable for ground).
-                kf for klems full.
-                kh for klems half.
-                kq for klems quarter.
-                rN for Reinhart - Tregenza type skies. N stands for subdivisions and defaults to 1.
-                scN for shirley-chiu subdivisions.
-            """
-            if value:
-                if value in ('u', 'kf', 'kh', 'kq'):
-                    self._hemisphereType = value
-                    return
-                elif value.startswith('r'):
-                    if len(value) > 1:
-                        try:
-                            num = int(value[1:])
-                        except ValueError:
-                            raise Exception(
-                                "The format reinhart tregenza type skies is rN ."
-                                "The value entered was %s" % value)
-                    else:
-                        num = ''
-                    self._hemisphereType = 'r' + str(num)
-                elif value.startswith('sc'):
-                    if len(value) > 2:
-                        try:
-                            num = int(value[2:])
-                        except ValueError:
-                            raise Exception(
-                                "The format for ShirleyChiu type values is scN."
-                                "The value entered was %s" % value)
-                    else:
-                        raise Exception(
-                            "The format for ShirleyChiu type values is scN."
-                            "The value entered was %s" % value)
-                    self._hemisphereType = 'sc' + str(num)
-                else:
-                    exceptStr = """
-                    The acceptable inputs for hemisphere type are:
-                        u for uniform.(Usually applicable for ground).
-                        kf for klems full.
-                        kh for klems half.
-                        kq for klems quarter.
-                        rN for Reinhart - Tregenza type skies. N stands for
-                            subdivisions and defaults to 1.
-                        scN for shirley-chiu subdivisions.
-                    The value entered was %s
-                    """ % (value)
-                    raise Exception(exceptStr)
-
-        @property
-        def hemisphereUpDirection(self):
-            return self._hemisphereUpDirection
-
-        @hemisphereUpDirection.setter
-        def hemisphereUpDirection(self, value):
-            """hemisphere direction.
-
-            The acceptable inputs for hemisphere direction are a tuple with 3 values
-            or 'X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y','-Z', '-x', '-y','-z'.
-            """
-            allowedValues = ('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
-                             '-Z', '-x', '-y', '-z', "+X", "+Y", "+Z",
-                             '+x', "+y", "+z")
-
-            if isinstance(value, (tuple, list)):
-                assert len(value) == 3, \
-                    'Length of emisphereUpDirection vector should be 3.'
-                self._hemisphereUpDirection = ','.join((str(v) for v in value))
-
-            elif value:
-                assert value in allowedValues, "The value for hemisphereUpDirection" \
-                                               "should be one of the following: %s" \
-                                               % (','.join(allowedValues))
-
-                self._hemisphereUpDirection = value
-            else:
-                self._hemisphereUpDirection = '+Z'
-
-        def __str__(self):
-            outputFileSpec = "o=%s" % self.outputFile if self.outputFile else ''
-            return "#@rfluxmtx h=%s u=%s %s" % (self.hemisphereType,
-                                                self.hemisphereUpDirection,
-                                                outputFileSpec)
-
-    @classmethod
-    def defaultSkyGround(cls, fileName, skyType=None, skyFileFormat=None,
+    @staticmethod
+    def defaultSkyGround(fileName, skyType=None, skyFileFormat=None,
                          groundFileFormat=None):
         """
 
@@ -174,10 +62,10 @@ class Rfluxmtx(RadianceCommand):
             fileName: Passes back the same fileName that was provided as input.
         """
 
-        skyParam = Rfluxmtx.ControlParameters(hemiType=skyType or 'r',
+        skyParam = Rfluxmtx.controlParameters(hemiType=skyType or 'r',
                                               outputFile=skyFileFormat)
 
-        groundParam = Rfluxmtx.ControlParameters(hemiType='u',
+        groundParam = Rfluxmtx.controlParameters(hemiType='u',
                                                  outputFile=groundFileFormat)
 
         groundString = Rfluxmtx.addControlParameters(Rfluxmtx.groundString,
@@ -190,8 +78,8 @@ class Rfluxmtx(RadianceCommand):
 
         return fileName
 
-    @classmethod
-    def addControlParameters(cls, inputString, modifierDict):
+    @staticmethod
+    def addControlParameters(inputString, modifierDict):
         if os.path.exists(inputString):
             with open(inputString)as fileString:
                 fileData = fileString.read()
@@ -203,7 +91,7 @@ class Rfluxmtx(RadianceCommand):
         for lines in fileData.split('\n'):
             for key, value in modifierDict.items():
                 if key in lines and not checkDict[key] and \
-                    not lines.strip().startswith('#'):
+                        not lines.strip().startswith('#'):
                     outputString += str(value) + '\n'
                     checkDict[key] = True
             else:
@@ -213,14 +101,15 @@ class Rfluxmtx(RadianceCommand):
             assert value, "The modifier %s was not found in the string specified" % key
 
         if os.path.exists(inputString):
-            newOutputFile = inputString[:-4] + '_m' + inputString[-4:]
+            newOutputFile = inputString[:-4] + '_cp_added' + inputString[-4:]
             with open(newOutputFile, 'w') as newoutput:
                 newoutput.write(outputString)
             outputString = newOutputFile
+
         return outputString
 
-    @classmethod
-    def checkForRfluxParameters(cls, fileVal):
+    @staticmethod
+    def checkForRfluxParameters(fileVal):
         with open(fileVal)as rfluxFile:
             rfluxString = rfluxFile.read()
         assert '#@rfluxmtx' in rfluxString, \
@@ -265,10 +154,11 @@ class Rfluxmtx(RadianceCommand):
         """The points file or input vwrays for which the illuminance/luminance
         value are to be calculated."""
 
+        self.numberOfPoints = 0
+        """Number of test points. Initially set to 0."""
+
         self.outputMatrix = outputMatrix
         """The flux matrix file that will be created by rfluxmtx."""
-
-        self.pointsFileData = ''
 
         self.viewRaysFile = viewRaysFile
         """File containing ray samples generated from vwrays"""
@@ -319,13 +209,13 @@ class Rfluxmtx(RadianceCommand):
     def pointsFile(self, value):
         if value:
             if os.path.exists(value):
-                with open(value)as pointsFile:
-                    numberOfPoints = len(pointsFile.read().split()) / 6
-                    self.pointsFileData += '-y %s' % numberOfPoints
+                with open(value, 'rb') as pfile:
+                    self.numberOfPoints = sum(1 for line in pfile if line.strip())
+            elif self.numberOfPoints == 0:
+                print('Warning: Failed to find the pointsFile at "{}".'
+                      ' Use numberOfPoints method to set the numberOfPoints eparately.')
 
-                self._pointsFile = os.path.relpath(value)
-            else:
-                raise ValueError('Failed to find pointsFile: {}.'.format(value))
+            self._pointsFile = value
         else:
             self._pointsFile = ''
 
@@ -361,7 +251,7 @@ class Rfluxmtx(RadianceCommand):
         verbose = self.verbose.toRadString()
 
         numberOfProcessors = self.numProcessors.toRadString()
-
+        numberOfPoints = '-y %s' % self.numberOfPoints if self.numberOfPoints > 0 else ''
         pointsFile = self.normspace(self.pointsFile)
         pointsFile = '< %s' % pointsFile if pointsFile else ''
 
@@ -379,18 +269,18 @@ class Rfluxmtx(RadianceCommand):
         outputFilenameFormat = self.outputFilenameFormat
         outputFilenameFormat = "-o %s" % outputFilenameFormat if \
             outputFilenameFormat else ''
-        # Lambda shortcut for adding an input or nothing to the command
-        addToStr = lambda val: "%s " % val if val else ''
+
+        # method for adding an input or nothing to the command
+        def addToStr(val):
+            return "%s " % val if val else ''
 
         # Creating the string this way because it might change again in the
         # future.
-
-        radString = ["%s " % self.normspace(os.path.join(self.radbinPath,
-                                                         'rfluxmtx'))]
+        radString = ["%s " % self.normspace(os.path.join(self.radbinPath, 'rfluxmtx'))]
         radString.append(addToStr(outputDataFormat))
         radString.append(addToStr(verbose))
         radString.append(addToStr(numberOfProcessors))
-        radString.append(addToStr(self.pointsFileData))
+        radString.append(addToStr(numberOfPoints))
         radString.append(addToStr(self._viewFileDimensions))
         radString.append(addToStr(samplingCount))
         radString.append(addToStr(self.rfluxmtxParameters.toRadString()))
@@ -407,3 +297,123 @@ class Rfluxmtx(RadianceCommand):
     @property
     def inputFiles(self):
         return [self.receiverFile] + self.radFiles
+
+
+class RfluxmtxControlParameters(object):
+    """Rfluxmtx ControlParameters.
+
+    Set the values for hemispheretype, hemisphere up direction and output file
+    location (optional).
+    """
+
+    def __init__(self, hemiType='u', hemiUpDirection='Y', outputFile=''):
+        """Init class."""
+        self.hemisphereType = hemiType
+        """
+            The acceptable inputs for hemisphere type are:
+                u for uniform.(Usually applicable for ground).
+                kf for klems full.
+                kh for klems half.
+                kq for klems quarter.
+                rN for Reinhart - Tregenza type skies. N stands for subdivisions
+                    and defaults to 1.
+                scN for shirley-chiu subdivisions."""
+        self.hemisphereUpDirection = hemiUpDirection
+        """The acceptable inputs for hemisphere direction are %s""" % \
+            (",".join(('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
+                       '-Z', '-x', '-y', '-z')))
+        self.outputFile = outputFile
+
+    @property
+    def hemisphereType(self):
+        return self._hemisphereType
+
+    @hemisphereType.setter
+    def hemisphereType(self, value):
+        """Hemisphere type.
+
+        The acceptable inputs for hemisphere type are:
+            u for uniform.(Usually applicable for ground).
+            kf for klems full.
+            kh for klems half.
+            kq for klems quarter.
+            rN for Reinhart - Tregenza type skies. N stands for subdivisions and
+                defaults to 1.
+            scN for shirley-chiu subdivisions.
+        """
+        if value:
+            if value in ('u', 'kf', 'kh', 'kq'):
+                self._hemisphereType = value
+                return
+            elif value.startswith('r'):
+                if len(value) > 1:
+                    try:
+                        num = int(value[1:])
+                    except ValueError:
+                        raise Exception(
+                            "The format reinhart tregenza type skies is rN ."
+                            "The value entered was %s" % value)
+                else:
+                    num = ''
+                self._hemisphereType = 'r' + str(num)
+            elif value.startswith('sc'):
+                if len(value) > 2:
+                    try:
+                        num = int(value[2:])
+                    except ValueError:
+                        raise Exception(
+                            "The format for ShirleyChiu type values is scN."
+                            "The value entered was %s" % value)
+                else:
+                    raise Exception(
+                        "The format for ShirleyChiu type values is scN."
+                        "The value entered was %s" % value)
+                self._hemisphereType = 'sc' + str(num)
+            else:
+                exceptStr = """
+                The acceptable inputs for hemisphere type are:
+                    u for uniform.(Usually applicable for ground).
+                    kf for klems full.
+                    kh for klems half.
+                    kq for klems quarter.
+                    rN for Reinhart - Tregenza type skies. N stands for
+                        subdivisions and defaults to 1.
+                    scN for shirley-chiu subdivisions.
+                The value entered was %s
+                """ % (value)
+                raise Exception(exceptStr)
+
+    @property
+    def hemisphereUpDirection(self):
+        return self._hemisphereUpDirection
+
+    @hemisphereUpDirection.setter
+    def hemisphereUpDirection(self, value):
+        """hemisphere direction.
+
+        The acceptable inputs for hemisphere direction are a tuple with 3 values
+        or 'X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y','-Z', '-x', '-y','-z'.
+        """
+        allowedValues = ('X', 'Y', 'Z', 'x', 'y', 'z', '-X', '-Y',
+                         '-Z', '-x', '-y', '-z', "+X", "+Y", "+Z",
+                         '+x', "+y", "+z")
+
+        if isinstance(value, (tuple, list)):
+            assert len(value) == 3, \
+                'Length of emisphereUpDirection vector should be 3.'
+            self._hemisphereUpDirection = ','.join((str(v) for v in value))
+
+        elif value:
+            assert value in allowedValues, "The value for hemisphereUpDirection" \
+                                           "should be one of the following: %s" \
+                                           % (','.join(allowedValues))
+
+            self._hemisphereUpDirection = value
+        else:
+            self._hemisphereUpDirection = '+Z'
+
+    def __str__(self):
+        outputFileSpec = "o=%s" % self.outputFile if self.outputFile else ''
+        return "#@rfluxmtx h=%s u=%s %s" % (self.hemisphereType,
+                                            self.hemisphereUpDirection,
+                                            outputFileSpec)

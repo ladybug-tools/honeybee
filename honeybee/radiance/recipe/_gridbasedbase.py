@@ -7,14 +7,15 @@ sunlighthours recipe and annual analysis recipe.
 from abc import ABCMeta, abstractmethod
 from ..analysisgrid import AnalysisGrid
 from ...futil import writeToFile
-from ._recipebase import DaylightAnalysisRecipe
+from ...utilcol import randomName
+from ._recipebase import AnalysisRecipe
 
 from ladybug.legendparameters import LegendParameters
 
 import os
 
 
-class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
+class GenericGridBased(AnalysisRecipe):
     """Honeybee generic grid base analysis base class.
 
     This class is base class for common gridbased analysis recipes as well as
@@ -32,8 +33,7 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     def __init__(self, analysisGrids, hbObjects=None, subFolder="gridbased"):
         """Create grid-based recipe."""
         # keep track of original points for re-structuring them later on
-        DaylightAnalysisRecipe.__init__(self, hbObjects=hbObjects,
-                                        subFolder=subFolder)
+        AnalysisRecipe.__init__(self, hbObjects=hbObjects, subFolder=subFolder)
         self.analysisGrids = analysisGrids
 
     @classmethod
@@ -59,14 +59,14 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
     @property
     def analysisGrids(self):
         """Return analysis grids."""
-        return self.__analysisGrids
+        return self._analysisGrids
 
     @analysisGrids.setter
     def analysisGrids(self, ags):
         """Set analysis grids."""
-        self.__analysisGrids = tuple(ags)
+        self._analysisGrids = tuple(ag.duplicate() for ag in ags)
 
-        for ag in self.__analysisGrids:
+        for ag in self._analysisGrids:
             assert hasattr(ag, 'isAnalysisGrid'), \
                 '{} is not an AnalysisGrid.'.format(ag)
 
@@ -81,12 +81,12 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
         return tuple(ap.vectors for ap in self.analysisGrids)
 
     @property
-    def numOfAnalysisGrids(self):
+    def AnalysisGridCount(self):
         """Number of point groups."""
         return len(self.analysisGrids)
 
     @property
-    def numOfTotalPoints(self):
+    def totalPointCount(self):
         """Number of total points."""
         return sum(len(tuple(pts)) for pts in self.points)
 
@@ -120,30 +120,36 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
 
         return analysisGrids
 
-    def toRadStringPoints(self):
-        """Return points radiance definition as a single multiline string."""
-        return '\n'.join((ag.toRadString() for ag in self.analysisGrids))
-
-    def writePointsToFile(self, targetDir, fileName, mkdir=False):
+    def writeAnalysisGrids(self, targetDir, fileName=None, merge=True, mkdir=False):
         """Write point groups to file.
 
         Args:
             targetDir: Path to project directory (e.g. c:/ladybug)
             fileName: File name as string. Points will be saved as
                 fileName.pts
-
+            merge: Merge all the grids into a single file. If the input is
+                False each file will be named based on the grid name (default: True).
         Returns:
             Path to file in case of success.
 
         Exceptions:
             ValueError if targetDir doesn't exist and mkdir is False.
         """
-        assert type(fileName) is str, 'fileName should be a string.'
-        fileName = fileName if fileName.lower().endswith('.pts') \
-            else fileName + '.pts'
+        if merge:
+            fileName = fileName or randomName()
+            assert type(fileName) is str, 'fileName should be a string.'
+            fileName = fileName if fileName.lower().endswith('.pts') \
+                else fileName + '.pts'
 
-        return writeToFile(os.path.join(targetDir, fileName),
-                           self.toRadStringPoints() + "\n", mkdir)
+            grids = '\n'.join((ag.toRadString() for ag in self.analysisGrids)) + '\n'
+            return writeToFile(os.path.join(targetDir, fileName), grids, mkdir)
+        else:
+            return tuple(
+                writeToFile(os.path.join(targetDir, ag.name + '.pts'),
+                            ag.toRadString() + '\n',
+                            mkdir)
+                for ag in self.analysisGrids
+            )
 
     @abstractmethod
     def results(self):
@@ -158,5 +164,5 @@ class GenericGridBasedAnalysisRecipe(DaylightAnalysisRecipe):
         """Represent grid based recipe."""
         return "%s\n#AnalysisGrids: %d #Points: %d" % \
             (self.__class__.__name__,
-             self.numOfAnalysisGrids,
-             self.numOfTotalPoints)
+             self.AnalysisGridCount,
+             self.totalPointCount)

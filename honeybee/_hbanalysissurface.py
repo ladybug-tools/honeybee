@@ -100,8 +100,18 @@ class HBAnalysisSurface(HBObject):
         return True
 
     @property
+    def isHBSurface(self):
+        """Return True for HBSurfaces."""
+        return False
+
+    @property
     def isHBFenSurface(self):
         """Return True for HBFenSurfaces."""
+        return False
+
+    @property
+    def isHBDynamicSurface(self):
+        """Return True for HBSurfaces."""
         return False
 
     @abstractproperty
@@ -155,7 +165,7 @@ class HBAnalysisSurface(HBObject):
         return self.parent.origin
 
     @property
-    def numOfStates(self):
+    def stateCount(self):
         """Number of states for this surface."""
         return len(self.states)
 
@@ -168,10 +178,10 @@ class HBAnalysisSurface(HBObject):
     def state(self, count):
         """The current state id."""
         if count != 0:
-            assert count < self.numOfStates, \
+            assert count < self.stateCount, \
                 ValueError(
                     'This surface has only {} state. {} is an invalid state.'.format(
-                        self.numOfStates, count
+                        self.stateCount, count
                     )
                 )
         self._state = count
@@ -354,7 +364,7 @@ class HBAnalysisSurface(HBObject):
                 (Default: False)
         """
         assert isinstance(pts, (list, tuple, types.GeneratorType)), \
-            "Points should be a list or a tuple or a generator"
+            'Points should be a list or a tuple or a generator not {}'.format(type(pts))
         if len(pts) == 0:
             return
         if removeCurrentPoints:
@@ -580,7 +590,7 @@ class HBAnalysisSurface(HBObject):
 
     def __repr__(self):
         """Represnt Honeybee surface."""
-        return ("HBSurface::%s::%s" % (self.name, self.surfaceType)) \
+        return ("%s::%s::%s" % (self.__class__.__name__, self.name, self.surfaceType)) \
             .replace('Surface Type: ', '')
 
 

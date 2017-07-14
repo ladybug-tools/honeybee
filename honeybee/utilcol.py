@@ -21,11 +21,18 @@ def checkName(name):
 
     A valid name can only have alphabet, digits, - and _.
     """
-    if re.match("^[A-Za-z0-9_-]*$", name):
+    if re.match("^[.A-Za-z0-9_-]*$", name):
         return True
     else:
         raise ValueError(
             'Invalid input name: ({}).'
             ' Name can only contain letters, numbers,'
-            ' underscores and dashes.'.format(name)
+            ' dots, underscores and dashes.'.format(name)
         )
+
+
+if __name__ == '__main__':
+    checkName('should_be_fine')
+#     checkName('also-fine')
+    checkName('this.is.also.fine.1234')
+#     checkName('not good')

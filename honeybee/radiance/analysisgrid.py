@@ -141,7 +141,8 @@ class AnalysisGrid(object):
                 hourlyValues, hoys, source, state, isDirect)
 
     def setValuesFromFile(self, filePath, hoys=None, source=None, state=None,
-                          startLine=None, isDirect=False, header=True):
+                          startLine=None, isDirect=False, header=True,
+                          checkPointCount=True):
         """Load values for test points from a file.
 
         Args:
@@ -155,27 +156,39 @@ class AnalysisGrid(object):
                 (default: False).
             header: A Boolean to declare if the file has header (default: True).
         """
+
+        assert os.path.getsize(filePath) > 0, \
+            ValueError(
+                'Failed to load results form empty file: {}\n'
+                'Double check inputs and outputs and make sure '
+                'everything is run correctly.'.format(filePath)
+        )
+
         with open(filePath, 'rb') as inf:
             if header:
                 # read the header
-                for i in xrange(7):
-                    if startLine == 0 and i == 2:
+                for i in xrange(10):
+                    line = inf.next()
+                    if line[:6] == 'FORMAT':
+                        inf.next()  # pass empty line
+                        break  # done with the header!
+                    elif startLine == 0 and line[:5] == 'NROWS':
                         pointsCount = int(inf.next().split('=')[-1])
-                        assert len(self._analysisPoints) == pointsCount, \
-                            "Length of points [%d] doesn't match length " \
-                            "of the results [%d]." \
-                            .format(len(self._analysisPoints), pointsCount)
-                    elif startLine == 0 and i == 3:
+                        if checkPointCount:
+                            assert len(self._analysisPoints) == pointsCount, \
+                                "Length of points [{}] doesn't match length " \
+                                "of the results [{}].".format(
+                                    len(self._analysisPoints), pointsCount)
+
+                    elif startLine == 0 and line[:5] == 'NCOLS':
                         hoursCount = int(inf.next().split('=')[-1])
                         if hoys:
                             assert hoursCount == len(hoys), \
-                                "Number of hours [%d] doesn't match length " \
-                                "of the results [%d]." \
+                                "Number of hours [{}] doesn't match length " \
+                                "of the results [{}]." \
                                 .format(len(hoys), hoursCount)
                         else:
                             hoys = xrange(0, hoursCount)
-                    else:
-                        inf.next()
 
             st = startLine or 0
             for i in xrange(st):
@@ -335,7 +348,8 @@ class AnalysisGrid(object):
 
     def duplicate(self):
         """Duplicate AnalysisGrid."""
-        dup = AnalysisGrid(self._analysisPoints, self._name)
+        aps = tuple(ap.duplicate() for ap in self._analysisPoints)
+        dup = AnalysisGrid(aps, self._name)
         dup._sources = self.sources
         return dup
 

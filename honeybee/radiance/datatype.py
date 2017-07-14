@@ -526,9 +526,10 @@ class RadiancePath(RadianceDefault):
         assigning the value to attribute.
         """
         if value is not None:
+            value = str(value)
             assert isinstance(value, str), \
                 "The input for %s should be string containing the path name." \
-                " %s was provided instead" % (self._nameString, value)
+                " %s %s was provided instead" % (self._nameString, value, type(value))
 
             if self._checkExists:
                 if not os.path.exists(value):
@@ -541,7 +542,8 @@ class RadiancePath(RadianceDefault):
                     "The accepted extension for %s is %s. The provided input" \
                     "was %s" % (self._nameString, self._extension, value)
 
-            setattr(instance, self._name, RadiancePathType(self._name, value, self._relativePath))
+            setattr(instance, self._name,
+                    RadiancePathType(self._name, value, self._relativePath))
 
 
 class RadianceDataType(object):
@@ -662,7 +664,7 @@ class RadianceBoolType(RadianceDataType):
         return self._value % other
 
     def __pow__(self, other):
-        return self._value**other
+        return self._value ** other
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -683,7 +685,7 @@ class RadianceBoolType(RadianceDataType):
         return other % self._value
 
     def __rpow__(self, other):
-        return other**self._value
+        return other ** self._value
 
 
 class RadiancePathType(RadianceDataType):
@@ -771,7 +773,7 @@ class RadianceNumberType(RadianceDataType):
         return self._value % other
 
     def __pow__(self, other):
-        return self._value**other
+        return self._value ** other
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -792,7 +794,7 @@ class RadianceNumberType(RadianceDataType):
         return other % self._value
 
     def __rpow__(self, other):
-        return other**self._value
+        return other ** self._value
 
 
 class RadianceReadOnly(object):

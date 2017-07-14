@@ -1,5 +1,12 @@
 from _hbanalysissurface import HBAnalysisSurface
 from surfaceproperties import SurfaceProperties, SurfaceState
+import utilcol as util
+import honeybee
+try:
+    import plus
+except ImportError as e:
+    if honeybee.isplus:
+        raise ImportError(e)
 
 
 class HBFenSurface(HBAnalysisSurface):
@@ -60,6 +67,7 @@ class HBFenSurface(HBAnalysisSurface):
         self.__isChildSurface = True
         # Parent will be set once the fen surface is added to a prent surface
         self._parent = None
+        self._isCreatedFromGeo = False
 
     # TODO: Parse EnergyPlus properties
     @classmethod
@@ -88,6 +96,56 @@ class HBFenSurface(HBAnalysisSurface):
         # create the surfaceString
         return cls(name, sortedPoints=_pts, isNameSetByUser=True)
 
+    @classmethod
+    def fromGeometry(cls, name, geometry, isNameSetByUser=False, radProperties=None,
+                     epProperties=None, states=None, group=False):
+        """Create a honeybee fenestration surface from Grasshopper geometry."""
+        assert honeybee.isplus, \
+            '"fromGeometries" method can only be used in [+] libraries.'
+
+        name = name or util.randomName()
+        srfData = plus.extractGeometryPoints(geometry)
+        cls._isCreatedFromGeo = True
+
+        if not group:
+            hbsrfs = []
+            # create a separate surface for each geometry.
+            for gcount, srf in enumerate(srfData):
+                for scount, (geo, pts) in enumerate(srf):
+                    _name = '%s_%d_%d' % (name, gcount, scount)
+                    _srf = cls(_name, pts, isNameSetByUser, radProperties, epProperties,
+                               states)
+                    _srf.geometry = geometry
+                    hbsrfs.append(_srf)
+
+            # check naming and fix it if it's only single geometry
+            if gcount == 0 and scount == 0:
+                # this is just a single geometry. remove counter
+                hbsrfs[0].name = '_'.join(hbsrfs[0].name.split('_')[:-2])
+            elif gcount == 0:
+                # this is a single geometry with multiple sub surfaces like a polysurface
+                for hbs in hbsrfs:
+                    bname = hbs.name.split('_')
+                    hbs.name = '%s_%s' % ('_'.join(bname[:-2]), bname[-1])
+            return hbsrfs
+        else:
+            _geos = []
+            _pts = []
+            # collect all the points in a single list
+            for srf in srfData:
+                for geo, pts in srf:
+                    _pts.extend(pts)
+                    _geos.append(geo)
+
+            _srf = cls(name, _pts, isNameSetByUser, radProperties, epProperties, states)
+            _srf.geometry = _geos
+            return _srf
+
+    @property
+    def isCreatedFromGeometry(self):
+        """Return True if the surface is created from a geometry not points."""
+        return self._isCreatedFromGeo
+
     @property
     def isHBFenSurface(self):
         """Return True for HBFenSurface."""
@@ -102,3 +160,32 @@ class HBFenSurface(HBAnalysisSurface):
     def parent(self):
         """Return parent surface for this fenestration surface."""
         return self._parent
+
+    @property
+    def geometry(self):
+        """Return geometry."""
+        assert honeybee.isplus, \
+            '"geometry" property can only be used in [+] libraries.'
+        if self.isCreatedFromGeometry:
+            return self._geometry
+        else:
+            return self.profile
+
+    @geometry.setter
+    def geometry(self, geo):
+        """Set geometry."""
+        assert honeybee.isplus, \
+            '"geometry" property can only be used in [+] libraries.'
+
+        assert honeybee.isplus, \
+            '"profile" property can only be used in [+] libraries.'
+        self._geometry = geo
+
+    @property
+    def profile(self):
+        """Get profile curve of this surface."""
+        assert honeybee.isplus, \
+            '"profile" property can only be used in [+] libraries.'
+        return plus.polygon(
+            tuple(plus.xyzToGeometricalPoints(self.absolutePoints))
+        )

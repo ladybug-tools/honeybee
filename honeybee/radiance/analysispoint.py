@@ -249,7 +249,14 @@ class AnalysisPoint(object):
 
         ind = 1 if isDirect else 0
         for hoy, value in izip(hoys, values):
-            self._values[sid][stateid][hoy][ind] = value
+            try:
+                self._values[sid][stateid][hoy][ind] = value
+            except Exception as e:
+                raise ValueError(
+                    'Failed to load {} results for window_group [{}], state[{}]'
+                    ' for hour {}.\n{}'.format('direct' if isDirect else 'total',
+                                               sid, stateid, hoy, e)
+                )
 
     def setCoupledValue(self, value, hoy, source=None, state=None):
         """Set both total and direct values for a specific hour of the year.
@@ -734,6 +741,17 @@ class AnalysisPoint(object):
                 problematicHours.append(h)
 
         return ASE > targetHours, ASE, problematicHours
+
+    def duplicate(self):
+        """Duplicate the analysis point."""
+        ap = AnalysisPoint(self._loc, self._dir)
+        ap._sources = self._sources
+        # This should be good enough as most of the time an analysis point will be
+        # copied with no values assigned.
+        ap._values = list(self._values)
+        ap._isDirectLoaded = bool(self._isDirectLoaded)
+        ap.logic = copy.copy(self.logic)
+        return ap
 
     def ToString(self):
         """Overwrite .NET ToString."""

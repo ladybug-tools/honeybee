@@ -49,17 +49,19 @@ class BSDFMaterial(RadianceMaterial):
 
     def toRadString(self, minimal=False):
         """Return full radiance definition."""
-        __baseString = self.headLine + "6 %.3f %s %.3f %.3f %.3f .\n0\n0\n"
+        baseString = self.headLine + "6 %.3f %s %.3f %.3f %.3f .\n0\n0\n"
 
-        matDef = __baseString % (self.thickness, self.xmlfile.replace('\\', '/'),
-                                 self.upOrientation[0],
-                                 self.upOrientation[1],
-                                 self.upOrientation[2])
+        matDef = baseString % (self.thickness,
+                               os.path.normpath(self.xmlfile),
+                               self.upOrientation[0],
+                               self.upOrientation[1],
+                               self.upOrientation[2])
 
         return matDef.replace("\n", " ") if minimal else matDef
 
 
 if __name__ == "__main__":
     # some test code
-    material = BSDFMaterial(r"C:\Users\Administrator\Documents\GitHub\honeybee\tests\room\xmls\clear.xml")
+    material = BSDFMaterial(
+        r"C:\Users\Administrator\Documents\GitHub\honeybee\tests\room\xmls\clear.xml")
     print material

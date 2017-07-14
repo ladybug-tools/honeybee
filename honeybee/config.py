@@ -151,8 +151,10 @@ class Folders(object):
                 elif os.path.isfile(r"c:\Program Files\radiance\bin\rad.exe"):
                     path = r"c:\Program Files\radiance"
                 elif self.openStudioPath and os.path.isfile(
-                        os.path.join(openStudioPath, r"share\openStudio\Radiance\bin\rad.exe")):
-                    path = os.path.join(openStudioPath, r"share\openStudio\Radiance")
+                        os.path.join(self.openStudioPath,
+                                     r"share\openStudio\Radiance\bin\rad.exe")):
+                    path = os.path.join(self.openStudioPath,
+                                        r"share\openStudio\Radiance")
             elif os.name == 'posix':
                 __radbin, __radFile = self.__which("mkillum")
                 if __radbin:

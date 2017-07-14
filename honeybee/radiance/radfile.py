@@ -2,11 +2,13 @@
 
 Create, modify and generate radiance files from a collection of hbobjects.
 """
-from ..futil import writeToFileByName
+from ..futil import writeToFileByName, copyFilesToFolder, preparedir
 from .geometry import polygon
 from .material.plastic import BlackMaterial
+from .material.glow import WhiteGlowMaterial
 
 import datetime
+import os
 
 
 class RadFile(object):
@@ -34,7 +36,89 @@ class RadFile(object):
         # parse the file and get the materials and geometries
         raise NotImplementedError()
 
-    def materials(self, mode=1, join=False, blacked=False):
+    def findBSDFMaterials(self, mode=1):
+        """Return a list fo BSDF materials if any."""
+        mode = mode or 1
+        if mode == 0:
+            # do not include children surface
+            mt = set(srf.radianceMaterial for srf in self.hbSurfaces
+                     if hasattr(srf.radianceMaterial, 'xmlfile'))
+
+        elif mode == 1:
+            # do not include children surface
+            mt_base = [srf.radianceMaterial for srf in self.hbSurfaces
+                       if hasattr(srf.radianceMaterial, 'xmlfile')]
+            mt_child = [childSrf.radianceMaterial
+                        for srf in self.hbSurfaces
+                        for childSrf in srf.childrenSurfaces
+                        if srf.hasChildSurfaces and
+                        hasattr(childSrf.radianceMaterial, 'xmlfile')]
+            mt = set(mt_base + mt_child)
+        elif mode == 2:
+            # only child surfaces
+            mt = set(childSrf.radianceMaterial
+                     for srf in self.hbSurfaces
+                     for childSrf in srf.childrenSurfaces
+                     if srf.hasChildSurfaces and
+                     hasattr(childSrf.radianceMaterial, 'xmlfile'))
+
+        return tuple(mt)
+
+    def radianceMaterialNames(self, mode=1):
+        """Get list of material names.
+
+        Args:
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+        """
+        mode = mode or 1
+        if mode == 0:
+            # do not include children surface
+            mt = set(srf.radianceMaterial.name for srf in self.hbSurfaces)
+
+        elif mode == 1:
+            # do not include children surface
+            mt_base = [srf.radianceMaterial.name for srf in self.hbSurfaces]
+            mt_child = [childSrf.radianceMaterial.name
+                        for srf in self.hbSurfaces
+                        for childSrf in srf.childrenSurfaces
+                        if srf.hasChildSurfaces]
+            mt = set(mt_base + mt_child)
+        elif mode == 2:
+            # only child surfaces
+            mt = set(childSrf.radianceMaterial.name
+                     for srf in self.hbSurfaces
+                     for childSrf in srf.childrenSurfaces
+                     if srf.hasChildSurfaces)
+
+        return tuple(mt)
+
+    @staticmethod
+    def copyAndReplaceXmlFiles(materialString, bsdfMaterials, targetFolder):
+        """Find and replace xml files full path and copy XML files under bsdf folder.
+
+        Args:
+            materialString: A joined string of radiance materials.
+            bsdfMaterials: A collection of BSDF materials.
+            targetFolder: The study folder where the materials will be written.
+        """
+        bsdfFiles = (mat.xmlfile for mat in bsdfMaterials)
+        targetFolder = os.path.join(targetFolder, '/bsdf')
+        isCreated = preparedir(targetFolder)
+        assert isCreated, 'Failed to create {}'.format(targetFolder)
+        # copy the xml file locally
+        copyFilesToFolder(bsdfFiles, targetFolder)
+        # replace the full path with relative path
+        for mat in bsdfMaterials:
+            path, name = os.path.split(mat.xmlfile)
+            materialString = materialString.replace(
+                os.path.normpath(mat.xmlfile), 'bsdf/%s' % name
+            )
+        return materialString
+
+    def materials(self, mode=1, join=False, blacked=False, glowed=False):
         """Get materials as a list of radiance strings.
 
         Args:
@@ -45,11 +129,17 @@ class RadFile(object):
             join: Set to True to join the output strings (Default: False).
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
+        assert not (blacked and glowed), \
+            ValueError('You can either use blacked or glowed option.')
+
         mode = mode or 1
         if mode == 0:
             # do not include children surface
             if blacked:
                 mt = set(BlackMaterial(srf.radianceMaterial.name).toRadString()
+                         for srf in self.hbSurfaces)
+            elif glowed:
+                mt = set(WhiteGlowMaterial(srf.radianceMaterial.name).toRadString()
                          for srf in self.hbSurfaces)
             else:
                 mt = set(srf.radianceMaterial.toRadString() for srf in self.hbSurfaces)
@@ -63,6 +153,15 @@ class RadFile(object):
                             for srf in self.hbSurfaces
                             for childSrf in srf.childrenSurfaces
                             if srf.hasChildSurfaces]
+            elif glowed:
+                mt_base = [
+                    WhiteGlowMaterial(srf.radianceMaterial.name).toRadString()
+                    for srf in self.hbSurfaces]
+                mt_child = [
+                    WhiteGlowMaterial(childSrf.radianceMaterial.name).toRadString()
+                    for srf in self.hbSurfaces
+                    for childSrf in srf.childrenSurfaces
+                    if srf.hasChildSurfaces]
             else:
                 mt_base = [srf.radianceMaterial.toRadString()
                            for srf in self.hbSurfaces]
@@ -75,6 +174,11 @@ class RadFile(object):
             # only child surfaces
             if blacked:
                 mt = set(BlackMaterial(childSrf.radianceMaterial.name).toRadString()
+                         for srf in self.hbSurfaces
+                         for childSrf in srf.childrenSurfaces
+                         if srf.hasChildSurfaces)
+            elif glowed:
+                mt = set(WhiteGlowMaterial(childSrf.radianceMaterial.name).toRadString()
                          for srf in self.hbSurfaces
                          for childSrf in srf.childrenSurfaces
                          if srf.hasChildSurfaces)
@@ -116,7 +220,8 @@ class RadFile(object):
 
         return '\n'.join(geo) if join else tuple(geo)
 
-    def toRadString(self, mode=1, includeMaterials=True, flipped=False, blacked=False):
+    def toRadString(self, mode=1, includeMaterials=True, flipped=False, blacked=False,
+                    glowed=False):
         """Get full radiance file as a string.
 
         Args:
@@ -131,20 +236,133 @@ class RadFile(object):
         """
         mode = mode or 1
         if includeMaterials:
-            return '\n'.join((self.materials(mode, True, blacked),
+            return '\n'.join((self.materials(mode, True, blacked, glowed),
                               self.geometries(mode, True, flipped))) + '\n'
         else:
             return self.geometries(mode, True, flipped) + '\n'
 
     def write(self, folder, filename, mode=1, includeMaterials=True,
-              flipped=False, blacked=False, mkdir=False):
+              flipped=False, blacked=False, glowed=False, mkdir=False):
+        """write materials and geometries to a file.
+
+        Args:
+            folder: Target folder.
+            filename: File name and extension as a string.
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+            includeMaterials: Set to False if you only want the geometry definition
+             (default:True).
+            flipped: Flip the surface geometry.
+            blacked: If True materials will all be set to plastic 0 0 0 0 0.
+            mkdir: Create the folder if does not exist already.
+        """
+
+        data = str(self.toRadString(mode, includeMaterials, flipped, blacked, glowed))
+        if not (glowed or blacked):
+            data = self.copyAndReplaceXmlFiles(
+                data, self.findBSDFMaterials(mode), folder
+            )
+        text = self.header() + '\n\n' + data
+        return writeToFileByName(folder, filename, text, mkdir)
+
+    def writeMaterials(self, folder, filename, mode=1, blacked=False, glowed=False,
+                       mkdir=False):
+        """Write materials to a file.
+
+        Args:
+            folder: Target folder.
+            filename: File name and extension as a string.
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+            includeMaterials: Set to False if you only want the geometry definition
+             (default:True).
+            flipped: Flip the surface geometry.
+            blacked: If True materials will all be set to plastic 0 0 0 0 0 0 0.
+            glowed: If True materials will all be set to glow 0 0 1 1 1 0. You can
+                either use blacked or glowed.
+            mkdir: Create the folder if does not exist already.
+        """
+        data = self.materials(mode, True, blacked, glowed)
+        if not (glowed or blacked):
+            data = self.copyAndReplaceXmlFiles(
+                data, self.findBSDFMaterials(mode), folder
+            )
+        text = self.header() + '\n\n' + data
+        return writeToFileByName(folder, filename, text, mkdir)
+
+    def writeGeometries(self, folder, filename, mode=1, flipped=False, mkdir=False):
+        """write geometries to a file.
+        Args:
+            folder: Target folder.
+            filename: File name and extension as a string.
+            mode: An integer 0-2 (Default: 1)
+                0 - Do not include children surfaces.
+                1 - Include children surfaces.
+                2 - Only children surfaces.
+            flipped: Flip the surface geometry.
+            mkdir: Create the folder if does not exist already.
+        """
+        data = self.toRadString(mode, False, flipped, False)
+        text = self.header() + '\n\n' + data
+        return writeToFileByName(folder, filename, text, mkdir)
+
+    def writeBlackMaterial(self, folder, filename, mkdir=False):
+        """Write black material to a file."""
+        text = self.header() + '\n\n' + BlackMaterial().toRadString()
+        return writeToFileByName(folder, filename, text, mkdir)
+
+    # TODO(): fix the bug for multiple surfaces. The material only changes for
+    # the first one.
+    def writeGeometriesBlacked(self, folder, filename, mode=0, flipped=False,
+                               mkdir=False):
+        """Write all the surfaces to a file with BlackMaterial.
+
+        Use this method to write objects like window-groups.
+        """
+        geo = self.geometries(mode, join=True, flipped=flipped)
+        matName = BlackMaterial().name
+        # replace the material in string with BlackMaterial.name
+        names = self.radianceMaterialNames(mode)
+
+        for name in names:
+            geo = geo.replace(name, matName)
+
+        text = self.header() + '\n\n' + geo
+        return writeToFileByName(folder, filename, text, mkdir)
+
+    def writeGlowMaterial(self, folder, filename, mkdir=False):
+        """Write white glow material to a file."""
+        text = self.header() + '\n\n' + WhiteGlowMaterial().toRadString()
+        return writeToFileByName(folder, filename, text, mkdir)
+
+    def writeGeometriesGlowed(self, folder, filename, mode=0, flipped=False,
+                              mkdir=False):
+        """Write all the surfaces to a file with WhiteGlowMaterial.
+
+        Use this method to write objects like window-groups.
+        """
+        geo = self.geometries(mode, flipped=flipped)
+        matName = WhiteGlowMaterial().name
+        # replace the material in string with BlackMaterial.name
+        names = self.radianceMaterialNames(mode)
+
+        for name in names:
+            geo = geo.replace(name, matName)
+
+        text = self.header() + '\n\n' + geo
+        return writeToFileByName(folder, filename, text, mkdir)
+
+    @staticmethod
+    def header():
         fmt = '%Y-%m-%d %H:%M:%S'
         now = datetime.datetime.now()
         header = '# Created by Honeybee[+] at %s' % now.strftime(fmt)
         note = '# www.ladybug.tools'
-        data = str(self.toRadString(mode, includeMaterials, flipped, blacked))
-        text = header + '\n' + note + '\n\n' + data
-        return writeToFileByName(folder, filename, text, mkdir)
+        return '%s\n%s' % (header, note)
 
     @staticmethod
     def getSurfaceRadString(surface, flipped=False):
