@@ -223,9 +223,6 @@ class DaylightCoeffGridBased(GenericGridBased):
 
         # for each window group - calculate total, direct and direct-analemma results
         # calculate the contribution of glazing if any with all window groups blacked
-        # this is a hack. A better solution is to create a HBDynamicSurface from glazing
-        # surfaces. The current limitation is that HBDynamicSurface can't have several
-        # surfaces with different materials.
         inputfiles = opqfiles, glzfiles, wgsfiles, extrafiles
         commands, results = getCommandsSceneDaylightCoeff(
             projectName, self.skyMatrix.skyDensity, projectFolder, skyfiles,
