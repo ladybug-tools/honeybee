@@ -105,7 +105,7 @@ class RadFile(object):
             targetFolder: The study folder where the materials will be written.
         """
         bsdfFiles = (mat.xmlfile for mat in bsdfMaterials)
-        targetFolder = os.path.join(targetFolder, '/bsdf')
+        targetFolder = os.path.join(targetFolder, 'bsdf')
         isCreated = preparedir(targetFolder)
         assert isCreated, 'Failed to create {}'.format(targetFolder)
         # copy the xml file locally
