@@ -99,22 +99,30 @@ class RadFile(object):
     def copyAndReplaceXmlFiles(materialString, bsdfMaterials, targetFolder):
         """Find and replace xml files full path and copy XML files under bsdf folder.
 
+        The root folder in Radiance is the place that commands are executed
+        which in honeybee is the root so the relative path is scene/bsdf
+        this will make this mathod fairly inflexible.
+
         Args:
             materialString: A joined string of radiance materials.
             bsdfMaterials: A collection of BSDF materials.
             targetFolder: The study folder where the materials will be written.
         """
         bsdfFiles = (mat.xmlfile for mat in bsdfMaterials)
-        targetFolder = os.path.join(targetFolder, 'bsdf')
+        basefolder = os.path.split(os.path.normpath(targetFolder))[0]
+        targetFolder = os.path.join(basefolder, 'bsdf')
         isCreated = preparedir(targetFolder)
         assert isCreated, 'Failed to create {}'.format(targetFolder)
         # copy the xml file locally
         copyFilesToFolder(bsdfFiles, targetFolder)
         # replace the full path with relative path
+        # The root folder in Radiance is the place that commands are executed
+        # which in honeybee is the root so the relative path is scene\glazing\bsdf
+        # this will make this mathod fairly inflexible.
         for mat in bsdfMaterials:
             path, name = os.path.split(mat.xmlfile)
             materialString = materialString.replace(
-                os.path.normpath(mat.xmlfile), 'bsdf/%s' % name
+                os.path.normpath(mat.xmlfile), 'scene\\bsdf\\%s' % name
             )
         return materialString
 

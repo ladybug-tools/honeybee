@@ -180,6 +180,11 @@ class DaylightCoeffGridBased(GenericGridBased):
         """Number of total runs for all window groups and states."""
         return sum(wg.stateCount for wg in self.windowGroups) + 1  # 1 for base case
 
+    def preprocCommands(self):
+        """Add echo in front of comments in batch file comments."""
+        cmd = ['echo ' + c if c[:2] == '::' else c for c in self._commands]
+        return ['@echo off'] + cmd
+
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
@@ -248,10 +253,8 @@ class DaylightCoeffGridBased(GenericGridBased):
         # # 2.5 write batch file
         batchFile = os.path.join(projectFolder, 'commands.bat')
 
-        # add echo to commands
-        cmds = ['echo ' + c if c[:2] == '::' else c for c in self._commands]
-
-        writeToFile(batchFile, '\n'.join(['@echo off'] + cmds))
+        # add echo to commands and write them to file
+        writeToFile(batchFile, '\n'.join(self.preprocCommands()))
 
         return batchFile
 
