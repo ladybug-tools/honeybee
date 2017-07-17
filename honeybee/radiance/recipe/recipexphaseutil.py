@@ -108,7 +108,8 @@ def getCommandsViewDaylightMatrices(
     # 2.3.Generate daylight coefficients using rfluxmtx
     # collect list of radiance files in the scene for both total and direct
     commands.append(
-        ':: calculation for the window group {}'.format(windowGroup.name)
+        ':: start of the 3-phase calculation for the window group {}'.format(
+            windowGroup.name)
     )
 
     vreceiver = wgsfiles[count].fpglw[0]
@@ -127,7 +128,12 @@ def getCommandsViewDaylightMatrices(
     vMatrix = 'result\\matrix\\{}.vmx'.format(windowGroup.name)
     if not os.path.isfile(os.path.join(projectFolder, vMatrix)) \
             or not reuseViewMtx:
-        commands.append(':: :: 1. view matrix calculation')
+        commands.append(':: :: [1/3] calculating view matrix')
+        commands.append(
+            ':: :: rfluxmtx - [wgroup] [scene] [points] [blacked wgroups]'
+            ' ^> [*.vmx]'
+        )
+        commands.append('::')
         # prepare input files
         radFiles = tuple(os.path.relpath(f, projectFolder) for f in vrfluxScene)
 
@@ -156,7 +162,12 @@ def getCommandsViewDaylightMatrices(
             dMatrix, os.path.relpath(receiver, projectFolder), radFiles,
             sender, None, None, samplingRaysCount, daylightMtxParameters)
 
-        commands.append(':: :: 2. daylight matrix calculation')
+        commands.append(':: :: [2/3] calculating daylight matrix')
+        commands.append(
+            ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] [scene]'
+            ' ^> [*.dmx]'
+        )
+        commands.append('::')
         commands.append(dmtx.toRadString())
 
     return commands, vMatrix, dMatrix
@@ -185,19 +196,17 @@ def matrixCalculationThreePhase(
             os.path.split(windowGroup.radianceMaterial.xmlfile)[-1])
         output = r'tmp\\{}..{}.tmp'.format(windowGroup.name, state.name)
         dct = matrixCalculation(output, vMatrix, tMatrix, dMatrix, skyMtxTotal)
-
-        commands.append(
-            ':: :: 3.1.{} final matrix calculation for {}'.format(stcount,
-                                                                  state.name))
+        commands.append(':: :: [3/3] vMatrix * dMatrix * tMatrix')
+        commands.append('dctimestep [vmx] [tmtx] [dmtx] ^ > [results.rgb]')
+        commands.append('::')
         commands.append(dct.toRadString())
 
         # 5. convert r, g ,b values to illuminance
         finalOutput = r'result\\{}..{}.ill'.format(windowGroup.name, state.name)
         finalmtx = RGBMatrixFileToIll((dct.outputFile,), finalOutput)
         commands.append(
-            ':: :: 3.2.{} convert RGB values to illuminance for {}'.format(
-                stcount, state.name)
-        )
+            'echo :: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [results.ill]')
+        commands.append('::')
         commands.append(finalmtx.toRadString())
 
         results.append(os.path.join(projectFolder, finalOutput))
@@ -250,19 +259,11 @@ def matrixCalculationFivePhase(
             os.path.split(windowGroup.radianceMaterial.xmlfile)[-1])
         output = r'tmp\\3phase..{}..{}.tmp'.format(windowGroup.name, state.name)
         dct = matrixCalculation(output, vMatrix, tMatrix, dMatrix, skyMtxTotal)
-
-        commands.append(
-            ':: :: 3.1.{} final matrix calculation for {}'.format(scount,
-                                                                  state.name))
         commands.append(dct.toRadString())
 
         # 5. convert r, g ,b values to illuminance
         finalOutput = r'result\\3phase..{}..{}.ill'.format(windowGroup.name, state.name)
         finalmtx = RGBMatrixFileToIll((dct.outputFile,), finalOutput)
-        commands.append(
-            ':: :: 3.2.{} convert RGB values to illuminance for {}'.format(
-                scount, state.name)
-        )
         commands.append(finalmtx.toRadString())
 
         results.append(os.path.join(projectFolder, finalOutput))
@@ -322,13 +323,13 @@ def matrixCalculationFivePhase(
 
             commands.extend(cmd.toRadString() for cmd in sunCommands)
         else:
-            commands.append(':: :: 1. reusing daylight matrices')
+            commands.append(':: :: reusing daylight matrices')
             commands.append('::')
 
-        commands.append(':: :: 2. matrix multiplication')
+        commands.append(':: :: matrix multiplication')
         commands.append('::')
 
-        commands.append(':: :: [2/3] calculating black daylight mtx * direct only sky')
+        commands.append(':: :: calculating black daylight mtx * direct only sky')
         commands.append(
             ':: :: dctimestep [black dc.mtx] [direct only sky] ^> [direct results.rgb]')
 
@@ -348,7 +349,7 @@ def matrixCalculationFivePhase(
         )
         commands.append(finalmtx.toRadString())
 
-        commands.append(':: :: [3/3] calculating black daylight mtx * analemma')
+        commands.append(':: :: calculating black daylight mtx * analemma')
         commands.append(
             ':: :: dctimestep [black dc.mtx] [analemma only sky] ^> [sun results.rgb]')
         dctSun = sunMatrixCalculation(
@@ -369,10 +370,10 @@ def matrixCalculationFivePhase(
         )
         commands.append(finalmtx.toRadString())
 
-        commands.append(':: :: 3. calculating final results')
+        commands.append(':: :: calculating final results')
         commands.append(
-            ':: :: rmtxop [total results.ill] - [direct results.ill] + [sun results.ill]'
-            ' ^> [final results.ill]'
+            ':: :: rmtxop [3phase results.ill] - [direct results.ill] + '
+            '[sun results.ill] ^> [final results.ill]'
         )
         commands.append('::')
 
@@ -386,7 +387,6 @@ def matrixCalculationFivePhase(
         commands.append(fmtx.toRadString())
         commands.append(
             ':: end of calculation for {}, {}'.format(windowGroup.name, state.name))
-        commands.append('::')
         commands.append('::')
         commands.append('::')
 

@@ -255,8 +255,8 @@ def _getCommandsDaylightCoeff(
             )
         commands.append('::')
         commands.append(
-            ':: start of calculation for {}, {}. Number of states: #{}'.format(
-                windowGroup.name, state.name, windowGroup.stateCount
+            ':: start of the calculation for {}, {}. Stat {} of {}'.format(
+                windowGroup.name, state.name, scount, windowGroup.stateCount
             )
         )
         commands.append('::')
@@ -424,7 +424,6 @@ def _getCommandsDaylightCoeff(
         commands.append(fmtx.toRadString())
         commands.append(
             ':: end of calculation for {}, {}'.format(windowGroup.name, state.name))
-        commands.append('::')
         commands.append('::')
         commands.append('::')
 
