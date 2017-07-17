@@ -8,7 +8,19 @@ import os
 from itertools import izip
 
 
-# TODO(mostapha): Implement sources from windowGroups
+class EmptyFileError(Exception):
+    """Exception for trying to load results from an empty file."""
+
+    def __init__(self, filePath=None):
+        message = ''
+        if filePath:
+            message = 'Failed to load the results form an empty file: {}\n' \
+                'Double check inputs and outputs and make sure ' \
+                'everything is run correctly.'.format(filePath)
+
+        super(EmptyFileError, self).__init__(message)
+
+
 class AnalysisGrid(object):
     """A grid of analysis points.
 
@@ -16,9 +28,8 @@ class AnalysisGrid(object):
         analysisPoints: A collection of analysis points.
     """
 
-    __slots__ = ('_analysisPoints', '_name', '_sources')
+    __slots__ = ('_analysisPoints', '_name', '_sources', '_wgroups')
 
-    # TODO(mostapha): Add sources.
     def __init__(self, analysisPoints, name=None, windowGroups=None):
         """Initialize a AnalysisPointGroup.
 
@@ -35,10 +46,14 @@ class AnalysisGrid(object):
         self._sources = {}
 
         if windowGroups:
-            raise NotImplementedError('windowGroups are not implemented.')
+            self._wgroups = tuple(wg.name for wg in windowGroups)
+        else:
+            self._wgroups = ()
 
         for ap in analysisPoints:
-            assert isinstance(ap, AnalysisPoint), '{} is not an AnalysisPoint.'
+            assert isinstance(ap, AnalysisPoint), \
+                '{} is not an AnalysisPoint.'.format(ap)
+
         self._analysisPoints = analysisPoints
 
     @classmethod
@@ -82,6 +97,15 @@ class AnalysisGrid(object):
     @name.setter
     def name(self, n):
         self._name = n or randomName()
+
+    @property
+    def windowGroups(self):
+        """A list of window group names that are related to this analysis grid."""
+        return self._wgroups
+
+    @windowGroups.setter
+    def windowGroups(self, wgs):
+        self._wgroups = tuple(wg.name for wg in wgs)
 
     @property
     def points(self):
@@ -142,7 +166,7 @@ class AnalysisGrid(object):
 
     def setValuesFromFile(self, filePath, hoys=None, source=None, state=None,
                           startLine=None, isDirect=False, header=True,
-                          checkPointCount=True):
+                          checkPointCount=True, mode=0):
         """Load values for test points from a file.
 
         Args:
@@ -157,12 +181,7 @@ class AnalysisGrid(object):
             header: A Boolean to declare if the file has header (default: True).
         """
 
-        assert os.path.getsize(filePath) > 0, \
-            ValueError(
-                'Failed to load results form empty file: {}\n'
-                'Double check inputs and outputs and make sure '
-                'everything is run correctly.'.format(filePath)
-        )
+        assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
 
         with open(filePath, 'rb') as inf:
             if header:
@@ -195,17 +214,95 @@ class AnalysisGrid(object):
                 inf.next()
 
             end = len(self._analysisPoints)
-            values = (tuple(int(float(r)) for r in inf.next().split())
-                      for count in xrange(end))
+            if mode == 0:
+                values = (tuple(int(float(r)) for r in inf.next().split())
+                          for count in xrange(end))
+            elif mode == 1:
+                # binary 0-1
+                values = (tuple(1 if float(r) > 0 else 0 for r in inf.next().split())
+                          for count in xrange(end))
+            else:
+                # divide values by mode (useful for daylight factor calculation)
+                values = (tuple(int(float(r) / mode) for r in inf.next().split())
+                          for count in xrange(end))
 
             # assign the values to points
             for count, hourlyValues in enumerate(values):
                 self.analysisPoints[count].setValues(
                     hourlyValues, hoys, source, state, isDirect)
 
-    def setCoupledValuesFromFile(self, totalFilePath, directFilePath, source=None,
-                                 state=None):
-        pass
+    def setCoupledValuesFromFile(
+            self, totalFilePath, directFilePath, hoys=None, source=None, state=None,
+            startLine=None, isDirect=False, header=True, checkPointCount=True):
+        """Load direct and total values for test points from two files.
+
+        Args:
+            filePath: Full file path to the result file.
+            hoys: A collection of hours of the year for the results. If None the
+                default will be range(0, len(results)).
+            source: Name of the source.
+            state: Name of the state.
+            startLine: Number of start lines after the header from 0 (default: 0).
+            isDirect: A Boolean to declare if the results is direct illuminance
+                (default: False).
+            header: A Boolean to declare if the file has header (default: True).
+        """
+
+        for filePath in (totalFilePath, directFilePath):
+            assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
+
+        with open(totalFilePath, 'rb') as inf, open(directFilePath, 'rb') as dinf:
+            if header:
+                # read the header
+                for i in xrange(10):
+                    line = inf.next()
+                    dinf.next()
+                    if line[:6] == 'FORMAT':
+                        inf.next()  # pass empty line
+                        dinf.next()
+                        break  # done with the header!
+                    elif startLine == 0 and line[:5] == 'NROWS':
+                        pointsCount = int(inf.next().split('=')[-1])
+                        dirPointsCount = int(dinf.next().split('=')[-1])
+                        assert pointsCount == dirPointsCount, \
+                            'Number of points in files ' \
+                            'must be equal {} != {}'.format(pointsCount,
+                                                            dirPointsCount)
+                        if checkPointCount:
+                            assert len(self._analysisPoints) == pointsCount, \
+                                "Length of points [{}] doesn't match length " \
+                                "of the results [{}].".format(
+                                    len(self._analysisPoints), pointsCount)
+
+                    elif startLine == 0 and line[:5] == 'NCOLS':
+                        hoursCount = int(inf.next().split('=')[-1])
+                        dirHoursCount = int(dinf.next().split('=')[-1])
+                        assert hoursCount == dirHoursCount, \
+                            'Number of hours in files ' \
+                            'must be equal {} != {}'.format(hoursCount, dirHoursCount)
+                        if hoys:
+                            assert hoursCount == len(hoys), \
+                                "Number of hours [{}] doesn't match length " \
+                                "of the results [{}]." \
+                                .format(len(hoys), hoursCount)
+                        else:
+                            hoys = xrange(0, hoursCount)
+
+            st = startLine or 0
+            for i in xrange(st):
+                inf.next()
+                dinf.next()
+
+            end = len(self._analysisPoints)
+            values = (tuple(int(float(r)) for r in inf.next().split())
+                      for count in xrange(end))
+            valuesdir = (tuple(int(float(r)) for r in dinf.next().split())
+                         for count in xrange(end))
+
+            # assign the values to points
+            for count, hourlyValues in enumerate(izip(values, valuesdir)):
+                self.analysisPoints[count].setCoupledValues(
+                    hourlyValues, hoys, source, state, isDirect)
 
     def annualMetrics(self, DAThreshhold=None, UDIMinMax=None, blindsStateIds=None,
                       occSchedule=None):
@@ -350,7 +447,8 @@ class AnalysisGrid(object):
         """Duplicate AnalysisGrid."""
         aps = tuple(ap.duplicate() for ap in self._analysisPoints)
         dup = AnalysisGrid(aps, self._name)
-        dup._sources = self.sources
+        dup._sources = aps[0].sources
+        dup._wgroups = self._wgroups
         return dup
 
     def toRadString(self):

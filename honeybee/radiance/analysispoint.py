@@ -210,7 +210,7 @@ class AnalysisPoint(object):
         """Set value for a specific hour of the year.
 
         Args:
-            value: Illuminance value as a number.
+            value: Value as a number.
             hoy: The hour of the year that corresponds to this value.
             source: Name of the source of light. Only needed in case of multiple
                 sources / window groups (default: None).
@@ -227,7 +227,7 @@ class AnalysisPoint(object):
         """Set values for several hours of the year.
 
         Args:
-            values: List of Illuminance values as numbers.
+            values: List of values as numbers.
             hoys: List of hours of the year that corresponds to input values.
             source: Name of the source of light. Only needed in case of multiple
                 sources / window groups (default: None).
@@ -248,6 +248,7 @@ class AnalysisPoint(object):
             self._isDirectLoaded = True
 
         ind = 1 if isDirect else 0
+
         for hoy, value in izip(hoys, values):
             try:
                 self._values[sid][stateid][hoy][ind] = value
@@ -262,7 +263,7 @@ class AnalysisPoint(object):
         """Set both total and direct values for a specific hour of the year.
 
         Args:
-            value: Illuminance value as as tuples (total, direct).
+            value: Value as as tuples (total, direct).
             hoy: The hour of the year that corresponds to this value.
             source: Name of the source of light. Only needed in case of multiple
                 sources / window groups (default: None).
@@ -287,7 +288,7 @@ class AnalysisPoint(object):
         """Set total and direct values for several hours of the year.
 
         Args:
-            values: List of Illuminance values as tuples (total, direct).
+            values: List of values as tuples (total, direct).
             hoys: List of hours of the year that corresponds to input values.
             source: Name of the source of light. Only needed in case of multiple
                 sources / window groups (default: None).
@@ -750,10 +751,13 @@ class AnalysisPoint(object):
     def duplicate(self):
         """Duplicate the analysis point."""
         ap = AnalysisPoint(self._loc, self._dir)
-        ap._sources = self._sources
         # This should be good enough as most of the time an analysis point will be
         # copied with no values assigned.
         ap._values = copy.copy(self._values)
+
+        if len(ap._values) == len(self._sources):
+            ap._sources = self._sources
+
         ap._isDirectLoaded = bool(self._isDirectLoaded)
         ap.logic = copy.copy(self.logic)
         return ap
