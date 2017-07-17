@@ -1,12 +1,11 @@
 """Radiance Daylight Coefficient Grid-Based Analysis Recipe."""
-from ..recipeutil import writeRadFilesDaylightCoeff, writeExtraFiles
-from ..recipeutil import coeffMatrixCommands, matrixCalculation, RGBMatrixFileToIll
-from ..recipeutil import skyReceiver, skymtxToGendaymtx, finalMatrixAddition
-from ..recipeutil import sunCoeffMatrixCommands, sunMatrixCalculation, glzSrfTowinGroup
+from ..recipeutil import writeExtraFiles
+from ..recipedcutil import writeRadFilesDaylightCoeff, getCommandsSky
+from ..recipedcutil import getCommandsSceneDaylightCoeff
+from ..recipedcutil import getCommandsWGroupsDaylightCoeff
 from .._gridbasedbase import GenericGridBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...sky.skymatrix import SkyMatrix
-from ...sky.sunmatrix import SunMatrix
 from ....futil import writeToFile
 
 import os
@@ -178,7 +177,16 @@ class DaylightCoeffGridBased(GenericGridBased):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
-    # TODO: docstring should be modified
+    @property
+    def totalRunsCount(self):
+        """Number of total runs for all window groups and states."""
+        return sum(wg.stateCount for wg in self.windowGroups) + 1  # 1 for base case
+
+    def preprocCommands(self):
+        """Add echo in front of comments in batch file comments."""
+        cmd = ['echo ' + c if c[:2] == '::' else c for c in self._commands]
+        return ['@echo off'] + cmd
+
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
@@ -214,198 +222,41 @@ class DaylightCoeffGridBased(GenericGridBased):
             self._commands.append(self.header(projectFolder))
 
         # # 2.1.Create sky matrix.
-        self.skyMatrix.mode = 0
-        skyMtxTotal = 'sky\\{}.smx'.format(self.skyMatrix.name)
-        self.skyMatrix.mode = 1
-        skyMtxDirect = 'sky\\{}.smx'.format(self.skyMatrix.name)
-        self.skyMatrix.mode = 0
-
-        # add commands for total and direct sky matrix.
-        if hasattr(self.skyMatrix, 'isSkyMatrix'):
-            for m in xrange(2):
-                self.skyMatrix.mode = m
-                gdm = skymtxToGendaymtx(self.skyMatrix, projectFolder)
-                if gdm:
-                    note = ':: {} sky matrix'.format('direct' if m else 'total')
-                    self._commands.extend((note, gdm))
-            self.skyMatrix.mode = 0
-        else:
-            # sky vector
-            raise TypeError('You must use a SkyMatrix to generate the sky.')
-
         # # 2.2. Create sun matrix
-        sm = SunMatrix(self.skyMatrix.wea, self.skyMatrix.north,
-                       self.skyMatrix.hoys, self.simulationType)
-        analemma, sunlist, analemmaMtx = \
-            sm.execute(os.path.join(projectFolder, 'sky'))
+        skycommands, skyfiles = getCommandsSky(projectFolder, self.skyMatrix,
+                                               reuse=True)
+
+        self._commands.extend(skycommands)
 
         # for each window group - calculate total, direct and direct-analemma results
-        # I can just add fenestration rad files here and that will work!
-
         # calculate the contribution of glazing if any with all window groups blacked
-        # this is a hack. A better solution is to create a HBDynamicSurface from glazing
-        # surfaces. The current limitation is that HBDynamicSurface can't have several
-        # surfaces with different materials.
-        allWindowGroups = [glzSrfTowinGroup()]
-        allWindowGroups.extend(self.windowGroups)
-        allWgsFiles = [glzfiles] + list(wgsfiles)
+        inputfiles = opqfiles, glzfiles, wgsfiles, extrafiles
+        commands, results = getCommandsSceneDaylightCoeff(
+            projectName, self.skyMatrix.skyDensity, projectFolder, skyfiles,
+            inputfiles, pointsFile, self.totalPointCount, self.radianceParameters,
+            self.reuseDaylightMtx, self.totalRunsCount)
 
-        for count, wg in enumerate(allWindowGroups):
-            if count == 0:
-                if len(wgsfiles) > 0:
-                    blkmaterial = [wgsfiles[0].fpblk[0]]
-                    wgsblacked = [f.fpblk[1] for c, f in enumerate(wgsfiles)]
-                else:
-                    blkmaterial = []
-                    wgsblacked = []
-            else:
-                # add material file
-                blkmaterial = [allWgsFiles[count].fpblk[0]]
-                # add all the blacked window groups but the one in use
-                # and finally add non-window group glazing as black
-                wgsblacked = \
-                    [f.fpblk[1] for c, f in enumerate(wgsfiles) if c != count - 1] + \
-                    list(glzfiles.fpblk)
+        self._commands.extend(commands)
+        self._resultFiles.extend(
+            os.path.join(projectFolder, str(result)) for result in results
+        )
 
-            for scount, state in enumerate(wg.states):
-                # 2.3.Generate daylight coefficients using rfluxmtx
-                # collect list of radiance files in the scene for both total and direct
-                self._commands.append(
-                    '\n:: calculation for {} window group {}'.format(wg.name, state.name)
-                )
+        # calculate the contribution for all window groups
+        commands, results = getCommandsWGroupsDaylightCoeff(
+            projectName, self.skyMatrix.skyDensity, projectFolder, self.windowGroups,
+            skyfiles, inputfiles, pointsFile, self.totalPointCount,
+            self.radianceParameters, self.reuseDaylightMtx, self.totalRunsCount)
 
-                if count == 0:
-                    # normal glazing
-                    nonBlackedWgfiles = allWgsFiles[count].fp
-                else:
-                    nonBlackedWgfiles = (allWgsFiles[count].fp[scount],)
-
-                rfluxScene = (
-                    f for fl in
-                    (nonBlackedWgfiles, opqfiles.fp, extrafiles.fp,
-                     blkmaterial, wgsblacked)
-                    for f in fl)
-
-                rfluxSceneBlacked = (
-                    f for fl in
-                    (nonBlackedWgfiles, opqfiles.fpblk, extrafiles.fpblk,
-                     blkmaterial, wgsblacked)
-                    for f in fl)
-
-                dMatrix = 'result\\matrix\\normal_{}_{}..{}..{}.dc'.format(
-                    projectName, self.skyMatrix.skyDensity, wg.name, state.name)
-
-                dMatrixDirect = 'result\\matrix\\black_{}_{}..{}..{}.dc'.format(
-                    projectName, self.skyMatrix.skyDensity, wg.name, state.name)
-
-                sunMatrix = 'result\\matrix\\sun_{}_{}..{}..{}.dc'.format(
-                    projectName, self.skyMatrix.skyDensity, wg.name, state.name)
-
-                if not os.path.isfile(os.path.join(projectFolder, dMatrix)) \
-                        or not self.reuseDaylightMtx:
-                    radFiles = tuple(self.relpath(f, projectFolder) for f in rfluxScene)
-                    sender = '-'
-                    receiver = skyReceiver(
-                        os.path.join(projectFolder, 'sky\\rfluxSky.rad'),
-                        self.skyMatrix.skyDensity
-                    )
-
-                    self._commands.append(
-                        ':: :: 1. daylight matrix {} > state {}'.format(wg.name,
-                                                                        state.name)
-                    )
-
-                    self._commands.append(':: :: 1.1 scene daylight matrix')
-                    # samplingRaysCount = 1 based on @sariths studies
-                    self.radianceParameters.ambientBounces = 5
-                    rflux = coeffMatrixCommands(
-                        dMatrix, self.relpath(receiver, projectFolder), radFiles, sender,
-                        self.relpath(pointsFile, projectFolder), self.totalPointCount,
-                        1, self.radianceParameters
-                    )
-                    self._commands.append(rflux.toRadString())
-
-                    radFilesBlacked = tuple(self.relpath(f, projectFolder)
-                                            for f in rfluxSceneBlacked)
-
-                    self._commands.append(':: :: 1.2 blacked scene daylight matrix')
-                    self.radianceParameters.ambientBounces = 1
-                    rfluxDirect = coeffMatrixCommands(
-                        dMatrixDirect, self.relpath(receiver, projectFolder),
-                        radFilesBlacked, sender, self.relpath(pointsFile, projectFolder),
-                        self.totalPointCount, None, self.radianceParameters
-                    )
-                    self._commands.append(rfluxDirect.toRadString())
-
-                    self._commands.append(':: :: 1.3 blacked scene analemma matrix')
-                    sunCommands = sunCoeffMatrixCommands(
-                        sunMatrix, self.relpath(pointsFile, projectFolder),
-                        radFilesBlacked, self.relpath(analemma, projectFolder),
-                        self.relpath(sunlist, projectFolder)
-                    )
-
-                    self._commands.extend(cmd.toRadString() for cmd in sunCommands)
-
-                self._commands.append(':: :: 2.1.0 total daylight matrix calculations')
-                dctTotal = matrixCalculation(
-                    'tmp\\total..{}..{}.rgb'.format(wg.name, state.name),
-                    dMatrix=dMatrix, skyMatrix=skyMtxTotal
-                )
-                self._commands.append(dctTotal.toRadString())
-
-                self._commands.append(':: :: 2.1.1 convert RGB values to illuminance')
-                finalmtx = RGBMatrixFileToIll(
-                    (dctTotal.outputFile,),
-                    'result\\total..{}..{}.ill'.format(wg.name, state.name)
-                )
-                self._commands.append(finalmtx.toRadString())
-
-                self._commands.append(':: :: 2.2.0 direct matrix calculations')
-                dctDirect = matrixCalculation(
-                    'tmp\\direct..{}..{}.rgb'.format(wg.name, state.name),
-                    dMatrix=dMatrixDirect, skyMatrix=skyMtxDirect
-                )
-                self._commands.append(dctDirect.toRadString())
-
-                self._commands.append(':: :: 2.2.1 convert RGB values to illuminance')
-                finalmtx = RGBMatrixFileToIll(
-                    (dctTotal.outputFile,),
-                    'result\\direct..{}..{}.ill'.format(wg.name, state.name)
-                )
-                self._commands.append(finalmtx.toRadString())
-
-                self._commands.append(':: :: 2.3.1 enhanced direct matrix calculations')
-                dctSun = sunMatrixCalculation(
-                    'tmp\\sun..{}..{}.rgb'.format(wg.name, state.name),
-                    dcMatrix=sunMatrix,
-                    skyMatrix=self.relpath(analemmaMtx, projectFolder)
-                )
-                self._commands.append(dctSun.toRadString())
-
-                self._commands.append(':: :: 2.3.2 convert RGB values to illuminance')
-                finalmtx = RGBMatrixFileToIll(
-                    (dctSun.outputFile,),
-                    'result\\sun..{}..{}.ill'.format(wg.name, state.name)
-                )
-                self._commands.append(finalmtx.toRadString())
-
-                self._commands.append(':: :: 2.4 final matrix calculation')
-                fmtx = finalMatrixAddition(
-                    'result\\total..{}..{}.ill'.format(wg.name, state.name),
-                    'result\\direct..{}..{}.ill'.format(wg.name, state.name),
-                    'result\\sun..{}..{}.ill'.format(wg.name, state.name),
-                    'result\\{}..{}.ill'.format(wg.name, state.name)
-                )
-                self._commands.append(fmtx.toRadString())
-
-                self._resultFiles.append(
-                    os.path.join(projectFolder, str(fmtx.outputFile))
-                )
+        self._commands.extend(commands)
+        self._resultFiles.extend(
+            os.path.join(projectFolder, str(result)) for result in results
+        )
 
         # # 2.5 write batch file
         batchFile = os.path.join(projectFolder, 'commands.bat')
 
-        writeToFile(batchFile, '\n'.join(self._commands))
+        # add echo to commands and write them to file
+        writeToFile(batchFile, '\n'.join(self.preprocCommands()))
 
         return batchFile
 
