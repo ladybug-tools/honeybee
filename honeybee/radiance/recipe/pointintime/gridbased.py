@@ -198,7 +198,7 @@ class GridBased(GenericGridBased):
         # # 4.1.prepare oconv
         octSceneFiles = \
             [os.path.join(projectFolder, str(self.sky.command('sky').outputFile))] + \
-            opqfiles + glzfiles + extrafiles.fp
+            opqfiles + glzfiles + wgsfiles + extrafiles.fp
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, projectFolder) for f in octSceneFiles)
