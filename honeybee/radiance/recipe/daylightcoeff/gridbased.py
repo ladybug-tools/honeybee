@@ -271,7 +271,7 @@ class DaylightCoeffGridBased(GenericGridBased):
             fn = os.path.split(rf)[-1][:-4].split("..")
             source = fn[-2]
             state = fn[-1]
-            print('loading restults for {}::{} from {}'.format(source, state, rf))
+            print('loading the restults for {}::{} from {}'.format(source, state, rf))
             startLine = 0
             for count, analysisGrid in enumerate(self.analysisGrids):
                 if count:

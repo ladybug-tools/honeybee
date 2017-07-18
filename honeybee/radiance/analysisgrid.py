@@ -192,19 +192,19 @@ class AnalysisGrid(object):
                         inf.next()  # pass empty line
                         break  # done with the header!
                     elif startLine == 0 and line[:5] == 'NROWS':
-                        pointsCount = int(inf.next().split('=')[-1])
+                        pointsCount = int(line.split('=')[-1])
                         if checkPointCount:
                             assert len(self._analysisPoints) == pointsCount, \
-                                "Length of points [{}] doesn't match length " \
-                                "of the results [{}].".format(
+                                "Length of points [{}] must match the number " \
+                                "of rows [{}].".format(
                                     len(self._analysisPoints), pointsCount)
 
                     elif startLine == 0 and line[:5] == 'NCOLS':
-                        hoursCount = int(inf.next().split('=')[-1])
+                        hoursCount = int(line.split('=')[-1])
                         if hoys:
                             assert hoursCount == len(hoys), \
-                                "Number of hours [{}] doesn't match length " \
-                                "of the results [{}]." \
+                                "Number of hours [{}] must match the " \
+                                "number of columns [{}]." \
                                 .format(len(hoys), hoursCount)
                         else:
                             hoys = xrange(0, hoursCount)
@@ -256,33 +256,34 @@ class AnalysisGrid(object):
                 # read the header
                 for i in xrange(10):
                     line = inf.next()
+                    dline = dinf.next()
                     dinf.next()
                     if line[:6] == 'FORMAT':
                         inf.next()  # pass empty line
                         dinf.next()
                         break  # done with the header!
                     elif startLine == 0 and line[:5] == 'NROWS':
-                        pointsCount = int(inf.next().split('=')[-1])
-                        dirPointsCount = int(dinf.next().split('=')[-1])
+                        pointsCount = int(line.split('=')[-1])
+                        dirPointsCount = int(dline.split('=')[-1])
                         assert pointsCount == dirPointsCount, \
                             'Number of points in files ' \
                             'must be equal {} != {}'.format(pointsCount,
                                                             dirPointsCount)
                         if checkPointCount:
                             assert len(self._analysisPoints) == pointsCount, \
-                                "Length of points [{}] doesn't match length " \
+                                "Length of points [{}] must match the length " \
                                 "of the results [{}].".format(
                                     len(self._analysisPoints), pointsCount)
 
                     elif startLine == 0 and line[:5] == 'NCOLS':
-                        hoursCount = int(inf.next().split('=')[-1])
-                        dirHoursCount = int(dinf.next().split('=')[-1])
+                        hoursCount = int(line.split('=')[-1])
+                        dirHoursCount = int(dline.split('=')[-1])
                         assert hoursCount == dirHoursCount, \
                             'Number of hours in files ' \
                             'must be equal {} != {}'.format(hoursCount, dirHoursCount)
                         if hoys:
                             assert hoursCount == len(hoys), \
-                                "Number of hours [{}] doesn't match length " \
+                                "Number of hours [{}] must match length " \
                                 "of the results [{}]." \
                                 .format(len(hoys), hoursCount)
                         else:
