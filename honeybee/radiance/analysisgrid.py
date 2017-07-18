@@ -164,6 +164,34 @@ class AnalysisGrid(object):
             self.analysisPoints[count].setValues(
                 hourlyValues, hoys, source, state, isDirect)
 
+    def parseHeader(self, inf, startLine, hoys, checkPointCount=False):
+        """Parse radiance matrix header."""
+        # read the header
+        for i in xrange(10):
+            line = inf.next()
+            if line[:6] == 'FORMAT':
+                inf.next()  # pass empty line
+                break  # done with the header!
+            elif startLine == 0 and line[:5] == 'NROWS':
+                pointsCount = int(line.split('=')[-1])
+                if checkPointCount:
+                    assert len(self._analysisPoints) == pointsCount, \
+                        "Length of points [{}] must match the number " \
+                        "of rows [{}].".format(
+                            len(self._analysisPoints), pointsCount)
+
+            elif startLine == 0 and line[:5] == 'NCOLS':
+                hoursCount = int(line.split('=')[-1])
+                if hoys:
+                    assert hoursCount == len(hoys), \
+                        "Number of hours [{}] must match the " \
+                        "number of columns [{}]." \
+                        .format(len(hoys), hoursCount)
+                else:
+                    hoys = xrange(0, hoursCount)
+
+        return inf, hoys
+
     def setValuesFromFile(self, filePath, hoys=None, source=None, state=None,
                           startLine=None, isDirect=False, header=True,
                           checkPointCount=True, mode=0):
@@ -185,29 +213,7 @@ class AnalysisGrid(object):
 
         with open(filePath, 'rb') as inf:
             if header:
-                # read the header
-                for i in xrange(10):
-                    line = inf.next()
-                    if line[:6] == 'FORMAT':
-                        inf.next()  # pass empty line
-                        break  # done with the header!
-                    elif startLine == 0 and line[:5] == 'NROWS':
-                        pointsCount = int(line.split('=')[-1])
-                        if checkPointCount:
-                            assert len(self._analysisPoints) == pointsCount, \
-                                "Length of points [{}] must match the number " \
-                                "of rows [{}].".format(
-                                    len(self._analysisPoints), pointsCount)
-
-                    elif startLine == 0 and line[:5] == 'NCOLS':
-                        hoursCount = int(line.split('=')[-1])
-                        if hoys:
-                            assert hoursCount == len(hoys), \
-                                "Number of hours [{}] must match the " \
-                                "number of columns [{}]." \
-                                .format(len(hoys), hoursCount)
-                        else:
-                            hoys = xrange(0, hoursCount)
+                inf, hoys = self.parseHeader(inf, startLine, hoys, checkPointCount)
 
             st = startLine or 0
             for i in xrange(st):
@@ -233,7 +239,7 @@ class AnalysisGrid(object):
 
     def setCoupledValuesFromFile(
             self, totalFilePath, directFilePath, hoys=None, source=None, state=None,
-            startLine=None, isDirect=False, header=True, checkPointCount=True):
+            startLine=None, header=True, checkPointCount=True):
         """Load direct and total values for test points from two files.
 
         Args:
@@ -243,8 +249,6 @@ class AnalysisGrid(object):
             source: Name of the source.
             state: Name of the state.
             startLine: Number of start lines after the header from 0 (default: 0).
-            isDirect: A Boolean to declare if the results is direct illuminance
-                (default: False).
             header: A Boolean to declare if the file has header (default: True).
         """
 
@@ -253,41 +257,8 @@ class AnalysisGrid(object):
 
         with open(totalFilePath, 'rb') as inf, open(directFilePath, 'rb') as dinf:
             if header:
-                # read the header
-                for i in xrange(10):
-                    line = inf.next()
-                    dline = dinf.next()
-                    dinf.next()
-                    if line[:6] == 'FORMAT':
-                        inf.next()  # pass empty line
-                        dinf.next()
-                        break  # done with the header!
-                    elif startLine == 0 and line[:5] == 'NROWS':
-                        pointsCount = int(line.split('=')[-1])
-                        dirPointsCount = int(dline.split('=')[-1])
-                        assert pointsCount == dirPointsCount, \
-                            'Number of points in files ' \
-                            'must be equal {} != {}'.format(pointsCount,
-                                                            dirPointsCount)
-                        if checkPointCount:
-                            assert len(self._analysisPoints) == pointsCount, \
-                                "Length of points [{}] must match the length " \
-                                "of the results [{}].".format(
-                                    len(self._analysisPoints), pointsCount)
-
-                    elif startLine == 0 and line[:5] == 'NCOLS':
-                        hoursCount = int(line.split('=')[-1])
-                        dirHoursCount = int(dline.split('=')[-1])
-                        assert hoursCount == dirHoursCount, \
-                            'Number of hours in files ' \
-                            'must be equal {} != {}'.format(hoursCount, dirHoursCount)
-                        if hoys:
-                            assert hoursCount == len(hoys), \
-                                "Number of hours [{}] must match length " \
-                                "of the results [{}]." \
-                                .format(len(hoys), hoursCount)
-                        else:
-                            hoys = xrange(0, hoursCount)
+                inf, hoys = self.parseHeader(inf, startLine, hoys, checkPointCount)
+                dinf, hoys = self.parseHeader(dinf, startLine, hoys, checkPointCount)
 
             st = startLine or 0
             for i in xrange(st):
@@ -295,15 +266,16 @@ class AnalysisGrid(object):
                 dinf.next()
 
             end = len(self._analysisPoints)
-            values = (tuple(int(float(r)) for r in inf.next().split())
-                      for count in xrange(end))
-            valuesdir = (tuple(int(float(r)) for r in dinf.next().split())
-                         for count in xrange(end))
+
+            coupledValues = (
+                tuple((int(float(r)), int(float(d))) for r, d in
+                      zip(inf.next().split(), dinf.next().split()))
+                for count in xrange(end))
 
             # assign the values to points
-            for count, hourlyValues in enumerate(izip(values, valuesdir)):
+            for count, hourlyValues in enumerate(coupledValues):
                 self.analysisPoints[count].setCoupledValues(
-                    hourlyValues, hoys, source, state, isDirect)
+                    hourlyValues, hoys, source, state)
 
     def annualMetrics(self, DAThreshhold=None, UDIMinMax=None, blindsStateIds=None,
                       occSchedule=None):

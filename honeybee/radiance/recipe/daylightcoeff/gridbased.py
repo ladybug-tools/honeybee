@@ -271,15 +271,32 @@ class DaylightCoeffGridBased(GenericGridBased):
             fn = os.path.split(rf)[-1][:-4].split("..")
             source = fn[-2]
             state = fn[-1]
-            print('loading the restults for {}::{} from {}'.format(source, state, rf))
+
+            folder, name = os.path.split(rf)
+            df = os.path.join(folder, 'sun..%s' % name)
+
+            print('loading the results for {}::{} from\n{}'.format(source, state, rf))
+
             startLine = 0
             for count, analysisGrid in enumerate(self.analysisGrids):
                 if count:
                     startLine += len(self.analysisGrids[count - 1])
 
-                analysisGrid.setValuesFromFile(
-                    rf, self.skyMatrix.hoys, source, state, startLine=startLine,
-                    header=True, checkPointCount=False
-                )
+                if not os.path.exists(df):
+                    # total value only
+                    analysisGrid.setValuesFromFile(
+                        rf, self.skyMatrix.hoys, source, state, startLine=startLine,
+                        header=True, checkPointCount=False
+                    )
+                else:
+                    # total and direct values
+                    print(
+                        'loading the direct results for {}::{} '
+                        'from\n{}'.format(source, state, df))
+
+                    analysisGrid.setCoupledValuesFromFile(
+                        rf, df, self.skyMatrix.hoys, source, state,
+                        startLine=startLine, header=True, checkPointCount=False
+                    )
 
         return self.analysisGrids
