@@ -5,9 +5,10 @@ from ..command.rmtxop import Rmtxop, RmtxopMatrix
 from ..command.gendaymtx import Gendaymtx
 from ..sky.sunmatrix import SunMatrix
 from ..command.oconv import Oconv
-from ..command.rcontrib import Rcontrib, RcontribParameters
+from ..command.rcontrib import Rcontrib
 from ..command.vwrays import Vwrays, VwraysParameters
 from .recipeutil import glzSrfTowinGroup
+from .parameters import getRadianceParametersGridBased
 
 import os
 from collections import namedtuple
@@ -305,7 +306,6 @@ def _getCommandsDaylightCoeff(
             commands.append('::')
 
             # samplingRaysCount = 1 based on @sariths studies
-            rfluxmtxParameters.ambientBounces = 5
             rflux = coeffMatrixCommands(
                 dMatrix, os.path.relpath(receiver, projectFolder), radFiles, sender,
                 os.path.relpath(pointsFile, projectFolder), totalPointCount,
@@ -323,6 +323,7 @@ def _getCommandsDaylightCoeff(
             )
             commands.append('::')
 
+            originalValue = int(rfluxmtxParameters.ambientBounces)
             rfluxmtxParameters.ambientBounces = 1
             rfluxDirect = coeffMatrixCommands(
                 dMatrixDirect, os.path.relpath(receiver, projectFolder),
@@ -330,6 +331,7 @@ def _getCommandsDaylightCoeff(
                 totalPointCount, None, rfluxmtxParameters
             )
             commands.append(rfluxDirect.toRadString())
+            rfluxmtxParameters.ambientBounces = originalValue
 
             commands.append(':: :: [3/3] black scene analemma daylight matrix')
             commands.append(
@@ -650,13 +652,8 @@ def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist):
     octree.outputFile = 'analemma.oct'
 
     # Creating sun coefficients
-    rctbParam = RcontribParameters()
-    rctbParam.ambientBounces = 0
-    rctbParam.directJitter = 0
-    rctbParam.directCertainty = 1
-    rctbParam.directThreshold = 0
+    rctbParam = getRadianceParametersGridBased(0, 1).smtx
     rctbParam.modFile = sunlist
-    rctbParam.irradianceCalc = True
 
     rctb = Rcontrib()
     rctb.octreeFile = octree.outputFile

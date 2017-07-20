@@ -1,3 +1,5 @@
+from .parameters import getRadianceParametersGridBased
+
 from ..recipeutil import writeExtraFiles
 from ..recipedcutil import getCommandsSceneDaylightCoeff, getCommandsSky
 
@@ -5,7 +7,6 @@ from ..recipexphaseutil import matrixCalculationThreePhase, writeRadFilesMultiPh
 from ..recipexphaseutil import getCommandsViewDaylightMatrices
 
 from ..daylightcoeff.gridbased import DaylightCoeffGridBased
-from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...sky.skymatrix import SkyMatrix
 from ....futil import writeToFile
 
@@ -123,12 +124,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
     @viewMtxParameters.setter
     def viewMtxParameters(self, vm):
         if not vm:
-            self._viewMtxParameters = RfluxmtxParameters()
-            self._viewMtxParameters.irradianceCalc = True
-            self._viewMtxParameters.ambientAccuracy = 0.1
-            self._viewMtxParameters.ambientBounces = 10
-            self._viewMtxParameters.ambientDivisions = 65536
-            self._viewMtxParameters.limitWeight = 1E-5
+            self._viewMtxParameters = getRadianceParametersGridBased(0, 2).vmtx
         else:
             assert hasattr(vm, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(vm)))
@@ -142,12 +138,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
     @daylightMtxParameters.setter
     def daylightMtxParameters(self, dm):
         if not dm:
-            self._daylightMtxParameters = RfluxmtxParameters()
-            self._daylightMtxParameters.ambientAccuracy = 0.1
-            self._daylightMtxParameters.ambientDivisions = 1024
-            self._daylightMtxParameters.ambientBounces = 2
-            self._daylightMtxParameters.limitWeight = 0.0000001
-
+            self._daylightMtxParameters = getRadianceParametersGridBased(0, 2).dmtx
         else:
             assert hasattr(dm, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(dm)))
