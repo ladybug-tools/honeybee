@@ -125,7 +125,7 @@ class AnalysisGrid(object):
     @property
     def sources(self):
         """Get sorted list fo sources."""
-        if self._sources == {}:
+        if not self._sources:
             return self.analysisPoints[0].sources
         else:
             srcs = range(len(self._sources))
@@ -277,6 +277,60 @@ class AnalysisGrid(object):
                 self.analysisPoints[count].setCoupledValues(
                     hourlyValues, hoys, source, state)
 
+    def combinedValueById(self, hoy, blindsStateIds=None):
+        """Get combined value from all sources based on stateId.
+
+        Args:
+            hoy: hour of the year.
+            blindsStateIds: List of state ids for all the sources for an hour. If you
+                want a source to be removed set the state to -1.
+
+        Returns:
+            total, direct values.
+        """
+        return (p.combinedValueById(hoy, blindsStateIds) for p in self)
+
+    def combinedValuesById(self, hoys=None, blindsStateIds=None):
+        """Get combined value from all sources based on stateIds.
+
+        Args:
+            hoys: A collection of hours of the year.
+            blindsStateIds: List of state ids for all the sources for input hoys. If you
+                want a source to be removed set the state to -1.
+
+        Returns:
+            Return a generator for (total, direct) values.
+        """
+        return (p.combinedValueById(hoys, blindsStateIds) for p in self)
+
+    def sumValuesById(self, hoys=None, blindsStateIds=None):
+        """Get sum of value for all the hours.
+
+        This method is mostly useful for radiation and solar access analysis.
+
+        Args:
+            hoys: A collection of hours of the year.
+            blindsStateIds: List of state ids for all the sources for input hoys. If you
+                want a source to be removed set the state to -1.
+
+        Returns:
+            Return a collection of sum values as (total, direct) values.
+        """
+        return (p.sumValuesById(hoys, blindsStateIds) for p in self)
+
+    def maxValuesById(self, hoys=None, blindsStateIds=None):
+        """Get maximum value for all the hours.
+
+        Args:
+            hoys: A collection of hours of the year.
+            blindsStateIds: List of state ids for all the sources for input hoys. If you
+                want a source to be removed set the state to -1.
+
+        Returns:
+            Return a tuple for sum of (total, direct) values.
+        """
+        return (p.maxValuesById(hoys, blindsStateIds) for p in self)
+
     def annualMetrics(self, DAThreshhold=None, UDIMinMax=None, blindsStateIds=None,
                       occSchedule=None):
         """Calculate annual metrics.
@@ -286,7 +340,7 @@ class AnalysisGrid(object):
         Args:
             DAThreshhold: Threshhold for daylight autonomy in lux (default: 300).
             UDIMinMax: A tuple of min, max value for useful daylight illuminance
-                (default: (100, 2000)).
+                (default: (100, 3000)).
             blindsStateIds: List of state ids for all the sources for input hoys. If you
                 want a source to be removed set the state to -1.
             occSchedule: An annual occupancy schedule.
@@ -301,7 +355,7 @@ class AnalysisGrid(object):
         res = ([], [], [], [], [])
 
         DAThreshhold = DAThreshhold or 300.0
-        UDIMinMax = UDIMinMax or (100, 2000)
+        UDIMinMax = UDIMinMax or (100, 3000)
         hours = self.hoys
         occSchedule = occSchedule or set(hours)
         blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hours)
@@ -364,10 +418,10 @@ class AnalysisGrid(object):
         As per IES-LM-83-12 ASE is the percent of sensors that are
         found to be exposed to more than 1000lux of direct sunlight for
         more than 250hrs per year. For LEED credits No more than 10% of
-        the points in the grid fail this measure.
+        the points in the grid should fail this measure.
 
         Args:
-            threshhold: Threshhold for daylight autonomy in lux (default: 1000).
+            threshhold: Threshhold for for solar exposure in lux (default: 1000).
             blindsStateIds: List of state ids for all the sources for input hoys.
                 If you want a source to be removed set the state to -1. ASE must
                 be calculated without dynamic blinds but you can use this option
@@ -420,7 +474,7 @@ class AnalysisGrid(object):
         """Duplicate AnalysisGrid."""
         aps = tuple(ap.duplicate() for ap in self._analysisPoints)
         dup = AnalysisGrid(aps, self._name)
-        dup._sources = aps[0].sources
+        dup._sources = aps[0]._sources
         dup._wgroups = self._wgroups
         return dup
 

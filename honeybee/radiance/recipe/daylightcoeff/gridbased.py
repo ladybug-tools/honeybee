@@ -4,7 +4,7 @@ from ..recipedcutil import writeRadFilesDaylightCoeff, getCommandsSky
 from ..recipedcutil import getCommandsSceneDaylightCoeff
 from ..recipedcutil import getCommandsWGroupsDaylightCoeff
 from .._gridbasedbase import GenericGridBased
-from ...parameters.rfluxmtx import RfluxmtxParameters
+from ..parameters import getRadianceParametersGridBased
 from ...sky.skymatrix import SkyMatrix
 from ....futil import writeToFile
 
@@ -161,12 +161,7 @@ class DaylightCoeffGridBased(GenericGridBased):
     def radianceParameters(self, par):
         if not par:
             # set RfluxmtxParameters as default radiance parameter for annual analysis
-            self._radianceParameters = RfluxmtxParameters()
-            self._radianceParameters.irradianceCalc = True
-            self._radianceParameters.ambientAccuracy = 0.1
-            self._radianceParameters.ambientDivisions = 4096
-            self._radianceParameters.ambientBounces = 5
-            self._radianceParameters.limitWeight = 0.0002
+            par = getRadianceParametersGridBased(0, 1).rad
         else:
             assert hasattr(par, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))

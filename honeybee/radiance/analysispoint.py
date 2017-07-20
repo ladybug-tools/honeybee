@@ -16,6 +16,20 @@ class AnalysisPoint(object):
 
     This class is developed to enable honeybee for running daylight control
     studies with dynamic shadings without going back to several files.
+
+    Each AnalysisPoint can load annual total and direct results for every state of
+    each source assigned to it. As a result once can end up with a lot of data for
+    a single point (8760 * sources * states for each source). The data are sorted as
+    integers and in different lists for each source. There are several methods to
+    set or get the data but if you're interested in more details read the comments
+    under __init__ to know how the data is stored.
+
+    In this class:
+     - Id stands for 'the id of a blind state'. Each state has a name and an ID will
+       be assigned to it based on the order of loading.
+     - coupledValue stands for a tuple of  (total, direct) values. If one the values is
+       not available it will be set to None.
+
     """
 
     __slots__ = ('_loc', '_dir', '_sources', '_values', '_isDirectLoaded', 'logic')
@@ -77,7 +91,10 @@ class AnalysisPoint(object):
 
     @property
     def sources(self):
-        """Get sorted list fo sources."""
+        """Get sorted list of light sources.
+
+        In most of the cases light sources are window groups.
+        """
         srcs = range(len(self._sources))
         for name, d in self._sources.iteritems():
             srcs[d['id']] = name
@@ -138,10 +155,10 @@ class AnalysisPoint(object):
         If the logic is not met the blind will be moved to the next state.
         Overwrite this method for optional blind control.
         """
-        return args[0] > 2000
+        return args[0] > 3000
 
     def sourceId(self, source):
-        """Get source id if available."""
+        """Get source id from source name."""
         # find the id for source and state
         try:
             return self._sources[source]['id']
@@ -343,24 +360,27 @@ class AnalysisPoint(object):
         else:
             self._isDirectLoaded = True
 
-    def values(self, hoys, source=None, state=None):
-        """Get illuminance values for several hours of the year."""
+    def values(self, hoys=None, source=None, state=None):
+        """Get values for several hours of the year."""
         # find the id for source and state
         sid = self.sourceId(source)
         # find the state id
         stateid = self.blindStateId(source, state)
 
+        hoys = hoys or self.hoys
         try:
             return tuple(self._values[sid][stateid][hoy][0] for hoy in hoys)
         except KeyError as e:
             raise ValueError('Invalid hoy input: {}'.format(e))
 
-    def directValues(self, hoys, source=None, state=None):
-        """Get direct illuminance values for several hours of the year."""
+    def directValues(self, hoys=None, source=None, state=None):
+        """Get direct values for several hours of the year."""
         # find the id for source and state
         sid = self.sourceId(source)
         # find the state id
         stateid = self.blindStateId(source, state)
+
+        hoys = hoys or self.hoys
 
         try:
             return tuple(self._values[sid][stateid][hoy][1] for hoy in hoys)
@@ -379,12 +399,14 @@ class AnalysisPoint(object):
         except KeyError:
             raise ValueError('Invalid hoy input: {}'.format(hoy))
 
-    def coupledValues(self, hoys, source=None, state=None):
+    def coupledValues(self, hoys=None, source=None, state=None):
         """Get total and direct values for several hours of year."""
         # find the id for source and state
         sid = self.sourceId(source)
         # find the state id
         stateid = self.blindStateId(source, state)
+
+        hoys = hoys or self.hoys
 
         try:
             return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
@@ -403,7 +425,7 @@ class AnalysisPoint(object):
         except Exception as e:
             raise ValueError('Invalid input: {}'.format(e))
 
-    def coupledValuesById(self, hoys, sourceId=None, stateId=None):
+    def coupledValuesById(self, hoys=None, sourceId=None, stateId=None):
         """Get total and direct values for several hours of year by source id.
 
         Use this method to load the values if you have the ids for source and state.
@@ -415,6 +437,9 @@ class AnalysisPoint(object):
         """
         sid = sourceId or 0
         stateid = stateId or 0
+
+        hoys = hoys or self.hoys
+
         try:
             return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
         except Exception as e:
@@ -429,7 +454,7 @@ class AnalysisPoint(object):
                 want a source to be removed set the state to -1.
 
         Returns:
-            total, direct illuminance values.
+            total, direct values.
         """
         total = 0
         direct = 0 if self._isDirectLoaded else None
@@ -470,23 +495,27 @@ class AnalysisPoint(object):
                 want a source to be removed set the state to -1.
 
         Returns:
-            Return a generator for (total, direct) illuminance values.
+            Return a generator for (total, direct) values.
         """
         hoys = hoys or self.hoys
 
         if not blindsStateIds:
-            blindsStateIds = [[0] * len(self._sources)] * len(hoys)
+            try:
+                hoursCount = len(hoys)
+            except TypeError:
+                raise TypeError('hoys must be an iterable object: {}'.format(hoys))
+            blindsStateIds = [[0] * len(self._sources)] * hoursCount
 
         assert len(hoys) == len(blindsStateIds), \
             'There should be a list of states for each hour. #states[{}] != #hours[{}]' \
             .format(len(blindsStateIds), len(hoys))
 
         dirValue = 0 if self._isDirectLoaded else None
-        for hoy in hoys:
+        for count, hoy in enumerate(hoys):
             total = 0
             direct = dirValue
 
-            for sid, stateid in enumerate(blindsStateIds[hoy]):
+            for sid, stateid in enumerate(blindsStateIds[count]):
                 if stateid == -1:
                     t = 0
                     d = 0
@@ -504,6 +533,51 @@ class AnalysisPoint(object):
                     pass
 
             yield total, direct
+
+    def sumValuesById(self, hoys=None, blindsStateIds=None):
+        """Get sum of value for all the hours.
+
+        This method is mostly useful for radiation and solar access analysis.
+
+        Args:
+            hoys: A collection of hours of the year.
+            blindsStateIds: List of state ids for all the sources for input hoys. If you
+                want a source to be removed set the state to -1.
+
+        Returns:
+            Return a tuple for sum of (total, direct) values.
+        """
+        values = tuple(self.combinedValuesById(hoys, blindsStateIds))
+
+        total = sum(v[0] for v in values)
+        try:
+            direct = sum(v[1] for v in values)
+        except TypeError as e:
+            if "'long' and 'NoneType'" in str(e):
+                # direct value is not loaded
+                direct = 0
+            else:
+                raise TypeError(e)
+
+        return total, direct
+
+    def maxValuesById(self, hoys=None, blindsStateIds=None):
+        """Get maximum value for all the hours.
+
+        Args:
+            hoys: A collection of hours of the year.
+            blindsStateIds: List of state ids for all the sources for input hoys. If you
+                want a source to be removed set the state to -1.
+
+        Returns:
+            Return a tuple for sum of (total, direct) values.
+        """
+        values = tuple(self.combinedValuesById(hoys, blindsStateIds))
+
+        total = max(v[0] for v in values)
+        direct = max(v[1] for v in values)
+
+        return total, direct
 
     def blindsState(self, hoys=None, blindsStateIds=None, *args, **kwargs):
         """Calculte blinds state based on a control logic.
