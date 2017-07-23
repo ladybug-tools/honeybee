@@ -1,8 +1,9 @@
 """Radiance Daylight Coefficient Image-Based Analysis Recipe."""
-from ..recipeutil import writeRadFilesDaylightCoeff, writeExtraFiles
-from ..recipeutil import viewSamplingCommands, viewCoeffMatrixCommands
-from ..recipeutil import viewMatrixCalculation, viewSunCoeffMatrixCommands
-from ..recipeutil import skyReceiver, skymtxToGendaymtx, glzSrfTowinGroup
+from ..recipeutil import writeExtraFiles, glzSrfTowinGroup
+from ..recipedcutil import writeRadFilesDaylightCoeff
+from ..recipedcutil import viewSamplingCommands, viewCoeffMatrixCommands
+from ..recipedcutil import viewMatrixCalculation
+from ..recipedcutil import skyReceiver, skymtxToGendaymtx
 from .._imagebasedbase import GenericImageBased
 from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...sky.sunmatrix import SunMatrix
@@ -18,7 +19,7 @@ class DaylightCoeffImageBased(GenericImageBased):
     """Daylight Coefficient Image-Based.
 
     Attributes:
-        sky: A honeybee sky for the analysis
+        skyMtx: A honeybee sky for the analysis
         views: List of views.
         simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 2)
@@ -57,37 +58,47 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         self.reuseDaylightMtx = reuseDaylightMtx
 
-        # create a result loader to load the results once the analysis is done.
-        # self.loader = LoadGridBasedDLAnalysisResults(self.simulationType,
-        #                                              self._resultFiles)
-
     @property
     def simulationType(self):
         """Get/set simulation Type.
 
         0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
         """
-        return self.__simType
+        return self._simType
 
     @simulationType.setter
     def simulationType(self, value):
         try:
             value = int(value)
         except TypeError:
-            value = 2
+            value = 0
 
         assert 0 <= value <= 2, \
             "Simulation type should be between 0-2. Current value: {}".format(value)
 
         # If this is a radiation analysis make sure the sky is climate-based
         if value == 1:
-            assert self.sky.isClimateBased, \
+            assert self.skyMatrix.isClimateBased, \
                 "The sky for radition analysis should be climate-based."
 
-        self.__simType = value
+        self._simType = value
+        self.skyMatrix.skyType = value
 
     @property
-    def skyType(self):
+    def skyMatrix(self):
+        """Get and set sky definition."""
+        return self._skyMatrix
+
+    @skyMatrix.setter
+    def skyMatrix(self, newSky):
+        assert hasattr(newSky, 'isRadianceSky'), \
+            '%s is not a valid Honeybee sky.' % type(newSky)
+        assert not newSky.isPointInTime, \
+            TypeError('Sky for daylight coefficient recipe must be a sky matrix.')
+        self._skyMatrix = newSky
+
+    @property
+    def skyDensity(self):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
@@ -178,7 +189,8 @@ class DaylightCoeffImageBased(GenericImageBased):
             raise TypeError('You must use a SkyMatrix to generate the sky.')
 
         # # 2.2. Create sun matrix
-        sm = SunMatrix(self.skyMatrix.wea, self.skyMatrix.north)
+        sm = SunMatrix(self.skyMatrix.wea, self.skyMatrix.north,
+                       self.skyMatrix.hoys, self.simulationType)
         analemma, sunlist, analemmaMtx = \
             sm.execute(os.path.join(projectFolder, 'sky'))
 

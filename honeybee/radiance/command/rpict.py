@@ -34,30 +34,25 @@ class Rpict(RadianceCommand):
 
         0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
         """
-        return self.__simType
+        return self._simType
 
     @simulationType.setter
     def simulationType(self, value):
         try:
             value = int(value)
-        except:
+        except Exception:
             value = 2
 
         assert 0 <= value <= 2, \
             "Simulation type should be between 0-2. Current value: {}".format(value)
 
-        # If this is a radiation analysis make sure the sky is climate-based
-        if value == 1:
-            assert self.sky.isClimateBased, \
-                "The sky for radition analysis should be climate-based."
-
-        self.__simType = value
+        self._simType = value
 
         # trun on/off I paramter
         # -I > Boolean switch to compute irradiance rather than radiance, with
         # the input origin and direction interpreted instead as measurement point
         # and orientation.
-        if self.__simType in (0, 1):
+        if self._simType in (0, 1):
             self.rpictParameters.irradianceCalc = True
         else:
             # luminance
@@ -66,11 +61,11 @@ class Rpict(RadianceCommand):
     @property
     def rpictParameters(self):
         """Get and set image parameters for rendering."""
-        return self.__rpictParameters
+        return self._rpictParameters
 
     @rpictParameters.setter
     def rpictParameters(self, parameters):
-        self.__rpictParameters = parameters if parameters is not None \
+        self._rpictParameters = parameters if parameters is not None \
             else ImageBasedParameters()
 
         assert hasattr(self.rpictParameters, "isImageBasedRadianceParameters"), \
@@ -79,16 +74,16 @@ class Rpict(RadianceCommand):
     @property
     def view(self):
         """Get and set view for rpict."""
-        return self.__view
+        return self._view
 
     @view.setter
     def view(self, v):
         if v is not None:
             assert isinstance(v, View),\
                 'The input for view should an instance of the class View.'
-            self.__view = v
+            self._view = v
         else:
-            self.__view = None
+            self._view = None
 
     def toRadString(self, relativePath=False):
         """Return full command as string."""

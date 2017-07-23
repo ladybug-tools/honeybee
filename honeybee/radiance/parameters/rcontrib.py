@@ -45,10 +45,11 @@ class RcontribParameters(GridBasedParameters):
         # or you can set all the parameter for rtrace based on quality
         rcp.quality = 1
         print rcp.toRadString()
-        > -aa 0.2 -ab 0 -ad 10000 -M c:/ladybug/suns.txt -I -dc 0.5 -st 0.5 -lw 0.01 -as 2048 -ar 64 -lr 6 -dt 0.25 -dr 1 -ds 0.25 -dp 256
+        > -aa 0.2 -ab 0 -ad 10000 -M c:/ladybug/suns.txt -I -dc 0.5 -st 0.5 -lw 0.01
+            -as 2048 -ar 64 -lr 6 -dt 0.25 -dr 1 -ds 0.25 -dp 256
     """
 
-    def __init__(self, modFile=None):
+    def __init__(self, modFile=None, totalPointCount=None):
         """Init paramters."""
         GridBasedParameters.__init__(self)
 
@@ -57,3 +58,8 @@ class RcontribParameters(GridBasedParameters):
         self.modFile = modFile
         """[-M file] File path to a file with a list of modifiers
         (Default: None)"""
+
+        self.addRadianceNumber('y', 'number of total points or pixels',
+                               attributeName='totalPointCount')
+        self.totalPointCount = totalPointCount
+        """"[-y int] Number of total points in points file."""

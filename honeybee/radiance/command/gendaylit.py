@@ -47,11 +47,12 @@ class Gendaylit(RadianceCommand):
     outputFile = RadiancePath('outputFile', descriptiveName='output sky file',
                               relativePath=None, checkExists=False)
 
-    def __init__(self, outputName='untitled', monthDayHour=None, rotation=0,
+    def __init__(self, outputName, monthDayHour, rotation=0,
                  gendaylitParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
+        outputName = outputName or 'untitled'
         self.outputFile = outputName if outputName.lower().endswith(".sky") \
             else outputName + ".sky"
         """results file for sky (Default: untitled)"""
@@ -60,14 +61,24 @@ class Gendaylit(RadianceCommand):
         self.rotation = rotation
         self.gendaylitParameters = gendaylitParameters
 
+    @classmethod
+    def fromLocationDirectAndDiffuseRadiation(
+        cls, outputName, location, monthDayHour, directRadiation, diffuseRadiation,
+            rotation=0):
+        par = GendaylitParameters()
+        par.latitude = location.latitude
+        par.longitude = -location.longitude
+        par.dirNormDifHorzIrrad = (directRadiation, diffuseRadiation)
+        return cls(outputName, monthDayHour, rotation, par)
+
     @property
     def gendaylitParameters(self):
         """Get and set gendaylitParameters."""
-        return self.__gendaylitParameters
+        return self._gendaylitParameters
 
     @gendaylitParameters.setter
     def gendaylitParameters(self, gendaylitParam):
-        self.__gendaylitParameters = gendaylitParam if gendaylitParam is not None \
+        self._gendaylitParameters = gendaylitParam if gendaylitParam is not None \
             else GendaylitParameters()
 
         assert hasattr(self.gendaylitParameters, "isRadianceParameters"), \
@@ -79,14 +90,21 @@ class Gendaylit(RadianceCommand):
         monthDayHour = self.monthDayHour.toRadString().replace("-monthDayHour ", "") if \
             self.monthDayHour else ''
 
-        radString = "%s %s %s | xform -rz %.3f > %s" % (
-            self.normspace(os.path.join(self.radbinPath, 'gendaylit')),
-            monthDayHour,
-            self.gendaylitParameters.toRadString(),
-            self.rotation,
-            self.normspace(self.outputFile.toRadString())
-        )
-
+        if self.rotation != 0:
+            radString = "%s %s %s | xform -rz %.3f > %s" % (
+                self.normspace(os.path.join(self.radbinPath, 'gendaylit')),
+                monthDayHour,
+                self.gendaylitParameters.toRadString(),
+                self.rotation,
+                self.normspace(self.outputFile.toRadString())
+            )
+        else:
+            radString = "%s %s %s > %s" % (
+                self.normspace(os.path.join(self.radbinPath, 'gendaylit')),
+                monthDayHour,
+                self.gendaylitParameters.toRadString(),
+                self.normspace(self.outputFile.toRadString())
+            )
         return radString
 
     @property

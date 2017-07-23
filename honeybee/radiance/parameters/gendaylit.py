@@ -76,8 +76,7 @@ class GendaylitParameters(AdvancedRadianceParameters):
         self.addRadianceNumber('i', 'time interval', attributeName='timeInterval',
                                numType=int)
         self.timeInterval = timeInterval
-        """[-m mer] A float number to indicate site meridian west of
-        Greenwich. """
+        """..."""
 
         self.addRadianceBoolFlag('s', 'suppress sun', attributeName='suppressSun')
         self.suppressSun = suppressSun

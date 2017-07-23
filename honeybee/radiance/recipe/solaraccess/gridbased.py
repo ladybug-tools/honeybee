@@ -1,7 +1,7 @@
 """Radiance Solar Access Grid-based Analysis Recipe."""
 from .._gridbasedbase import GenericGridBased
 from ..recipeutil import writeRadFiles, writeExtraFiles
-from ...postprocess.sunlighthourresults import LoadSunlighthoursResults
+from ..recipedcutil import RGBMatrixFileToIll
 from ...parameters.rcontrib import RcontribParameters
 from ...command.oconv import Oconv
 from ...command.rcontrib import Rcontrib
@@ -23,6 +23,7 @@ class SolarAccessGridBased(GenericGridBased):
     Attributes:
         sunVectors: A list of ladybug sun vectors as (x, y, z) values. Z value
             for sun vectors should be negative (coming from sun toward earth)
+        hoys: A list of hours of the year for each sun vector.
         analysisGrids: List of analysis grids.
         timestep: The number of timesteps per hour for sun vectors. This number
             should be smaller than 60 and divisible by 60. The default is set to
@@ -47,14 +48,20 @@ class SolarAccessGridBased(GenericGridBased):
         print analysisRecipe.results()
     """
 
-    def __init__(self, sunVectors, analysisGrids, timestep=1, hbObjects=None,
+    def __init__(self, sunVectors, hoys, analysisGrids, timestep=1, hbObjects=None,
                  subFolder='solaraccess'):
         """Create sunlighthours recipe."""
         GenericGridBased.__init__(
             self, analysisGrids, hbObjects, subFolder
         )
 
+        assert len(hoys) == len(sunVectors), \
+            ValueError(
+                'Length of sunVectors [] must be equall to '
+                'the length of hoys []'.format(len(sunVectors), len(hoys))
+        )
         self.sunVectors = sunVectors
+        self._hoys = hoys
         self.timestep = timestep
 
         self._radianceParameters = RcontribParameters()
@@ -64,16 +71,14 @@ class SolarAccessGridBased(GenericGridBased):
         self._radianceParameters.directThreshold = 0
         self._radianceParameters.directJitter = 0
 
-        # create a result loader to load the results once the analysis is done.
-        self.loader = LoadSunlighthoursResults(self.timestep, self._resultFiles)
-
-    def fromPointsAndVectors(cls, sunVectors, pointGroups, vectorGroups=[],
+    def fromPointsAndVectors(cls, sunVectors, hoys, pointGroups, vectorGroups=[],
                              timestep=1, hbObjects=None, subFolder='sunlighthour'):
         """Create sunlighthours recipe from points and vectors.
 
         Args:
             sunVectors: A list of ladybug sun vectors as (x, y, z) values. Z value
                 for sun vectors should be negative (coming from sun toward earth)
+            hoys: A list of hours of the year for each sun vector.
             pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test
                 points. Each list of test points will be converted to a
                 TestPointGroup. If testPts is a single flattened list only one
@@ -89,7 +94,7 @@ class SolarAccessGridBased(GenericGridBased):
         """
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
-        return cls(sunVectors, analysisGrids, timestep, hbObjects, subFolder)
+        return cls(sunVectors, hoys, analysisGrids, timestep, hbObjects, subFolder)
 
     @classmethod
     def fromSuns(cls, suns, pointGroups, vectorGroups=[], timestep=1,
@@ -113,26 +118,27 @@ class SolarAccessGridBased(GenericGridBased):
         """
         try:
             sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
+            hoys = tuple(s.hoy for s in suns if s.isDuringDay)
         except AttributeError:
             raise TypeError('The input is not a valid LBSun.')
 
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
-        return cls(sunVectors, analysisGrids, timestep, hbObjects, subFolder)
+        return cls(sunVectors, hoys, analysisGrids, timestep, hbObjects, subFolder)
 
     @classmethod
-    def fromLocationAndHoys(cls, location, HOYs, pointGroups, vectorGroups=[],
+    def fromLocationAndHoys(cls, location, hoys, pointGroups, vectorGroups=[],
                             timestep=1, hbObjects=None, subFolder='sunlighthour'):
         """Create sunlighthours recipe from Location and hours of year."""
         sp = Sunpath.fromLocation(location)
 
-        suns = (sp.calculateSunFromHOY(HOY) for HOY in HOYs)
+        suns = (sp.calculateSunFromHOY(HOY) for HOY in hoys)
 
         sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
 
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
-        return cls(sunVectors, analysisGrids, timestep, hbObjects, subFolder)
+        return cls(sunVectors, hoys, analysisGrids, timestep, hbObjects, subFolder)
 
     @classmethod
     def fromLocationAndAnalysisPeriod(
@@ -147,11 +153,17 @@ class SolarAccessGridBased(GenericGridBased):
         suns = (sp.calculateSunFromHOY(HOY) for HOY in analysisPeriod.floatHOYs)
 
         sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
+        hoys = tuple(s.hoy for s in suns if s.isDuringDay)
 
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
-        return cls(sunVectors, analysisGrids, analysisPeriod.timestep, hbObjects,
-                   subFolder)
+        return cls(sunVectors, hoys, analysisGrids, analysisPeriod.timestep,
+                   hbObjects, subFolder)
+
+    @property
+    def hoys(self):
+        """Return list of hours of the year."""
+        return self._hoys
 
     @property
     def sunVectors(self):
@@ -236,7 +248,6 @@ class SolarAccessGridBased(GenericGridBased):
         else:
             raise IOError('Failed to write sun vectors!')
 
-    # TODO: Add path to PATH and use relative path in batch files
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 
@@ -285,6 +296,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         # 2.1.add sun list to modifiers
         self._radianceParameters.modFile = self.relpath(sunsList, projectFolder)
+        self._radianceParameters.totalPointCount = self.totalPointCount
 
         # 3.write batch file
         if header:
@@ -292,7 +304,8 @@ class SolarAccessGridBased(GenericGridBased):
 
         # TODO(Mostapha): add windowGroups here if any!
         # # 4.1.prepare oconv
-        octSceneFiles = opqfiles + glzfiles + [sunsMat, sunsGeo] + extrafiles.fp
+        octSceneFiles = opqfiles + glzfiles + wgsfiles + [sunsMat, sunsGeo] + \
+            extrafiles.fp
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, projectFolder) for f in octSceneFiles)
@@ -303,20 +316,35 @@ class SolarAccessGridBased(GenericGridBased):
         rct.octreeFile = str(oc.outputFile)
         rct.pointsFile = self.relpath(pointsFile, projectFolder)
 
+        batchFile = os.path.join(projectFolder, "commands.bat")
+        rmtx = RGBMatrixFileToIll((str(rct.outputFile),),
+                                  'result\\{}.ill'.format(projectName))
+
         # # 4.3 write batch file
         self._commands.append(oc.toRadString())
         self._commands.append(rct.toRadString())
-        batchFile = os.path.join(projectFolder, "commands.bat")
+        self._commands.append(rmtx.toRadString())
 
-        self._resultFiles = (os.path.join(projectFolder, str(rct.outputFile)),)
+        self._resultFiles = os.path.join(projectFolder, str(rmtx.outputFile))
+
+        batchFile = os.path.join(projectFolder, "commands.bat")
         return writeToFile(batchFile, '\n'.join(self.commands))
 
-    def results(self, flattenResults=True):
+    def results(self):
         """Return results for this analysis."""
         assert self._isCalculated, \
-            'You haven not run the Recipe yet. Use self.run ' + \
-            'to run the analysis before loading the results.'
+            "You haven't run the Recipe yet. Use self.run " + \
+            "to run the analysis before loading the results."
 
-        self.loader.timestep = self.timestep
-        self.loader.resultFiles = self._resultFiles
-        return self.loader.results
+        hours = tuple(int(self.timestep * h) for h in self.hoys)
+        rf = self._resultFiles
+        startLine = 0
+        for count, analysisGrid in enumerate(self.analysisGrids):
+            if count:
+                startLine += len(self.analysisGrids[count - 1])
+
+            analysisGrid.setValuesFromFile(
+                rf, hours, startLine=startLine, header=True, mode=1
+            )
+
+        return self.analysisGrids
