@@ -119,6 +119,16 @@ class HBSurface(HBAnalysisSurface):
             '"fromGeometries" method can only be used in [+] libraries.'
 
         name = name or util.randomName()
+
+        if isinstance(name, basestring):
+            names = (name,)
+        elif not hasattr(name, '__iter__'):
+            names = (name,)
+        else:
+            names = name
+
+        namescount = len(names) - 1
+
         srfData = plus.extractGeometryPoints(geometry)
         cls._isCreatedFromGeo = True
         if not group:
@@ -128,7 +138,11 @@ class HBSurface(HBAnalysisSurface):
             # create a separate surface for each geometry.
             for gcount, srf in enumerate(srfData):
                 for scount, (geo, pts) in enumerate(srf):
-                    _name = '%s_%d_%d' % (name, gcount, scount)
+                    try:
+                        _name = '%s_%d_%d' % (names[gcount], gcount, scount)
+                    except IndexError:
+                        _name = '%s_%d_%d' % (names[-1], gcount, scount)
+
                     if radProperties:
                         _srf = cls(_name, pts, surfaceType, isNameSetByUser,
                                    isTypeSetByUser, radProperties.duplicate(),
@@ -137,14 +151,15 @@ class HBSurface(HBAnalysisSurface):
                         _srf = cls(_name, pts, surfaceType, isNameSetByUser,
                                    isTypeSetByUser, radProperties, epProperties, states)
 
-                    _srf.geometry = geometry
+                    _srf.geometry = geo
                     hbsrfs.append(_srf)
 
             # check naming and fix it if it's only single geometry
-            if gcount == 0 and scount == 0:
+            if (gcount == 0 or gcount <= namescount) and scount == 0:
                 # this is just a single geometry. remove counter
-                hbsrfs[0].name = '_'.join(hbsrfs[0].name.split('_')[:-2])
-            elif gcount == 0:
+                for hbsrf in hbsrfs:
+                    hbsrf.name = '_'.join(hbsrf.name.split('_')[:-2])
+            elif gcount == 0 or gcount == namescount:
                 # this is a single geometry with multiple sub surfaces like a polysurface
                 for hbs in hbsrfs:
                     bname = hbs.name.split('_')
@@ -159,7 +174,7 @@ class HBSurface(HBAnalysisSurface):
                     _pts.extend(pts)
                     _geos.append(geo)
 
-            _srf = cls(name, _pts, surfaceType, isNameSetByUser, isTypeSetByUser,
+            _srf = cls(names[0], _pts, surfaceType, isNameSetByUser, isTypeSetByUser,
                        radProperties, epProperties, states)
             _srf.geometry = _geos
             return _srf

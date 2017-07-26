@@ -1,4 +1,4 @@
-from .parameters import getRadianceParametersGridBased
+from ..parameters import getRadianceParametersGridBased
 
 from ..recipeutil import writeExtraFiles
 from ..recipedcutil import getCommandsSceneDaylightCoeff, getCommandsSky

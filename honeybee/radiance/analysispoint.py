@@ -71,9 +71,14 @@ class AnalysisPoint(object):
         try:
             self._loc = Point3(*(float(l) for l in location))
         except TypeError:
-            raise TypeError(
-                'Failed to convert {} to location.\n'
-                'location should be a list or a tuple with 3 values.'.format(location))
+            try:
+                # Dynamo Points!
+                self._loc = Point3(location.X, location.Y, location.Z)
+            except Exception as e:
+                raise TypeError(
+                    'Failed to convert {} to location.\n'
+                    'location should be a list or a tuple with 3 values.\n{}'
+                    .format(location, e))
 
     @property
     def direction(self):
@@ -85,9 +90,14 @@ class AnalysisPoint(object):
         try:
             self._dir = Vector3(*(float(d) for d in direction))
         except TypeError:
-            raise TypeError(
-                'Failed to convert {} to direction.\n'
-                'location should be a list or a tuple with 3 values.'.format(direction))
+            try:
+                # Dynamo Points!
+                self._dir = Vector3(direction.X, direction.Y, direction.Z)
+            except Exception as e:
+                raise TypeError(
+                    'Failed to convert {} to direction.\n'
+                    'location should be a list or a tuple with 3 values.\n{}'
+                    .format(direction, e))
 
     @property
     def sources(self):
