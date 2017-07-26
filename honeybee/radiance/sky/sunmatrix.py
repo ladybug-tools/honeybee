@@ -189,6 +189,8 @@ class SunMatrix(RadianceSky):
 
         sunCount = len(sunUpHours)
 
+        assert sunCount > 0, ValueError('There is 0 sun up hours!')
+
         print('# Number of sun up hours: %d' % sunCount)
         print('Writing sun positions and radiation values to {}'.format(fp))
         # create solar discs.
