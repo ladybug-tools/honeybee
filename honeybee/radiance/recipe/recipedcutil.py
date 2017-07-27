@@ -309,7 +309,7 @@ def _getCommandsDaylightCoeff(
             rflux = coeffMatrixCommands(
                 dMatrix, os.path.relpath(receiver, projectFolder), radFiles, sender,
                 os.path.relpath(pointsFile, projectFolder), totalPointCount,
-                1, rfluxmtxParameters
+                rfluxmtxParameters
             )
             commands.append(rflux.toRadString())
 
@@ -328,7 +328,7 @@ def _getCommandsDaylightCoeff(
             rfluxDirect = coeffMatrixCommands(
                 dMatrixDirect, os.path.relpath(receiver, projectFolder),
                 radFilesBlacked, sender, os.path.relpath(pointsFile, projectFolder),
-                totalPointCount, None, rfluxmtxParameters
+                totalPointCount, rfluxmtxParameters
             )
             commands.append(rfluxDirect.toRadString())
             rfluxmtxParameters.ambientBounces = originalValue
@@ -342,7 +342,8 @@ def _getCommandsDaylightCoeff(
             sunCommands = sunCoeffMatrixCommands(
                 sunMatrix, os.path.relpath(pointsFile, projectFolder),
                 radFilesBlacked, os.path.relpath(analemma, projectFolder),
-                os.path.relpath(sunlist, projectFolder)
+                os.path.relpath(sunlist, projectFolder),
+                rfluxmtxParameters.irradianceCalc
             )
 
             commands.extend(cmd.toRadString() for cmd in sunCommands)
@@ -498,8 +499,7 @@ def viewCoeffMatrixCommands(
 
 
 def coeffMatrixCommands(outputName, receiver, radFiles, sender, pointsFile=None,
-                        numberOfPoints=None, samplingRaysCount=None,
-                        rfluxmtxParameters=None):
+                        numberOfPoints=None, rfluxmtxParameters=None):
     """Returns radiance commands to create coefficient matrix.
 
     Args:
@@ -511,7 +511,6 @@ def coeffMatrixCommands(outputName, receiver, radFiles, sender, pointsFile=None,
             such as window groups (Default: '-').
         pointsFile: Path to point file which will be used instead of sender.
         numberOfPoints: Number of points in pointsFile as an integer.
-        samplingRaysCount: Number of sampling rays (Default: 1000).
         rfluxmtxParameters: Radiance parameters for Rfluxmtx command using a
             RfluxmtxParameters instance (Default: None).
     """
@@ -526,9 +525,6 @@ def coeffMatrixCommands(outputName, receiver, radFiles, sender, pointsFile=None,
 
     # -------------- set the parameters ----------------- #
     rfluxmtx.rfluxmtxParameters = rfluxmtxParameters
-    # ray counts
-    if samplingRaysCount:
-        rfluxmtx.samplingRaysCount = samplingRaysCount
 
     # -------------- set up the sender objects ---------- #
     # '-' in case of view matrix, window group in case of
@@ -631,7 +627,8 @@ def sunMatrixCalculation(output, dcMatrix=None, skyMatrix=None):
     return dct
 
 
-def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist):
+def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist,
+                           irradianceCalc):
     """Return commands for calculating analemma coefficient.
 
     Args:
@@ -643,7 +640,7 @@ def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist):
             SunMatrix class. Analemma has list of sun positions with their respective
             values.
         sunlist: Path to sunlist. Use SunMatrix to generate sunlist.
-
+        simulationType:
     Returns:
         octree and rcontrib commands ready to be executed.
     """
@@ -654,13 +651,13 @@ def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist):
     # Creating sun coefficients
     rctbParam = getRadianceParametersGridBased(0, 1).smtx
     rctbParam.modFile = sunlist
+    rctbParam.irradianceCalc = irradianceCalc
 
     rctb = Rcontrib()
     rctb.octreeFile = octree.outputFile
     rctb.outputFile = output
     rctb.pointsFile = pointFile
     rctb.rcontribParameters = rctbParam
-
     return (octree, rctb)
 
 

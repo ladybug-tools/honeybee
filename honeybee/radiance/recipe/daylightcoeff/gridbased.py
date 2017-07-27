@@ -57,12 +57,13 @@ class DaylightCoeffGridBased(GenericGridBased):
 
         self.skyMatrix = skyMtx
 
+        self.radianceParameters = radianceParameters
+
         self.simulationType = simulationType
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
            2: Luminance (Candela) (Default: 2)
         """
 
-        self.radianceParameters = radianceParameters
         self.reuseDaylightMtx = reuseDaylightMtx
 
     @classmethod
@@ -139,6 +140,23 @@ class DaylightCoeffGridBased(GenericGridBased):
         self._simType = value
         self.skyMatrix.skyType = value
 
+        if self._simType < 2:
+            self.radianceParameters.irradianceCalc = True
+        else:
+            self.radianceParameters.irradianceCalc = None
+
+        if hasattr(self, 'viewMtxParameters'):
+            if self._simType < 2:
+                self.viewMtxParameters.irradianceCalc = True
+            else:
+                self.viewMtxParameters.irradianceCalc = None
+
+        if hasattr(self, 'daylightMtxParameters'):
+            if self._simType < 2:
+                self.daylightMtxParameters.irradianceCalc = True
+            else:
+                self.daylightMtxParameters.irradianceCalc = None
+
     @property
     def skyMatrix(self):
         """Get and set sky definition."""
@@ -161,11 +179,12 @@ class DaylightCoeffGridBased(GenericGridBased):
     def radianceParameters(self, par):
         if not par:
             # set RfluxmtxParameters as default radiance parameter for annual analysis
-            par = getRadianceParametersGridBased(0, 1).rad
-        else:
-            assert hasattr(par, 'isRfluxmtxParameters'), \
-                TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))
-            self._radianceParameters = par
+            par = getRadianceParametersGridBased(0, 1).dmtx
+
+        assert hasattr(par, 'isRfluxmtxParameters'), \
+            TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))
+
+        self._radianceParameters = par
 
     @property
     def skyDensity(self):
@@ -231,21 +250,36 @@ class DaylightCoeffGridBased(GenericGridBased):
             inputfiles, pointsFile, self.totalPointCount, self.radianceParameters,
             self.reuseDaylightMtx, self.totalRunsCount)
 
-        self._commands.extend(commands)
         self._resultFiles.extend(
             os.path.join(projectFolder, str(result)) for result in results
         )
 
-        # calculate the contribution for all window groups
-        commands, results = getCommandsWGroupsDaylightCoeff(
-            projectName, self.skyMatrix.skyDensity, projectFolder, self.windowGroups,
-            skyfiles, inputfiles, pointsFile, self.totalPointCount,
-            self.radianceParameters, self.reuseDaylightMtx, self.totalRunsCount)
+        if self.reuseDaylightMtx:
+            if not skycommands:
+                for f in self._resultFiles:
+                    if not os.path.isfile(f):
+                        self._commands.extend(commands)
+                        break
+            else:
+                # there are changes in the sky.
+                # matrices multiplication needs to be recalculated.
+                self._commands.extend(commands)
+        else:
+            # there are changes in the sky.
+            # matrices multiplication needs to be recalculated.
+            self._commands.extend(commands)
 
-        self._commands.extend(commands)
-        self._resultFiles.extend(
-            os.path.join(projectFolder, str(result)) for result in results
-        )
+        if self.windowGroups:
+            # calculate the contribution for all window groups
+            commands, results = getCommandsWGroupsDaylightCoeff(
+                projectName, self.skyMatrix.skyDensity, projectFolder, self.windowGroups,
+                skyfiles, inputfiles, pointsFile, self.totalPointCount,
+                self.radianceParameters, self.reuseDaylightMtx, self.totalRunsCount)
+
+            self._commands.extend(commands)
+            self._resultFiles.extend(
+                os.path.join(projectFolder, str(result)) for result in results
+            )
 
         # # 2.5 write batch file
         batchFile = os.path.join(projectFolder, 'commands.bat')
@@ -270,14 +304,14 @@ class DaylightCoeffGridBased(GenericGridBased):
             folder, name = os.path.split(rf)
             df = os.path.join(folder, 'sun..%s' % name)
 
-            print('loading the results for {}::{} from\n{}'.format(source, state, rf))
-
             startLine = 0
             for count, analysisGrid in enumerate(self.analysisGrids):
                 if count:
                     startLine += len(self.analysisGrids[count - 1])
 
                 if not os.path.exists(df):
+                    print('\nloading the results for {} AnalysisGrid form {}::{}\n{}\n'
+                          .format(analysisGrid.name, source, state, rf))
                     # total value only
                     analysisGrid.setValuesFromFile(
                         rf, self.skyMatrix.hoys, source, state, startLine=startLine,
@@ -286,8 +320,9 @@ class DaylightCoeffGridBased(GenericGridBased):
                 else:
                     # total and direct values
                     print(
-                        'loading the direct results for {}::{} '
-                        'from\n{}'.format(source, state, df))
+                        '\nloading total and direct results for {} AnalysisGrid'
+                        ' from {}::{}\n{}\n{}\n'.format(
+                            analysisGrid.name, source, state, rf, df))
 
                     analysisGrid.setCoupledValuesFromFile(
                         rf, df, self.skyMatrix.hoys, source, state,

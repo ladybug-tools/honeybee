@@ -104,7 +104,7 @@ class ClimateBased(PointInTimeSky):
             diffuseRadiation=self.diffuseRadiation,
             rotation=self.north)
 
-        cmd.gendaylitParameters.outputType = self.skyType
+        cmd.gendaylitParameters.outputType = self.skyType % 2
 
         return cmd
 

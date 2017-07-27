@@ -70,7 +70,7 @@ class ImageBased(GenericImageBased):
 
         0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
         """
-        return self.__simType
+        return self._simType
 
     @simulationType.setter
     def simulationType(self, value):
@@ -87,13 +87,17 @@ class ImageBased(GenericImageBased):
             assert self.sky.isClimateBased, \
                 "The sky for radition analysis should be climate-based."
 
-        self.__simType = value
+        self._simType = value
         self.sky.skyType = value
+        if self._simType < 2:
+            self.radianceParameters.irradianceCalc = True
+        else:
+            self.radianceParameters.irradianceCalc = None
 
     @property
     def sky(self):
         """Get and set sky definition."""
-        return self.__sky
+        return self._sky
 
     @sky.setter
     def sky(self, newSky):
@@ -102,12 +106,12 @@ class ImageBased(GenericImageBased):
         assert newSky.isPointInTime, \
             TypeError('Sky must be one of the point-in-time skies.')
 
-        self.__sky = newSky
+        self._sky = newSky
 
     @property
     def radianceParameters(self):
         """Get and set Radiance parameters."""
-        return self.__radianceParameters
+        return self._radianceParameters
 
     @radianceParameters.setter
     def radianceParameters(self, radParameters):
@@ -115,7 +119,7 @@ class ImageBased(GenericImageBased):
             radParameters = ImageBasedParameters.LowQuality()
         assert hasattr(radParameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(radParameters)
-        self.__radianceParameters = radParameters
+        self._radianceParameters = radParameters
 
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
