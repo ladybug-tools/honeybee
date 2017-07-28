@@ -118,7 +118,8 @@ class GridBased(GenericGridBased):
                 "The sky for radition analysis should be climate-based."
 
         self._simType = value
-        self.sky.skyType = value
+        if self.sky.isClimateBased:
+            self.sky.skyType = value
 
     @property
     def sky(self):
@@ -194,11 +195,14 @@ class GridBased(GenericGridBased):
         # 3.write sky file
         self._commands.append(self.sky.toRadString(folder='sky'))
 
+        # 3.1. write ground and sky materials
+        skyground = self.sky.writeSkyGround(os.path.join(projectFolder, 'sky'))
+
         # TODO(Mostapha): add windowGroups here if any!
         # # 4.1.prepare oconv
         octSceneFiles = \
-            [os.path.join(projectFolder, str(self.sky.command('sky').outputFile))] + \
-            opqfiles + glzfiles + wgsfiles + extrafiles.fp
+            [os.path.join(projectFolder, str(self.sky.command('sky').outputFile)),
+             skyground] + opqfiles + glzfiles + wgsfiles + extrafiles.fp
 
         oc = Oconv(projectName)
         oc.sceneFiles = tuple(self.relpath(f, projectFolder) for f in octSceneFiles)
