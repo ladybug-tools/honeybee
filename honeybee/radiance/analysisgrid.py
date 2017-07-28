@@ -2,6 +2,7 @@
 from __future__ import division
 from ..utilcol import randomName
 from ..dataoperation import matchData
+from ..schedule import Schedule
 from .analysispoint import AnalysisPoint
 
 import os
@@ -357,7 +358,7 @@ class AnalysisGrid(object):
         DAThreshhold = DAThreshhold or 300.0
         UDIMinMax = UDIMinMax or (100, 3000)
         hours = self.hoys
-        occSchedule = occSchedule or set(hours)
+        occSchedule = occSchedule or Schedule.fromWorkdayHours()
         blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hours)
 
         for sensor in self.analysisPoints:
@@ -382,7 +383,7 @@ class AnalysisGrid(object):
 
         DAThreshhold = DAThreshhold or 300.0
         hours = self.hoys
-        occSchedule = occSchedule or set(hours)
+        occSchedule = occSchedule or Schedule.fromWorkdayHours()
         blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hours)
 
         # get the annual results for each sensor
@@ -398,6 +399,7 @@ class AnalysisGrid(object):
         # change target area to an integer to enhance the performance in the loop
         target = int(targetArea) if int(targetArea) != targetArea \
             else int(targetArea - 1)
+
         metHours = 0
         problematicHours = []
         for hr, hrv in izip(hours, izip(*hourlyResults)):
@@ -409,7 +411,7 @@ class AnalysisGrid(object):
             else:
                 problematicHours.append(hr)
 
-        return metHours / len(hours), problematicHours
+        return 100 * metHours / len(occSchedule.occupiedHours), problematicHours
 
     def annualSolarExposure(self, threshhold=None, blindsStateIds=None,
                             occSchedule=None, targetHours=None, targetArea=None):
@@ -431,8 +433,8 @@ class AnalysisGrid(object):
             targetArea: Minimum target area percentage for this grid (default: 10)
 
         Returns:
-            Success as a Boolean, Percentage area, Problematic points,
-            Problematic hours for each point
+            Success as a Boolean, ASE values for each point, Percentage area,
+            Problematic points, Problematic hours for each point
         """
         if not self.hasDirectValues:
             raise ValueError('Direct values are not loaded to calculate ASE.')
@@ -458,17 +460,33 @@ class AnalysisGrid(object):
         problematicPointCount = 0
         problematicPoints = []
         problematicHours = []
-        for i, (success, _, pHours) in enumerate(izip(*res)):
+        aseValues = []
+        for i, (success, ase, pHours) in enumerate(izip(*res)):
+            aseValues.append(ase)  # collect annual ASE values for each point
             if success:
                 continue
-
             problematicPointCount += 1
             problematicPoints.append(ap[i])
             problematicHours.append(pHours)
 
-        return 100 * problematicPointCount / len(ap) < targetArea, \
-            100 * problematicPointCount / len(ap), problematicPoints, \
-            problematicHours
+        perProblematic = 100 * problematicPointCount / len(ap)
+        return perProblematic < targetArea, aseValues, perProblematic, \
+            problematicPoints, problematicHours
+
+    def parseBlindStates(self, blindsStateIds):
+        """Parse input blind states.
+
+        The method tries to convert each state to a tuple of a list. Use this method
+        to parse the input from plugins.
+
+        Args:
+            blindsStateIds: List of state ids for all the sources for an hour. If you
+                want a source to be removed set the state to -1. If not provided
+                a longest combination of states from sources (window groups) will
+                be used. Length of each item in states should be equal to number
+                of sources.
+        """
+        return self.analysisPoints[0].parseBlindStates(blindsStateIds)
 
     def duplicate(self):
         """Duplicate AnalysisGrid."""
