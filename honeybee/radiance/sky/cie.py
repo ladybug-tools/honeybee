@@ -62,10 +62,11 @@ class CIE(PointInTimeSky):
     @property
     def name(self):
         """Sky default name."""
-        return "{}_{}_{}_{}_{}_at_{}{}".format(
+        return "{}_{}_{}_{}_{}_{}_at_{}{}".format(
             self.__class__.__name__,
             self.humanReadableSkyType,
-            self.location.city.replace(' ', '_'),
+            self.location.latitude,
+            self.location.longitude,
             self.month, self.day, self.hour,
             '_{}'.format(self.suffix) if self.suffix else ''
         )

@@ -75,9 +75,10 @@ class ClimateBased(PointInTimeSky):
     @property
     def name(self):
         """Sky default name."""
-        return "{}_{}_{}_{}_{}_at_{}_{}_{}{}".format(
+        return "{}_{}_{}_{}_{}_{}_at_{}_{}_{}{}".format(
             self.__class__.__name__.lower(), self.skyTypeHumanReadable,
-            self.location.city.replace(' ', '_'),
+            self.location.latitude,
+            self.location.longitude,
             self.month, self.day, self.hour,
             self.directRadiation, self.diffuseRadiation,
             '_{}'.format(self.suffix) if self.suffix else ''

@@ -112,8 +112,10 @@ class PointInTimeSky(RadianceSky):
     @property
     def name(self):
         """Sky default name."""
-        return "{}_{}_{}_{}_at_{}{}".format(
-            self.__class__.__name__, self.location.city.replace(' ', '_'),
+        return "{}_{}_{}_{}_{}_at_{}{}".format(
+            self.__class__.__name__,
+            self.location.latitude,
+            self.location.longitude,
             self.month, self.day, self.hour,
             '_{}'.format(self.suffix) if self.suffix else ''
         )

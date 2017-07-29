@@ -15,12 +15,12 @@ def randomName(shorten=True):
         return str(uuid.uuid4())
 
 
-# TODO(-): Not sure what should happen with non-ascii stuff. for now they are not valid.
 def checkName(name):
     """Check if a name is a valid honeybee name.
 
     A valid name can only have alphabet, digits, - and _.
     """
+    name = name.encode('utf-8')
     if re.match("^[.A-Za-z0-9_-]*$", name):
         return True
     else:
