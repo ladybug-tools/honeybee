@@ -106,7 +106,7 @@ class ImageBased(GenericImageBased):
         assert newSky.isPointInTime, \
             TypeError('Sky must be one of the point-in-time skies.')
 
-        self._sky = newSky
+        self._sky = newSky.duplicate()
 
     @property
     def radianceParameters(self):

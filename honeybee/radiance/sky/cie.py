@@ -18,6 +18,9 @@ class CIE(PointInTimeSky):
         skyType: An integer between 0..5 to indicate CIE Sky Type.
             [0] Sunny with sun, [1] sunny without sun, [2] intermediate with sun
             [3] intermediate without sun, [4] cloudy sky, [5] uniform sky
+        suffix: An optional suffix for sky name. The suffix will be added at the
+            end of the standard name. Use this input to customize the new and
+            avoid sky being overwritten by other skymatrix components.
     """
 
     SKYTYPES = {
@@ -80,6 +83,11 @@ class CIE(PointInTimeSky):
             longitude=-1 * self.location.longitude, meridian=self.location.meridian,
             rotation=self.north)
         return cmd
+
+    def duplicate(self):
+        """Duplicate class."""
+        return CIE(self.location, self.month, self.day, self.hour, self.north,
+                   self.skyType, self.suffix)
 
     def ToString(self):
         """Overwrite .NET ToString method."""

@@ -9,7 +9,9 @@ class CertainIlluminanceLevel(CIE):
         illuminanceValue: Desired illuminance value in lux
         skyType: An integer between 0..1 to indicate CIE Sky Type.
             [0] cloudy sky, [1] uniform sky (default: 0)
-
+        suffix: An optional suffix for sky name. The suffix will be added at the
+            end of the standard name. Use this input to customize the new and
+            avoid sky being overwritten by other skymatrix components.
     Usage:
 
         sky = CertainIlluminanceLevel(1000)
@@ -62,6 +64,12 @@ class CertainIlluminanceLevel(CIE):
             skyType=self.skyType
         )
         return cmd
+
+    def duplicate(self):
+        """Duplicate class."""
+        return CertainIlluminanceLevel(
+            self.illuminanceValue, self.skyType - 4, self.suffix
+        )
 
 
 if __name__ == "__main__":

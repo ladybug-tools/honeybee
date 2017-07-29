@@ -3,8 +3,8 @@ from abc import ABCMeta, abstractproperty, abstractmethod
 
 class RadianceSky(object):
     """Base class for Honeybee Skies."""
-
     __metaclass__ = ABCMeta
+    __slots__ = ()
 
     @property
     def isRadianceSky(self):

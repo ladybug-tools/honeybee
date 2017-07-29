@@ -132,7 +132,7 @@ class GridBased(GenericGridBased):
             '%s is not a valid Honeybee sky.' % type(newSky)
         assert newSky.isPointInTime, \
             TypeError('Sky must be one of the point-in-time skies.')
-        self._sky = newSky
+        self._sky = newSky.duplicate()
 
     @property
     def radianceParameters(self):

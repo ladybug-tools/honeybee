@@ -95,7 +95,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             '%s is not a valid Honeybee sky.' % type(newSky)
         assert not newSky.isPointInTime, \
             TypeError('Sky for daylight coefficient recipe must be a sky matrix.')
-        self._skyMatrix = newSky
+        self._skyMatrix = newSky.duplicate()
 
     @property
     def skyDensity(self):

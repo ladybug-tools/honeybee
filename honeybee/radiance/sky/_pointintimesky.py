@@ -144,6 +144,11 @@ class PointInTimeSky(RadianceSky):
         """
         return self.command(folder).execute()
 
+    def duplicate(self):
+        """Duplicate sky."""
+        return PointInTimeSky(
+            self.location, self.month, self.day, self.hour, self.north, self.suffix)
+
     def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()

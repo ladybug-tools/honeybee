@@ -17,6 +17,9 @@ class ClimateBased(PointInTimeSky):
         north_: A number between 0 and 360 that represents the degrees off from
             the y-axis to make North. The default North direction is set to the
             Y-axis (default: 0 degrees).
+        suffix: An optional suffix for sky name. The suffix will be added at the
+            end of the standard name. Use this input to customize the new and
+            avoid sky being overwritten by other skymatrix components.
     """
 
     def __init__(self, location, month, day, hour, directRadiation, diffuseRadiation,
@@ -35,6 +38,9 @@ class ClimateBased(PointInTimeSky):
             north_: A number between 0 and 360 that represents the degrees off from
                 the y-axis to make North. The default North direction is set to the
                 Y-axis (default: 0 degrees).
+            suffix: An optional suffix for sky name. The suffix will be added at the
+                end of the standard name. Use this input to customize the new and
+                avoid sky being overwritten by other skymatrix components.
         """
         PointInTimeSky.__init__(self, location, month, day, hour, north, suffix=suffix)
         self.directRadiation = directRadiation
@@ -110,6 +116,12 @@ class ClimateBased(PointInTimeSky):
         cmd.gendaylitParameters.outputType = self.skyType % 2
 
         return cmd
+
+    def duplicate(self):
+        """Duplicate sky."""
+        return ClimateBased(
+            self.location, self.month, self.day, self.hour,
+            self.directRadiation, self.diffuseRadiation, self.north, self.suffix)
 
     def ToString(self):
         """Overwrite .NET ToString method."""
