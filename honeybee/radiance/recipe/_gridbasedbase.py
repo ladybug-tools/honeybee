@@ -154,7 +154,7 @@ class GenericGridBased(AnalysisRecipe):
     @abstractmethod
     def results(self):
         """Return results for this analysis."""
-        pass
+        raise NotImplementedError()
 
     def ToString(self):
         """Overwriet .NET ToString method."""

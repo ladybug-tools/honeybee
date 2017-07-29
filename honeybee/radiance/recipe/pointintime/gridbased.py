@@ -248,12 +248,14 @@ class GridBased(GenericGridBased):
 
         rf = self._resultFiles
         startLine = 0
+        mode = 179 if self.simulationType == 1 else 0
+
         for count, analysisGrid in enumerate(self.analysisGrids):
             if count:
                 startLine += len(self.analysisGrids[count - 1])
 
             analysisGrid.setValuesFromFile(
-                rf, (int(dt.hoy),), startLine=startLine, header=False
+                rf, (int(dt.hoy),), startLine=startLine, header=False, mode=mode
             )
 
         return self.analysisGrids

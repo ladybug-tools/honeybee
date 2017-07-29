@@ -308,7 +308,7 @@ class DaylightCoeffGridBased(GenericGridBased):
 
             folder, name = os.path.split(rf)
             df = os.path.join(folder, 'sun..%s' % name)
-
+            mode = 179 if self.simulationType == 1 else 0
             startLine = 0
             for count, analysisGrid in enumerate(self.analysisGrids):
                 if count:
@@ -320,7 +320,7 @@ class DaylightCoeffGridBased(GenericGridBased):
                     # total value only
                     analysisGrid.setValuesFromFile(
                         rf, self.skyMatrix.hoys, source, state, startLine=startLine,
-                        header=True, checkPointCount=False
+                        header=True, checkPointCount=False, mode=mode
                     )
                 else:
                     # total and direct values
@@ -331,7 +331,8 @@ class DaylightCoeffGridBased(GenericGridBased):
 
                     analysisGrid.setCoupledValuesFromFile(
                         rf, df, self.skyMatrix.hoys, source, state,
-                        startLine=startLine, header=True, checkPointCount=False
+                        startLine=startLine, header=True, checkPointCount=False,
+                        mode=mode
                     )
 
         return self.analysisGrids

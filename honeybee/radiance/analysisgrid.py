@@ -7,6 +7,7 @@ from .analysispoint import AnalysisPoint
 
 import os
 from itertools import izip
+from collections import namedtuple
 
 
 class EmptyFileError(Exception):
@@ -29,7 +30,8 @@ class AnalysisGrid(object):
         analysisPoints: A collection of analysis points.
     """
 
-    __slots__ = ('_analysisPoints', '_name', '_sources', '_wgroups')
+    __slots__ = ('_analysisPoints', '_name', '_sources', '_wgroups', '_directFiles',
+                 '_totalFiles')
 
     def __init__(self, analysisPoints, name=None, windowGroups=None):
         """Initialize a AnalysisPointGroup.
@@ -56,6 +58,8 @@ class AnalysisGrid(object):
                 '{} is not an AnalysisPoint.'.format(ap)
 
         self._analysisPoints = analysisPoints
+        self._directFiles = []  # list of results files
+        self._totalFiles = []  # list of results files
 
     @classmethod
     def fromPointsAndVectors(cls, points, vectors=None, name=None, windowGroups=None):
@@ -157,6 +161,29 @@ class AnalysisGrid(object):
         """Return True if the grid has the results only for an hour."""
         return len(self.hoys) == 1
 
+    @property
+    def resultFiles(self):
+        """Return result files as a list [[total files], [direct files]]."""
+        return self._totalFiles, self._directFiles
+
+    def addResultFiles(self, filePath, hoys, startLine=None, isDirect=False,
+                       header=True, mode=0):
+        """Add new result files to grid.
+
+        Use this methods if you want to get annual metrics without loading the values
+        for each point. This method is only useful for cases with no window groups and
+        dynamic blind states. After adding the files you can call 'annualMetrics' method.
+        """
+        ResultFile = namedtuple(
+            'ResultFile', ('path', 'hoys', 'startLine', 'header', 'mode'))
+
+        inf = ResultFile(filePath, hoys, startLine, header, mode)
+
+        if isDirect:
+            self._directFiles.append(inf)
+        else:
+            self._totalFiles.append(inf)
+
     def setValues(self, hoys, values, source=None, state=None, isDirect=False):
 
         pass
@@ -208,15 +235,21 @@ class AnalysisGrid(object):
             isDirect: A Boolean to declare if the results is direct illuminance
                 (default: False).
             header: A Boolean to declare if the file has header (default: True).
+            mode: 0 > load the values 1 > load values as binary. Any non-zero value
+                will be 1. This is useful for studies such as sunlight hours. 2 >
+                load the values divided by mode number. Use this mode for daylight
+                factor or radiation analysis.
         """
 
         assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
+        st = startLine or 0
 
         with open(filePath, 'rb') as inf:
             if header:
                 inf, hoys = self.parseHeader(inf, startLine, hoys, checkPointCount)
 
-            st = startLine or 0
+            self.addResultFiles(filePath, hoys, st, isDirect, header, mode)
+
             for i in xrange(st):
                 inf.next()
 
@@ -240,7 +273,7 @@ class AnalysisGrid(object):
 
     def setCoupledValuesFromFile(
             self, totalFilePath, directFilePath, hoys=None, source=None, state=None,
-            startLine=None, header=True, checkPointCount=True):
+            startLine=None, header=True, checkPointCount=True, mode=0):
         """Load direct and total values for test points from two files.
 
         Args:
@@ -251,27 +284,49 @@ class AnalysisGrid(object):
             state: Name of the state.
             startLine: Number of start lines after the header from 0 (default: 0).
             header: A Boolean to declare if the file has header (default: True).
+            mode: 0 > load the values 1 > load values as binary. Any non-zero value
+                will be 1. This is useful for studies such as sunlight hours. 2 >
+                load the values divided by mode number. Use this mode for daylight
+                factor or radiation analysis.
         """
 
         for filePath in (totalFilePath, directFilePath):
             assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
+
+        st = startLine or 0
 
         with open(totalFilePath, 'rb') as inf, open(directFilePath, 'rb') as dinf:
             if header:
                 inf, hoys = self.parseHeader(inf, startLine, hoys, checkPointCount)
                 dinf, hoys = self.parseHeader(dinf, startLine, hoys, checkPointCount)
 
-            st = startLine or 0
+            self.addResultFiles(totalFilePath, hoys, st, False, header, mode)
+            self.addResultFiles(directFilePath, hoys, st, True, header, mode)
+
             for i in xrange(st):
                 inf.next()
                 dinf.next()
 
             end = len(self._analysisPoints)
 
-            coupledValues = (
-                tuple((int(float(r)), int(float(d))) for r, d in
-                      zip(inf.next().split(), dinf.next().split()))
-                for count in xrange(end))
+            if mode == 0:
+                coupledValues = (
+                    tuple((int(float(r)), int(float(d))) for r, d in
+                          izip(inf.next().split(), dinf.next().split()))
+                    for count in xrange(end))
+            elif mode == 1:
+                # binary 0-1
+                coupledValues = (tuple(
+                    (int(float(1 if float(r) > 0 else 0)),
+                     int(float(1 if float(d) > 0 else 0)))
+                    for r, d in izip(inf.next().split(), dinf.next().split()))
+                    for count in xrange(end))
+            else:
+                # divide values by mode (useful for daylight factor calculation)
+                coupledValues = (
+                    tuple((int(float(r) / mode), int(float(d) / mode)) for r, d in
+                          izip(inf.next().split(), dinf.next().split()))
+                    for count in xrange(end))
 
             # assign the values to points
             for count, hourlyValues in enumerate(coupledValues):

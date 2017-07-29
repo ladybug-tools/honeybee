@@ -365,7 +365,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         print "Files are written to: %s" % projectFolder
         return batchFile
 
-    def results(self, flattenResults=True):
+    def results(self):
         """Return results for this analysis."""
         assert self._isCalculated, \
             "You haven't run the Recipe yet. Use self.run " + \
