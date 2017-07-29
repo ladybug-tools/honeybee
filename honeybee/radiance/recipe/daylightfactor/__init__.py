@@ -1,1 +1,1 @@
-"""Point-in-time recipes."""
+"""Daylight factor recipes."""

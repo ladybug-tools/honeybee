@@ -1,17 +1,23 @@
-"""Radiance Daylight Coefficient Grid-Based Analysis Recipe."""
+"""Radiation analysis based on Daylight Coefficient Grid-Based Analysis Recipe.
+
+This is a slightly faster implementation for annual radiation analysis using daylight
+coefficient based method. This recipe genrates -s sky and add it up with analemma.
+
+See: https://github.com/ladybug-tools/honeybee/issues/167#issue-245745189
+
+"""
 from ..recipeutil import writeExtraFiles
-from ..recipedcutil import writeRadFilesDaylightCoeff, getCommandsSky
+from ..recipedcutil import writeRadFilesDaylightCoeff, getCommandsRadiationSky
 from ..recipedcutil import getCommandsSceneDaylightCoeff
 from ..recipedcutil import getCommandsWGroupsDaylightCoeff
-from .._gridbasedbase import GenericGridBased
-from ..parameters import getRadianceParametersGridBased
+from ..daylightcoeff.gridbased import DaylightCoeffGridBased
 from ...sky.skymatrix import SkyMatrix
 from ....futil import writeToFile
 
 import os
 
 
-class DaylightCoeffGridBased(GenericGridBased):
+class GridBased(DaylightCoeffGridBased):
     """Grid based daylight coefficient analysis recipe.
 
     Attributes:
@@ -19,58 +25,28 @@ class DaylightCoeffGridBased(GenericGridBased):
             will be ran for the analysis period.
         analysisGrids: A list of Honeybee analysis grids. Daylight metrics will
             be calculated for each analysisGrid separately.
-        simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
         radianceParameters: Radiance parameters for this analysis. Parameters
             should be an instance of RfluxmtxParameters.
         hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
         subFolder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
 
-
-    Usage:
-
-        # initiate analysisRecipe
-        analysisRecipe = DaylightCoeffGridBased(
-            skyMtx, analysisGrids, radParameters
-            )
-
-        # add honeybee object
-        analysisRecipe.hbObjects = HBObjs
-
-        # write analysis files to local drive
-        commandsFile = analysisRecipe.write(_folder_, _name_)
-
-        # run the analysis
-        analysisRecipe.run(commandsFile)
-
-        # get the results
-        print analysisRecipe.results()
     """
 
-    def __init__(self, skyMtx, analysisGrids, simulationType=0,
+    def __init__(self, skyMtx, analysisGrids,
                  radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
-                 subFolder="gridbased_daylightcoeff"):
+                 subFolder="gridbased_radiation"):
         """Create an annual recipe."""
-        GenericGridBased.__init__(
-            self, analysisGrids, hbObjects, subFolder
-        )
 
-        self.skyMatrix = skyMtx
+        simulationType = 1
 
-        self.radianceParameters = radianceParameters
-
-        self.simulationType = simulationType
-        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
-           2: Luminance (Candela) (Default: 2)
-        """
-
-        self.reuseDaylightMtx = reuseDaylightMtx
+        DaylightCoeffGridBased.__init__(
+            self, skyMtx, analysisGrids, simulationType, radianceParameters,
+            reuseDaylightMtx, hbObjects, subFolder)
 
     @classmethod
     def fromWeatherFilePointsAndVectors(
         cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
-            simulationType=0, radianceParameters=None, reuseDaylightMtx=True,
-            hbObjects=None,
+            radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
             subFolder="gridbased_daylightcoeff"):
         """Create grid based daylight coefficient from weather file, points and vectors.
 
@@ -94,13 +70,12 @@ class DaylightCoeffGridBased(GenericGridBased):
         analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
                                                               vectorGroups)
 
-        return cls(skyMtx, analysisGrids, simulationType, radianceParameters,
+        return cls(skyMtx, analysisGrids, radianceParameters,
                    reuseDaylightMtx, hbObjects, subFolder)
 
     @classmethod
     def fromPointsFile(cls, epwFile, pointsFile, skyDensity=1,
-                       simulationType=0, radianceParameters=None,
-                       reuseDaylightMtx=True, hbObjects=None,
+                       radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
                        subFolder="gridbased_daylightcoeff"):
         """Create grid based daylight coefficient recipe from points file."""
         try:
@@ -111,113 +86,8 @@ class DaylightCoeffGridBased(GenericGridBased):
             raise ValueError("Couldn't import points from {}".format(pointsFile))
 
         return cls.fromWeatherFilePointsAndVectors(
-            epwFile, pointGroups, vectorGroups, skyDensity, simulationType,
+            epwFile, pointGroups, vectorGroups, skyDensity,
             radianceParameters, reuseDaylightMtx, hbObjects, subFolder)
-
-    @property
-    def simulationType(self):
-        """Get/set simulation Type.
-
-        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
-        """
-        return self._simType
-
-    @simulationType.setter
-    def simulationType(self, value):
-        try:
-            value = int(value)
-        except TypeError:
-            value = 0
-
-        assert 0 <= value <= 2, \
-            "Simulation type should be between 0-2. Current value: {}".format(value)
-
-        # If this is a radiation analysis make sure the sky is climate-based
-        if value == 1:
-            assert self.skyMatrix.isClimateBased, \
-                "The sky for radition analysis should be climate-based."
-
-        self._simType = value
-        self.skyMatrix.skyType = value
-
-        if self._simType < 2:
-            self.radianceParameters.irradianceCalc = True
-        else:
-            self.radianceParameters.irradianceCalc = None
-
-        if hasattr(self, 'viewMtxParameters'):
-            if self._simType < 2:
-                self.viewMtxParameters.irradianceCalc = True
-            else:
-                self.viewMtxParameters.irradianceCalc = None
-
-        if hasattr(self, 'daylightMtxParameters'):
-            if self._simType < 2:
-                self.daylightMtxParameters.irradianceCalc = True
-            else:
-                self.daylightMtxParameters.irradianceCalc = None
-
-    @property
-    def skyMatrix(self):
-        """Get and set sky definition."""
-        return self._skyMatrix
-
-    @skyMatrix.setter
-    def skyMatrix(self, newSky):
-        assert hasattr(newSky, 'isRadianceSky'), \
-            '%s is not a valid Honeybee sky.' % type(newSky)
-        assert not newSky.isPointInTime, \
-            TypeError('Sky for daylight coefficient recipe must be a sky matrix.')
-        self._skyMatrix = newSky
-
-    @property
-    def radianceParameters(self):
-        """Radiance parameters for annual analysis."""
-        return self._radianceParameters
-
-    @radianceParameters.setter
-    def radianceParameters(self, par):
-        if not par:
-            # set RfluxmtxParameters as default radiance parameter for annual analysis
-            par = getRadianceParametersGridBased(0, 1).dmtx
-
-        assert hasattr(par, 'isRfluxmtxParameters'), \
-            TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))
-
-        self._radianceParameters = par
-
-    @property
-    def skyDensity(self):
-        """Radiance sky type e.g. r1, r2, r4."""
-        return "r{}".format(self.skyMatrix.skyDensity)
-
-    @property
-    def totalRunsCount(self):
-        """Number of total runs for all window groups and states."""
-        return sum(wg.stateCount for wg in self.windowGroups) + 1  # 1 for base case
-
-    def preprocCommands(self):
-        """Add echo in front of comments in batch file comments."""
-        cmd = [c for c in self._commands if c]
-        cmd = ['echo ' + c if c[:2] == '::' else c for c in cmd]
-        return ['@echo off'] + cmd
-
-    def _addCommands(self, skycommands, commands):
-        """Check if the commands should be added to self._commands."""
-        if self.reuseDaylightMtx:
-            if not skycommands:
-                for f in self._resultFiles:
-                    if not os.path.isfile(f):
-                        self._commands.extend(commands)
-                        break
-            else:
-                # there are changes in the sky.
-                # matrices multiplication needs to be recalculated.
-                self._commands.extend(commands)
-        else:
-            # there are changes in the sky.
-            # matrices multiplication needs to be recalculated.
-            self._commands.extend(commands)
 
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
@@ -234,7 +104,7 @@ class DaylightCoeffGridBased(GenericGridBased):
         # 0.prepare target folder
         # create main folder targetFolder\projectName
         projectFolder = \
-            super(GenericGridBased, self).writeContent(
+            super(DaylightCoeffGridBased, self).writeContent(
                 targetFolder, projectName, False, subfolders=['tmp', 'result/matrix']
             )
 
@@ -255,8 +125,8 @@ class DaylightCoeffGridBased(GenericGridBased):
 
         # # 2.1.Create sky matrix.
         # # 2.2. Create sun matrix
-        skycommands, skyfiles = getCommandsSky(projectFolder, self.skyMatrix,
-                                               reuse=True)
+        skycommands, skyfiles = getCommandsRadiationSky(
+            projectFolder, self.skyMatrix, reuse=True)
 
         self._commands.extend(skycommands)
 
@@ -266,7 +136,7 @@ class DaylightCoeffGridBased(GenericGridBased):
         commands, results = getCommandsSceneDaylightCoeff(
             projectName, self.skyMatrix.skyDensity, projectFolder, skyfiles,
             inputfiles, pointsFile, self.totalPointCount, self.radianceParameters,
-            self.reuseDaylightMtx, self.totalRunsCount)
+            self.reuseDaylightMtx, self.totalRunsCount, radiationOnly=True)
 
         self._resultFiles.extend(
             os.path.join(projectFolder, str(result)) for result in results
@@ -279,9 +149,10 @@ class DaylightCoeffGridBased(GenericGridBased):
             commands, results = getCommandsWGroupsDaylightCoeff(
                 projectName, self.skyMatrix.skyDensity, projectFolder, self.windowGroups,
                 skyfiles, inputfiles, pointsFile, self.totalPointCount,
-                self.radianceParameters, self.reuseDaylightMtx, self.totalRunsCount)
+                self.radianceParameters, self.reuseDaylightMtx, self.totalRunsCount,
+                radiationOnly=True)
 
-            self._addCommands(skycommands, commands)
+            self._commands.extend(commands)
             self._resultFiles.extend(
                 os.path.join(projectFolder, str(result)) for result in results
             )
