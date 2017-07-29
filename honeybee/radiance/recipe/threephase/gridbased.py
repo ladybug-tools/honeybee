@@ -1,4 +1,4 @@
-from .parameters import getRadianceParametersGridBased
+from ..parameters import getRadianceParametersGridBased
 
 from ..recipeutil import writeExtraFiles
 from ..recipedcutil import getCommandsSceneDaylightCoeff, getCommandsSky
@@ -130,6 +130,12 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(vm)))
             self._viewMtxParameters = vm
 
+        # reset -I option for when parameters are updated.
+        if self._simType < 2:
+            self._viewMtxParameters.irradianceCalc = True
+        else:
+            self._viewMtxParameters.irradianceCalc = None
+
     @property
     def daylightMtxParameters(self):
         """View matrix parameters."""
@@ -144,12 +150,17 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(dm)))
             self._daylightMtxParameters = dm
 
+        # reset -I option for when parameters are updated.
+        if self._simType < 2:
+            self._daylightMtxParameters.irradianceCalc = True
+        else:
+            self._daylightMtxParameters.irradianceCalc = None
+
     @property
     def skyDensity(self):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
-    # TODO(): docstring should be modified
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 

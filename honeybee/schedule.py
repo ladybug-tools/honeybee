@@ -5,6 +5,7 @@ Honeybee schedule.
 Use this class to create schecules.
 """
 from ladybug.analysisperiod import AnalysisPeriod
+import itertools
 
 
 class Schedule(object):
@@ -15,14 +16,17 @@ class Schedule(object):
         hoys: List of hours of the year for this values.
     """
 
-    __slots__ = ('_values', '_hoys')
+    __slots__ = ('_values', '_hoys', '_occupiedHours')
 
     def __init__(self, values, hoys=None):
         """Init Schedule."""
         hoys = hoys or xrange(8760)
         self._values = tuple(values)
         # put the hours in a set for quick look up
-        self._hoys = set(hoys)
+        self._hoys = tuple(hoys)
+        self._occupiedHours = set(
+            h for h, v in itertools.izip(self._hoys, self._values)
+            if v != 0)
 
         # check for length of data
         assert len(self._values) == len(self._hoys), \
@@ -114,6 +118,11 @@ class Schedule(object):
         """Tuple of values in this schedule."""
         return self._hoys
 
+    @property
+    def occupiedHours(self):
+        """Occupied hours of the year as a set."""
+        return self._occupiedHours
+
     def write(self, filePath):
         """Write the schedule to a csv file."""
         raise NotImplementedError('Write method is not implemented yet!')
@@ -122,7 +131,7 @@ class Schedule(object):
         return len(self._values)
 
     def __contains__(self, hour):
-        return hour in self._hoys
+        return hour in self._occupiedHours
 
     def ToString(self):
         """Overwrite .NET ToString."""

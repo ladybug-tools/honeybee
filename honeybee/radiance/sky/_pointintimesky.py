@@ -1,4 +1,5 @@
-from _skyBase import RadianceSky
+from ._skyBase import RadianceSky
+from ...futil import writeToFileByName
 from ladybug.dt import DateTime
 from ladybug.location import Location
 
@@ -15,6 +16,27 @@ class PointInTimeSky(RadianceSky):
             the y-axis to make North. The default North direction is set to the
             Y-axis (default: 0 degrees).
     """
+    SKYGROUNDMATERIAL = \
+        'skyfunc glow sky_mat\n' \
+        '0\n' \
+        '0\n' \
+        '4\n' \
+        '1 1 1 0\n' \
+        'sky_mat source sky\n' \
+        '0\n' \
+        '0\n' \
+        '4\n' \
+        '0 0 1 180\n' \
+        'skyfunc glow ground_glow\n' \
+        '0\n' \
+        '0\n' \
+        '4\n' \
+        '1 .8 .5 0\n' \
+        'ground_glow source ground\n' \
+        '0\n' \
+        '0\n' \
+        '4\n' \
+        '0 0 -1 180\n'
 
     def __init__(self, location=None, month=9, day=21, hour=12, north=0):
         """Create sky."""
@@ -94,6 +116,13 @@ class PointInTimeSky(RadianceSky):
             self.month, self.day, self.hour
         )
 
+    def writeSkyGround(self, folder, filename=None):
+        """Write sky and ground materials to a file."""
+        filename = filename or 'groundSky.rad'
+        if not filename.lower().endswith('.rad'):
+            filename += '.rad'
+        return writeToFileByName(folder, filename, self.SKYGROUNDMATERIAL, True)
+
     def command(self, folder):
         """Get sky radiance command."""
         raise NotImplementedError(
@@ -119,4 +148,4 @@ class PointInTimeSky(RadianceSky):
 
     def __repr__(self):
         """Sky representation."""
-        return self.toRadString()
+        return self.command().toRadString()

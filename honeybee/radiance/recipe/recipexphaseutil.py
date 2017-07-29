@@ -140,7 +140,7 @@ def getCommandsViewDaylightMatrices(
         vmtx = coeffMatrixCommands(
             vMatrix, os.path.relpath(vreceiver, projectFolder), radFiles, '-',
             os.path.relpath(pointsFile, projectFolder), numberOfPoints,
-            None, viewMtxParameters)
+            viewMtxParameters)
 
         commands.append(vmtx.toRadString())
 
@@ -155,12 +155,11 @@ def getCommandsViewDaylightMatrices(
             os.path.join(projectFolder, 'sky\\rfluxSky.rad'), skyDensity
         )
 
-        samplingRaysCount = 1000
         radFiles = tuple(os.path.relpath(f, projectFolder) for f in drfluxScene)
 
         dmtx = coeffMatrixCommands(
             dMatrix, os.path.relpath(receiver, projectFolder), radFiles,
-            sender, None, None, samplingRaysCount, daylightMtxParameters)
+            sender, None, None, daylightMtxParameters)
 
         commands.append(':: :: [2/3] calculating daylight matrix')
         commands.append(
@@ -305,7 +304,7 @@ def matrixCalculationFivePhase(
             rfluxDirect = coeffMatrixCommands(
                 dMatrixDirect, os.path.relpath(receiver, projectFolder),
                 radFilesBlacked, sender, os.path.relpath(pointsFile, projectFolder),
-                totalPointCount, None, rfluxmtxParameters
+                totalPointCount, rfluxmtxParameters
             )
             commands.append(rfluxDirect.toRadString())
 
@@ -318,7 +317,8 @@ def matrixCalculationFivePhase(
             sunCommands = sunCoeffMatrixCommands(
                 sunMatrix, os.path.relpath(pointsFile, projectFolder),
                 radFilesBlacked, os.path.relpath(analemma, projectFolder),
-                os.path.relpath(sunlist, projectFolder)
+                os.path.relpath(sunlist, projectFolder),
+                rfluxmtxParameters.irradianceCalc
             )
 
             commands.extend(cmd.toRadString() for cmd in sunCommands)

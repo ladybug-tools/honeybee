@@ -1,6 +1,7 @@
 """Honeybee PointGroup and TestPointGroup."""
 from __future__ import division
 from ..vectormath.euclid import Point3, Vector3
+from ..schedule import Schedule
 from collections import defaultdict
 from itertools import izip
 import types
@@ -71,9 +72,14 @@ class AnalysisPoint(object):
         try:
             self._loc = Point3(*(float(l) for l in location))
         except TypeError:
-            raise TypeError(
-                'Failed to convert {} to location.\n'
-                'location should be a list or a tuple with 3 values.'.format(location))
+            try:
+                # Dynamo Points!
+                self._loc = Point3(location.X, location.Y, location.Z)
+            except Exception as e:
+                raise TypeError(
+                    'Failed to convert {} to location.\n'
+                    'location should be a list or a tuple with 3 values.\n{}'
+                    .format(location, e))
 
     @property
     def direction(self):
@@ -85,9 +91,14 @@ class AnalysisPoint(object):
         try:
             self._dir = Vector3(*(float(d) for d in direction))
         except TypeError:
-            raise TypeError(
-                'Failed to convert {} to direction.\n'
-                'location should be a list or a tuple with 3 values.'.format(direction))
+            try:
+                # Dynamo Points!
+                self._dir = Vector3(direction.X, direction.Y, direction.Z)
+            except Exception as e:
+                raise TypeError(
+                    'Failed to convert {} to direction.\n'
+                    'location should be a list or a tuple with 3 values.\n{}'
+                    .format(direction, e))
 
     @property
     def sources(self):
@@ -234,6 +245,8 @@ class AnalysisPoint(object):
             state: State of the source if any (default: None).
             isDirect: Set to True if the value is direct contribution of sunlight.
         """
+        if hoy is None:
+            return
         sid, stateid = self._createDataStructure(source, state)
         if isDirect:
             self._isDirectLoaded = True
@@ -267,6 +280,8 @@ class AnalysisPoint(object):
         ind = 1 if isDirect else 0
 
         for hoy, value in izip(hoys, values):
+            if hoy is None:
+                continue
             try:
                 self._values[sid][stateid][hoy][ind] = value
             except Exception as e:
@@ -287,6 +302,9 @@ class AnalysisPoint(object):
             state: State of the source if any (default: None).
         """
         sid, stateid = self._createDataStructure(source, state)
+
+        if hoy is None:
+            return
 
         try:
             self._values[sid][stateid][hoy] = value[0], value[1]
@@ -322,6 +340,8 @@ class AnalysisPoint(object):
         sid, stateid = self._createDataStructure(source, state)
 
         for hoy, value in izip(hoys, values):
+            if hoy is None:
+                continue
             try:
                 self._values[sid][stateid][hoy] = value[0], value[1]
             except TypeError:
@@ -600,13 +620,12 @@ class AnalysisPoint(object):
             # recreate the states in case the inputs are the names of the states
             # and not the numbers.
             sources = self.sources
-            combs = [[c.strip() for c in str(cc).split(",")] for cc in blindsStateIds]
 
-            combIds = copy.deepcopy(combs)
+            combIds = copy.deepcopy(blindsStateIds)
 
-            # find state ids for each state
+            # find state ids for each state if inputs are state names
             try:
-                for c, comb in enumerate(combs):
+                for c, comb in enumerate(combIds):
                     for count, source in enumerate(sources):
                         combIds[c][count] = self.blindStateId(source, comb[count])
             except IndexError:
@@ -662,7 +681,7 @@ class AnalysisPoint(object):
                 (default: (100, 2000)).
             blindsStateIds: List of state ids for all the sources for input hoys. If you
                 want a source to be removed set the state to -1.
-            occSchedule: An annual occupancy schedule.
+            occSchedule: An annual occupancy schedule (default: Office Schedule).
 
         Returns:
             Daylight autonomy, Continious daylight autonomy, Useful daylight illuminance,
@@ -672,7 +691,7 @@ class AnalysisPoint(object):
         UDIMinMax = UDIMinMax or (100, 2000)
         udiMin, udiMax = UDIMinMax
         hours = self.hoys
-        schedule = occSchedule or set(hours)
+        schedule = occSchedule or Schedule.fromWorkdayHours()
         DA = 0
         CDA = 0
         UDI = 0
@@ -700,8 +719,9 @@ class AnalysisPoint(object):
         if totalHourCount == 0:
             raise ValueError('There is 0 hours available in the schedule.')
 
-        return DA / totalHourCount, CDA / totalHourCount, UDI / totalHourCount, \
-            UDI_l / totalHourCount, UDI_m / totalHourCount
+        return 100 * DA / totalHourCount, 100 * CDA / totalHourCount, \
+            100 * UDI / totalHourCount, 100 * UDI_l / totalHourCount, \
+            100 * UDI_m / totalHourCount
 
     def usefulDaylightIlluminance(self, UDIMinMax=None, blindsStateIds=None,
                                   occSchedule=None):
@@ -740,7 +760,8 @@ class AnalysisPoint(object):
         if totalHourCount == 0:
             raise ValueError('There is 0 hours available in the schedule.')
 
-        return UDI / totalHourCount, UDI_l / totalHourCount, UDI_m / totalHourCount
+        return 100 * UDI / totalHourCount, 100 * UDI_l / totalHourCount, \
+            100 * UDI_m / totalHourCount
 
     def daylightAutonomy(self, DAThreshhold=None, blindsStateIds=None,
                          occSchedule=None):
@@ -775,7 +796,7 @@ class AnalysisPoint(object):
         if totalHourCount == 0:
             raise ValueError('There is 0 hours available in the schedule.')
 
-        return DA / totalHourCount, CDA / totalHourCount
+        return 100 * DA / totalHourCount, 100 * CDA / totalHourCount
 
     def annualSolarExposure(self, threshhold=None, blindsStateIds=None,
                             occSchedule=None, targetHours=None):
@@ -798,7 +819,8 @@ class AnalysisPoint(object):
             Success as a Boolean, Number of hours, Problematic hours
         """
         if not self.hasDirectValues:
-            raise ValueError('Direct values are not loaded to calculate ASE.')
+            raise ValueError(
+                'Direct values are not loaded. Data is not available to calculate ASE.')
 
         threshhold = threshhold or 1000
         targetHours = targetHours or 250
@@ -811,11 +833,31 @@ class AnalysisPoint(object):
             if h not in schedule:
                 continue
             if v > threshhold:
-                print(v)
                 ASE += 1
                 problematicHours.append(h)
 
-        return ASE > targetHours, ASE, problematicHours
+        return ASE < targetHours, ASE, problematicHours
+
+    @staticmethod
+    def parseBlindStates(blindsStateIds):
+        """Parse input blind states.
+
+        The method tries to convert each state to a tuple of a list. Use this method
+        to parse the input from plugins.
+
+        Args:
+            blindsStateIds: List of state ids for all the sources for an hour. If you
+                want a source to be removed set the state to -1. If not provided
+                a longest combination of states from sources (window groups) will
+                be used. Length of each item in states should be equal to number
+                of sources.
+        """
+        try:
+            combs = [list(eval(cc)) for cc in blindsStateIds]
+        except Exception as e:
+            ValueError('Failed to convert input blind states:\n{}'.format(e))
+
+        return combs
 
     def unload(self):
         """Unload values and sources."""
