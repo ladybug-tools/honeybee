@@ -25,16 +25,17 @@ class SunMatrix(RadianceSky):
         analemma, sunlist, sunmtxfile = sunmtx.execute('c:/ladybug')
     """
 
-    def __init__(self, wea, north=0, hoys=None, skyType=0):
+    def __init__(self, wea, north=0, hoys=None, skyType=0, suffix=None):
         """Create sun matrix."""
         RadianceSky.__init__(self)
         self.wea = wea
         self.north = north
         self.hoys = hoys or range(8760)
         self.skyType = skyType  # set default to 0 for visible radiation
+        self.suffix = suffix or ''
 
     @classmethod
-    def fromEpwFile(cls, epwFile, north=0, hoys=None):
+    def fromEpwFile(cls, epwFile, north=0, hoys=None, suffix=None):
         """Create sun matrix from an epw file."""
         return cls(Wea.fromEpwFile(epwFile), north, hoys)
 
@@ -72,12 +73,13 @@ class SunMatrix(RadianceSky):
     @property
     def name(self):
         """Sky default name."""
-        return "sunmtx_{}_{}_{}_{}_{}".format(
+        return "sunmtx_{}_{}_{}_{}_{}{}".format(
             self.skyTypeHumanReadable,
             self.wea.location.stationId,
             self.wea.location.latitude,
             self.wea.location.longitude,
-            self.north
+            self.north,
+            '_{}'.format(self.suffix) if self.suffix else ''
         )
 
     @property

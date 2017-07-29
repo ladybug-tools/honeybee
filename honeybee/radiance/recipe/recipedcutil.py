@@ -113,7 +113,8 @@ def getCommandsSky(projectFolder, skyMatrix, reuse=True):
         raise TypeError('You must use a SkyMatrix to generate the sky.')
 
     # # 2.2. Create sun matrix
-    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType)
+    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType,
+                   suffix=skyMatrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(projectFolder, 'sky'), reuse=reuse)
 
@@ -156,7 +157,8 @@ def getCommandsRadiationSky(projectFolder, skyMatrix, reuse=True):
     skyMatrix.mode = 0
 
     # # 2.2. Create sun matrix
-    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType)
+    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType,
+                   suffix=skyMatrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(projectFolder, 'sky'), reuse=reuse)
 

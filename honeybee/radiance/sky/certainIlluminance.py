@@ -16,7 +16,7 @@ class CertainIlluminanceLevel(CIE):
         sky.execute("c:/ladybug/1000luxsky.sky")
     """
 
-    def __init__(self, illuminanceValue=10000, skyType=0):
+    def __init__(self, illuminanceValue=10000, skyType=0, suffix=None):
         """Create sky.
 
         Attributes:
@@ -25,7 +25,7 @@ class CertainIlluminanceLevel(CIE):
                 [0] cloudy sky, [1] uniform sky (default: 0)
         """
         skyType = skyType or 0
-        CIE.__init__(self, skyType=skyType + 4)
+        CIE.__init__(self, skyType=skyType + 4, suffix=suffix)
         self.illuminanceValue = illuminanceValue or 10000
 
     @property
@@ -36,7 +36,9 @@ class CertainIlluminanceLevel(CIE):
     @property
     def name(self):
         """Sky default name."""
-        return "%s_%d" % (self.__class__.__name__, int(self.illuminanceValue))
+        return "%s_%d%s" % (
+            self.__class__.__name__, int(self.illuminanceValue),
+            '_{}'.format(self.suffix) if self.suffix else '')
 
     @property
     def illuminanceValue(self):

@@ -20,7 +20,7 @@ class ClimateBased(PointInTimeSky):
     """
 
     def __init__(self, location, month, day, hour, directRadiation, diffuseRadiation,
-                 north=0):
+                 north=0, suffix=None):
         """A climate based sky based on direct and diffuse radiation.
 
         This classs uses gendaylit -W for generating the sky.
@@ -36,7 +36,7 @@ class ClimateBased(PointInTimeSky):
                 the y-axis to make North. The default North direction is set to the
                 Y-axis (default: 0 degrees).
         """
-        PointInTimeSky.__init__(self, location, month, day, hour, north)
+        PointInTimeSky.__init__(self, location, month, day, hour, north, suffix=suffix)
         self.directRadiation = directRadiation
         self.diffuseRadiation = diffuseRadiation
         self._skyType = 0  # set default sky type to visible radiation
@@ -44,20 +44,22 @@ class ClimateBased(PointInTimeSky):
     @classmethod
     def fromLatLong(cls, city, latitude, longitude, timezone, elevation,
                     month, day, hour, directRadiation, diffuseRadiation,
-                    north=0):
+                    north=0, suffix=None):
         """Create sky from latitude and longitude."""
         loc = Location(city, None, latitude, longitude, timezone, elevation)
-        return cls(loc, month, day, hour, directRadiation, diffuseRadiation, north)
+        return cls(loc, month, day, hour, directRadiation, diffuseRadiation, north,
+                   suffix=suffix)
 
     @classmethod
-    def fromWea(cls, wea, month, day, hour, north=0):
+    def fromWea(cls, wea, month, day, hour, north=0, suffix=None):
         """Create sky from wea file."""
         assert hasattr(wea, 'isWea'), \
             TypeError('Wea input should be form type WEA not {}.'.format(type(wea)))
 
         # get radiation values
         direct, diffuse = wea.getRadiationValues(month, day, hour)
-        return cls(wea.location, month, day, hour, int(direct), int(diffuse), north)
+        return cls(wea.location, month, day, hour, int(direct), int(diffuse), north,
+                   suffix=suffix)
 
     @property
     def isClimateBased(slef):
@@ -67,11 +69,12 @@ class ClimateBased(PointInTimeSky):
     @property
     def name(self):
         """Sky default name."""
-        return "{}_{}_{}_{}_{}_at_{}_{}_{}".format(
+        return "{}_{}_{}_{}_{}_at_{}_{}_{}{}".format(
             self.__class__.__name__.lower(), self.skyTypeHumanReadable,
             self.location.city.replace(' ', '_'),
             self.month, self.day, self.hour,
-            self.directRadiation, self.diffuseRadiation
+            self.directRadiation, self.diffuseRadiation,
+            '_{}'.format(self.suffix) if self.suffix else ''
         )
 
     @property

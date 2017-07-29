@@ -29,7 +29,8 @@ class CIE(PointInTimeSky):
         5: ('-u', 'uniformSky')
     }
 
-    def __init__(self, location=None, month=9, day=21, hour=12, north=0, skyType=0):
+    def __init__(self, location=None, month=9, day=21, hour=12, north=0, skyType=0,
+                 suffix=None):
         """Create CIE sky.
 
         Args:
@@ -44,25 +45,26 @@ class CIE(PointInTimeSky):
                 [0] Sunny with sun, [1] sunny without sun, [2] intermediate with sun
                 [3] intermediate without sun, [4] cloudy sky, [5] uniform sky
         """
-        PointInTimeSky.__init__(self, location, month, day, hour, north)
+        PointInTimeSky.__init__(self, location, month, day, hour, north, suffix=suffix)
         self.skyType = skyType % 6
         self.humanReadableSkyType = self.SKYTYPES[self.skyType][1]
 
     @classmethod
     def fromLatLong(cls, city, latitude, longitude, timezone, elevation,
-                    month=6, day=21, hour=9, north=0, skyType=0):
+                    month=6, day=21, hour=9, north=0, skyType=0, suffix=None):
         """Create sky from latitude and longitude."""
         loc = Location(city, None, latitude, longitude, timezone, elevation)
-        return cls(loc, month, day, hour, skyType, north)
+        return cls(loc, month, day, hour, skyType, north, suffix=suffix)
 
     @property
     def name(self):
         """Sky default name."""
-        return "{}_{}_{}_{}_{}_at_{}".format(
+        return "{}_{}_{}_{}_{}_at_{}{}".format(
             self.__class__.__name__,
             self.humanReadableSkyType,
             self.location.city.replace(' ', '_'),
-            self.month, self.day, self.hour
+            self.month, self.day, self.hour,
+            '_{}'.format(self.suffix) if self.suffix else ''
         )
 
     def command(self, folder=None):

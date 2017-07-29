@@ -18,7 +18,7 @@ class SkyMatrix(RadianceSky):
         mode: Sky mode 0: total, 1: direct-only, 2: diffuse-only (Default: 0).
     """
 
-    def __init__(self, wea, skyDensity=1, north=0, hoys=None, mode=0):
+    def __init__(self, wea, skyDensity=1, north=0, hoys=None, mode=0, suffix=None):
         """Create sky."""
         RadianceSky.__init__(self)
         self.wea = wea
@@ -29,11 +29,13 @@ class SkyMatrix(RadianceSky):
         self.north = north
         self.skyDensity = skyDensity
         self.mode = mode
+        self.suffix = suffix or ''
 
     @classmethod
-    def fromEpwFile(cls, epwFile, skyDensity=1, north=0, hoys=None, mode=0):
+    def fromEpwFile(cls, epwFile, skyDensity=1, north=0, hoys=None, mode=0, suffix=None):
         """Create sky from an epw file."""
-        return cls(Wea.fromEpwFile(epwFile), skyDensity, north, hoys, mode)
+        return cls(Wea.fromEpwFile(epwFile), skyDensity, north, hoys, mode,
+                   suffix=suffix)
 
     @property
     def isSkyMatrix(self):
@@ -102,10 +104,11 @@ class SkyMatrix(RadianceSky):
     @property
     def name(self):
         """Sky default name."""
-        return "skymtx_{}_r{}_{}_{}_{}_{}_{}".format(
+        return "skymtx_{}_r{}_{}_{}_{}_{}_{}{}".format(
             self.skyTypeHumanReadable, self.skyDensity,
             self.mode, self.wea.location.stationId,
-            self.wea.location.latitude, self.wea.location.longitude, self.north
+            self.wea.location.latitude, self.wea.location.longitude, self.north,
+            '_{}'.format(self.suffix) if self.suffix else ''
         )
 
     @property
