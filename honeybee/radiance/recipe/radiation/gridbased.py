@@ -152,7 +152,7 @@ class GridBased(DaylightCoeffGridBased):
                 self.radianceParameters, self.reuseDaylightMtx, self.totalRunsCount,
                 radiationOnly=True)
 
-            self._commands.extend(commands)
+            self._addCommands(skycommands, commands)
             self._resultFiles.extend(
                 os.path.join(projectFolder, str(result)) for result in results
             )
