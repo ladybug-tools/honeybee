@@ -336,6 +336,10 @@ class SolarAccessGridBased(GenericGridBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
+        print('Unloading the current values from the analysis grids.')
+        for ag in self.analysisGrids:
+            ag.unload()
+
         hours = tuple(int(self.timestep * h) for h in self.hoys)
         rf = self._resultFiles
         startLine = 0

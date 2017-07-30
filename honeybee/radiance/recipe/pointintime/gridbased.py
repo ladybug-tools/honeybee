@@ -242,6 +242,10 @@ class GridBased(GenericGridBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
+        print('Unloading the current values from the analysis grids.')
+        for ag in self.analysisGrids:
+            ag.unload()
+
         sky = self.sky
         dt = DateTime(sky.month, sky.day, int(sky.hour),
                       int(60 * (sky.hour - int(sky.hour))))

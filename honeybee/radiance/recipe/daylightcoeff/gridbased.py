@@ -300,6 +300,10 @@ class DaylightCoeffGridBased(GenericGridBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
+        print('Unloading the current values from the analysis grids.')
+        for ag in self.analysisGrids:
+            ag.unload()
+
         # results are merged as a single file
         for rf in self._resultFiles:
             fn = os.path.split(rf)[-1][:-4].split("..")

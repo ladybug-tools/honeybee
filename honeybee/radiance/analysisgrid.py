@@ -241,7 +241,9 @@ class AnalysisGrid(object):
                 factor or radiation analysis.
         """
 
-        assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
+        if os.path.getsize(filePath) < 2:
+            raise EmptyFileError(filePath)
+
         st = startLine or 0
 
         with open(filePath, 'rb') as inf:
@@ -291,7 +293,8 @@ class AnalysisGrid(object):
         """
 
         for filePath in (totalFilePath, directFilePath):
-            assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
+            if os.path.getsize(filePath) < 2:
+                raise EmptyFileError(filePath)
 
         st = startLine or 0
 
@@ -542,6 +545,12 @@ class AnalysisGrid(object):
                 of sources.
         """
         return self.analysisPoints[0].parseBlindStates(blindsStateIds)
+
+    def unload(self):
+        """Remove all the sources and values from analysisPoints."""
+        for ap in self._analysisPoints:
+            ap._sources = {}
+            ap._values = []
 
     def duplicate(self):
         """Duplicate AnalysisGrid."""
