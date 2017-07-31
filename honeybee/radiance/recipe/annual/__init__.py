@@ -1,0 +1,1 @@
+"""Radiance annual daylight recipes."""

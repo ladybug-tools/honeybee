@@ -47,6 +47,8 @@ class GridBased(DaylightCoeffGridBased):
         assert len(self.windowGroups) == 0, \
             'You cannot use the annual recipe for a scene with windowGroups. ' \
             'Try daylightcoeff recipe instead.'
+        if self.subFolder == "gridbased_daylightcoeff":
+            self.subFolder == "gridbased_annual"
 
         return super(GridBased, self).write(targetFolder, projectName, header)
 
