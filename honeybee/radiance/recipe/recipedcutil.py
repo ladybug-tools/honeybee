@@ -560,8 +560,8 @@ def imageBasedViewSamplingCommands(projectFolder, view, viewFile, vwraysParamete
     return vwrDimFile, vwrSamp
 
 
-def imagedBasedSunCoeffMatrixCommands(output, view, viewRaysFile, sceneFiles, analemma,
-                                      sunlist):
+def imagedBasedSunCoeffMatrixCommands(
+        outputFilenameFormat, view, viewRaysFile, sceneFiles, analemma, sunlist):
     # output, pointFile, sceneFiles, analemma, sunlist, irradianceCalc
 
     octree = Oconv()
@@ -576,10 +576,10 @@ def imagedBasedSunCoeffMatrixCommands(output, view, viewRaysFile, sceneFiles, an
     rctbParam.outputDataFormat = 'fc'
     rctbParam.irradianceCalc = None  # -I
     rctbParam.iIrradianceCalc = True  # -i
+    rctbParam.outputFilenameFormat = outputFilenameFormat
 
     rctb = Rcontrib()
     rctb.octreeFile = octree.outputFile
-    rctb.outputFile = output
     rctb.pointsFile = viewRaysFile
     rctb.rcontribParameters = rctbParam
     return (octree, rctb)

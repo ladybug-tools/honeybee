@@ -47,19 +47,21 @@ class Rcontrib(RadianceCommand):
         rcontrib.execute()
     """
 
-    outputFile = RadiancePath("dc", "results file")
+    outputFile = RadiancePath("dc", "results file", extension=".dc")
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
     pointsFile = RadiancePath("points", "test point file")
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
+    def __init__(self, outputName=None, octreeFile=None, pointsFile=None,
                  rcontribParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        self.outputFile = outputName if outputName.lower().endswith(".dc") \
-            else outputName if outputName.lower().endswith(".hdr") \
-            else outputName + ".dc"
+        self.outputFile = None
         """results file for coefficients (Default: untitled)"""
+        if outputName:
+            self.outputFile = outputName if outputName.lower().endswith(".dc") \
+                else outputName if outputName.lower().endswith(".hdr") \
+                else outputName + ".dc"
 
         self.octreeFile = octreeFile
         """Full path to input oct file."""
@@ -87,14 +89,14 @@ class Rcontrib(RadianceCommand):
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        radString = "%s %s %s < %s > %s" % (
+        radString = "%s %s %s < %s%s" % (
             self.normspace(os.path.join(self.radbinPath, "rcontrib")),
             self.rcontribParameters.toRadString(),
             self.normspace(self.octreeFile.toRadString()),
             self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputFile.toRadString())
+            ' > %s' % self.normspace(self.outputFile.toRadString())
+            if self.outputFile.toRadString().strip() else ''
         )
-
         # make sure input files are set by user
         self.checkInputFiles(radString)
         return radString

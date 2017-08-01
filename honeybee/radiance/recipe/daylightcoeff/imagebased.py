@@ -128,8 +128,8 @@ class DaylightCoeffImageBased(GenericImageBased):
                     view.name, wg.name, state.name, i)
             )
 
-            if not os.path.isfile(fp) and os.path.getsize(fp) > 265:
-                # file exist and is smaller than 265 bytes
+            if not os.path.isfile(fp) or os.path.getsize(fp) < 265:
+                # file doesn't exist or is smaller than 265 bytes
                 return False
 
         return True
@@ -270,7 +270,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                     # Daylight matrix
                     if not self.reuseDaylightMtx or not \
-                            self.isDaylightMtxCreated(projectFolder, view):
+                            self.isDaylightMtxCreated(projectFolder, view, wg, state):
 
                         radFiles = tuple(self.relpath(f, projectFolder)
                                          for f in rfluxScene)
@@ -319,12 +319,19 @@ class DaylightCoeffImageBased(GenericImageBased):
                         self._commands.append(rfluxDirect.toRadString())
 
                         self._commands.append(':: :: 1.3 blacked scene analemma matrix')
-                        output = ' result\\{}_{}_{}_sun_%%04d.hdr'.format(
-                            view.name, wg.name, state.name)
+
+                        if os.name == 'nt':
+                            outputFilenameFormat = \
+                                ' result\\{}_{}_{}_sun_%%04d.hdr'.format(
+                                    view.name, wg.name, state.name)
+                        else:
+                            outputFilenameFormat = \
+                                ' result\\{}_{}_{}_sun_%04d.hdr'.format(
+                                    view.name, wg.name, state.name)
 
                         sunCommands = imagedBasedSunCoeffMatrixCommands(
-                            output, view, str(vwrSamp.outputFile), radFilesBlacked,
-                            self.relpath(analemma, projectFolder),
+                            outputFilenameFormat, view, str(vwrSamp.outputFile),
+                            radFilesBlacked, self.relpath(analemma, projectFolder),
                             self.relpath(sunlist, projectFolder))
 
                         self._commands.extend(cmd.toRadString() for cmd in sunCommands)
