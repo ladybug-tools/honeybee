@@ -531,8 +531,7 @@ def _getCommandsDaylightCoeff(
     return commands, resultFiles
 
 
-# TODO(mostapha): Review parameters
-def imageBasedViewSamplingCommands(projectFolder, view, viewFile, vwraysParameters=None):
+def imageBasedViewSamplingCommands(projectFolder, view, viewFile, vwraysParameters):
     """Return VWrays command for calculating view coefficient matrix."""
     # calculate view dimensions
     vwrDimFile = os.path.join(
@@ -542,17 +541,12 @@ def imageBasedViewSamplingCommands(projectFolder, view, viewFile, vwraysParamete
         vdfile.write('-x %d -y %d -ld-\n' % (x, y))
 
     # calculate sampling for each view
-    if not vwraysParameters:
-        vwrParaSamp = VwraysParameters()
-        vwrParaSamp.xResolution = view.xRes
-        vwrParaSamp.yResolution = view.yRes
-        vwrParaSamp.samplingRaysCount = 6  # 9
-        vwrParaSamp.jitter = 0.7
-    else:
-        vwrParaSamp = vwraysParameters
+    # the value will be different for each view
+    vwraysParameters.xResolution = view.xRes
+    vwraysParameters.yResolution = view.yRes
 
     vwrSamp = Vwrays()
-    vwrSamp.vwraysParameters = vwrParaSamp
+    vwrSamp.vwraysParameters = vwraysParameters
     vwrSamp.viewFile = os.path.relpath(viewFile, projectFolder)
     vwrSamp.outputFile = r'view\\{}.rays'.format(view.name)
     vwrSamp.outputDataFormat = 'f'
@@ -706,17 +700,18 @@ def matrixCalculation(output, vMatrix=None, tMatrix=None, dMatrix=None, skyMatri
     return dct
 
 
-def imageBasedViewMatrixCalculation(output, view, wg, state, skyMatrix, extention=''):
+def imageBasedViewMatrixCalculation(output, view, wg, state, skyMatrix, extention='',
+                                    digits=3):
     ext = extention
     dct = Dctimestep()
     if os.name == 'nt':
         dct.daylightCoeffSpec = \
-            'result\\matrix\\{}_{}_{}_%%03d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            'result\\hdr\\{}\\{}_{}_{}_%%0{}d.hdr'.format(
+                extention, view.name, wg.name, state.name, digits)
     else:
         dct.daylightCoeffSpec = \
-            'result\\matrix\\{}_{}_{}_%03d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            'result\\hdr\\{}\\{}_{}_{}_%0{}d.hdr'.format(
+                extention, view.name, wg.name, state.name, digits)
 
     dct.skyVectorFile = skyMatrix
 
@@ -777,11 +772,6 @@ def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist,
     rctb.pointsFile = pointFile
     rctb.rcontribParameters = rctbParam
     return (octree, rctb)
-
-
-def viewSunCoeffMatrixCommands(output, view):
-    # raise NotImplementedError()
-    return ''
 
 
 def finalMatrixAddition(skymtx, skydirmtx, sunmtx, output):

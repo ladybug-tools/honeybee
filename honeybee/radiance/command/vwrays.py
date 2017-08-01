@@ -23,6 +23,11 @@ class Vwrays(RadianceCommand):
         self.outputDataFormat = outputDataFormat
 
     @property
+    def isVwraysParameters(self):
+        """return True for type check."""
+        return True
+
+    @property
     def vwraysParameters(self):
         """Get and set gendaymtxParameters."""
         return self.__vwraysParameters

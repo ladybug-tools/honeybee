@@ -41,6 +41,15 @@ DCDEFAULTS = (
      'samplingRaysCount': 1}
 )
 
+IMGDCDEFAULTS = (
+    {'ambientDivisions': 5000, 'ambientBounces': 3, 'limitWeight': 0.000002,
+     'samplingRaysCount': 1},
+    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.67E-07,
+     'samplingRaysCount': 3},
+    {'ambientDivisions': 25000, 'ambientBounces': 6, 'limitWeight': 4E-07,
+     'samplingRaysCount': 6}
+)
+
 # Illuminance based daylight-coefficients
 # Parameter settings explained contextually:
 # Low: Simple room with one or two glazing systems and no furniture.
@@ -144,7 +153,7 @@ def getRadianceParametersImageBased(quality, recType):
         # this is a place holder.
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in DCDEFAULTS[quality].iteritems():
+        for k, v in IMGDCDEFAULTS[quality].iteritems():
             setattr(dmtxpar, k, v)
 
         # sun matrix
