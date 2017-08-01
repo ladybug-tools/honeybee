@@ -1,11 +1,12 @@
 """Radiance Daylight Coefficient Image-Based Analysis Recipe."""
 from ..recipeutil import writeExtraFiles, glzSrfTowinGroup
 from ..recipedcutil import writeRadFilesDaylightCoeff
-from ..recipedcutil import viewSamplingCommands, viewCoeffMatrixCommands
-from ..recipedcutil import viewMatrixCalculation
+from ..recipedcutil import imageBasedViewSamplingCommands, \
+    imageBasedViewCoeffMatrixCommands, imagedBasedSunCoeffMatrixCommands
+from ..parameters import getRadianceParametersImageBased
+from ..recipedcutil import imageBasedViewMatrixCalculation
 from ..recipedcutil import skyReceiver, skymtxToGendaymtx
 from .._imagebasedbase import GenericImageBased
-from ...parameters.rfluxmtx import RfluxmtxParameters
 from ...sky.sunmatrix import SunMatrix
 from ....futil import writeToFile
 
@@ -37,7 +38,7 @@ class DaylightCoeffImageBased(GenericImageBased):
     # if there has been no changes in inputs.
     def __init__(self, skyMtx, views, simulationType=2, daylightMtxParameters=None,
                  vwraysParameters=None, reuseDaylightMtx=True, hbObjects=None,
-                 subFolder="imagebased_dyalightcoeff"):
+                 subFolder="imagebased_daylightcoeff"):
         """Create grid-based recipe."""
         GenericImageBased.__init__(
             self, views, hbObjects, subFolder)
@@ -50,7 +51,7 @@ class DaylightCoeffImageBased(GenericImageBased):
            2: Luminance (Candela) (Default: 2)
         """
 
-        self.radianceParameters = daylightMtxParameters
+        self.daylightMtxParameters = daylightMtxParameters
         """Radiance parameters for grid based analysis (rtrace).
             (Default: imagebased.LowQualityImage)"""
 
@@ -102,24 +103,22 @@ class DaylightCoeffImageBased(GenericImageBased):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.skyMatrix.skyDensity)
 
+    # TODO(mostapha): Change this to daylightMtxParameters and use default values from
+    # the parameters! Do not set them up manually.
     @property
-    def radianceParameters(self):
+    def daylightMtxParameters(self):
         """Get and set Radiance parameters."""
-        return self._radianceParameters
+        return self._daylightMtxParameters
 
-    @radianceParameters.setter
-    def radianceParameters(self, par):
+    @daylightMtxParameters.setter
+    def daylightMtxParameters(self, par):
         if not par:
             # set RfluxmtxParameters as default radiance parameter for annual analysis
-            self._radianceParameters = RfluxmtxParameters()
-            self._radianceParameters.ambientAccuracy = 0.1
-            self._radianceParameters.ambientBounces = 5  # 10
-            self._radianceParameters.ambientDivisions = 4096  # 65536
-            self._radianceParameters.limitWeight = 0.001  # 1E-5
+            par = getRadianceParametersImageBased(0, 1).dmtx
         else:
             assert hasattr(par, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(par)))
-            self.__daylightMtxParameters = par
+        self._daylightMtxParameters = par
 
     def isDaylightMtxCreated(self, studyFolder, view, wg, state):
         """Check if hdr images for daylight matrix are already created."""
@@ -130,7 +129,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             )
 
             if not os.path.isfile(fp) and os.path.getsize(fp) > 265:
-                # file exist and is larger then 265 bytes
+                # file exist and is smaller than 265 bytes
                 return False
 
         return True
@@ -210,7 +209,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             # Step1: Create the view matrix.
             self.commands.append(':: calculation for view: {}'.format(view.name))
             self.commands.append(':: 1 view sampling')
-            viewInfoFile, vwrSamp = viewSamplingCommands(
+            viewInfoFile, vwrSamp = imageBasedViewSamplingCommands(
                 projectFolder, view, viewFile, self.vwraysParameters)
             self.commands.append(vwrSamp.toRadString())
 
@@ -297,14 +296,11 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         self._commands.append(':: :: 1.1 scene daylight matrix')
 
-                        samplingRaysCount = 6
-                        self.radianceParameters.ambientBounces = 5
-
-                        rflux = viewCoeffMatrixCommands(
+                        rflux = imageBasedViewCoeffMatrixCommands(
                             dMatrix, self.relpath(receiver, projectFolder),
                             radFiles, sender, viewInfoFile,
-                            viewFile, str(vwrSamp.outputFile), samplingRaysCount,
-                            self.radianceParameters)
+                            viewFile, str(vwrSamp.outputFile),
+                            self.daylightMtxParameters)
 
                         self.commands.append(rflux.toRadString())
 
@@ -312,39 +308,45 @@ class DaylightCoeffImageBased(GenericImageBased):
                                                 for f in rfluxSceneBlacked)
 
                         self._commands.append(':: :: 1.2 blacked scene daylight matrix')
-                        samplingRaysCount = 1
-                        self.radianceParameters.ambientBounces = 1
-                        rfluxDirect = viewCoeffMatrixCommands(
+                        self.daylightMtxParameters.samplingRaysCount = 1
+                        self.daylightMtxParameters.ambientBounces = 1
+                        rfluxDirect = imageBasedViewCoeffMatrixCommands(
                             dMatrixDirect, self.relpath(receiver, projectFolder),
                             radFilesBlacked, sender, viewInfoFile,
-                            viewFile, str(vwrSamp.outputFile), samplingRaysCount,
-                            self.radianceParameters)
+                            viewFile, str(vwrSamp.outputFile),
+                            self.daylightMtxParameters)
 
                         self._commands.append(rfluxDirect.toRadString())
 
                         self._commands.append(':: :: 1.3 blacked scene analemma matrix')
-                        # sunCommands = viewSunCoeffMatrixCommands()
-                        # self._commands.extend(cmd.toRadString() for cmd in sunCommands)
-                        self._commands.append(':: commands are missing here!')
+                        output = ' result\\{}_{}_{}_sun_%%04d.hdr'.format(
+                            view.name, wg.name, state.name)
+
+                        sunCommands = imagedBasedSunCoeffMatrixCommands(
+                            output, view, str(vwrSamp.outputFile), radFilesBlacked,
+                            self.relpath(analemma, projectFolder),
+                            self.relpath(sunlist, projectFolder))
+
+                        self._commands.extend(cmd.toRadString() for cmd in sunCommands)
 
                     # Generate resultsFile
                     self._commands.append(
                         ':: :: 2.1.0 total daylight matrix calculations')
-                    dct = viewMatrixCalculation(dMatrix, view, wg, state, skyMtxTotal,
-                                                'total')
+                    dct = imageBasedViewMatrixCalculation(
+                        dMatrix, view, wg, state, skyMtxTotal, 'total')
                     self.commands.append(dct.toRadString())
 
                     self._commands.append(':: :: 2.2.0 direct matrix calculations')
-                    dctDirect = viewMatrixCalculation(dMatrixDirect, view, wg, state,
-                                                      skyMtxDirect, 'direct')
+                    dctDirect = imageBasedViewMatrixCalculation(
+                        dMatrixDirect, view, wg, state, skyMtxDirect, 'direct')
                     self.commands.append(dctDirect.toRadString())
 
                     self._commands.append(
                         ':: :: 2.3.0 enhanced direct matrix calculations')
-                    # TODO(sarith) final addition of the images
                     # dctSun = viewSunCoeffMatrixCommands(sunMatrix)
-                    # self.commands.append(dctSun.toRadString())
-                    self._commands.append(':: commands are missing here!')
+                    dctSun = imageBasedViewMatrixCalculation(
+                        sunMatrix, view, wg, state, analemmaMtx, 'sun')
+                    self.commands.append(dctSun.toRadString())
 
                     self._commands.append(':: :: 2.4 final matrix calculation')
 

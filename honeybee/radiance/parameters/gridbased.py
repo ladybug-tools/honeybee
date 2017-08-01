@@ -238,6 +238,22 @@ class GridBasedParameters(AdvancedRadianceParameters):
             radiance default value for this option is False.
         """
 
+        # TODO(sarith)
+        self.addRadianceBoolFlag('i', descriptiveName='irradiance calculation',
+                                 attributeName='iIrradianceCalc')
+        self.iIrradianceCalc = None
+
+        """
+        -i
+
+            Boolean switch to compute irradiance rather than radiance values. This
+            only affects the final result, substituting a Lambertian surface and
+            multiplying the radiance by pi. Glass and other transparent surfaces are
+            ignored during this stage. Light sources still appear with their original
+            radiance values, though the -dv option (below) may be used to override
+            this. This option is especially useful in conjunction with ximage(1)
+            for computing illuminance at scene points
+        """
         self.addRadianceBoolFlag('u', descriptiveName='uncorrelated random sampling',
                                  attributeName='uncorRandSamp')
         self.uncorRandSamp = None
@@ -248,6 +264,20 @@ class GridBasedParameters(AdvancedRadianceParameters):
         low-discrepancy sequence is used, which reduces variance but can result
         in a brushed appearance in specular highlights. When "on", pure Monte
         Carlo sampling is used in all calculations.
+        """
+        self.addRadianceValue('f', 'output data format',
+                              attributeName='outputDataFormat', isJoined=True)
+        self.outputDataFormat = None
+        """
+        -f[io]
+
+        Format input according to the character i and output according to the
+        character o. Rtrace understands the following input and output formats:
+        'a' for ascii, 'f' for single-precision floating point, and 'd' for
+        double-precision floating point. In addition to these three choices, the
+        character 'c' may be used to denote 4-byte floating point (Radiance) color
+        format for the output of values only (-ov option, below). If the output
+        character is missing, the input format is used.
         """
 
     @property

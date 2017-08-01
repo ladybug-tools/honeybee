@@ -140,5 +140,33 @@ def getRadianceParametersImageBased(quality, recType):
     """
     if recType == 0:
         return Parameters(ImageBasedParameters(quality), None, None, None)
+    elif recType == 1:
+        # this is a place holder.
+        # daylight matrix
+        dmtxpar = RfluxmtxParameters(quality=quality)
+        for k, v in DCDEFAULTS[quality].iteritems():
+            setattr(dmtxpar, k, v)
+
+        # sun matrix
+        sunmtxpar = RcontribParameters()
+        for k, v in SMDEFAULTS.iteritems():
+            setattr(sunmtxpar, k, v)
+
+        return Parameters(None, None, dmtxpar, sunmtxpar)
     else:
-        raise NotImplementedError()
+        # view matrix
+        vmtxpar = RfluxmtxParameters(quality=quality)
+        for k, v in VMDEFAULTS[quality].iteritems():
+            setattr(vmtxpar, k, v)
+
+        # daylight matrix
+        dmtxpar = RfluxmtxParameters(quality=quality)
+        for k, v in DMDEFAULTS[quality].iteritems():
+            setattr(dmtxpar, k, v)
+
+        # sun matrix
+        sunmtxpar = RcontribParameters()
+        for k, v in SMDEFAULTS.iteritems():
+            setattr(sunmtxpar, k, v)
+
+        return Parameters(None, vmtxpar, dmtxpar, sunmtxpar)

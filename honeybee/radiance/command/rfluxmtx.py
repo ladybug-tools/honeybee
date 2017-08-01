@@ -8,6 +8,8 @@ from ..parameters.rfluxmtx import RfluxmtxParameters
 import os
 
 
+# TODO (sarith and mostapha): move parameters such as outputDataFormat to command
+# parameters. They are not command inputs.
 class Rfluxmtx(RadianceCommand):
     """Radiance Rfluxmtx matrix."""
 

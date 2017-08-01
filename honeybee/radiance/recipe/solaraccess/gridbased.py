@@ -296,7 +296,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         # 2.1.add sun list to modifiers
         self._radianceParameters.modFile = self.relpath(sunsList, projectFolder)
-        self._radianceParameters.totalPointCount = self.totalPointCount
+        self._radianceParameters.yDimension = self.totalPointCount
 
         # 3.write batch file
         if header:

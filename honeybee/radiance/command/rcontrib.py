@@ -1,12 +1,14 @@
 # coding=utf-8
 """RADIANCE rcontrib command."""
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath
 from ..parameters.rcontrib import RcontribParameters
 
 import os
 
 
+# TODO(mostapha): pointsFile should change to input file. It can also be used for
+# vwrays output
 class Rcontrib(RadianceCommand):
     u"""
     rcontrib - Compute contribution coefficients in a RADIANCE scene.
@@ -45,9 +47,9 @@ class Rcontrib(RadianceCommand):
         rcontrib.execute()
     """
 
-    outputFile = RadiancePath("dc", "results file", extension=".dc")
+    outputFile = RadiancePath("dc", "results file")
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+    pointsFile = RadiancePath("points", "test point file")
 
     def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
                  rcontribParameters=None):
@@ -55,6 +57,7 @@ class Rcontrib(RadianceCommand):
         RadianceCommand.__init__(self)
 
         self.outputFile = outputName if outputName.lower().endswith(".dc") \
+            else outputName if outputName.lower().endswith(".hdr") \
             else outputName + ".dc"
         """results file for coefficients (Default: untitled)"""
 

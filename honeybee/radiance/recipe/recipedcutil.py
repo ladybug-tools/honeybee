@@ -8,7 +8,7 @@ from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
 from ..command.vwrays import Vwrays, VwraysParameters
 from .recipeutil import glzSrfTowinGroup
-from .parameters import getRadianceParametersGridBased
+from .parameters import getRadianceParametersGridBased, getRadianceParametersImageBased
 
 import os
 from collections import namedtuple
@@ -531,11 +531,12 @@ def _getCommandsDaylightCoeff(
     return commands, resultFiles
 
 
-def viewSamplingCommands(projectFolder, view, viewFile, vwraysParameters=None):
+# TODO(mostapha): Review parameters
+def imageBasedViewSamplingCommands(projectFolder, view, viewFile, vwraysParameters=None):
     """Return VWrays command for calculating view coefficient matrix."""
     # calculate view dimensions
     vwrDimFile = os.path.join(
-        projectFolder, r'view\\{}.dimensions'.format(view.name))
+        projectFolder, r'view\\{}.dim'.format(view.name))
     x, y = view.getViewDimension()
     with open(vwrDimFile, 'wb') as vdfile:
         vdfile.write('-x %d -y %d -ld-\n' % (x, y))
@@ -559,9 +560,34 @@ def viewSamplingCommands(projectFolder, view, viewFile, vwraysParameters=None):
     return vwrDimFile, vwrSamp
 
 
-def viewCoeffMatrixCommands(
+def imagedBasedSunCoeffMatrixCommands(output, view, viewRaysFile, sceneFiles, analemma,
+                                      sunlist):
+    # output, pointFile, sceneFiles, analemma, sunlist, irradianceCalc
+
+    octree = Oconv()
+    octree.sceneFiles = list(sceneFiles) + [analemma]
+    octree.outputFile = 'analemma.oct'
+
+    # Creating sun coefficients
+    # -ab 0 -i -ffc -dj 0 -dc 1 -dt 0
+    rctbParam = getRadianceParametersImageBased(0, 1).smtx
+    rctbParam.xDimension, rctbParam.yDimension = view.getViewDimension()
+    rctbParam.modFile = sunlist
+    rctbParam.outputDataFormat = 'fc'
+    rctbParam.irradianceCalc = None  # -I
+    rctbParam.iIrradianceCalc = True  # -i
+
+    rctb = Rcontrib()
+    rctb.octreeFile = octree.outputFile
+    rctb.outputFile = output
+    rctb.pointsFile = viewRaysFile
+    rctb.rcontribParameters = rctbParam
+    return (octree, rctb)
+
+
+def imageBasedViewCoeffMatrixCommands(
         outputName, receiver, radFiles, sender, viewInfoFile, viewFile, viewRaysFile,
-        samplingRaysCount=None, rfluxmtxParameters=None):
+        rfluxmtxParameters=None):
     """Returns radiance commands to create coefficient matrix.
 
     Args:
@@ -586,8 +612,6 @@ def viewCoeffMatrixCommands(
     rflux.verbose = True
     rflux.viewInfoFile = viewInfoFile
     rflux.viewRaysFile = viewRaysFile
-    if samplingRaysCount:
-        rflux.samplingRaysCount = samplingRaysCount  # 9
 
     return rflux
 
@@ -682,7 +706,7 @@ def matrixCalculation(output, vMatrix=None, tMatrix=None, dMatrix=None, skyMatri
     return dct
 
 
-def viewMatrixCalculation(output, view, wg, state, skyMatrix, extention=''):
+def imageBasedViewMatrixCalculation(output, view, wg, state, skyMatrix, extention=''):
     ext = extention
     dct = Dctimestep()
     if os.name == 'nt':
