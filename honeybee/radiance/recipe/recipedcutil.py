@@ -6,7 +6,7 @@ from ..command.gendaymtx import Gendaymtx
 from ..sky.sunmatrix import SunMatrix
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
-from ..command.vwrays import Vwrays, VwraysParameters
+from ..command.vwrays import Vwrays
 from .recipeutil import glzSrfTowinGroup
 from .parameters import getRadianceParametersGridBased, getRadianceParametersImageBased
 
@@ -580,12 +580,11 @@ def imagedBasedSunCoeffMatrixCommands(
 
 
 def imageBasedViewCoeffMatrixCommands(
-        outputName, receiver, radFiles, sender, viewInfoFile, viewFile, viewRaysFile,
+        receiver, radFiles, sender, viewInfoFile, viewFile, viewRaysFile,
         rfluxmtxParameters=None):
     """Returns radiance commands to create coefficient matrix.
 
     Args:
-        outputName: Output file name.
         receiver: A radiance file to indicate the receiver. In view matrix it will be the
         window group and in daylight matrix it will be the sky.
         radFiles: A collection of Radiance files that should be included in the scene.
@@ -700,30 +699,29 @@ def matrixCalculation(output, vMatrix=None, tMatrix=None, dMatrix=None, skyMatri
     return dct
 
 
-def imageBasedViewMatrixCalculation(output, view, wg, state, skyMatrix, extention='',
+def imageBasedViewMatrixCalculation(view, wg, state, skyMatrix, extention='',
                                     digits=3):
-    ext = extention
     dct = Dctimestep()
     if os.name == 'nt':
         dct.daylightCoeffSpec = \
-            'result\\hdr\\{}\\{}_{}_{}_%%0{}d.hdr'.format(
-                extention, view.name, wg.name, state.name, digits)
+            'result\\dc\\{}\\%%0{}d_{}..{}..{}.hdr'.format(
+                extention, digits, view.name, wg.name, state.name)
     else:
         dct.daylightCoeffSpec = \
-            'result\\hdr\\{}\\{}_{}_{}_%0{}d.hdr'.format(
-                extention, view.name, wg.name, state.name, digits)
+            'result\\dc\\{}\\%0{}d_{}..{}..{}.hdr'.format(
+                extention, digits, view.name, wg.name, state.name)
 
     dct.skyVectorFile = skyMatrix
 
     # sky matrix is annual
     if os.name == 'nt':
         dct.dctimestepParameters.outputDataFormat = \
-            ' result\\{}_{}_{}_%%04d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            ' result\\hdr\\{}\\%%04d_{}..{}..{}.hdr'.format(
+                extention, view.name, wg.name, state.name)
     else:
         dct.dctimestepParameters.outputDataFormat = \
-            ' result\\{}_{}_{}_%04d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            ' result\\hdr\\{}\\%04d_{}..{}..{}.hdr'.format(
+                extention, view.name, wg.name, state.name)
 
     return dct
 

@@ -2,29 +2,30 @@
 """pcomb - combine Radiance pictures"""
 
 from _commandbase import RadianceCommand
-from ..datatype import RadianceNumber,RadianceTuple,RadianceBoolFlag
+from ..datatype import RadianceNumber, RadianceTuple, RadianceBoolFlag
 from ..datatype import RadiancePath
 from ..parameters.pcomb import PcombParameters
 import os
 from ... import config
 
+
 class PcombImage(RadianceCommand):
-    originalPixelUse = RadianceBoolFlag('o','use original pixels')
-    scalingFactor = RadianceNumber('s','scaling factor')
-    rgbColorMultiplier = RadianceTuple('c','scaling factor for rgb channels',
+    originalPixelUse = RadianceBoolFlag('o', 'use original pixels')
+    scalingFactor = RadianceNumber('s', 'scaling factor')
+    rgbColorMultiplier = RadianceTuple('c', 'scaling factor for rgb channels',
                                        tupleSize=3)
-    inputImageFile = RadiancePath('inputImageFile','input image file')
+    inputImageFile = RadiancePath('inputImageFile', 'input image file')
 
-    def __init__(self,originalPixelUse=None,scalingFactor=None,
-                rgbColorMultiplier=None,inputImageFile=None):
+    def __init__(self, originalPixelUse=None, scalingFactor=None,
+                 rgbColorMultiplier=None, inputImageFile=None):
 
-        RadianceCommand.__init__(self,'pcomb')
+        RadianceCommand.__init__(self, 'pcomb')
         self.originalPixelUse = originalPixelUse
         self.scalingFactor = scalingFactor
         self.rgbColorMultiplier = rgbColorMultiplier
         self.inputImageFile = inputImageFile
 
-    #Overriding these properties as I don't want the script to check for
+    # Overriding these properties as I don't want the script to check for
     # binaries named PcombImage in radbin !
     @property
     def radbinPath(self):
@@ -44,7 +45,7 @@ class PcombImage(RadianceCommand):
         sclFact = self.scalingFactor.toRadString()
         rgb = self.rgbColorMultiplier.toRadString()
         img = self.inputImageFile.toRadString()
-        radString = "{} {} {} {}".format(pixelInput,sclFact,rgb,img)
+        radString = "{} {} {} {}".format(pixelInput, sclFact, rgb, img)
         return radString
 
     @property
@@ -57,12 +58,13 @@ class PcombImage(RadianceCommand):
 
 
 class Pcomb(RadianceCommand):
-    outputImageFile = RadiancePath('outputImageFile', 'output image file')
-    def __init__(self,imageList=None, outputImageFile=None,
+    outputFile = RadiancePath('outputImageFile', 'output image file')
+
+    def __init__(self, imageList=None, outputFile=None,
                  pcombParameters=None):
         RadianceCommand.__init__(self)
         self.imageList = imageList
-        self.outputImageFile = outputImageFile
+        self.outputFile = outputFile
         self.pcombParameters = pcombParameters
 
     @property
@@ -70,14 +72,14 @@ class Pcomb(RadianceCommand):
         return self._imageList
 
     @imageList.setter
-    def imageList(self,images):
+    def imageList(self, images):
         self._imageList = []
         if images:
             for image in images:
-                #This is probably an overkill to have the images be assigned
+                # This is probably an overkill to have the images be assigned
                 # this way but doing this will reduce a lot of errors related
                 # to incorrect input flags.
-                assert isinstance(image,PcombImage),\
+                assert isinstance(image, PcombImage),\
                     'The input for imageList should be a list containing ' \
                     'instances of the class PcombImage'
                 self._imageList.append(image.toRadString())
@@ -104,14 +106,11 @@ class Pcomb(RadianceCommand):
 
     def toRadString(self, relativePath=False):
         """Return full command as a string"""
-        cmdPath = self.normspace(os.path.join(self.radbinPath,'pcomb'))
+        cmdPath = self.normspace(os.path.join(self.radbinPath, 'pcomb'))
         pcombParam = self.pcombParameters.toRadString()
         inputImages = " ".join(self.imageList)
-        opImagePath = self.outputImageFile.toRadString()
-        outputImages = " > %s"%opImagePath if opImagePath else ''
-        radString = "{} {} {} {}".format(cmdPath,pcombParam,inputImages,
+        opImagePath = self.outputFile.toRadString()
+        outputImages = " > %s" % opImagePath if opImagePath else ''
+        radString = "{} {} {} {}".format(cmdPath, pcombParam, inputImages,
                                          outputImages)
-        #A (hopefully harmless) attempt to clean up excessive whitespaces in
-        # case most options are absent.
-        radString = radString.replace("  "," ")
-        return radString
+        return ' '.join(radString.split())

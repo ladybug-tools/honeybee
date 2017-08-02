@@ -364,10 +364,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blindStateId(source, state)
 
-        try:
-            return self._values[sid][stateid][hoy][0]
-        except KeyError:
-            raise ValueError('Invalid hoy input: {}'.format(hoy))
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+        return self._values[sid][stateid][hoy][0]
 
     def directValue(self, hoy, source=None, state=None):
         """Get direct value for an hour of the year."""
@@ -376,12 +376,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blindStateId(source, state)
 
-        try:
-            return self._values[sid][stateid][hoy][1]
-        except KeyError:
-            raise ValueError('Invalid hoy input: {}'.format(hoy))
-        else:
-            self._isDirectLoaded = True
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+        return self._values[sid][stateid][hoy][1]
 
     def values(self, hoys=None, source=None, state=None):
         """Get values for several hours of the year."""
@@ -391,10 +389,12 @@ class AnalysisPoint(object):
         stateid = self.blindStateId(source, state)
 
         hoys = hoys or self.hoys
-        try:
-            return tuple(self._values[sid][stateid][hoy][0] for hoy in hoys)
-        except KeyError as e:
-            raise ValueError('Invalid hoy input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+
+        return tuple(self._values[sid][stateid][hoy][0] for hoy in hoys)
 
     def directValues(self, hoys=None, source=None, state=None):
         """Get direct values for several hours of the year."""
@@ -405,10 +405,11 @@ class AnalysisPoint(object):
 
         hoys = hoys or self.hoys
 
-        try:
-            return tuple(self._values[sid][stateid][hoy][1] for hoy in hoys)
-        except KeyError as e:
-            raise ValueError('Invalid hoy input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+        return tuple(self._values[sid][stateid][hoy][1] for hoy in hoys)
 
     def coupledValue(self, hoy, source=None, state=None):
         """Get total and direct values for an hoy."""
@@ -417,10 +418,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blindStateId(source, state)
 
-        try:
-            return self._values[sid][stateid][hoy]
-        except KeyError:
-            raise ValueError('Invalid hoy input: {}'.format(hoy))
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+        return self._values[sid][stateid][hoy]
 
     def coupledValues(self, hoys=None, source=None, state=None):
         """Get total and direct values for several hours of year."""
@@ -431,10 +432,12 @@ class AnalysisPoint(object):
 
         hoys = hoys or self.hoys
 
-        try:
-            return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
-        except KeyError as e:
-            raise ValueError('Invalid hoy input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+
+        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
 
     def coupledValueById(self, hoy, sourceId=None, stateId=None):
         """Get total and direct values for an hoy."""
@@ -443,10 +446,11 @@ class AnalysisPoint(object):
         # find the state id
         stateid = stateId or 0
 
-        try:
-            return self._values[sid][stateid][hoy]
-        except Exception as e:
-            raise ValueError('Invalid input: {}'.format(e))
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+
+        return self._values[sid][stateid][hoy]
 
     def coupledValuesById(self, hoys=None, sourceId=None, stateId=None):
         """Get total and direct values for several hours of year by source id.
@@ -463,10 +467,12 @@ class AnalysisPoint(object):
 
         hoys = hoys or self.hoys
 
-        try:
-            return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
-        except Exception as e:
-            raise ValueError('Invalid input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+
+        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
 
     def combinedValueById(self, hoy, blindsStateIds=None):
         """Get combined value from all sources based on stateId.
