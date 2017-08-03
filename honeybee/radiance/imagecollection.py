@@ -5,7 +5,7 @@ Use ImageCollection to collect the path to different images and generate their
 combinations using pcomb.
 """
 from .command.pcomb import Pcomb, PcombImage
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import types
 from itertools import izip
 import os
@@ -28,7 +28,7 @@ class ImageCollection(object):
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
         # It is set inside _createDataStructure method on setting values.
-        self._sources = {}
+        self._sources = OrderedDict()
 
         # an empty list for values
         # for each source there will be a new list

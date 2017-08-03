@@ -195,16 +195,18 @@ def matrixCalculationThreePhase(
             os.path.split(windowGroup.radianceMaterial.xmlfile)[-1])
         output = r'tmp\\{}..{}.tmp'.format(windowGroup.name, state.name)
         dct = matrixCalculation(output, vMatrix, tMatrix, dMatrix, skyMtxTotal)
+        commands.append(':: :: State {} [{} out of {}]'
+                        .format(state.name, stcount + 1, len(windowGroup.states)))
         commands.append(':: :: [3/3] vMatrix * dMatrix * tMatrix')
-        commands.append('dctimestep [vmx] [tmtx] [dmtx] ^ > [results.rgb]')
-        commands.append('::')
+        commands.append(':: :: dctimestep [vmx] [tmtx] [dmtx] ^ > [results.rgb]')
         commands.append(dct.toRadString())
 
         # 5. convert r, g ,b values to illuminance
         finalOutput = r'result\\{}..{}.ill'.format(windowGroup.name, state.name)
         finalmtx = RGBMatrixFileToIll((dct.outputFile,), finalOutput)
         commands.append(
-            'echo :: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [results.ill]')
+            ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [results.ill]')
+        commands.append('::')
         commands.append('::')
         commands.append(finalmtx.toRadString())
 

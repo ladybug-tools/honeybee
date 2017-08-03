@@ -7,7 +7,7 @@ from .analysispoint import AnalysisPoint
 
 import os
 from itertools import izip
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 
 class EmptyFileError(Exception):
@@ -46,7 +46,7 @@ class AnalysisGrid(object):
         self.name = name
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
-        self._sources = {}
+        self._sources = OrderedDict()
 
         if windowGroups:
             self._wgroups = tuple(wg.name for wg in windowGroups)
@@ -708,7 +708,7 @@ class AnalysisGrid(object):
         """Load grid values from self.resultFiles."""
         # remove old results
         for ap in self._analysisPoints:
-            ap._sources = {}
+            ap._sources = OrderedDict()
             ap._values = []
         rFiles = self.resultFiles[0][:]
         dFiles = self.resultFiles[1][:]
@@ -762,7 +762,7 @@ class AnalysisGrid(object):
         self._directFiles = []
 
         for ap in self._analysisPoints:
-            ap._sources = {}
+            ap._sources = OrderedDict()
             ap._values = []
 
     def duplicate(self):

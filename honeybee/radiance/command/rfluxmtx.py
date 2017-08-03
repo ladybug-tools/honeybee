@@ -281,7 +281,12 @@ class Rfluxmtx(RadianceCommand):
         radString.append(addToStr(numberOfProcessors))
         radString.append(addToStr(numberOfPoints))
         radString.append(addToStr(self._viewFileDimensions))
-        radString.append(addToStr(self.rfluxmtxParameters.toRadString()))
+        if str(self.sender).strip() == '-':
+            radString.append(addToStr(self.rfluxmtxParameters.toRadString()))
+        else:
+            # -I and -i options are only valid for pass-through cases
+            rfluxPar = addToStr(self.rfluxmtxParameters.toRadString()).replace('-I', '')
+            radString.append(rfluxPar)
         radString.append(addToStr(outputFilenameFormat))
         radString.append(addToStr(self.sender))
         radString.append(addToStr(self.normspace(self.receiverFile.toRadString())))

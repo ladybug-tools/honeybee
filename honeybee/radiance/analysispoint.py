@@ -2,7 +2,7 @@
 from __future__ import division
 from ..vectormath.euclid import Point3, Vector3
 from ..schedule import Schedule
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from itertools import izip
 import types
 import copy
@@ -44,7 +44,7 @@ class AnalysisPoint(object):
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
         # It is set inside _createDataStructure method on setting values.
-        self._sources = {}
+        self._sources = OrderedDict()
 
         # an empty list for values
         # for each source there will be a new list
@@ -886,7 +886,7 @@ class AnalysisPoint(object):
     def unload(self):
         """Unload values and sources."""
         self._values = []
-        self._sources = {}
+        self._sources = OrderedDict()
 
     def duplicate(self):
         """Duplicate the analysis point."""
