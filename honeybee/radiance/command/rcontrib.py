@@ -1,12 +1,14 @@
 # coding=utf-8
 """RADIANCE rcontrib command."""
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath
 from ..parameters.rcontrib import RcontribParameters
 
 import os
 
 
+# TODO(mostapha): pointsFile should change to input file. It can also be used for
+# vwrays output
 class Rcontrib(RadianceCommand):
     u"""
     rcontrib - Compute contribution coefficients in a RADIANCE scene.
@@ -47,16 +49,19 @@ class Rcontrib(RadianceCommand):
 
     outputFile = RadiancePath("dc", "results file", extension=".dc")
     octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+    pointsFile = RadiancePath("points", "test point file")
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
+    def __init__(self, outputName=None, octreeFile=None, pointsFile=None,
                  rcontribParameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        self.outputFile = outputName if outputName.lower().endswith(".dc") \
-            else outputName + ".dc"
+        self.outputFile = None
         """results file for coefficients (Default: untitled)"""
+        if outputName:
+            self.outputFile = outputName if outputName.lower().endswith(".dc") \
+                else outputName if outputName.lower().endswith(".hdr") \
+                else outputName + ".dc"
 
         self.octreeFile = octreeFile
         """Full path to input oct file."""
@@ -84,13 +89,35 @@ class Rcontrib(RadianceCommand):
 
     def toRadString(self, relativePath=False):
         """Return full command as a string."""
-        radString = "%s %s %s < %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, "rcontrib")),
-            self.rcontribParameters.toRadString(),
-            self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputFile.toRadString())
-        )
+        if self.outputFile.toRadString().strip():
+            radString = "%s %s %s < %s > %s" % (
+                self.normspace(os.path.join(self.radbinPath, "rcontrib")),
+                self.rcontribParameters.toRadString(),
+                self.normspace(self.octreeFile.toRadString()),
+                self.normspace(self.pointsFile.toRadString()),
+                self.normspace(self.outputFile.toRadString())
+            )
+        elif not str(self.rcontribParameters.outputFilenameFormat) == 'None':
+            # image-based daylight coefficient - order matters
+            mod = str(self.rcontribParameters.modFile)
+            out = str(self.rcontribParameters.outputFilenameFormat)
+            self.rcontribParameters.modFile = None
+            self.rcontribParameters.outputFilenameFormat = None
+
+            radString = "%s %s < %s -o %s -M %s %s" % (
+                self.normspace(os.path.join(self.radbinPath, "rcontrib")),
+                self.rcontribParameters.toRadString(),
+                self.normspace(self.pointsFile.toRadString()),
+                out, mod,
+                self.normspace(self.octreeFile.toRadString())
+            )
+        else:
+            radString = "%s %s %s < %s" % (
+                self.normspace(os.path.join(self.radbinPath, "rcontrib")),
+                self.rcontribParameters.toRadString(),
+                self.normspace(self.octreeFile.toRadString()),
+                self.normspace(self.pointsFile.toRadString())
+            )
 
         # make sure input files are set by user
         self.checkInputFiles(radString)

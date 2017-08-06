@@ -9,14 +9,16 @@ class CertainIlluminanceLevel(CIE):
         illuminanceValue: Desired illuminance value in lux
         skyType: An integer between 0..1 to indicate CIE Sky Type.
             [0] cloudy sky, [1] uniform sky (default: 0)
-
+        suffix: An optional suffix for sky name. The suffix will be added at the
+            end of the standard name. Use this input to customize the new and
+            avoid sky being overwritten by other skymatrix components.
     Usage:
 
         sky = CertainIlluminanceLevel(1000)
         sky.execute("c:/ladybug/1000luxsky.sky")
     """
 
-    def __init__(self, illuminanceValue=10000, skyType=0):
+    def __init__(self, illuminanceValue=10000, skyType=0, suffix=None):
         """Create sky.
 
         Attributes:
@@ -25,7 +27,7 @@ class CertainIlluminanceLevel(CIE):
                 [0] cloudy sky, [1] uniform sky (default: 0)
         """
         skyType = skyType or 0
-        CIE.__init__(self, skyType=skyType + 4)
+        CIE.__init__(self, skyType=skyType + 4, suffix=suffix)
         self.illuminanceValue = illuminanceValue or 10000
 
     @property
@@ -36,7 +38,9 @@ class CertainIlluminanceLevel(CIE):
     @property
     def name(self):
         """Sky default name."""
-        return "%s_%d" % (self.__class__.__name__, int(self.illuminanceValue))
+        return "%s_%d%s" % (
+            self.__class__.__name__, int(self.illuminanceValue),
+            '_{}'.format(self.suffix) if self.suffix else '')
 
     @property
     def illuminanceValue(self):
@@ -60,6 +64,12 @@ class CertainIlluminanceLevel(CIE):
             skyType=self.skyType
         )
         return cmd
+
+    def duplicate(self):
+        """Duplicate class."""
+        return CertainIlluminanceLevel(
+            self.illuminanceValue, self.skyType - 4, self.suffix
+        )
 
 
 if __name__ == "__main__":

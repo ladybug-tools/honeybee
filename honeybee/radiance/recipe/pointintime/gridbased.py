@@ -132,7 +132,7 @@ class GridBased(GenericGridBased):
             '%s is not a valid Honeybee sky.' % type(newSky)
         assert newSky.isPointInTime, \
             TypeError('Sky must be one of the point-in-time skies.')
-        self._sky = newSky
+        self._sky = newSky.duplicate()
 
     @property
     def radianceParameters(self):
@@ -242,18 +242,24 @@ class GridBased(GenericGridBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
+        print('Unloading the current values from the analysis grids.')
+        for ag in self.analysisGrids:
+            ag.unload()
+
         sky = self.sky
         dt = DateTime(sky.month, sky.day, int(sky.hour),
                       int(60 * (sky.hour - int(sky.hour))))
 
         rf = self._resultFiles
         startLine = 0
+        mode = 179 if self.simulationType == 1 else 0
+
         for count, analysisGrid in enumerate(self.analysisGrids):
             if count:
                 startLine += len(self.analysisGrids[count - 1])
 
             analysisGrid.setValuesFromFile(
-                rf, (int(dt.hoy),), startLine=startLine, header=False
+                rf, (int(dt.hoy),), startLine=startLine, header=False, mode=mode
             )
 
         return self.analysisGrids

@@ -6,9 +6,9 @@ from ..command.gendaymtx import Gendaymtx
 from ..sky.sunmatrix import SunMatrix
 from ..command.oconv import Oconv
 from ..command.rcontrib import Rcontrib
-from ..command.vwrays import Vwrays, VwraysParameters
+from ..command.vwrays import Vwrays
 from .recipeutil import glzSrfTowinGroup
-from .parameters import getRadianceParametersGridBased
+from .parameters import getRadianceParametersGridBased, getRadianceParametersImageBased
 
 import os
 from collections import namedtuple
@@ -113,7 +113,8 @@ def getCommandsSky(projectFolder, skyMatrix, reuse=True):
         raise TypeError('You must use a SkyMatrix to generate the sky.')
 
     # # 2.2. Create sun matrix
-    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType)
+    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType,
+                   suffix=skyMatrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(projectFolder, 'sky'), reuse=reuse)
 
@@ -156,7 +157,8 @@ def getCommandsRadiationSky(projectFolder, skyMatrix, reuse=True):
     skyMatrix.mode = 0
 
     # # 2.2. Create sun matrix
-    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType)
+    sm = SunMatrix(skyMatrix.wea, skyMatrix.north, skyMatrix.hoys, skyMatrix.skyType,
+                   suffix=skyMatrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(projectFolder, 'sky'), reuse=reuse)
 
@@ -529,27 +531,22 @@ def _getCommandsDaylightCoeff(
     return commands, resultFiles
 
 
-def viewSamplingCommands(projectFolder, view, viewFile, vwraysParameters=None):
+def imageBasedViewSamplingCommands(projectFolder, view, viewFile, vwraysParameters):
     """Return VWrays command for calculating view coefficient matrix."""
     # calculate view dimensions
     vwrDimFile = os.path.join(
-        projectFolder, r'view\\{}.dimensions'.format(view.name))
+        projectFolder, r'view\\{}.dim'.format(view.name))
     x, y = view.getViewDimension()
     with open(vwrDimFile, 'wb') as vdfile:
         vdfile.write('-x %d -y %d -ld-\n' % (x, y))
 
     # calculate sampling for each view
-    if not vwraysParameters:
-        vwrParaSamp = VwraysParameters()
-        vwrParaSamp.xResolution = view.xRes
-        vwrParaSamp.yResolution = view.yRes
-        vwrParaSamp.samplingRaysCount = 6  # 9
-        vwrParaSamp.jitter = 0.7
-    else:
-        vwrParaSamp = vwraysParameters
+    # the value will be different for each view
+    vwraysParameters.xResolution = view.xRes
+    vwraysParameters.yResolution = view.yRes
 
     vwrSamp = Vwrays()
-    vwrSamp.vwraysParameters = vwrParaSamp
+    vwrSamp.vwraysParameters = vwraysParameters
     vwrSamp.viewFile = os.path.relpath(viewFile, projectFolder)
     vwrSamp.outputFile = r'view\\{}.rays'.format(view.name)
     vwrSamp.outputDataFormat = 'f'
@@ -557,13 +554,37 @@ def viewSamplingCommands(projectFolder, view, viewFile, vwraysParameters=None):
     return vwrDimFile, vwrSamp
 
 
-def viewCoeffMatrixCommands(
-        outputName, receiver, radFiles, sender, viewInfoFile, viewFile, viewRaysFile,
-        samplingRaysCount=None, rfluxmtxParameters=None):
+def imagedBasedSunCoeffMatrixCommands(
+        outputFilenameFormat, view, viewRaysFile, sceneFiles, analemma, sunlist):
+    # output, pointFile, sceneFiles, analemma, sunlist, irradianceCalc
+
+    octree = Oconv()
+    octree.sceneFiles = list(sceneFiles) + [analemma]
+    octree.outputFile = 'analemma.oct'
+
+    # Creating sun coefficients
+    # -ab 0 -i -ffc -dj 0 -dc 1 -dt 0
+    rctbParam = getRadianceParametersImageBased(0, 1).smtx
+    rctbParam.xDimension, rctbParam.yDimension = view.getViewDimension()
+    rctbParam.modFile = sunlist
+    rctbParam.outputDataFormat = 'fc'
+    rctbParam.irradianceCalc = None  # -I
+    rctbParam.iIrradianceCalc = True  # -i
+    rctbParam.outputFilenameFormat = outputFilenameFormat
+
+    rctb = Rcontrib()
+    rctb.octreeFile = octree.outputFile
+    rctb.pointsFile = viewRaysFile
+    rctb.rcontribParameters = rctbParam
+    return (octree, rctb)
+
+
+def imageBasedViewCoeffMatrixCommands(
+        receiver, radFiles, sender, viewInfoFile, viewFile, viewRaysFile,
+        rfluxmtxParameters=None):
     """Returns radiance commands to create coefficient matrix.
 
     Args:
-        outputName: Output file name.
         receiver: A radiance file to indicate the receiver. In view matrix it will be the
         window group and in daylight matrix it will be the sky.
         radFiles: A collection of Radiance files that should be included in the scene.
@@ -584,8 +605,6 @@ def viewCoeffMatrixCommands(
     rflux.verbose = True
     rflux.viewInfoFile = viewInfoFile
     rflux.viewRaysFile = viewRaysFile
-    if samplingRaysCount:
-        rflux.samplingRaysCount = samplingRaysCount  # 9
 
     return rflux
 
@@ -680,29 +699,29 @@ def matrixCalculation(output, vMatrix=None, tMatrix=None, dMatrix=None, skyMatri
     return dct
 
 
-def viewMatrixCalculation(output, view, wg, state, skyMatrix, extention=''):
-    ext = extention
+def imageBasedViewMatrixCalculation(view, wg, state, skyMatrix, extention='',
+                                    digits=3):
     dct = Dctimestep()
     if os.name == 'nt':
         dct.daylightCoeffSpec = \
-            'result\\matrix\\{}_{}_{}_%%03d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            'result\\dc\\{}\\%%0{}d_{}..{}..{}.hdr'.format(
+                extention, digits, view.name, wg.name, state.name)
     else:
         dct.daylightCoeffSpec = \
-            'result\\matrix\\{}_{}_{}_%03d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            'result\\dc\\{}\\%0{}d_{}..{}..{}.hdr'.format(
+                extention, digits, view.name, wg.name, state.name)
 
     dct.skyVectorFile = skyMatrix
 
     # sky matrix is annual
     if os.name == 'nt':
         dct.dctimestepParameters.outputDataFormat = \
-            ' result\\{}_{}_{}_%%04d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            ' result\\hdr\\{}\\%%04d_{}..{}..{}.hdr'.format(
+                extention, view.name, wg.name, state.name)
     else:
         dct.dctimestepParameters.outputDataFormat = \
-            ' result\\{}_{}_{}_%04d.hdr'.format(
-                view.name, wg.name, state.name + '_' + ext if ext else state.name)
+            ' result\\hdr\\{}\\%04d_{}..{}..{}.hdr'.format(
+                extention, view.name, wg.name, state.name)
 
     return dct
 
@@ -751,11 +770,6 @@ def sunCoeffMatrixCommands(output, pointFile, sceneFiles, analemma, sunlist,
     rctb.pointsFile = pointFile
     rctb.rcontribParameters = rctbParam
     return (octree, rctb)
-
-
-def viewSunCoeffMatrixCommands(output, view):
-    # raise NotImplementedError()
-    return ''
 
 
 def finalMatrixAddition(skymtx, skydirmtx, sunmtx, output):

@@ -7,6 +7,7 @@ from .analysispoint import AnalysisPoint
 
 import os
 from itertools import izip
+from collections import namedtuple, OrderedDict
 
 
 class EmptyFileError(Exception):
@@ -29,7 +30,8 @@ class AnalysisGrid(object):
         analysisPoints: A collection of analysis points.
     """
 
-    __slots__ = ('_analysisPoints', '_name', '_sources', '_wgroups')
+    __slots__ = ('_analysisPoints', '_name', '_sources', '_wgroups', '_directFiles',
+                 '_totalFiles')
 
     def __init__(self, analysisPoints, name=None, windowGroups=None):
         """Initialize a AnalysisPointGroup.
@@ -44,7 +46,7 @@ class AnalysisGrid(object):
         self.name = name
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
-        self._sources = {}
+        self._sources = OrderedDict()
 
         if windowGroups:
             self._wgroups = tuple(wg.name for wg in windowGroups)
@@ -52,10 +54,12 @@ class AnalysisGrid(object):
             self._wgroups = ()
 
         for ap in analysisPoints:
-            assert isinstance(ap, AnalysisPoint), \
+            assert hasattr(ap, '_dir'), \
                 '{} is not an AnalysisPoint.'.format(ap)
 
         self._analysisPoints = analysisPoints
+        self._directFiles = []  # list of results files
+        self._totalFiles = []  # list of results files
 
     @classmethod
     def fromPointsAndVectors(cls, points, vectors=None, name=None, windowGroups=None):
@@ -141,9 +145,9 @@ class AnalysisGrid(object):
 
     @property
     def hasDirectValues(self):
-        """Check if direct values are loaded for this point.
+        """Check if direct values are available for this point.
 
-        In some cases and based on the recipe only total values are available.
+        In point-in-time and 3phase recipes only total values are available.
         """
         return self.analysisPoints[0].hasDirectValues
 
@@ -156,6 +160,29 @@ class AnalysisGrid(object):
     def isResultsPointInTime(self):
         """Return True if the grid has the results only for an hour."""
         return len(self.hoys) == 1
+
+    @property
+    def resultFiles(self):
+        """Return result files as a list [[total files], [direct files]]."""
+        return self._totalFiles, self._directFiles
+
+    def addResultFiles(self, filePath, hoys, startLine=None, isDirect=False,
+                       header=True, mode=0):
+        """Add new result files to grid.
+
+        Use this methods if you want to get annual metrics without loading the values
+        for each point. This method is only useful for cases with no window groups and
+        dynamic blind states. After adding the files you can call 'annualMetrics' method.
+        """
+        ResultFile = namedtuple(
+            'ResultFile', ('path', 'hoys', 'startLine', 'header', 'mode'))
+
+        inf = ResultFile(filePath, hoys, startLine, header, mode)
+
+        if isDirect:
+            self._directFiles.append(inf)
+        else:
+            self._totalFiles.append(inf)
 
     def setValues(self, hoys, values, source=None, state=None, isDirect=False):
 
@@ -208,15 +235,23 @@ class AnalysisGrid(object):
             isDirect: A Boolean to declare if the results is direct illuminance
                 (default: False).
             header: A Boolean to declare if the file has header (default: True).
+            mode: 0 > load the values 1 > load values as binary. Any non-zero value
+                will be 1. This is useful for studies such as sunlight hours. 2 >
+                load the values divided by mode number. Use this mode for daylight
+                factor or radiation analysis.
         """
 
-        assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
+        if os.path.getsize(filePath) < 2:
+            raise EmptyFileError(filePath)
+
+        st = startLine or 0
 
         with open(filePath, 'rb') as inf:
             if header:
-                inf, hoys = self.parseHeader(inf, startLine, hoys, checkPointCount)
+                inf, hoys = self.parseHeader(inf, st, hoys, checkPointCount)
 
-            st = startLine or 0
+            self.addResultFiles(filePath, hoys, st, isDirect, header, mode)
+
             for i in xrange(st):
                 inf.next()
 
@@ -240,7 +275,7 @@ class AnalysisGrid(object):
 
     def setCoupledValuesFromFile(
             self, totalFilePath, directFilePath, hoys=None, source=None, state=None,
-            startLine=None, header=True, checkPointCount=True):
+            startLine=None, header=True, checkPointCount=True, mode=0):
         """Load direct and total values for test points from two files.
 
         Args:
@@ -251,27 +286,50 @@ class AnalysisGrid(object):
             state: Name of the state.
             startLine: Number of start lines after the header from 0 (default: 0).
             header: A Boolean to declare if the file has header (default: True).
+            mode: 0 > load the values 1 > load values as binary. Any non-zero value
+                will be 1. This is useful for studies such as sunlight hours. 2 >
+                load the values divided by mode number. Use this mode for daylight
+                factor or radiation analysis.
         """
 
         for filePath in (totalFilePath, directFilePath):
-            assert os.path.getsize(filePath) > 0, EmptyFileError(filePath)
+            if os.path.getsize(filePath) < 2:
+                raise EmptyFileError(filePath)
+
+        st = startLine or 0
 
         with open(totalFilePath, 'rb') as inf, open(directFilePath, 'rb') as dinf:
             if header:
-                inf, hoys = self.parseHeader(inf, startLine, hoys, checkPointCount)
-                dinf, hoys = self.parseHeader(dinf, startLine, hoys, checkPointCount)
+                inf, hoys = self.parseHeader(inf, st, hoys, checkPointCount)
+                dinf, hoys = self.parseHeader(dinf, st, hoys, checkPointCount)
 
-            st = startLine or 0
+            self.addResultFiles(totalFilePath, hoys, st, False, header, mode)
+            self.addResultFiles(directFilePath, hoys, st, True, header, mode)
+
             for i in xrange(st):
                 inf.next()
                 dinf.next()
 
             end = len(self._analysisPoints)
 
-            coupledValues = (
-                tuple((int(float(r)), int(float(d))) for r, d in
-                      zip(inf.next().split(), dinf.next().split()))
-                for count in xrange(end))
+            if mode == 0:
+                coupledValues = (
+                    tuple((int(float(r)), int(float(d))) for r, d in
+                          izip(inf.next().split(), dinf.next().split()))
+                    for count in xrange(end))
+            elif mode == 1:
+                # binary 0-1
+                coupledValues = (tuple(
+                    (int(float(1 if float(r) > 0 else 0)),
+                     int(float(1 if float(d) > 0 else 0)))
+                    for r, d in izip(inf.next().split(), dinf.next().split()))
+                    for count in xrange(end))
+            else:
+                # divide values by mode (useful for daylight factor calculation)
+                coupledValues = (
+                    tuple((int(float(r) / mode), int(float(d) / mode)) for r, d in
+                          izip(inf.next().split(), dinf.next().split()))
+                    for count in xrange(end))
 
             # assign the values to points
             for count, hourlyValues in enumerate(coupledValues):
@@ -289,6 +347,9 @@ class AnalysisGrid(object):
         Returns:
             total, direct values.
         """
+        if self.digitSign == 1:
+            self.loadValuesFromFiles()
+
         return (p.combinedValueById(hoy, blindsStateIds) for p in self)
 
     def combinedValuesById(self, hoys=None, blindsStateIds=None):
@@ -302,6 +363,9 @@ class AnalysisGrid(object):
         Returns:
             Return a generator for (total, direct) values.
         """
+        if self.digitSign == 1:
+            self.loadValuesFromFiles()
+
         return (p.combinedValueById(hoys, blindsStateIds) for p in self)
 
     def sumValuesById(self, hoys=None, blindsStateIds=None):
@@ -317,6 +381,9 @@ class AnalysisGrid(object):
         Returns:
             Return a collection of sum values as (total, direct) values.
         """
+        if self.digitSign == 1:
+            self.loadValuesFromFiles()
+
         return (p.sumValuesById(hoys, blindsStateIds) for p in self)
 
     def maxValuesById(self, hoys=None, blindsStateIds=None):
@@ -330,6 +397,9 @@ class AnalysisGrid(object):
         Returns:
             Return a tuple for sum of (total, direct) values.
         """
+        if self.digitSign == 1:
+            self.loadValuesFromFiles()
+
         return (p.maxValuesById(hoys, blindsStateIds) for p in self)
 
     def annualMetrics(self, DAThreshhold=None, UDIMinMax=None, blindsStateIds=None,
@@ -350,24 +420,75 @@ class AnalysisGrid(object):
             Daylight autonomy, Continious daylight autonomy, Useful daylight illuminance,
             Less than UDI, More than UDI
         """
-        if not self.hasValues:
+        resultsLoaded = True
+        if not self.hasValues and not self.resultFiles[0]:
             raise ValueError('No values are assigned to this analysis grid.')
+        elif not self.hasValues:
+            # results are not loaded but are available
+            assert len(self.resultFiles[0]) == 1, \
+                ValueError(
+                    'Annual recipe can currently only handle '
+                    'a single merged result file.'
+            )
+            resultsLoaded = False
+            print('Loading the results from result files.')
 
         res = ([], [], [], [], [])
 
         DAThreshhold = DAThreshhold or 300.0
         UDIMinMax = UDIMinMax or (100, 3000)
-        hours = self.hoys
+        hoys = self.hoys
         occSchedule = occSchedule or Schedule.fromWorkdayHours()
-        blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hours)
 
-        for sensor in self.analysisPoints:
-            for c, r in enumerate(sensor.annualMetrics(DAThreshhold,
-                                                       UDIMinMax,
-                                                       blindsStateIds,
-                                                       occSchedule
-                                                       )):
-                res[c].append(r)
+        if resultsLoaded:
+            blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hoys)
+
+            for sensor in self.analysisPoints:
+                for c, r in enumerate(sensor.annualMetrics(DAThreshhold,
+                                                           UDIMinMax,
+                                                           blindsStateIds,
+                                                           occSchedule
+                                                           )):
+                    res[c].append(r)
+        else:
+            # This is a method for annual recipe to load the results line by line
+            # which unlike the other method doesn't load all the values to the memory
+            # at once.
+            blindsStateIds = [[0] * len(self.sources)] * len(hoys)
+            calculateAnnualMetrics = self.analysisPoints[0]._calculateAnnualMetrics
+
+            for fileData in self.resultFiles[0]:
+                filePath, hoys, startLine, header, mode = fileData
+
+                # read the results line by line and caluclate the values
+                if os.path.getsize(filePath) < 2:
+                    raise EmptyFileError(filePath)
+
+                assert mode == 0, \
+                    TypeError(
+                        'Annual results can only be calculated from '
+                        'illuminance studies.')
+
+                st = startLine or 0
+
+                with open(filePath, 'rb') as inf:
+                    if header:
+                        inf, _ = self.parseHeader(inf, st, hoys, False)
+
+                    for i in xrange(st):
+                        inf.next()
+
+                    end = len(self._analysisPoints)
+
+                    # load one line at a time
+                    for count in xrange(end):
+                        values = (int(float(r)) for r in inf.next().split())
+                        for c, r in enumerate(
+                            calculateAnnualMetrics(
+                                values, hoys, DAThreshhold, UDIMinMax,
+                                blindsStateIds, occSchedule)):
+
+                            res[c].append(r)
 
         return res
 
@@ -378,19 +499,58 @@ class AnalysisGrid(object):
         Args:
             targetArea: Minimum target area percentage for this grid (default: 55)
         """
-        if not self.hasValues:
+        resultsLoaded = True
+        if not self.hasValues and not self.resultFiles[0]:
             raise ValueError('No values are assigned to this analysis grid.')
+        elif not self.hasValues:
+            # results are not loaded but are available
+            assert len(self.resultFiles[0]) == 1, \
+                ValueError(
+                    'Annual recipe can currently only handle '
+                    'a single merged result file.'
+            )
+            resultsLoaded = False
+            print('Loading the results from result files.')
 
         DAThreshhold = DAThreshhold or 300.0
-        hours = self.hoys
+        hoys = self.hoys
         occSchedule = occSchedule or Schedule.fromWorkdayHours()
-        blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hours)
 
-        # get the annual results for each sensor
-        hourlyResults = (
-            sensor.combinedValuesById(hours, blindsStateIds)
-            for sensor in self.analysisPoints
-        )
+        if resultsLoaded:
+            blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hoys)
+
+            # get the annual results for each sensor
+            hourlyResults = (
+                sensor.combinedValuesById(hoys, blindsStateIds)
+                for sensor in self.analysisPoints
+            )
+        else:
+            blindsStateIds = [[0] * len(self.sources)] * len(hoys)
+            for fileData in self.resultFiles[0]:
+                filePath, hoys, startLine, header, mode = fileData
+
+                # read the results line by line and caluclate the values
+                if os.path.getsize(filePath) < 2:
+                    raise EmptyFileError(filePath)
+
+                assert mode == 0, \
+                    TypeError(
+                        'Annual results can only be calculated from '
+                        'illuminance studies.')
+
+                st = startLine or 0
+
+                with open(filePath, 'rb') as inf:
+                    if header:
+                        inf, _ = self.parseHeader(inf, st, hoys, False)
+
+                    for i in xrange(st):
+                        inf.next()
+
+                    end = len(self._analysisPoints)
+                    hourlyResults = \
+                        tuple(tuple((int(float(r)), None) for r in inf.next().split())
+                              for count in xrange(end))
 
         # iterate through the results
         # find minimum number of points to meet the targetArea
@@ -402,7 +562,7 @@ class AnalysisGrid(object):
 
         metHours = 0
         problematicHours = []
-        for hr, hrv in izip(hours, izip(*hourlyResults)):
+        for hr, hrv in izip(hoys, izip(*hourlyResults)):
             if hr not in occSchedule:
                 continue
             count = sum(1 if res[0] > DAThreshhold else 0 for res in hrv)
@@ -436,24 +596,80 @@ class AnalysisGrid(object):
             Success as a Boolean, ASE values for each point, Percentage area,
             Problematic points, Problematic hours for each point
         """
-        if not self.hasDirectValues:
-            raise ValueError('Direct values are not loaded to calculate ASE.')
+        resultsLoaded = True
+        if not self.hasDirectValues and not self.resultFiles[1]:
+            raise ValueError(
+                'Direct values are not available to calculate ASE.\nIn most of the cases'
+                ' this is because you are using a point in time recipe or the three-'
+                'phase recipe. You should use one of the daylight coefficient based '
+                'recipes or the 5 phase recipe instead.')
+        elif not self.hasDirectValues:
+            # results are not loaded but are available
+            assert len(self.resultFiles[1]) == 1, \
+                ValueError(
+                    'Annual recipe can currently only handle '
+                    'a single merged result file.'
+            )
+            resultsLoaded = False
+            print('Loading the results from result files.')
 
         res = ([], [], [])
         threshhold = threshhold or 1000
         targetHours = targetHours or 250
         targetArea = targetArea or 10
-        hours = self.hoys
-        occSchedule = occSchedule or set(hours)
-        blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hours)
+        hoys = self.hoys
+        occSchedule = occSchedule or set(hoys)
 
-        for sensor in self.analysisPoints:
-            for c, r in enumerate(sensor.annualSolarExposure(threshhold,
-                                                             blindsStateIds,
-                                                             occSchedule,
-                                                             targetHours
-                                                             )):
-                res[c].append(r)
+        if resultsLoaded:
+            blindsStateIds = blindsStateIds or [[0] * len(self.sources)] * len(hoys)
+
+            for sensor in self.analysisPoints:
+                for c, r in enumerate(sensor.annualSolarExposure(threshhold,
+                                                                 blindsStateIds,
+                                                                 occSchedule,
+                                                                 targetHours
+                                                                 )):
+                    res[c].append(r)
+        else:
+            # This is a method for annual recipe to load the results line by line
+            # which unlike the other method doesn't load all the values to the memory
+            # at once.
+            blindsStateIds = [[0] * len(self.sources)] * len(hoys)
+            calculateAnnualSolarExposure = \
+                self.analysisPoints[0]._calculateAnnualSolarExposure
+
+            for fileData in self.resultFiles[1]:
+                filePath, hoys, startLine, header, mode = fileData
+
+                # read the results line by line and caluclate the values
+                if os.path.getsize(filePath) < 2:
+                    raise EmptyFileError(filePath)
+
+                assert mode == 0, \
+                    TypeError(
+                        'Annual results can only be calculated from '
+                        'illuminance studies.')
+
+                st = startLine or 0
+
+                with open(filePath, 'rb') as inf:
+                    if header:
+                        inf, _ = self.parseHeader(inf, st, hoys, False)
+
+                    for i in xrange(st):
+                        inf.next()
+
+                    end = len(self._analysisPoints)
+
+                    # load one line at a time
+                    for count in xrange(end):
+                        values = (int(float(r)) for r in inf.next().split())
+                        for c, r in enumerate(
+                            calculateAnnualSolarExposure(
+                                values, hoys, threshhold, blindsStateIds, occSchedule,
+                                targetHours)):
+
+                            res[c].append(r)
 
         # calculate ASE for the grid
         ap = self.analysisPoints  # create a local copy of points for better performance
@@ -487,6 +703,67 @@ class AnalysisGrid(object):
                 of sources.
         """
         return self.analysisPoints[0].parseBlindStates(blindsStateIds)
+
+    def loadValuesFromFiles(self):
+        """Load grid values from self.resultFiles."""
+        # remove old results
+        for ap in self._analysisPoints:
+            ap._sources = OrderedDict()
+            ap._values = []
+        rFiles = self.resultFiles[0][:]
+        dFiles = self.resultFiles[1][:]
+        self._totalFiles = []
+        self._directFiles = []
+        # pass
+        if rFiles and dFiles:
+            # both results are available
+            for rf, df in izip(rFiles, dFiles):
+                rfPath, hoys, startLine, header, mode = rf
+                dfPath, hoys, startLine, header, mode = df
+                fn = os.path.split(rfPath)[-1][:-4].split("..")
+                source = fn[-2]
+                state = fn[-1]
+                print(
+                    '\nloading total and direct results for {} AnalysisGrid'
+                    ' from {}::{}\n{}\n{}\n'.format(
+                        self.name, source, state, rfPath, dfPath))
+                self.setCoupledValuesFromFile(
+                    rfPath, dfPath, hoys, source, state, startLine, header,
+                    False, mode
+                )
+        elif rFiles:
+            for rf in rFiles:
+                rfPath, hoys, startLine, header, mode = rf
+                fn = os.path.split(rfPath)[-1][:-4].split("..")
+                source = fn[-2]
+                state = fn[-1]
+                print('\nloading the results for {} AnalysisGrid form {}::{}\n{}\n'
+                      .format(self.name, source, state, rfPath))
+                self.setValuesFromFile(
+                    rf, hoys, source, state, startLine, isDirect=False,
+                    header=header, checkPointCount=False, mode=mode
+                )
+        elif dFiles:
+            for rf in dFiles:
+                rfPath, hoys, startLine, header, mode = rf
+                fn = os.path.split(rfPath)[-1][:-4].split("..")
+                source = fn[-2]
+                state = fn[-1]
+                print('\nloading the results for {} AnalysisGrid form {}::{}\n{}\n'
+                      .format(self.name, source, state, rfPath))
+                self.setValuesFromFile(
+                    rf, hoys, source, state, startLine, isDirect=True,
+                    header=header, checkPointCount=False, mode=mode
+                )
+
+    def unload(self):
+        """Remove all the sources and values from analysisPoints."""
+        self._totalFiles = []
+        self._directFiles = []
+
+        for ap in self._analysisPoints:
+            ap._sources = OrderedDict()
+            ap._values = []
 
     def duplicate(self):
         """Duplicate AnalysisGrid."""
@@ -548,12 +825,35 @@ class AnalysisGrid(object):
         return self.toRadString()
 
     @property
+    def digitSign(self):
+        if not self.hasValues:
+            if len(self.resultFiles[0]) + len(self.resultFiles[1]) == 0:
+                # only x, y, z datat is available
+                return 0
+            else:
+                # results are available but are not loaded yet
+                return 1
+        elif self.isResultsPointInTime:
+            # results is loaded for a single hour
+            return 2
+        else:
+            # results is loaded for multiple hours
+            return 3
+
+    @property
     def _sign(self):
         if not self.hasValues:
-            return '[.]'
+            if len(self.resultFiles[0]) + len(self.resultFiles[1]) == 0:
+                # only x, y, z datat is available
+                return '[.]'
+            else:
+                # results are available but are not loaded yet
+                return '[/]'
         elif self.isResultsPointInTime:
+            # results is loaded for a single hour
             return '[+]'
         else:
+            # results is loaded for multiple hours
             return '[*]'
 
     def __repr__(self):

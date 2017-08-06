@@ -16,9 +16,15 @@ class SkyMatrix(RadianceSky):
             (Default: 0).
         hoys: The list of hours for generating the sky matrix (Default: 0..8759).
         mode: Sky mode 0: total, 1: direct-only, 2: diffuse-only (Default: 0).
+        suffix: An optional suffix for sky name. The suffix will be added at the
+            end of the standard name. Use this input to customize the new and
+            avoid sky being overwritten by other skymatrix components.
     """
 
-    def __init__(self, wea, skyDensity=1, north=0, hoys=None, mode=0):
+    __slots__ = ('_wea', 'hoys', '_skyType', '_skyMatrixParameters',
+                 '_mode', 'suffix', 'north')
+
+    def __init__(self, wea, skyDensity=1, north=0, hoys=None, mode=0, suffix=None):
         """Create sky."""
         RadianceSky.__init__(self)
         self.wea = wea
@@ -29,11 +35,13 @@ class SkyMatrix(RadianceSky):
         self.north = north
         self.skyDensity = skyDensity
         self.mode = mode
+        self.suffix = suffix or ''
 
     @classmethod
-    def fromEpwFile(cls, epwFile, skyDensity=1, north=0, hoys=None, mode=0):
+    def fromEpwFile(cls, epwFile, skyDensity=1, north=0, hoys=None, mode=0, suffix=None):
         """Create sky from an epw file."""
-        return cls(Wea.fromEpwFile(epwFile), skyDensity, north, hoys, mode)
+        return cls(Wea.fromEpwFile(epwFile), skyDensity, north, hoys, mode,
+                   suffix=suffix)
 
     @property
     def isSkyMatrix(self):
@@ -102,10 +110,11 @@ class SkyMatrix(RadianceSky):
     @property
     def name(self):
         """Sky default name."""
-        return "skymtx_{}_r{}_{}_{}_{}_{}_{}".format(
+        return "skymtx_{}_r{}_{}_{}_{}_{}_{}{}".format(
             self.skyTypeHumanReadable, self.skyDensity,
             self.mode, self.wea.location.stationId,
-            self.wea.location.latitude, self.wea.location.longitude, self.north
+            self.wea.location.latitude, self.wea.location.longitude, self.north,
+            '_{}'.format(self.suffix) if self.suffix else ''
         )
 
     @property
@@ -117,6 +126,7 @@ class SkyMatrix(RadianceSky):
     def skyType(self, t):
         """Specify 0 for visible radiation, 1 for total solar radiation."""
         self._skyType = t % 2
+        self._skyMatrixParameters.outputType = self._skyType
 
     @property
     def skyTypeHumanReadable(self):
@@ -178,6 +188,13 @@ class SkyMatrix(RadianceSky):
             genday.gendaymtxParameters = self._skyMatrixParameters
             genday.gendaymtxParameters.outputType = self.skyType
             return genday.execute()
+
+    def duplicate(self):
+        """Duplicate this class."""
+        skymtx = SkyMatrix(self.wea, self.skyDensity, self.north, self.hoys,
+                           self.mode, self.suffix)
+        skymtx.skyType = self.skyType
+        return skymtx
 
     def ToString(self):
         """Overwrite .NET ToString method."""

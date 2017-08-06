@@ -41,6 +41,15 @@ DCDEFAULTS = (
      'samplingRaysCount': 1}
 )
 
+IMGDCDEFAULTS = (
+    {'ambientDivisions': 5000, 'ambientBounces': 3, 'limitWeight': 0.000002,
+     'samplingRaysCount': 1},
+    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.67E-07,
+     'samplingRaysCount': 3},
+    {'ambientDivisions': 25000, 'ambientBounces': 6, 'limitWeight': 4E-07,
+     'samplingRaysCount': 6}
+)
+
 # Illuminance based daylight-coefficients
 # Parameter settings explained contextually:
 # Low: Simple room with one or two glazing systems and no furniture.
@@ -140,5 +149,33 @@ def getRadianceParametersImageBased(quality, recType):
     """
     if recType == 0:
         return Parameters(ImageBasedParameters(quality), None, None, None)
+    elif recType == 1:
+        # this is a place holder.
+        # daylight matrix
+        dmtxpar = RfluxmtxParameters(quality=quality)
+        for k, v in IMGDCDEFAULTS[quality].iteritems():
+            setattr(dmtxpar, k, v)
+
+        # sun matrix
+        sunmtxpar = RcontribParameters()
+        for k, v in SMDEFAULTS.iteritems():
+            setattr(sunmtxpar, k, v)
+
+        return Parameters(None, None, dmtxpar, sunmtxpar)
     else:
-        raise NotImplementedError()
+        # view matrix
+        vmtxpar = RfluxmtxParameters(quality=quality)
+        for k, v in VMDEFAULTS[quality].iteritems():
+            setattr(vmtxpar, k, v)
+
+        # daylight matrix
+        dmtxpar = RfluxmtxParameters(quality=quality)
+        for k, v in DMDEFAULTS[quality].iteritems():
+            setattr(dmtxpar, k, v)
+
+        # sun matrix
+        sunmtxpar = RcontribParameters()
+        for k, v in SMDEFAULTS.iteritems():
+            setattr(sunmtxpar, k, v)
+
+        return Parameters(None, vmtxpar, dmtxpar, sunmtxpar)

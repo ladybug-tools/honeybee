@@ -168,7 +168,7 @@ class DaylightCoeffGridBased(GenericGridBased):
             '%s is not a valid Honeybee sky.' % type(newSky)
         assert not newSky.isPointInTime, \
             TypeError('Sky for daylight coefficient recipe must be a sky matrix.')
-        self._skyMatrix = newSky
+        self._skyMatrix = newSky.duplicate()
 
     @property
     def radianceParameters(self):
@@ -300,6 +300,10 @@ class DaylightCoeffGridBased(GenericGridBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
+        print('Unloading the current values from the analysis grids.')
+        for ag in self.analysisGrids:
+            ag.unload()
+
         # results are merged as a single file
         for rf in self._resultFiles:
             fn = os.path.split(rf)[-1][:-4].split("..")
@@ -308,7 +312,7 @@ class DaylightCoeffGridBased(GenericGridBased):
 
             folder, name = os.path.split(rf)
             df = os.path.join(folder, 'sun..%s' % name)
-
+            mode = 179 if self.simulationType == 1 else 0
             startLine = 0
             for count, analysisGrid in enumerate(self.analysisGrids):
                 if count:
@@ -320,7 +324,7 @@ class DaylightCoeffGridBased(GenericGridBased):
                     # total value only
                     analysisGrid.setValuesFromFile(
                         rf, self.skyMatrix.hoys, source, state, startLine=startLine,
-                        header=True, checkPointCount=False
+                        header=True, checkPointCount=False, mode=mode
                     )
                 else:
                     # total and direct values
@@ -331,7 +335,8 @@ class DaylightCoeffGridBased(GenericGridBased):
 
                     analysisGrid.setCoupledValuesFromFile(
                         rf, df, self.skyMatrix.hoys, source, state,
-                        startLine=startLine, header=True, checkPointCount=False
+                        startLine=startLine, header=True, checkPointCount=False,
+                        mode=mode
                     )
 
         return self.analysisGrids

@@ -49,7 +49,7 @@ class RcontribParameters(GridBasedParameters):
             -as 2048 -ar 64 -lr 6 -dt 0.25 -dr 1 -ds 0.25 -dp 256
     """
 
-    def __init__(self, modFile=None, totalPointCount=None):
+    def __init__(self, modFile=None, x=None, y=None, outputFilenameFormat=None):
         """Init paramters."""
         GridBasedParameters.__init__(self)
 
@@ -59,7 +59,17 @@ class RcontribParameters(GridBasedParameters):
         """[-M file] File path to a file with a list of modifiers
         (Default: None)"""
 
-        self.addRadianceNumber('y', 'number of total points or pixels',
-                               attributeName='totalPointCount')
-        self.totalPointCount = totalPointCount
-        """"[-y int] Number of total points in points file."""
+        self.addRadianceNumber('y', 'number of total points or pixels in y direction',
+                               attributeName='yDimension')
+        self.yDimension = y
+        """[-y int] Y dimension of an image or number of total points in points file."""
+
+        self.addRadianceNumber('x', 'number of pixels in x direction',
+                               attributeName='xDimension')
+        self.xDimension = x
+        """[-x int] X dimension of an image."""
+
+        self.addRadianceValue('o', 'output file name format',
+                              attributeName='outputFilenameFormat')
+        self.outputFilenameFormat = outputFilenameFormat
+        """[-0 str] output format e.g. %04f.hdr."""

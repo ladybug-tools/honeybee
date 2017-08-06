@@ -1,11 +1,12 @@
-"""Honeybee PointGroup and TestPointGroup."""
+# """Honeybee PointGroup and TestPointGroup."""
 from __future__ import division
 from ..vectormath.euclid import Point3, Vector3
 from ..schedule import Schedule
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from itertools import izip
 import types
 import copy
+import ladybug.dt as dt
 
 
 class AnalysisPoint(object):
@@ -43,7 +44,7 @@ class AnalysisPoint(object):
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
         # It is set inside _createDataStructure method on setting values.
-        self._sources = {}
+        self._sources = OrderedDict()
 
         # an empty list for values
         # for each source there will be a new list
@@ -197,6 +198,8 @@ class AnalysisPoint(object):
     def longestStateIds(self):
         """Get longest combination between blind states as blindsStateIds."""
         states = tuple(len(s[1]['state']) - 1 for s in self._sources.iteritems())
+        if not states:
+            raise ValueError('This sensor is associated with no dynamic blinds.')
 
         return tuple(tuple(min(s, i) for s in states)
                      for i in range(max(states) + 1))
@@ -361,10 +364,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blindStateId(source, state)
 
-        try:
-            return self._values[sid][stateid][hoy][0]
-        except KeyError:
-            raise ValueError('Invalid hoy input: {}'.format(hoy))
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+        return self._values[sid][stateid][hoy][0]
 
     def directValue(self, hoy, source=None, state=None):
         """Get direct value for an hour of the year."""
@@ -373,12 +376,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blindStateId(source, state)
 
-        try:
-            return self._values[sid][stateid][hoy][1]
-        except KeyError:
-            raise ValueError('Invalid hoy input: {}'.format(hoy))
-        else:
-            self._isDirectLoaded = True
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+        return self._values[sid][stateid][hoy][1]
 
     def values(self, hoys=None, source=None, state=None):
         """Get values for several hours of the year."""
@@ -388,10 +389,12 @@ class AnalysisPoint(object):
         stateid = self.blindStateId(source, state)
 
         hoys = hoys or self.hoys
-        try:
-            return tuple(self._values[sid][stateid][hoy][0] for hoy in hoys)
-        except KeyError as e:
-            raise ValueError('Invalid hoy input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+
+        return tuple(self._values[sid][stateid][hoy][0] for hoy in hoys)
 
     def directValues(self, hoys=None, source=None, state=None):
         """Get direct values for several hours of the year."""
@@ -402,10 +405,11 @@ class AnalysisPoint(object):
 
         hoys = hoys or self.hoys
 
-        try:
-            return tuple(self._values[sid][stateid][hoy][1] for hoy in hoys)
-        except KeyError as e:
-            raise ValueError('Invalid hoy input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+        return tuple(self._values[sid][stateid][hoy][1] for hoy in hoys)
 
     def coupledValue(self, hoy, source=None, state=None):
         """Get total and direct values for an hoy."""
@@ -414,10 +418,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blindStateId(source, state)
 
-        try:
-            return self._values[sid][stateid][hoy]
-        except KeyError:
-            raise ValueError('Invalid hoy input: {}'.format(hoy))
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+        return self._values[sid][stateid][hoy]
 
     def coupledValues(self, hoys=None, source=None, state=None):
         """Get total and direct values for several hours of year."""
@@ -428,10 +432,12 @@ class AnalysisPoint(object):
 
         hoys = hoys or self.hoys
 
-        try:
-            return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
-        except KeyError as e:
-            raise ValueError('Invalid hoy input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+
+        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
 
     def coupledValueById(self, hoy, sourceId=None, stateId=None):
         """Get total and direct values for an hoy."""
@@ -440,10 +446,11 @@ class AnalysisPoint(object):
         # find the state id
         stateid = stateId or 0
 
-        try:
-            return self._values[sid][stateid][hoy]
-        except Exception as e:
-            raise ValueError('Invalid input: {}'.format(e))
+        if hoy not in self._values[sid][stateid]:
+            raise ValueError('Hourly values are not available for {}.'
+                             .format(dt.DateTime.fromHoy(hoy)))
+
+        return self._values[sid][stateid][hoy]
 
     def coupledValuesById(self, hoys=None, sourceId=None, stateId=None):
         """Get total and direct values for several hours of year by source id.
@@ -460,10 +467,12 @@ class AnalysisPoint(object):
 
         hoys = hoys or self.hoys
 
-        try:
-            return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
-        except Exception as e:
-            raise ValueError('Invalid input: {}'.format(e))
+        for hoy in hoys:
+            if hoy not in self._values[sid][stateid]:
+                raise ValueError('Hourly values are not available for {}.'
+                                 .format(dt.DateTime.fromHoy(hoy)))
+
+        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
 
     def combinedValueById(self, hoy, blindsStateIds=None):
         """Get combined value from all sources based on stateId.
@@ -492,10 +501,10 @@ class AnalysisPoint(object):
                 t = 0
                 d = 0
             else:
-                try:
-                    t, d = self._values[sid][stateid][hoy]
-                except Exception as e:
-                    raise ValueError('Invalid input: {}'.format(e))
+                if hoy not in self._values[sid][stateid]:
+                    raise ValueError('Hourly values are not available for {}.'
+                                     .format(dt.DateTime.fromHoy(hoy)))
+                t, d = self._values[sid][stateid][hoy]
 
             try:
                 total += t
@@ -540,10 +549,10 @@ class AnalysisPoint(object):
                     t = 0
                     d = 0
                 else:
-                    try:
-                        t, d = self._values[sid][stateid][hoy]
-                    except Exception as e:
-                        raise ValueError('Invalid input: {}'.format(e))
+                    if hoy not in self._values[sid][stateid]:
+                        raise ValueError('Hourly values are not available for {}.'
+                                         .format(dt.DateTime.fromHoy(hoy)))
+                    t, d = self._values[sid][stateid][hoy]
 
                 try:
                     total += t
@@ -651,20 +660,20 @@ class AnalysisPoint(object):
         dirValues = [None] * hoursCount
         success = [0] * hoursCount
 
-        for h in hoys:
+        for count, h in enumerate(hoys):
             for state in range(len(combIds)):
-                ill, ill_dir = results[state][h]
+                ill, ill_dir = results[state][count]
                 if not self.logic(ill, ill_dir, h, args, kwargs):
-                    blindsIndex[h] = state
-                    illValues[h] = ill
-                    dirValues[h] = ill_dir
+                    blindsIndex[count] = state
+                    illValues[count] = ill
+                    dirValues[count] = ill_dir
                     if state > 0:
-                        success[h] = 1
+                        success[count] = 1
                     break
             else:
-                success[h] = -1
-                illValues[h] = ill
-                dirValues[h] = ill_dir
+                success[count] = -1
+                illValues[count] = ill
+                dirValues[count] = ill_dir
 
         blindsState = tuple(combIds[ids] for ids in blindsIndex)
         return blindsState, blindsIndex, illValues, dirValues, success
@@ -687,41 +696,11 @@ class AnalysisPoint(object):
             Daylight autonomy, Continious daylight autonomy, Useful daylight illuminance,
             Less than UDI, More than UDI
         """
-        DAThreshhold = DAThreshhold or 300.0
-        UDIMinMax = UDIMinMax or (100, 2000)
-        udiMin, udiMax = UDIMinMax
         hours = self.hoys
-        schedule = occSchedule or Schedule.fromWorkdayHours()
-        DA = 0
-        CDA = 0
-        UDI = 0
-        UDI_l = 0
-        UDI_m = 0
-        totalHourCount = len(hours)
         values = tuple(v[0] for v in self.combinedValuesById(hours, blindsStateIds))
-        for h, v in izip(hours, values):
-            if h not in schedule:
-                totalHourCount -= 1
-                continue
-            if v >= DAThreshhold:
-                DA += 1
-                CDA += 1
-            else:
-                CDA += v / DAThreshhold
 
-            if v < udiMin:
-                UDI_l += 1
-            elif v > udiMax:
-                UDI_m += 1
-            else:
-                UDI += 1
-
-        if totalHourCount == 0:
-            raise ValueError('There is 0 hours available in the schedule.')
-
-        return 100 * DA / totalHourCount, 100 * CDA / totalHourCount, \
-            100 * UDI / totalHourCount, 100 * UDI_l / totalHourCount, \
-            100 * UDI_m / totalHourCount
+        return self._calculateAnnualMetrics(
+            values, hours, DAThreshhold, UDIMinMax, blindsStateIds, occSchedule)
 
     def usefulDaylightIlluminance(self, UDIMinMax=None, blindsStateIds=None,
                                   occSchedule=None):
@@ -822,14 +801,21 @@ class AnalysisPoint(object):
             raise ValueError(
                 'Direct values are not loaded. Data is not available to calculate ASE.')
 
+        hoys = self.hoys
+        values = tuple(v[1] for v in self.combinedValuesById(hoys, blindsStateIds))
+        return self._calculateAnnualSolarExposure(
+            values, hoys, threshhold, blindsStateIds, occSchedule, targetHours)
+
+    @staticmethod
+    def _calculateAnnualSolarExposure(
+            values, hoys, threshhold=None, blindsStateIds=None, occSchedule=None,
+            targetHours=None):
         threshhold = threshhold or 1000
         targetHours = targetHours or 250
-        hours = self.hoys
-        schedule = occSchedule or set(hours)
+        schedule = occSchedule or set(hoys)
         ASE = 0
         problematicHours = []
-        values = tuple(v[1] for v in self.combinedValuesById(hours, blindsStateIds))
-        for h, v in izip(hours, values):
+        for h, v in izip(hoys, values):
             if h not in schedule:
                 continue
             if v > threshhold:
@@ -837,6 +823,44 @@ class AnalysisPoint(object):
                 problematicHours.append(h)
 
         return ASE < targetHours, ASE, problematicHours
+
+    @staticmethod
+    def _calculateAnnualMetrics(
+        values, hours, DAThreshhold=None, UDIMinMax=None, blindsStateIds=None,
+            occSchedule=None):
+        totalHourCount = len(hours)
+        udiMin, udiMax = UDIMinMax
+        UDIMinMax = UDIMinMax or (100, 2000)
+        DAThreshhold = DAThreshhold or 300.0
+        schedule = occSchedule or Schedule.fromWorkdayHours()
+        DA = 0
+        CDA = 0
+        UDI = 0
+        UDI_l = 0
+        UDI_m = 0
+        for h, v in izip(hours, values):
+            if h not in schedule:
+                totalHourCount -= 1
+                continue
+            if v >= DAThreshhold:
+                DA += 1
+                CDA += 1
+            else:
+                CDA += v / DAThreshhold
+
+            if v < udiMin:
+                UDI_l += 1
+            elif v > udiMax:
+                UDI_m += 1
+            else:
+                UDI += 1
+
+        if totalHourCount == 0:
+            raise ValueError('There is 0 hours available in the schedule.')
+
+        return 100 * DA / totalHourCount, 100 * CDA / totalHourCount, \
+            100 * UDI / totalHourCount, 100 * UDI_l / totalHourCount, \
+            100 * UDI_m / totalHourCount
 
     @staticmethod
     def parseBlindStates(blindsStateIds):
@@ -862,7 +886,7 @@ class AnalysisPoint(object):
     def unload(self):
         """Unload values and sources."""
         self._values = []
-        self._sources = {}
+        self._sources = OrderedDict()
 
     def duplicate(self):
         """Duplicate the analysis point."""

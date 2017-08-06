@@ -145,11 +145,6 @@ class SkyVector(RadianceSky):
                 '.'.join(str(self.sky.outputFile).split('.')[:-1])
             )
 
-    @property
-    def main(self):
-        """Generate Radiance's line for sky with certain illuminance value."""
-        return " "
-
     # TODO: re-write the method! It's Currently very shaky
     def toRadString(self, workingDir=None, relativePath=None):
         """Return Radiance command line."""

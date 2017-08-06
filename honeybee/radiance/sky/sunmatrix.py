@@ -16,7 +16,10 @@ class SunMatrix(RadianceSky):
         north: An angle in degrees between 0-360 to indicate north direction
             (Default: 0).
         hoys: The list of hours for generating the sky matrix (Default: 0..8759)
-
+        skyType: Specify 0 for visible radiation, 1 for total solar radiation.
+        suffix: An optional suffix for sky name. The suffix will be added at the
+            end of the standard name. Use this input to customize the new and
+            avoid sky being overwritten by other skymatrix components.
     Usage:
 
         from honeybee.radiance.sky.sunmatrix import SunMatrix
@@ -25,16 +28,17 @@ class SunMatrix(RadianceSky):
         analemma, sunlist, sunmtxfile = sunmtx.execute('c:/ladybug')
     """
 
-    def __init__(self, wea, north=0, hoys=None, skyType=0):
+    def __init__(self, wea, north=0, hoys=None, skyType=0, suffix=None):
         """Create sun matrix."""
         RadianceSky.__init__(self)
         self.wea = wea
         self.north = north
         self.hoys = hoys or range(8760)
         self.skyType = skyType  # set default to 0 for visible radiation
+        self.suffix = suffix or ''
 
     @classmethod
-    def fromEpwFile(cls, epwFile, north=0, hoys=None):
+    def fromEpwFile(cls, epwFile, north=0, hoys=None, suffix=None):
         """Create sun matrix from an epw file."""
         return cls(Wea.fromEpwFile(epwFile), north, hoys)
 
@@ -72,12 +76,13 @@ class SunMatrix(RadianceSky):
     @property
     def name(self):
         """Sky default name."""
-        return "sunmtx_{}_{}_{}_{}_{}".format(
+        return "sunmtx_{}_{}_{}_{}_{}{}".format(
             self.skyTypeHumanReadable,
             self.wea.location.stationId,
             self.wea.location.latitude,
             self.wea.location.longitude,
-            self.north
+            self.north,
+            '_{}'.format(self.suffix) if self.suffix else ''
         )
 
     @property
@@ -227,6 +232,10 @@ class SunMatrix(RadianceSky):
             sunMtx.write('\n')
 
         return fp, lfp, mfp
+
+    def duplicate(self):
+        """Duplicate this class."""
+        return SunMatrix(self.wea, self.north, self.hoys, self.skyType, self.suffix)
 
     def toRadString(self, workingDir, writeHours=False):
         """Get the radiance command line as a string."""

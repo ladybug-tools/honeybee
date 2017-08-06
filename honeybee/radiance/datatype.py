@@ -128,6 +128,9 @@ class RadianceDefault(object):
             if instance:
                 setattr(instance, self._name,
                         RadianceDataType(self._name, value, self._isJoined))
+        else:
+            setattr(instance, self._name,
+                    RadianceDataType(self._name, None, self._isJoined))
 
     def __repr__(self):
         """Value representation."""

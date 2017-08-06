@@ -296,7 +296,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         # 2.1.add sun list to modifiers
         self._radianceParameters.modFile = self.relpath(sunsList, projectFolder)
-        self._radianceParameters.totalPointCount = self.totalPointCount
+        self._radianceParameters.yDimension = self.totalPointCount
 
         # 3.write batch file
         if header:
@@ -335,6 +335,10 @@ class SolarAccessGridBased(GenericGridBased):
         assert self._isCalculated, \
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
+
+        print('Unloading the current values from the analysis grids.')
+        for ag in self.analysisGrids:
+            ag.unload()
 
         hours = tuple(int(self.timestep * h) for h in self.hoys)
         rf = self._resultFiles
