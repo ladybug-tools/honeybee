@@ -41,16 +41,36 @@ DCDEFAULTS = (
      'samplingRaysCount': 1}
 )
 
+#Image-based daylight coefficients
+#Parameter settings explained contextually:
+#   Low: Regardless of geometry, these settings are suitable for doing a first pass simulation.
+#   Medium: These parameters will be enough for the results from a single room with side lighting to converge.
+#   High: Set these parameters for generating high-quality final renderings.
 IMGDCDEFAULTS = (
-    {'ambientDivisions': 5000, 'ambientBounces': 3, 'limitWeight': 0.000002,
+    {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
      'samplingRaysCount': 1},
-    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.67E-07,
-     'samplingRaysCount': 3},
-    {'ambientDivisions': 25000, 'ambientBounces': 6, 'limitWeight': 4E-07,
+    {'ambientDivisions': 5000, 'ambientBounces': 4, 'limitWeight': 0.00002,
+     'samplingRaysCount': 5},
+    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.666E-06,
      'samplingRaysCount': 6}
 )
 
-# Illuminance based daylight-coefficients
+
+#Image-based View Matrix parameters for Three Phase, Five Phase and F-Matrix simulations.
+#Parameter settings explained contextually:
+#   Low: Regardless of geometry, these settings are suitable for doing a first pass simulation.
+#   Medium: These parameters will be enough for the results from a single room with side lighting to converge.
+#   High: Set these parameters for generating high-quality final renderings.
+IMGVMDEFAULTS = (
+    {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
+     'samplingRaysCount': 1},
+    {'ambientDivisions': 3000, 'ambientBounces': 4, 'limitWeight': 3.33E-05,
+     'samplingRaysCount': 5},
+    {'ambientDivisions': 10000, 'ambientBounces': 5, 'limitWeight': 1E-05,
+     'samplingRaysCount': 6}
+)
+
+# Illuminance based view matrix parameters.
 # Parameter settings explained contextually:
 # Low: Simple room with one or two glazing systems and no furniture.
 # Medium: Room with partitions, furnitures etc. but no occluding surfaces for
