@@ -388,6 +388,16 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         Carlo sampling is used in all calculations.
         """
 
+        self.addRadianceNumber('x', descriptiveName='x resolution',
+                               attributeName='xResolution', numType=int)
+        self.xResolution = None
+        """ Set the maximum x resolution."""
+
+        self.addRadianceNumber('y', descriptiveName='y resolution',
+                               attributeName='yResolution', numType=int)
+        self.yResolution = None
+        """ Set the maximum y resolution."""
+
     @classmethod
     def LowQuality(cls):
         """Radiance parmaters for a quick analysis."""

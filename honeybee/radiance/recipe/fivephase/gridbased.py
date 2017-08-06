@@ -122,7 +122,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             commands, vMatrix, dMatrix = getCommandsViewDaylightMatrices(
                 projectFolder, wg, count, inputfiles, pointsFile, numberOfPoints,
                 self.skyMatrix.skyDensity, self.viewMtxParameters,
-                self.daylightMtxParameters, self.reuseViewMtx, self.reuseDaylightMtx)
+                self.daylightMtxParameters, self.reuseViewMtx, self.reuseDaylightMtx,
+                phasesCount=5)
 
             self._commands.extend(commands)
 

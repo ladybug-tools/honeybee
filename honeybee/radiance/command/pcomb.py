@@ -90,12 +90,11 @@ class Pcomb(RadianceCommand):
     @property
     def pcombParameters(self):
         """Get and set gendaymtxParameters."""
-        return self.__pcombParameters
+        return self._pcombParameters
 
     @pcombParameters.setter
     def pcombParameters(self, parameters):
-        self.__pcombParameters = parameters if parameters is not None \
-            else PcombParameters()
+        self._pcombParameters = parameters or PcombParameters()
 
         assert hasattr(self.pcombParameters, "isRadianceParameters"), \
             "input pcombParameters is not a valid parameters type."

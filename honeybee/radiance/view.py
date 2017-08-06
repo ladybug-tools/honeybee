@@ -207,7 +207,7 @@ class View(object):
         vv = self.viewVSize
 
         if self.viewType == 0:
-            hvRatio = math.tan(math.radians(vh / 2)) / math.tan(math.radians(vv / 2))
+            hvRatio = math.tan(math.radians(vh) / 2.0) / math.tan(math.radians(vv) / 2.0)
         else:
             hvRatio = vh / vv
 
@@ -215,18 +215,18 @@ class View(object):
         # to fit the aspect ratio. In case the size doesn't match it reverses
         # the process.
         if maxY <= maxX:
-            newx = int(hvRatio * maxY)
+            newx = int(round(hvRatio * maxY))
             if newx <= maxX:
                 return newx, maxY
             else:
-                newy = int(maxX / hvRatio)
+                newy = int(round(maxX / hvRatio))
                 return maxX, newy
         else:
-            newy = int(maxX / hvRatio)
+            newy = int(round(maxX / hvRatio))
             if newy <= maxY:
                 return maxX, newy
             else:
-                newx = int(hvRatio * maxY)
+                newx = int(round(hvRatio * maxY))
                 return newx, maxY
 
     def calculateViewGrid(self, xDivCount=1, yDivCount=1):

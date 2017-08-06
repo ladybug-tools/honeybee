@@ -5,8 +5,10 @@ from ..command.rmtxop import Rmtxop, RmtxopMatrix
 from ..command.gendaymtx import Gendaymtx
 from ..sky.sunmatrix import SunMatrix
 from ..command.oconv import Oconv
+from ..command.rpict import Rpict
 from ..command.rcontrib import Rcontrib
 from ..command.vwrays import Vwrays
+from ..parameters.imagebased import ImageBasedParameters
 from .recipeutil import glzSrfTowinGroup
 from .parameters import getRadianceParametersGridBased, getRadianceParametersImageBased
 
@@ -552,6 +554,26 @@ def imageBasedViewSamplingCommands(projectFolder, view, viewFile, vwraysParamete
     vwrSamp.outputDataFormat = 'f'
 
     return vwrDimFile, vwrSamp
+
+
+def createReferenceMapCommand(view, viewFile, outputfolder, octreeFile):
+    """Create a reference map to conver illuminance to luminance."""
+    # set the parameters / options
+    imgPar = ImageBasedParameters()
+    imgPar.ambientAccuracy = 0
+    imgPar.ambientValue = [0.31831] * 3
+    imgPar.pixelSampling = 1
+    imgPar.pixelJitter = 1
+    x, y = view.getViewDimension()
+    imgPar.xResolution = x
+    imgPar.yResolution = y
+
+    rp = Rpict()
+    rp.rpictParameters = imgPar
+    rp.octreeFile = octreeFile
+    rp.viewFile = viewFile
+    rp.outputFile = os.path.join(outputfolder, '{}_map.hdr'.format(view.name))
+    return rp
 
 
 def imagedBasedSunCoeffMatrixCommands(

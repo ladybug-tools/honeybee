@@ -1,8 +1,11 @@
 """Radiance Daylight Coefficient Image-Based Analysis Recipe."""
 from ..recipeutil import writeExtraFiles, glzSrfTowinGroup
-from ..recipedcutil import writeRadFilesDaylightCoeff
+from ..recipedcutil import writeRadFilesDaylightCoeff, createReferenceMapCommand
 from ..recipedcutil import imageBasedViewSamplingCommands, \
     imageBasedViewCoeffMatrixCommands, imagedBasedSunCoeffMatrixCommands
+from ...command.oconv import Oconv
+from ...command.pcomb import Pcomb, PcombImage
+from ...parameters.pcomb import PcombParameters
 from ..parameters import getRadianceParametersImageBased
 from ..recipedcutil import imageBasedViewMatrixCalculation
 from ..recipedcutil import skyReceiver, getCommandsSky
@@ -188,9 +191,9 @@ class DaylightCoeffImageBased(GenericImageBased):
             super(GenericImageBased, self).writeContent(
                 targetFolder, projectName, False,
                 subfolders=['view', 'result/dc', 'result/hdr',
-                            'result/dc/total', 'result/dc/direct', 'result/dc/sun',
-                            'result/hdr/total', 'result/hdr/direct', 'result/hdr/sun',
-                            'result/hdr/combined']
+                            'result/dc/total', 'result/dc/direct', 'result/dc/isun',
+                            'result/dc/refmap', 'result/hdr/total', 'result/hdr/direct',
+                            'result/hdr/sun', 'result/hdr/combined', 'result/hdr/isun']
             )
 
         # write geometry and material files
@@ -229,10 +232,43 @@ class DaylightCoeffImageBased(GenericImageBased):
         allWindowGroups.extend(self.windowGroups)
         allWgsFiles = [glzfiles] + list(wgsfiles)
 
+        # create the base octree for the scene
+        # TODO(mostapha): this should be fine for most of the cases but
+        # if one of the window groups has major material change in a step
+        # that won't be included in this step.
+        # add material file
+        blkmaterial = [wgsfiles[0].fpblk[0]]
+        # add all the blacked window groups but the one in use
+        # and finally add non-window group glazing as black
+        wgsblacked = [f.fpblk[1] for f in wgsfiles] + list(glzfiles.fpblk)
+
+        sceneFiles = [f for filegroups in (opqfiles.fp, glzfiles.fp, extrafiles.fp)
+                      for f in filegroups]
+        octSceneFiles = sceneFiles + blkmaterial + wgsblacked
+
+        oc = Oconv(projectName)
+        oc.sceneFiles = tuple(self.relpath(f, projectFolder)
+                              for f in octSceneFiles)
+
+        self._commands.append(oc.toRadString())
+
         # # 4.2.prepare vwray
         for viewCount, (view, viewFile) in enumerate(izip(self.views, viewFiles)):
-            # Step1: Create the view matrix.
+            # create the reference map file
             self.commands.append(':: calculation for view: {}'.format(view.name))
+            self.commands.append(':: 0 reference map')
+
+            refmapfilename = '{}_map.hdr'.format(view.name)
+            refmapfilepath = os.path.join('result\\dc\\refmap', refmapfilename)
+
+            if not self.reuseDaylightMtx or not os.path.isfile(
+                    os.path.join(projectName, 'result\\dc\\refmap', refmapfilename)):
+                rfm = createReferenceMapCommand(
+                    view, self.relpath(viewFile, projectFolder),
+                    'result\\dc\\refmap', oc.outputFile)
+                self._commands.append(rfm.toRadString())
+
+            # Step1: Create the view matrix.
             self.commands.append(':: 1 view sampling')
             viewInfoFile, vwrSamp = imageBasedViewSamplingCommands(
                 projectFolder, view, viewFile, self.vwraysParameters)
@@ -343,6 +379,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         self._commands.append(':: :: 1.2 blacked scene daylight matrix')
 
+                        ab = int(self.daylightMtxParameters.ambientBounces)
                         self.daylightMtxParameters.ambientBounces = 1
 
                         # output pattern is set in receiver
@@ -358,11 +395,11 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         if os.name == 'nt':
                             outputFilenameFormat = \
-                                ' result\\dc\\sun\\%%04d_{}..{}..{}.hdr'.format(
+                                ' result\\dc\\isun\\%%04d_{}..{}..{}.hdr'.format(
                                     view.name, wg.name, state.name)
                         else:
                             outputFilenameFormat = \
-                                ' result\\dc\\sun\\%04d_{}..{}..{}.hdr'.format(
+                                ' result\\dc\\isun\\%04d_{}..{}..{}.hdr'.format(
                                     view.name, wg.name, state.name)
 
                         sunCommands = imagedBasedSunCoeffMatrixCommands(
@@ -371,6 +408,8 @@ class DaylightCoeffImageBased(GenericImageBased):
                             self.relpath(sunlist, projectFolder))
 
                         self._commands.extend(cmd.toRadString() for cmd in sunCommands)
+                        self.daylightMtxParameters.ambientBounces = ab
+
                     else:
                         print(
                             'reusing the dalight matrix for {}:{} from '
@@ -397,7 +436,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                         self._commands.append(':: :: 2.2.0 direct matrix calculations')
                         dctDirect = imageBasedViewMatrixCalculation(
                             view, wg, state, skyMtxDirect, 'direct')
-                        self.commands.append(dctDirect.toRadString())
+                        self._commands.append(dctDirect.toRadString())
                     else:
                         print(
                             'reusing the direct dalight matrix for {}:{} from '
@@ -408,11 +447,33 @@ class DaylightCoeffImageBased(GenericImageBased):
                                              state, 'sun'):
                         self._commands.append(
                             ':: :: 2.3.0 enhanced direct matrix calculations')
-                        # dctSun = viewSunCoeffMatrixCommands(sunMatrix)
                         dctSun = imageBasedViewMatrixCalculation(
                             view, wg, state,
-                            self.relpath(analemmaMtx, projectFolder), 'sun', 4)
-                        self.commands.append(dctSun.toRadString())
+                            self.relpath(analemmaMtx, projectFolder), 'isun', 4)
+
+                        self._commands.append(dctSun.toRadString())
+
+                        # multiply the sun matrix with the reference map
+                        # TODO: move this to a separate function
+                        # TODO: write the loop as a for loop in bat/bash file
+                        par = PcombParameters()
+                        refmapImage = PcombImage(inputImageFile=refmapfilepath)
+                        if os.name == 'nt':
+                            par.expression = '"lo=li(1)*li(2)"'
+                        else:
+                            par.expression = "'lo=li(1)*li(2)'"
+
+                        for hourcount in xrange(len(self.skyMatrix.hoys)):
+                            inp = 'result\\hdr\\isun\\{:04d}_{}..{}..{}.hdr'.format(
+                                hourcount + 1, view.name, wg.name, state.name
+                            )
+                            out = 'result\\hdr\\sun\\{:04d}_{}..{}..{}.hdr'.format(
+                                hourcount + 1, view.name, wg.name, state.name
+                            )
+                            images = PcombImage(inputImageFile=inp), refmapImage
+
+                            pcb = Pcomb(images, out, par)
+                            self._commands.append(pcb.toRadString())
                     else:
                         print(
                             'reusing the enhanced direct dalight matrix for '
@@ -457,7 +518,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
             imgc.addCoupledImageFiles(sourceFiles, hoys, source, state)
 
-        # TODO(mostapha): Add properties for file addresses
+        # TODO(mostapha): Add properties to the class for output file addresses
         imgc.outputFolder = fpt.split('result\\hdr')[0] + 'result\\hdr\\combined'
         yield imgc
 

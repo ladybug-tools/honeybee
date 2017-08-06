@@ -92,7 +92,7 @@ def writeRadFilesMultiPhase(workingDir, projectName, opq, glz, wgs):
 def getCommandsViewDaylightMatrices(
     projectFolder, windowGroup, count, inputfiles, pointsFile,
     numberOfPoints, skyDensity, viewMtxParameters, daylightMtxParameters,
-        reuseViewMtx=False, reuseDaylightMtx=False):
+        reuseViewMtx=False, reuseDaylightMtx=False, phasesCount=3):
     """Get commnds, view matrix file and daylight matrix file."""
     commands = []
     opqfiles, glzfiles, wgsfiles, extrafiles = inputfiles
@@ -128,7 +128,7 @@ def getCommandsViewDaylightMatrices(
     vMatrix = 'result\\matrix\\{}.vmx'.format(windowGroup.name)
     if not os.path.isfile(os.path.join(projectFolder, vMatrix)) \
             or not reuseViewMtx:
-        commands.append(':: :: [1/3] calculating view matrix')
+        commands.append(':: :: [1/{}] calculating view matrix'.format(phasesCount))
         commands.append(
             ':: :: rfluxmtx - [wgroup] [scene] [points] [blacked wgroups]'
             ' ^> [*.vmx]'
@@ -161,7 +161,7 @@ def getCommandsViewDaylightMatrices(
             dMatrix, os.path.relpath(receiver, projectFolder), radFiles,
             sender, None, None, daylightMtxParameters)
 
-        commands.append(':: :: [2/3] calculating daylight matrix')
+        commands.append(':: :: [2/{}] calculating daylight matrix'.format(phasesCount))
         commands.append(
             ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] [scene]'
             ' ^> [*.dmx]'
@@ -260,6 +260,8 @@ def matrixCalculationFivePhase(
             os.path.split(windowGroup.radianceMaterial.xmlfile)[-1])
         output = r'tmp\\3phase..{}..{}.tmp'.format(windowGroup.name, state.name)
         dct = matrixCalculation(output, vMatrix, tMatrix, dMatrix, skyMtxTotal)
+        commands.append(':: :: [3/5] vMatrix * dMatrix * tMatrix')
+        commands.append(':: :: dctimestep [vmx] [tmtx] [dmtx] ^ > [results.rgb]')
         commands.append(dct.toRadString())
 
         # 5. convert r, g ,b values to illuminance
@@ -302,13 +304,19 @@ def matrixCalculationFivePhase(
             )
             commands.append('::')
 
+            ab = int(rfluxmtxParameters.ambientBounces)
+            src = int(rfluxmtxParameters.samplingRaysCount)
             rfluxmtxParameters.ambientBounces = 1
+            rfluxmtxParameters.samplingRaysCount = 1
             rfluxDirect = coeffMatrixCommands(
                 dMatrixDirect, os.path.relpath(receiver, projectFolder),
                 radFilesBlacked, sender, os.path.relpath(pointsFile, projectFolder),
                 totalPointCount, rfluxmtxParameters
             )
             commands.append(rfluxDirect.toRadString())
+            # set the values back to the original values
+            rfluxmtxParameters.ambientBounces = ab
+            rfluxmtxParameters.samplingRaysCount = src
 
             commands.append(':: :: [5/5] black scene analemma daylight matrix')
             commands.append(
