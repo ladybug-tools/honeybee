@@ -161,6 +161,19 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         return True
 
+    def isSunMtxCreated(self, studyFolder, view, wg, state):
+        """Check if hdr images for daylight matrix are already created."""
+        for count, h in enumerate(self.skyMatrix.hoys):
+            fp = os.path.join(
+                studyFolder, 'result\\dc\\{}\\{}_{}..{}..{}.hdr'.format(
+                    'isun', '%04d' % count, view.name, wg.name, state.name))
+
+            if not os.path.isfile(fp) or os.path.getsize(fp) < 265:
+                # file doesn't exist or is smaller than 265 bytes
+                return False
+
+        return True
+
     def isHdrMtxCreated(self, studyFolder, view, wg, state, stype):
         """Check if hourly hdr images for daylight matrix are already created."""
         for count, h in enumerate(self.skyMatrix.hoys):
@@ -317,6 +330,41 @@ class DaylightCoeffImageBased(GenericImageBased):
                          blkmaterial, wgsblacked)
                         for f in fl)
 
+                    sender = '-'
+
+                    groundFileFormat = 'result\\dc\\total\\%03d_%s..%s..%s.hdr' % (
+                        1 + 144 * (self.skyMatrix.skyDensity ** 2),
+                        view.name, wg.name, state.name
+                    )
+
+                    skyFileFormat = 'result\\dc\\total\\%03d_{}..{}..{}.hdr'.format(
+                        view.name, wg.name, state.name)
+
+                    receiver = skyReceiver(
+                        os.path.join(
+                            projectFolder,
+                            'sky\\rfluxSkyTotal..{}..{}.rad'.format(
+                                wg.name, state.name)),
+                        self.skyMatrix.skyDensity, groundFileFormat, skyFileFormat
+                    )
+
+                    groundFileFormat = 'result\\dc\\direct\\%03d_%s..%s..%s.hdr' % (
+                        1 + 144 * (self.skyMatrix.skyDensity ** 2),
+                        view.name, wg.name, state.name
+                    )
+
+                    skyFileFormat = 'result\\dc\\direct\\%03d_{}..{}..{}.hdr'.format(
+                        view.name, wg.name, state.name)
+
+                    receiverDir = skyReceiver(
+                        os.path.join(projectFolder,
+                                     'sky\\rfluxSkyDirect..{}..{}.rad'.format(
+                                         wg.name, state.name)),
+                        self.skyMatrix.skyDensity, groundFileFormat, skyFileFormat
+                    )
+
+                    radFilesBlacked = tuple(self.relpath(f, projectFolder)
+                                            for f in rfluxSceneBlacked)
                     # Daylight matrix
                     if not self.reuseDaylightMtx or not \
                             self.isDaylightMtxCreated(projectFolder, view, wg, state):
@@ -325,23 +373,6 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         radFiles = tuple(self.relpath(f, projectFolder)
                                          for f in rfluxScene)
-                        sender = '-'
-
-                        groundFileFormat = 'result\\dc\\total\\%03d_%s..%s..%s.hdr' % (
-                            1 + 144 * (self.skyMatrix.skyDensity ** 2),
-                            view.name, wg.name, state.name
-                        )
-
-                        skyFileFormat = 'result\\dc\\total\\%03d_{}..{}..{}.hdr'.format(
-                            view.name, wg.name, state.name)
-
-                        receiver = skyReceiver(
-                            os.path.join(
-                                projectFolder,
-                                'sky\\rfluxSkyTotal..{}..{}.rad'.format(
-                                    wg.name, state.name)),
-                            self.skyMatrix.skyDensity, groundFileFormat, skyFileFormat
-                        )
 
                         self._commands.append(
                             ':: :: 1. daylight matrix {}, {} > state {}'.format(
@@ -358,25 +389,13 @@ class DaylightCoeffImageBased(GenericImageBased):
                             self.daylightMtxParameters)
 
                         self.commands.append(rflux.toRadString())
+                    else:
+                        print(
+                            'reusing the dalight matrix for {}:{} from '
+                            'the previous study.'.format(wg.name, state.name))
 
-                        groundFileFormat = 'result\\dc\\direct\\%03d_%s..%s..%s.hdr' % (
-                            1 + 144 * (self.skyMatrix.skyDensity ** 2),
-                            view.name, wg.name, state.name
-                        )
-
-                        skyFileFormat = 'result\\dc\\direct\\%03d_{}..{}..{}.hdr'.format(
-                            view.name, wg.name, state.name)
-
-                        receiverDir = skyReceiver(
-                            os.path.join(projectFolder,
-                                         'sky\\rfluxSkyDirect..{}..{}.rad'.format(
-                                             wg.name, state.name)),
-                            self.skyMatrix.skyDensity, groundFileFormat, skyFileFormat
-                        )
-
-                        radFilesBlacked = tuple(self.relpath(f, projectFolder)
-                                                for f in rfluxSceneBlacked)
-
+                    if not self.reuseDaylightMtx or not \
+                            self.isSunMtxCreated(projectFolder, view, wg, state):
                         self._commands.append(':: :: 1.2 blacked scene daylight matrix')
 
                         ab = int(self.daylightMtxParameters.ambientBounces)
@@ -407,12 +426,26 @@ class DaylightCoeffImageBased(GenericImageBased):
                             radFilesBlacked, self.relpath(analemma, projectFolder),
                             self.relpath(sunlist, projectFolder))
 
+                        # delete the files if they are already created
+                        # rcontrib won't overwrite the files if they already exist
+                        for hourcount in xrange(len(self.skyMatrix.hoys)):
+                            sf = 'result\\dc\\isun\\{:04d}_{}..{}..{}.hdr'.format(
+                                hourcount, view.name, wg.name, state.name
+                            )
+                            try:
+                                fp = os.path.join(projectFolder, sf)
+                                os.remove(fp)
+                            except Exception as e:
+                                # failed to delete the file
+                                if os.path.isfile(fp):
+                                    print('Failed to remove {}:\n{}'.format(sf, e))
+
                         self._commands.extend(cmd.toRadString() for cmd in sunCommands)
                         self.daylightMtxParameters.ambientBounces = ab
 
                     else:
                         print(
-                            'reusing the dalight matrix for {}:{} from '
+                            'reusing the sun matrix for {}:{} from '
                             'the previous study.'.format(wg.name, state.name))
 
                     # generate hourly images
