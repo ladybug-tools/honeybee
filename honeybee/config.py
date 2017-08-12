@@ -50,15 +50,15 @@ class Folders(object):
         self.loadFromFile()
 
         # set path for openstudio
-        self.openStudioPath = self.__defaultPath["path_to_openstudio"]
+        self.openStudioPath = self._defaultPath["path_to_openstudio"]
 
         # set path for radiance, if path to radiance is not set honeybee will
         # try to set it up to the radiance installation that comes with openStudio
-        self.radiancePath = self.__defaultPath["path_to_radiance"]
-        self.perlPath = self.__defaultPath["path_to_perl"]
+        self.radiancePath = self._defaultPath["path_to_radiance"]
+        self.perlPath = self._defaultPath["path_to_perl"]
 
     @staticmethod
-    def __which(program):
+    def _which(program):
         """Find executable programs.
 
         Args:
@@ -90,23 +90,24 @@ class Folders(object):
     @property
     def openStudioPath(self):
         """Set and get the path to openstudio installation folder."""
-        return self.__openStudioPath
+        return self._openStudioPath
 
     @openStudioPath.setter
     def openStudioPath(self, path):
         if not path:
             # check the default installation folders on Windows
-            path = self.__findOpenStudioFolder()
+            path = self._findOpenStudioFolder()
 
-        self.__openStudioPath = path
-        if os.name == 'nt':
+        self._openStudioPath = path
+        if os.name == 'nt' and self._openStudioPath:
             assert os.path.isfile(os.path.join(path, 'bin\\openstudio.exe')), \
                 '{} is not a valid path to openstudio installation.'.format(path)
-            if not self.mute and self.__openStudioPath:
-                print "Path to OpenStudio is set to: %s" % self.__openStudioPath
+            if not self.mute and self._openStudioPath:
+                print "Path to OpenStudio is set to: %s" % self._openStudioPath
 
+    # TODO(mostapha or chris): Update for OpenStudio 2
     @staticmethod
-    def __findOpenStudioFolder():
+    def _findOpenStudioFolder():
 
         def getversion(openStudioPath):
             ver = ''.join(s for s in openStudioPath if (s.isdigit() or s == '.'))
@@ -126,23 +127,23 @@ class Folders(object):
     @property
     def radiancePath(self):
         """Get and set path to radiance installation folder."""
-        return self.__radiancePath
+        return self._radiancePath
 
     @property
     def radbinPath(self):
         """Path to Radiance binary folder."""
-        return self.__radbin
+        return self._radbin
 
     @property
     def radlibPath(self):
         """Path to Radiance library folder."""
-        return self.__radlib
+        return self._radlib
 
     @radiancePath.setter
     def radiancePath(self, path):
         if not path:
             if os.name == 'nt':
-                __radbin, __radFile = self.__which("rad.exe")
+                __radbin, __radFile = self._which("rad.exe")
                 if __radbin:
                     path = os.path.split(__radbin)[0]
                 # finding by path failed. Let's check typical folders on Windows
@@ -156,73 +157,73 @@ class Folders(object):
                     path = os.path.join(self.openStudioPath,
                                         r"share\openStudio\Radiance")
             elif os.name == 'posix':
-                __radbin, __radFile = self.__which("mkillum")
+                __radbin, __radFile = self._which("mkillum")
                 if __radbin:
                     path = os.path.split(__radbin)[0]
 
-        self.__radiancePath = path
+        self._radiancePath = path
 
         if not os.path.isdir(path):
             if not self.mute:
                 msg = "Warning: Failed to find radiance installation folder.\n" \
-                    "You can set it up manually in {}.".format(self.__configFile)
+                    "You can set it up manually in {}.".format(self._configFile)
                 print msg
-            self.__radbin = ""
-            self.__radlib = ""
+            self._radbin = ""
+            self._radlib = ""
         else:
             # set up lib path
-            self.__radbin = os.path.normpath(os.path.join(path, 'bin'))
-            self.__radlib = os.path.normpath(os.path.join(path, 'lib'))
+            self._radbin = os.path.normpath(os.path.join(path, 'bin'))
+            self._radlib = os.path.normpath(os.path.join(path, 'lib'))
 
-            if not self.mute and self.__radiancePath:
-                print "Path to radiance is set to: %s" % self.__radiancePath
+            if not self.mute and self._radiancePath:
+                print "Path to radiance is set to: %s" % self._radiancePath
 
-            if self.__radiancePath.find(' ') != -1:
+            if self._radiancePath.find(' ') != -1:
                 msg = 'Radiance path {} has a whitespace. Some of the radiance ' \
                     'commands may fail.\nWe strongly suggest you to install radiance ' \
                     'under a path with no withspace (e.g. c:/radiance)'.format(
-                        self.__radiancePath
+                        self._radiancePath
                     )
                 print msg
 
     @property
     def perlPath(self):
         """Path to the folder containing Perl binary files."""
-        return self.__perlPath
+        return self._perlPath
 
     @property
     def perlExePath(self):
         """Path to perl executable file."""
-        return self.__perlExePath
+        return self._perlExePath
 
     @perlPath.setter
     def perlPath(self, path):
         """Path to the folder containing Perl binary files."""
-        self.__perlPath = path or ""
-        self.__perlExePath = path + "\\perl"
+        self._perlPath = path or ""
+        self._perlExePath = path + "\\perl"
 
-        if not self.__perlPath:
+        if not self._perlPath:
             if os.name == 'nt':
-                self.__perlPath, self.__perlExePath = self.__which("perl.exe")
+                self._perlPath, self._perlExePath = self._which("perl.exe")
             elif os.name == 'posix':
-                self.__perlPath, self.__perlExePath = self.__which("perl")
+                self._perlPath, self._perlExePath = self._which("perl")
 
-        if not self.__perlPath and self.openStudioPath:
+        if not self._perlPath and self.openStudioPath:
             # try to find perl under openstudio
             p = os.path.join(self.openStudioPath,
                              'strawberry-perl-5.16.2.1-32bit-portable-reduced')
             if os.path.isfile(os.path.join(p, 'perl\\bin\\perl.exe')):
-                self.__perlPath, self.__perlExePath = p, \
+                self._perlPath, self._perlExePath = p, \
                     os.path.join(p, 'perl\\bin\\perl.exe')
 
-        if not self.mute and self.__perlPath:
-            print "Path to perl is set to: %s" % self.__perlPath
+        if not self.mute and self._perlPath:
+            print "Path to perl is set to: %s" % self._perlPath
 
     @property
     def epFolder(self):
         """Path to EnergyPlus folder."""
         raise NotImplementedError
-        # return self.__eplus
+        # return self._eplus
 
     @property
     def pythonExePath(self):
@@ -231,7 +232,7 @@ class Folders(object):
 
     def loadFromFile(self, filePath=None):
         """Load installation folders from a json file."""
-        filePath = filePath or self.__configFile
+        filePath = filePath or self._configFile
         assert os.path.isfile(str(filePath)), \
             ValueError('No such a file as {}'.format(filePath))
 
@@ -244,7 +245,7 @@ class Folders(object):
             else:
                 for key, p in paths.iteritems():
                     if not key.startswith('__') and p.strip():
-                        self.__defaultPath[key] = p.strip()
+                        self._defaultPath[key] = p.strip()
 
 
 f = Folders(mute=False)
