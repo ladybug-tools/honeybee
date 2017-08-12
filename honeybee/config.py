@@ -50,12 +50,12 @@ class Folders(object):
         self.loadFromFile()
 
         # set path for openstudio
-        self.openStudioPath = self._defaultPath["path_to_openstudio"]
+        self.openStudioPath = self.__defaultPath["path_to_openstudio"]
 
         # set path for radiance, if path to radiance is not set honeybee will
         # try to set it up to the radiance installation that comes with openStudio
-        self.radiancePath = self._defaultPath["path_to_radiance"]
-        self.perlPath = self._defaultPath["path_to_perl"]
+        self.radiancePath = self.__defaultPath["path_to_radiance"]
+        self.perlPath = self.__defaultPath["path_to_perl"]
 
     @staticmethod
     def _which(program):
@@ -166,7 +166,7 @@ class Folders(object):
         if not os.path.isdir(path):
             if not self.mute:
                 msg = "Warning: Failed to find radiance installation folder.\n" \
-                    "You can set it up manually in {}.".format(self._configFile)
+                    "You can set it up manually in {}.".format(self.__configFile)
                 print msg
             self._radbin = ""
             self._radlib = ""
@@ -232,7 +232,7 @@ class Folders(object):
 
     def loadFromFile(self, filePath=None):
         """Load installation folders from a json file."""
-        filePath = filePath or self._configFile
+        filePath = filePath or self.__configFile
         assert os.path.isfile(str(filePath)), \
             ValueError('No such a file as {}'.format(filePath))
 
@@ -245,7 +245,7 @@ class Folders(object):
             else:
                 for key, p in paths.iteritems():
                     if not key.startswith('__') and p.strip():
-                        self._defaultPath[key] = p.strip()
+                        self.__defaultPath[key] = p.strip()
 
 
 f = Folders(mute=False)

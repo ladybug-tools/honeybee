@@ -2,6 +2,7 @@ from ..recipeutil import writeExtraFiles
 from ..recipexphaseutil import writeRadFilesMultiPhase, matrixCalculationFivePhase
 from ..recipedcutil import getCommandsSceneDaylightCoeff, getCommandsSky
 from ..recipexphaseutil import getCommandsViewDaylightMatrices
+from ..recipexphaseutil import getCommandsDirectViewDaylightMatrices
 
 from ..threephase.gridbased import ThreePhaseGridBased
 from ....futil import writeToFile
@@ -118,12 +119,20 @@ class FivePhaseGridBased(ThreePhaseGridBased):
 
         for count, wg in enumerate(self.windowGroups):
 
-            # vMatrix and d matrix
+            # vMatrix and dMatrix
             commands, vMatrix, dMatrix = getCommandsViewDaylightMatrices(
                 projectFolder, wg, count, inputfiles, pointsFile, numberOfPoints,
                 self.skyMatrix.skyDensity, self.viewMtxParameters,
                 self.daylightMtxParameters, self.reuseViewMtx, self.reuseDaylightMtx,
                 phasesCount=5)
+
+            self._commands.extend(commands)
+
+            # direct vMatrix and dMatrix
+            commands, dvMatrix, ddMatrix = getCommandsDirectViewDaylightMatrices(
+                projectFolder, wg, count, inputfiles, pointsFile, numberOfPoints,
+                self.skyMatrix.skyDensity, self.viewMtxParameters,
+                self.daylightMtxParameters, self.reuseViewMtx, self.reuseDaylightMtx)
 
             self._commands.extend(commands)
 
@@ -135,8 +144,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             cmd, results = matrixCalculationFivePhase(
                 projectName, self.skyMatrix.skyDensity, projectFolder, wg, skyfiles,
                 inputfiles, pointsFile, self.totalPointCount, self.daylightMtxParameters,
-                vMatrix, dMatrix, count, self.reuseViewMtx, self.reuseDaylightMtx,
-                (counter, self.totalRunsCount))
+                vMatrix, dMatrix, dvMatrix, ddMatrix, count, self.reuseViewMtx,
+                self.reuseDaylightMtx, (counter, self.totalRunsCount))
 
             self._commands.extend(cmd)
             self._resultFiles.extend(results)

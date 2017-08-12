@@ -172,6 +172,98 @@ def getCommandsViewDaylightMatrices(
     return commands, vMatrix, dMatrix
 
 
+def getCommandsDirectViewDaylightMatrices(
+    projectFolder, windowGroup, count, inputfiles, pointsFile,
+    numberOfPoints, skyDensity, viewMtxParameters, daylightMtxParameters,
+        reuseViewMtx=False, reuseDaylightMtx=False):
+    """Get commnds, view matrix file and daylight matrix file for direct calculation."""
+    commands = []
+    opqfiles, glzfiles, wgsfiles, extrafiles = inputfiles
+    # add material file
+    blkmaterial = [wgsfiles[count].fpblk[0]]
+    # add all the blacked window groups but the one in use
+    # and finally add non-window group glazing as black
+    wgsblacked = \
+        [f.fpblk[1] for c, f in enumerate(wgsfiles) if c != count] + \
+        list(glzfiles.fpblk)
+
+    # for scount, state in enumerate(wg.states):
+    # 2.3.Generate daylight coefficients using rfluxmtx
+    # collect list of radiance files in the scene for both total and direct
+    commands.append(
+        ':: start of the 3-phase direct calculation for the window group {}'.format(
+            windowGroup.name)
+    )
+
+    vreceiver = wgsfiles[count].fpglw[0]
+
+    # change here to create a black scene instead
+    vrfluxScene = (
+        f for fl in
+        (opqfiles.fpblk, blkmaterial, wgsblacked)
+        for f in fl)
+
+    drfluxScene = (
+        f for fl in
+        (opqfiles.fpblk, extrafiles.fpblk, blkmaterial, wgsblacked)
+        for f in fl)
+
+    # 3.2.Generate view matrix
+    vMatrix = 'result\\matrix\\{}_dir.vmx'.format(windowGroup.name)
+    if not os.path.isfile(os.path.join(projectFolder, vMatrix)) \
+            or not reuseViewMtx:
+        commands.append(':: :: [4-1/5] calculating direct view matrix')
+        commands.append(
+            ':: :: rfluxmtx - [wgroup] [blacked scene] [points] [blacked wgroups]'
+            ' ^> [*.vmx]'
+        )
+        commands.append('::')
+        # prepare input files
+        radFiles = tuple(os.path.relpath(f, projectFolder) for f in vrfluxScene)
+
+        ab = int(viewMtxParameters.ambientBounces)
+        viewMtxParameters.ambientBounces = 1
+        vmtx = coeffMatrixCommands(
+            vMatrix, os.path.relpath(vreceiver, projectFolder), radFiles, '-',
+            os.path.relpath(pointsFile, projectFolder), numberOfPoints,
+            viewMtxParameters)
+        viewMtxParameters.ambientBounces = ab
+        commands.append(vmtx.toRadString())
+
+    # 3.3 daylight matrix
+    dMatrix = 'result\\matrix\\{}_{}_dir.dmx'.format(windowGroup.name, skyDensity)
+
+    if not os.path.isfile(os.path.join(projectFolder, dMatrix)) \
+            or not reuseDaylightMtx:
+        sender = os.path.relpath(vreceiver, projectFolder)
+
+        receiver = skyReceiver(
+            os.path.join(projectFolder, 'sky\\rfluxSky.rad'), skyDensity
+        )
+
+        radFiles = tuple(os.path.relpath(f, projectFolder) for f in drfluxScene)
+
+        ab = int(daylightMtxParameters.ambientBounces)
+        src = int(daylightMtxParameters.samplingRaysCount)
+        daylightMtxParameters.ambientBounces = 1
+        daylightMtxParameters.samplingRaysCount = 1
+        dmtx = coeffMatrixCommands(
+            dMatrix, os.path.relpath(receiver, projectFolder), radFiles,
+            sender, None, None, daylightMtxParameters)
+        daylightMtxParameters.ambientBounces = ab
+        daylightMtxParameters.samplingRaysCount = src
+
+        commands.append(':: :: [4-2/5] calculating direct daylight matrix')
+        commands.append(
+            ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] [blacked scene]'
+            ' ^> [*.dmx]'
+        )
+        commands.append('::')
+        commands.append(dmtx.toRadString())
+
+    return commands, vMatrix, dMatrix
+
+
 def matrixCalculationThreePhase(
         projectFolder, windowGroup, vMatrix, dMatrix, skyMtxTotal):
     """Three phase matrix calculation.
@@ -217,8 +309,8 @@ def matrixCalculationThreePhase(
 
 def matrixCalculationFivePhase(
         projectName, skyDensity, projectFolder, windowGroup, skyfiles, inputfiles,
-        pointsFile, totalPointCount, rfluxmtxParameters, vMatrix, dMatrix,
-        windowGroupCount=0, reuseViewMtx=False, reuseDaylightMtx=False,
+        pointsFile, totalPointCount, rfluxmtxParameters, vMatrix, dMatrix, dvMatrix,
+        ddMatrix, windowGroupCount=0, reuseViewMtx=False, reuseDaylightMtx=False,
         counter=None):
     """Get commands for the five phase recipe.
 
@@ -272,6 +364,23 @@ def matrixCalculationFivePhase(
         results.append(os.path.join(projectFolder, finalOutput))
 
         commands.append('::')
+
+        # calculate direct matrix with black scene
+        output = r'tmp\\direct..{}..{}.tmp'.format(windowGroup.name, state.name)
+        dct = matrixCalculation(output, dvMatrix, tMatrix, ddMatrix, skyMtxDirect)
+        commands.append(':: :: [4/5] vMatrix * dMatrix * tMatrix')
+        commands.append(':: :: dctimestep [vmx] [tmtx] [dmtx] ^ > [results.rgb]')
+        commands.append(dct.toRadString())
+
+        # 5. convert r, g ,b values to illuminance
+        finalOutput = r'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name)
+        finalmtx = RGBMatrixFileToIll((dct.outputFile,), finalOutput)
+        commands.append(finalmtx.toRadString())
+
+        results.append(os.path.join(projectFolder, finalOutput))
+
+        commands.append('::')
+
         # in case window group is not already provided
         windowGroupfiles = (wgsfiles[windowGroupCount].fp[scount],)
 
@@ -281,43 +390,16 @@ def matrixCalculationFivePhase(
              blkmaterial, wgsblacked)
             for f in fl)
 
-        dMatrixDirect = 'result\\matrix\\black_{}..{}..{}.dc'.format(
-            projectName, windowGroup.name, state.name)
-
         sunMatrix = 'result\\matrix\\sun_{}..{}..{}.dc'.format(
             projectName, windowGroup.name, state.name)
 
-        if not os.path.isfile(os.path.join(projectFolder, dMatrixDirect)) \
+        if not os.path.isfile(os.path.join(projectFolder, sunMatrix)) \
                 or not reuseDaylightMtx:
-            sender = '-'
-            receiver = skyReceiver(
-                os.path.join(projectFolder, 'sky\\rfluxSky.rad'), skyDensity
-            )
 
             radFilesBlacked = tuple(os.path.relpath(f, projectFolder)
                                     for f in rfluxSceneBlacked)
 
-            commands.append(':: :: [4/5] black scene daylight matrix')
-            commands.append(
-                ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] '
-                '[blacked scene] ^> [black dc.mtx]'
-            )
-            commands.append('::')
-
-            ab = int(rfluxmtxParameters.ambientBounces)
-            src = int(rfluxmtxParameters.samplingRaysCount)
-            rfluxmtxParameters.ambientBounces = 1
-            rfluxmtxParameters.samplingRaysCount = 1
-            rfluxDirect = coeffMatrixCommands(
-                dMatrixDirect, os.path.relpath(receiver, projectFolder),
-                radFilesBlacked, sender, os.path.relpath(pointsFile, projectFolder),
-                totalPointCount, rfluxmtxParameters
-            )
-            commands.append(rfluxDirect.toRadString())
-            # set the values back to the original values
-            rfluxmtxParameters.ambientBounces = ab
-            rfluxmtxParameters.samplingRaysCount = src
-
+            # replace the 4th phase with the new function
             commands.append(':: :: [5/5] black scene analemma daylight matrix')
             commands.append(
                 ':: :: rcontrib - [sunMatrix] [points] [wgroup] [blacked wgroups] '
@@ -335,29 +417,6 @@ def matrixCalculationFivePhase(
         else:
             commands.append(':: :: reusing daylight matrices')
             commands.append('::')
-
-        commands.append(':: :: matrix multiplication')
-        commands.append('::')
-
-        commands.append(':: :: calculating black daylight mtx * direct only sky')
-        commands.append(
-            ':: :: dctimestep [black dc.mtx] [direct only sky] ^> [direct results.rgb]')
-
-        dctDirect = matrixCalculation(
-            'tmp\\direct..{}..{}.rgb'.format(windowGroup.name, state.name),
-            dMatrix=dMatrixDirect, skyMatrix=skyMtxDirect
-        )
-        commands.append(dctDirect.toRadString())
-        commands.append(
-            ':: :: rmtxop -c 47.4 119.9 11.6 [direct results.rgb] ^> '
-            '[direct results.ill]'
-        )
-        commands.append('::')
-        finalmtx = RGBMatrixFileToIll(
-            (dctDirect.outputFile,),
-            'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name)
-        )
-        commands.append(finalmtx.toRadString())
 
         commands.append(':: :: calculating black daylight mtx * analemma')
         commands.append(
