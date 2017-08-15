@@ -31,6 +31,15 @@ class GridBased(DaylightCoeffGridBased):
 
     """
 
+    def __init__(self, skyMtx, analysisGrids, simulationType=0,
+                 radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
+                 subFolder="gridbased_annual"):
+        """Create an annual recipe."""
+
+        DaylightCoeffGridBased.__init__(
+            self, skyMtx, analysisGrids, simulationType, radianceParameters,
+            reuseDaylightMtx, hbObjects, subFolder)
+
     def write(self, targetFolder, projectName='untitled', header=True):
         """Write analysis files to target folder.
 

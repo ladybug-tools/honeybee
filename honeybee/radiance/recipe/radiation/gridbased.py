@@ -47,7 +47,7 @@ class GridBased(DaylightCoeffGridBased):
     def fromWeatherFilePointsAndVectors(
         cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
             radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
-            subFolder="gridbased_daylightcoeff"):
+            subFolder="gridbased_radiation"):
         """Create grid based daylight coefficient from weather file, points and vectors.
 
         Args:
@@ -76,7 +76,7 @@ class GridBased(DaylightCoeffGridBased):
     @classmethod
     def fromPointsFile(cls, epwFile, pointsFile, skyDensity=1,
                        radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
-                       subFolder="gridbased_daylightcoeff"):
+                       subFolder="gridbased_radiation"):
         """Create grid based daylight coefficient recipe from points file."""
         try:
             with open(pointsFile, "rb") as inf:
