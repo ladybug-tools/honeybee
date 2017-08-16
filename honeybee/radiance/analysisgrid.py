@@ -497,7 +497,7 @@ class AnalysisGrid(object):
         """Calculate Spatial Daylight Autonomy (sDA).
 
         Args:
-            targetArea: Minimum target area percentage for this grid (default: 55)
+            targetArea: Minimum target area percentage for this grid (default: 50)
         """
         resultsLoaded = True
         if not self.hasValues and not self.resultFiles[0]:
@@ -555,7 +555,7 @@ class AnalysisGrid(object):
         # iterate through the results
         # find minimum number of points to meet the targetArea
         targetArea = targetArea * len(self.analysisPoints) / 100 or \
-            0.55 * len(self.analysisPoints)
+            0.50 * len(self.analysisPoints)
         # change target area to an integer to enhance the performance in the loop
         target = int(targetArea) if int(targetArea) != targetArea \
             else int(targetArea - 1)

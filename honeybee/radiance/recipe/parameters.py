@@ -41,10 +41,12 @@ DCDEFAULTS = (
      'samplingRaysCount': 1}
 )
 
-#Image-based daylight coefficients
-#Parameter settings explained contextually:
-#   Low: Regardless of geometry, these settings are suitable for doing a first pass simulation.
-#   Medium: These parameters will be enough for the results from a single room with side lighting to converge.
+# Image-based daylight coefficients
+# Parameter settings explained contextually:
+#   Low: Regardless of geometry, these settings are suitable for doing a first pass
+#     simulation.
+#   Medium: These parameters will be enough for the results from a single room with side
+#     lighting to converge.
 #   High: Set these parameters for generating high-quality final renderings.
 IMGDCDEFAULTS = (
     {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
@@ -56,10 +58,12 @@ IMGDCDEFAULTS = (
 )
 
 
-#Image-based View Matrix parameters for Three Phase, Five Phase and F-Matrix simulations.
-#Parameter settings explained contextually:
-#   Low: Regardless of geometry, these settings are suitable for doing a first pass simulation.
-#   Medium: These parameters will be enough for the results from a single room with side lighting to converge.
+# Image-based View Matrix parameters for Three Phase, Five Phase and F-Matrix simulations
+# Parameter settings explained contextually:
+#   Low: Regardless of geometry, these settings are suitable for doing a first pass
+#     simulation.
+#   Medium: These parameters will be enough for the results from a single room with side
+#     lighting to converge.
 #   High: Set these parameters for generating high-quality final renderings.
 IMGVMDEFAULTS = (
     {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
@@ -185,7 +189,7 @@ def getRadianceParametersImageBased(quality, recType):
     else:
         # view matrix
         vmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in VMDEFAULTS[quality].iteritems():
+        for k, v in IMGVMDEFAULTS[quality].iteritems():
             setattr(vmtxpar, k, v)
 
         # daylight matrix
