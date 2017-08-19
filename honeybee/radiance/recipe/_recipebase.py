@@ -72,11 +72,11 @@ class AnalysisRecipe(object):
                     if hasattr(obj, 'isHBZone'):
                         self._hbObjs.extend(obj.surfaces)
                         for srf in obj.surfaces:
-                            self._hbObjs.extend(obj.childrenSurface)
+                            self._hbObjs.extend(srf.childrenSurfaces)
                     elif obj.isHBAnalysisSurface:
                         self._hbObjs.append(obj)
                         try:
-                            self._hbObjs.extend(obj.childrenSurface)
+                            self._hbObjs.extend(obj.childrenSurfaces)
                         except AttributeError:
                             # HBFenSurfaces
                             pass
