@@ -34,7 +34,16 @@ class BSDFMaterial(RadianceMaterial):
         name = '.'.join(os.path.split(self.xmlfile)[-1].split('.')[:-1])
 
         RadianceMaterial.__init__(self, name, materialType="BSDF", modifier=modifier)
-        x, y, z = upOrientation or (0.01, 0.01, 1.00)
+        try:
+            x, y, z = upOrientation or (0.01, 0.01, 1.00)
+        except TypeError as e:
+            try:
+                # Dynamo!
+                x, y, z = upOrientation.X, upOrientation.Y, upOrientation.Z
+            except AttributeError:
+                # raise the original error
+                raise TypeError(str(e))
+
         self.upOrientation = x, y, z
         self.thickness = thickness or 0
 

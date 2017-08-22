@@ -250,7 +250,11 @@ class DaylightCoeffImageBased(GenericImageBased):
         # if one of the window groups has major material change in a step
         # that won't be included in this step.
         # add material file
-        blkmaterial = [wgsfiles[0].fpblk[0]]
+        try:
+            blkmaterial = [wgsfiles[0].fpblk[0]]
+        except IndexError:
+            # no window groups
+            blkmaterial = []
         # add all the blacked window groups but the one in use
         # and finally add non-window group glazing as black
         wgsblacked = [f.fpblk[1] for f in wgsfiles] + list(glzfiles.fpblk)
