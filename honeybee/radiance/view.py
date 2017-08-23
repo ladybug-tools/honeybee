@@ -262,13 +262,17 @@ class View(object):
 
         elif self.viewType == 0:
             # perspective (vtv)
-            _vh = (2. * 180. / PI) * math.atan(((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-            _vv = (2. * 180. / PI) * math.atan(math.tan((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+            _vh = (2. * 180. / PI) * \
+                math.atan(((PI / 180. / 2.) * self.viewHSize) / xDivCount)
+            _vv = (2. * 180. / PI) * \
+                math.atan(math.tan((PI / 180. / 2.) * self.viewVSize) / yDivCount)
 
         elif self.viewType in [1, 4, 5]:
             # fish eye
-            _vh = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-            _vv = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+            _vh = (2. * 180. / PI) * \
+                math.asin(math.sin((PI / 180. / 2.) * self.viewHSize) / xDivCount)
+            _vv = (2. * 180. / PI) * \
+                math.asin(math.sin((PI / 180. / 2.) * self.viewVSize) / yDivCount)
 
         else:
             print "Grid views are not supported for %s." % self.viewType
@@ -280,12 +284,14 @@ class View(object):
             if xDivCount == 1:
                 _vs = 0
             else:
-                _vs = (((viewCount % xDivCount) / (xDivCount - 1)) - 0.5) * (xDivCount - 1)
+                _vs = (((viewCount % xDivCount) / (xDivCount - 1)) - 0.5) \
+                    * (xDivCount - 1)
 
             if yDivCount == 1:
                 _vl = 0
             else:
-                _vl = ((int(viewCount / yDivCount) / (yDivCount - 1)) - 0.5) * (yDivCount - 1)
+                _vl = ((int(viewCount / yDivCount) / (yDivCount - 1)) - 0.5) \
+                    * (yDivCount - 1)
 
             # create a copy from the current copy
             _nView = deepcopy(self)

@@ -348,7 +348,8 @@ class SolarAccessGridBased(GenericGridBased):
                 startLine += len(self.analysisGrids[count - 1])
 
             analysisGrid.setValuesFromFile(
-                rf, hours, startLine=startLine, header=True, mode=1
+                rf, hours, startLine=startLine, header=True, checkPointCount=False,
+                mode=1
             )
 
         return self.analysisGrids
