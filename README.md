@@ -2,7 +2,7 @@
 
 # honeybee
 
-Honeybe is a python library to create, run and visualize the results of daylight ([RADIANCE](https://radiance-online.org//)) and energy analysis ([EnergyPlus](https://energyplus.net/)/[OpenStudio](https://www.openstudio.net/)). The current version only supports Radiance integration. For Energy simulation you can use the [lagacy honeybee for Grasshopper](https://github.com/mostaphaRoudsari/honeybee).
+Honeybee is a Python library to create, run and visualize the results of daylight ([RADIANCE](https://radiance-online.org//)) and energy analysis ([EnergyPlus](https://energyplus.net/)/[OpenStudio](https://www.openstudio.net/)). The current version supports only Radiance integration. For energy simulation you may use the [legacy honeybee for Grasshopper](https://github.com/mostaphaRoudsari/honeybee).
 
 This repository includes the core library which is the base for Honeybee plugins. For plugin-specific questions and comments refer to [honeybee-grasshopper](https://github.com/ladybug-tools/honeybee-grasshopper) or [honeybee-dynamo](https://github.com/ladybug-tools/honeybee-dynamo) repositories.
 
@@ -29,7 +29,7 @@ For the daylighting library cite this presentation:
 `
 
 ## Examples
-Here is an example that shows how to put a grid-based analysis together. For more examples check one of the plugins repository.
+Here is a Python example that shows how to put a grid-based analysis together. For more examples check one of the plugins repository.
 
 ```python
 from honeybee.room import Room
