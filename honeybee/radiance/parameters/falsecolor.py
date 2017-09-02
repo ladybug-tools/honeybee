@@ -5,29 +5,31 @@
 from ._advancedparametersbase import AdvancedRadianceParameters
 from ._frozen import frozen
 
-#TODO: Didn't add inputs for red,green,blue channels as the chances of that being used are..
-#TODO:..almost zero.
+# TODO: Didn't add inputs for red,green,blue channels as the chances of that being used are..
+# TODO:..almost zero.
+
 
 @frozen
 class FalsecolorParameters(AdvancedRadianceParameters):
-    def __init__(self,picForContours=None,contourBands=None,contourLines=None,
-                 printExtremaPoints=None,scale=None,label=None,contourQuant=None,
-                 legendWidth=None,legendHeight=None,log=None,multiplier=None,
+    def __init__(self, picForContours=None, contourBands=None, contourLines=None,
+                 printExtremaPoints=None, scale=None, label=None, contourQuant=None,
+                 legendWidth=None, legendHeight=None, log=None, multiplier=None,
                  palette=None):
 
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadiancePath('p','picture for contours',checkExists=True,
+        self.addRadiancePath('p', 'picture for contours', checkExists=True,
                              attributeName='picForContours')
-        self.picForContours=picForContours
+        self.picForContours = picForContours
         """
         -p picture
 
         Contour lines can be placed over another Radiance picture using the -p option.
         """
 
-        self.addRadianceBoolFlag('cb','create contour bands',attributeName='contourBands')
-        self.contourBands=contourBands
+        self.addRadianceBoolFlag('cb', 'create contour bands',
+                                 attributeName='contourBands')
+        self.contourBands = contourBands
         """
         -cb
 
@@ -46,8 +48,11 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         picture using the -p  option.
         """
 
-        self.addRadianceBoolFlag('e','print extrema points',attributeName='printExtremaPoints')
-        self.printExtremaPoints=printExtremaPoints
+        self.addRadianceBoolFlag(
+            'e',
+            'print extrema points',
+            attributeName='printExtremaPoints')
+        self.printExtremaPoints = printExtremaPoints
         """
         -e
 
@@ -55,8 +60,8 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         darkest pixels of the input picture.
         """
 
-        self.addRadianceValue('s','scaling value',attributeName='scale')
-        self.scale=scale
+        self.addRadianceValue('s', 'scaling value', attributeName='scale')
+        self.scale = scale
         """
         -s scale
 
@@ -66,8 +71,8 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         or irradiance to luminance or illuminance, respectively.
         """
 
-        self.addRadianceValue('l','label for legend',attributeName='label')
-        self.label=label
+        self.addRadianceValue('l', 'label for legend', attributeName='label')
+        self.label = label
         """
         -l label
 
@@ -76,9 +81,9 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         Radiance images.
         """
 
-        self.addRadianceNumber('n','number of contours',attributeName='contourQuant',
+        self.addRadianceNumber('n', 'number of contours', attributeName='contourQuant',
                                numType=int)
-        self.contourQuant=contourQuant
+        self.contourQuant = contourQuant
         """
         -n
 
@@ -104,9 +109,8 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         eliminates the legend in the output.
         """
 
-
         self.addRadianceNumber('log', 'number of decades for log scale',
-                               attributeName='log',numType=int)
+                               attributeName='log', numType=int)
         self.log = log
         """
         -log
@@ -123,12 +127,11 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         given with -m to get daylight factors or whatever.
         """
 
-        self.addRadianceValue('pal','color palettes',attributeName='palette',
-                              acceptedInputs=('spec','hot','pm3d'))
-        self.palette=palette
+        self.addRadianceValue('pal', 'color palettes', attributeName='palette',
+                              acceptedInputs=('spec', 'hot', 'pm3d'))
+        self.palette = palette
         """
         The -pal option provides different color palettes for falsecolor. The
         current choices are spec for the old spectral mapping, hot for a thermal
         scale, and pm3d for a variation of the default mapping, def.
         """
-

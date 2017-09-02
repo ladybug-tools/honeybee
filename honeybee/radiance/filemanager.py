@@ -13,7 +13,10 @@ def getRadianceObjectsFromString(fullString):
     Returns:
         A list of strings. Each string represents a differnt Rdiance Object
     """
-    rawRadObjects = re.findall(r'(\n|^)(\w*(\h*\w.*\n){1,})', fullString + "\n", re.MULTILINE)
+    rawRadObjects = re.findall(
+        r'(\n|^)(\w*(\h*\w.*\n){1,})',
+        fullString + "\n",
+        re.MULTILINE)
 
     return [("").join(radObject[:-1]) for radObject in rawRadObjects]
 

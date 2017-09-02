@@ -5,6 +5,7 @@ import sys
 from ..datatype import *
 from ..parameters.rcollate import RcollateParameters
 
+
 class Rcollate(RadianceCommand):
     u"""
     rcollate - resize or transpose matrix data
@@ -12,10 +13,10 @@ class Rcollate(RadianceCommand):
     Attributes:
 
     """
-    matrixFile = RadiancePath('matrixFile',descriptiveName='input matrix file',
+    matrixFile = RadiancePath('matrixFile', descriptiveName='input matrix file',
                               checkExists=True)
 
-    def __index__(self,outputName=None,matrixFile=None,rcollateParameters=None):
+    def __index__(self, outputName=None, matrixFile=None, rcollateParameters=None):
         """Init command"""
         RadianceCommand.__init__(self)
 
@@ -28,7 +29,6 @@ class Rcollate(RadianceCommand):
         outputFile = os.path.splitext(str(self.matrixFile))[0] + ".mtx" \
             if self.outputName is None and self.matrixFile.normpath is not None \
             else self.outputName
-
 
         radString = "%s %s %s > %s" % (
             os.path.join(self.radbinPath, 'rcollate'),

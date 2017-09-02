@@ -100,7 +100,7 @@ class AnalysisBase(object):
                 if finished == total:
                     self.__done = True
 
-        except Exception, e:
+        except Exception as e:
             print "Failed to execute batch files: %s" % str(e)
 
     def __repr__(self):

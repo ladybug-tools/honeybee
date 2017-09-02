@@ -33,7 +33,7 @@ class RmtxopParameters(AdvancedRadianceParameters):
 
     """
 
-    def __init__(self, verboseReporting=None, outputFormat=None,combineValues=None,
+    def __init__(self, verboseReporting=None, outputFormat=None, combineValues=None,
                  transposeMatrix=None):
         AdvancedRadianceParameters.__init__(self)
 

@@ -12,21 +12,20 @@ class Falsecolor(RadianceCommand):
     """
     falsecolor - make a falsecolor Radiance picture
     """
-    inputImageFile=RadiancePath('i','input file',checkExists=True)
-    outputFile=RadiancePath('outputFile','output file')
-    
-    def __init__(self,inputImageFile=None,outputFile=None,falsecolorParameters=None):
-        RadianceCommand.__init__(self,executableName='falsecolor.pl')
-        self.inputImageFile=inputImageFile
+    inputImageFile = RadiancePath('i', 'input file', checkExists=True)
+    outputFile = RadiancePath('outputFile', 'output file')
+
+    def __init__(self, inputImageFile=None, outputFile=None, falsecolorParameters=None):
+        RadianceCommand.__init__(self, executableName='falsecolor.pl')
+        self.inputImageFile = inputImageFile
         """The file path for which the falsecolor image is to be created."""
-        
-        self.outputFile=outputFile
+
+        self.outputFile = outputFile
         """The name of the output file."""
-        
-        self.falsecolorParameters=falsecolorParameters
+
+        self.falsecolorParameters = falsecolorParameters
         """Paramters for the falsecolor command."""
-        
-        
+
     @property
     def falsecolorParameters(self):
         """Get and set falsecolorParameters."""
@@ -52,12 +51,10 @@ class Falsecolor(RadianceCommand):
 
         inputParams = self.falsecolorParameters.toRadString()
         inputFile = self.inputImageFile.toRadString()
-        inputFile = "-i %s"%inputFile if inputFile else ''
-        outputFile = self.outputFile.toRadString().replace("outputFile",'')
+        inputFile = "-i %s" % inputFile if inputFile else ''
+        outputFile = self.outputFile.toRadString().replace("outputFile", '')
 
-        radString="%s %s %s > %s"%(cmdPath,inputParams,inputFile,outputFile)
-
-
+        radString = "%s %s %s > %s" % (cmdPath, inputParams, inputFile, outputFile)
 
         return radString
 

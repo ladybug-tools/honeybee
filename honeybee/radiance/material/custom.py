@@ -48,7 +48,7 @@ class CustomMaterial(RadianceMaterial):
         for lineCount in xrange(3):
             try:
                 values = self.values[lineCount]
-            except:
+            except BaseException:
                 values = []  # line will be printed as 0
             else:
                 count = [str(len(values))]

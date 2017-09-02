@@ -219,7 +219,7 @@ class HBAnalysisSurface(HBObject):
         """
         try:
             # check if user passed a tuple
-            if type(values) is str:
+            if isinstance(values, str):
                 raise TypeError
             newName, isNameSetByUser = values
         except ValueError:

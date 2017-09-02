@@ -57,7 +57,7 @@ def matchPointsAndVectors(ptsT, vecT):
     for i, p in enumerate(ptsT):
         try:
             v = vecT[i]
-        except:
+        except BaseException:
             v = []
 
         tempPts, tempVectors = matchData(

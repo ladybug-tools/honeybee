@@ -125,7 +125,7 @@ class RadianceCommand(object):
         if os.name == 'nt':
             if self.executableName:
                 __executable = os.path.normpath(os.path.join(str(radbinPath),
-                                                self.executableName.lower()))
+                                                             self.executableName.lower()))
             else:
                 __executable = os.path.normpath(
                     os.path.join(str(radbinPath),

@@ -6,12 +6,13 @@ import os
 from ..parameters.raBmp import RaBmpParameters
 from ..datatype import RadiancePath
 
+
 class RaBmp(RadianceCommand):
     inputHdrFile = RadiancePath('inputHdr', 'inputHDR file')
     outputBmpFile = RadiancePath('outputBmp', 'output TIFF file', extension='.bmp')
 
     def __init__(self, inputHdrFile=None, outputBmpFile=None, raBmpParameters=None):
-        RadianceCommand.__init__(self,executableName='ra_bmp.exe')
+        RadianceCommand.__init__(self, executableName='ra_bmp.exe')
         self.inputHdrFile = inputHdrFile
         """Path for input HDR file"""
         self.outputBmpFile = outputBmpFile

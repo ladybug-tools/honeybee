@@ -35,8 +35,10 @@ class Room(HBZone):
         self.rotationAngle = float(rotationAngle)
 
         self._zAxis = Vector3(0, 0, 1)
-        self._xAxis = Vector3(1, 0, 0).rotate_around(self._zAxis, math.radians(rotationAngle))
-        self._yAxis = Vector3(0, 1, 0).rotate_around(self._zAxis, math.radians(rotationAngle))
+        self._xAxis = Vector3(1, 0, 0).rotate_around(
+            self._zAxis, math.radians(rotationAngle))
+        self._yAxis = Vector3(0, 1, 0).rotate_around(
+            self._zAxis, math.radians(rotationAngle))
 
         # create 8 points
         self.__calculateVertices()
@@ -74,7 +76,7 @@ class Room(HBZone):
         try:
             wall = tuple(srf for srf in self.surfaces
                          if srf.name == '%sWall' % wallName.lower())[0]
-        except:
+        except BaseException:
             raise ValueError('Cannot find {} wall'.format(wallName))
 
         name = '{}Glazing_{}'.format(wallName.lower(),

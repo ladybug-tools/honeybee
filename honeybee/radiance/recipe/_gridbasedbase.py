@@ -137,7 +137,7 @@ class GenericGridBased(AnalysisRecipe):
         """
         if merge:
             fileName = fileName or randomName()
-            assert type(fileName) is str, 'fileName should be a string.'
+            assert isinstance(fileName, str), 'fileName should be a string.'
             fileName = fileName if fileName.lower().endswith('.pts') \
                 else fileName + '.pts'
 

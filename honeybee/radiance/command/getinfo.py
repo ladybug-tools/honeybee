@@ -12,7 +12,6 @@ class Getinfo(RadianceCommand):
 
     def __init__(self, getDimensions=None, headerSuppress=None, radFiles=None,
                  outputFile=None):
-
         """Init command."""
         RadianceCommand.__init__(self)
 
@@ -43,7 +42,7 @@ class Getinfo(RadianceCommand):
         outputFilePath = self.outputFile.toRadString()
         outputFile = ">%s" % outputFilePath if outputFilePath else ''
         radString = "{0} {1} {2} {3}".format(cmdPath, warning, radFiles,
-                                                 outputFile)
+                                             outputFile)
         self.checkInputFiles(radString)
 
         return radString

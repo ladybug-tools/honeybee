@@ -222,7 +222,7 @@ class SolarAccessGridBased(GenericGridBased):
         Exceptions:
             ValueError if targetDir doesn't exist and mkdir is False.
         """
-        assert type(projectName) is str, "projectName should be a string."
+        assert isinstance(projectName, str), "projectName should be a string."
 
         _suns = range(len(self.sunVectors))
         _mat = range(len(self.sunVectors))

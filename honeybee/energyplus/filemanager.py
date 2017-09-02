@@ -24,7 +24,8 @@ def getEnergyPlusObjectsFromString(epFileString):
 
     for obj in rawEPObjects:
         # seperate each segment of EnergyPlus object
-        segments = [seg.split("!")[0] for seg in re.findall(r'.+[,|;]', obj, re.MULTILINE)]
+        segments = [seg.split("!")[0]
+                    for seg in re.findall(r'.+[,|;]', obj, re.MULTILINE)]
 
         # clean the objects and join them into a single comma separated string
         segments = "".join(segments).replace("\t", "").replace(" ", "")[:-1].split(",")
@@ -65,7 +66,8 @@ def getEnergyPlusObjectsFromFile(epFilePath):
 
 
 if __name__ == "__main__":
-    objects = getEnergyPlusObjectsFromFile(r"C:\EnergyPlusV8-3-0\ExampleFiles\5ZoneWaterCooled_GasFiredSteamHumidifier.idf")
+    objects = getEnergyPlusObjectsFromFile(
+        r"C:\EnergyPlusV8-3-0\ExampleFiles\5ZoneWaterCooled_GasFiredSteamHumidifier.idf")
 
     # if the geometry rules is relative then all the points should be added
     # to X, Y, Z of zone origin

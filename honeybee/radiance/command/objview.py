@@ -1,38 +1,39 @@
 # coding=utf-8
 
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath,RadianceBoolFlag,RadianceValue
+from ..datatype import RadiancePath, RadianceBoolFlag, RadianceValue
 from ..datatype import RadianceNumber
 import os
 
 from pyRad import objview
 
+
 class Objview(RadianceCommand):
-    useOpenGl = RadianceBoolFlag('g','use GlRad(openGl) to render the scene')
-    hemisphereUp = RadianceValue('u','hemisphere up direction')
-    backFaceVisibility = RadianceBoolFlag('bv','back face visibility')
-    viewDetails = RadianceValue('v','view details')
+    useOpenGl = RadianceBoolFlag('g', 'use GlRad(openGl) to render the scene')
+    hemisphereUp = RadianceValue('u', 'hemisphere up direction')
+    backFaceVisibility = RadianceBoolFlag('bv', 'back face visibility')
+    viewDetails = RadianceValue('v', 'view details')
     numProcessors = RadianceNumber('N',
                                    'number of processors to render the scene',
                                    numType=int)
-    outputDevice = RadianceValue('o','output device to be used for rendering')
-    verboseDisplay = RadianceBoolFlag('e','display errors and messages')
-    disableWarnings = RadianceBoolFlag('w','disable warnings')
+    outputDevice = RadianceValue('o', 'output device to be used for rendering')
+    verboseDisplay = RadianceBoolFlag('e', 'display errors and messages')
+    disableWarnings = RadianceBoolFlag('w', 'disable warnings')
     glRadFullScreen = RadianceBoolFlag('S',
                                        'enable full screen options with glRad')
-    viewFile = RadianceValue('vf','view file path')
-    sceneExposure = RadianceNumber('exp','scene exposure',numType=float)
-    noLights = RadianceBoolFlag('nL','render the scene without extra lights')
-    runSilently = RadianceBoolFlag('s','run the Radiance scene silently')
-    printViews = RadianceBoolFlag('V','print view details to standard output')
+    viewFile = RadianceValue('vf', 'view file path')
+    sceneExposure = RadianceNumber('exp', 'scene exposure', numType=float)
+    noLights = RadianceBoolFlag('nL', 'render the scene without extra lights')
+    runSilently = RadianceBoolFlag('s', 'run the Radiance scene silently')
+    printViews = RadianceBoolFlag('V', 'print view details to standard output')
 
-    def __init__(self,useOpenGl=None,hemisphereUp=None,backFaceVisibility=None,
-                 viewDetails=None,numProcessors=None,outputDevice=None,
-                 verboseDisplay=None,disableWarnings=None,glRadFullScreen=None,
-                 viewFile=None,sceneExposure=None,noLights=None,
-                 runSilently=None,printViews=None,sceneFiles=None):
+    def __init__(self, useOpenGl=None, hemisphereUp=None, backFaceVisibility=None,
+                 viewDetails=None, numProcessors=None, outputDevice=None,
+                 verboseDisplay=None, disableWarnings=None, glRadFullScreen=None,
+                 viewFile=None, sceneExposure=None, noLights=None,
+                 runSilently=None, printViews=None, sceneFiles=None):
 
-        RadianceCommand.__init__(self,executableName='objview.pl')
+        RadianceCommand.__init__(self, executableName='objview.pl')
 
         self.useOpenGl = useOpenGl
         self.hemisphereUp = hemisphereUp
@@ -55,7 +56,6 @@ class Objview(RadianceCommand):
         """Get and set scene files."""
         return self.__sceneFiles
 
-
     @sceneFiles.setter
     def sceneFiles(self, files):
         if files:
@@ -67,13 +67,13 @@ class Objview(RadianceCommand):
         objviewPythonPath = objview.__file__
         cmdPath = self.normspace(objviewPythonPath)
 
-        useOpenGl= self.useOpenGl.toRadString()
+        useOpenGl = self.useOpenGl.toRadString()
         hemisphereUp = self.hemisphereUp.toRadString()
-        backFaceVisibility= self.backFaceVisibility.toRadString()
+        backFaceVisibility = self.backFaceVisibility.toRadString()
         viewDetails = self.viewDetails.toRadString()
-        numProcessors= self.numProcessors.toRadString()
+        numProcessors = self.numProcessors.toRadString()
         outputDevice = self.outputDevice.toRadString()
-        verboseDisplay= self.verboseDisplay.toRadString()
+        verboseDisplay = self.verboseDisplay.toRadString()
         disableWarnings = self.disableWarnings.toRadString()
         glRadFullScreen = self.glRadFullScreen.toRadString()
         viewFile = self.viewFile.toRadString()
@@ -82,20 +82,19 @@ class Objview(RadianceCommand):
         runSilently = self.runSilently.toRadString()
         printViews = self.printViews.toRadString()
 
-
-        radString = "%s %s "%(self.pythonExePath,cmdPath)
+        radString = "%s %s " % (self.pythonExePath, cmdPath)
 
         # Lambda shortcut for adding an input or nothing to the command
-        addToStr = lambda val: "%s " % val if val else ''
-        objviewParam = (useOpenGl,hemisphereUp,backFaceVisibility,viewDetails,
-                        numProcessors,outputDevice,verboseDisplay,
-                        disableWarnings,glRadFullScreen,viewFile,sceneExposure,
-                        noLights,runSilently,printViews)
+        def addToStr(val): return "%s " % val if val else ''
+        objviewParam = (useOpenGl, hemisphereUp, backFaceVisibility, viewDetails,
+                        numProcessors, outputDevice, verboseDisplay,
+                        disableWarnings, glRadFullScreen, viewFile, sceneExposure,
+                        noLights, runSilently, printViews)
 
-        for parameter  in objviewParam:
+        for parameter in objviewParam:
             radString += addToStr(parameter)
 
-        radString += " %s"%(" ".join(self.sceneFiles))
+        radString += " %s" % (" ".join(self.sceneFiles))
 
         # make sure input files are set by user
         self.checkInputFiles(radString)
