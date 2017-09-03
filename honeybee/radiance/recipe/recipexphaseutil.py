@@ -222,13 +222,13 @@ def get_commands_direct_view_daylight_matrices(
         # prepare input files
         rad_files = tuple(os.path.relpath(f, project_folder) for f in vrflux_scene)
 
-        ab = int(view_mtx_parameters.ambientBounces)
-        view_mtx_parameters.ambientBounces = 1
+        ab = int(view_mtx_parameters.ambient_bounces)
+        view_mtx_parameters.ambient_bounces = 1
         vmtx = coeff_matrix_commands(
             v_matrix, os.path.relpath(vreceiver, project_folder), rad_files, '-',
             os.path.relpath(points_file, project_folder), number_of_points,
             view_mtx_parameters)
-        view_mtx_parameters.ambientBounces = ab
+        view_mtx_parameters.ambient_bounces = ab
         commands.append(vmtx.to_rad_string())
 
     # 3.3 daylight matrix
@@ -244,14 +244,14 @@ def get_commands_direct_view_daylight_matrices(
 
         rad_files = tuple(os.path.relpath(f, project_folder) for f in drflux_scene)
 
-        ab = int(daylight_mtx_parameters.ambientBounces)
+        ab = int(daylight_mtx_parameters.ambient_bounces)
         src = int(daylight_mtx_parameters.sampling_rays_count)
-        daylight_mtx_parameters.ambientBounces = 1
+        daylight_mtx_parameters.ambient_bounces = 1
         daylight_mtx_parameters.sampling_rays_count = 1
         dmtx = coeff_matrix_commands(
             d_matrix, os.path.relpath(receiver, project_folder), rad_files,
             sender, None, None, daylight_mtx_parameters)
-        daylight_mtx_parameters.ambientBounces = ab
+        daylight_mtx_parameters.ambient_bounces = ab
         daylight_mtx_parameters.sampling_rays_count = src
 
         commands.append(':: :: [4-2/5] calculating direct daylight matrix')

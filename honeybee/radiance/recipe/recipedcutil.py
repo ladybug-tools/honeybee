@@ -379,15 +379,15 @@ def _get_commands_daylight_coeff(
             )
             commands.append('::')
 
-            original_value = int(rfluxmtx_parameters.ambientBounces)
-            rfluxmtx_parameters.ambientBounces = 1
+            original_value = int(rfluxmtx_parameters.ambient_bounces)
+            rfluxmtx_parameters.ambient_bounces = 1
             rflux_direct = coeff_matrix_commands(
                 d_matrix_direct, os.path.relpath(receiver, project_folder),
                 rad_files_blacked, sender, os.path.relpath(points_file, project_folder),
                 total_point_count, rfluxmtx_parameters
             )
             commands.append(rflux_direct.to_rad_string())
-            rfluxmtx_parameters.ambientBounces = original_value
+            rfluxmtx_parameters.ambient_bounces = original_value
 
             commands.append(':: :: [3/3] black scene analemma daylight matrix')
             commands.append(
@@ -564,10 +564,10 @@ def create_reference_map_command(view, view_file, outputfolder, octree_file):
     """Create a reference map to conver illuminance to luminance."""
     # set the parameters / options
     img_par = ImageBasedParameters()
-    img_par.ambientAccuracy = 0
-    img_par.ambientValue = [0.31831] * 3
-    img_par.pixelSampling = 1
-    img_par.pixelJitter = 1
+    img_par.ambient_accuracy = 0
+    img_par.ambient_value = [0.31831] * 3
+    img_par.pixel_sampling = 1
+    img_par.pixel_jitter = 1
     x, y = view.get_view_dimension()
     img_par.x_resolution = x
     img_par.y_resolution = y
@@ -591,11 +591,11 @@ def imaged_based_sun_coeff_matrix_commands(
     # Creating sun coefficients
     # -ab 0 -i -ffc -dj 0 -dc 1 -dt 0
     rctb_param = get_radiance_parameters_image_based(0, 1).smtx
-    rctb_param.xDimension, rctb_param.yDimension = view.get_view_dimension()
+    rctb_param.x_dimension, rctb_param.y_dimension = view.get_view_dimension()
     rctb_param.mod_file = sunlist
     rctb_param.output_data_format = 'fc'
     rctb_param.irradiance_calc = None  # -I
-    rctb_param.iIrradianceCalc = True  # -i
+    rctb_param.i_irradiance_calc = True  # -i
     rctb_param.output_filename_format = output_filename_format
 
     rctb = Rcontrib()

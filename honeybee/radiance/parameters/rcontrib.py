@@ -60,13 +60,13 @@ class RcontribParameters(GridBasedParameters):
         (Default: None)"""
 
         self.add_radiance_number('y', 'number of total points or pixels in y direction',
-                                 attribute_name='yDimension')
-        self.yDimension = y
+                                 attribute_name='y_dimension')
+        self.y_dimension = y
         """[-y int] Y dimension of an image or number of total points in points file."""
 
         self.add_radiance_number('x', 'number of pixels in x direction',
-                                 attribute_name='xDimension')
-        self.xDimension = x
+                                 attribute_name='x_dimension')
+        self.x_dimension = x
         """[-x int] X dimension of an image."""
 
         self.add_radiance_value('o', 'output file name format',

@@ -33,11 +33,11 @@ from collections import namedtuple
 # High: A room within a sky-scraper with intricate furnitures, complex
 # external geometry (complex fins,overhangs etc).
 DCDEFAULTS = (
-    {'ambientDivisions': 5000, 'ambientBounces': 3, 'limitWeight': 0.000002,
+    {'ambient_divisions': 5000, 'ambient_bounces': 3, 'limit_weight': 0.000002,
      'sampling_rays_count': 1},
-    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.67E-07,
+    {'ambient_divisions': 15000, 'ambient_bounces': 5, 'limit_weight': 6.67E-07,
      'sampling_rays_count': 1},
-    {'ambientDivisions': 25000, 'ambientBounces': 6, 'limitWeight': 4E-07,
+    {'ambient_divisions': 25000, 'ambient_bounces': 6, 'limit_weight': 4E-07,
      'sampling_rays_count': 1}
 )
 
@@ -49,11 +49,11 @@ DCDEFAULTS = (
 #     lighting to converge.
 #   High: Set these parameters for generating high-quality final renderings.
 IMGDCDEFAULTS = (
-    {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
+    {'ambient_divisions': 1000, 'ambient_bounces': 2, 'limit_weight': 0.0001,
      'sampling_rays_count': 1},
-    {'ambientDivisions': 5000, 'ambientBounces': 4, 'limitWeight': 0.00002,
+    {'ambient_divisions': 5000, 'ambient_bounces': 4, 'limit_weight': 0.00002,
      'sampling_rays_count': 5},
-    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.666E-06,
+    {'ambient_divisions': 15000, 'ambient_bounces': 5, 'limit_weight': 6.666E-06,
      'sampling_rays_count': 6}
 )
 
@@ -66,11 +66,11 @@ IMGDCDEFAULTS = (
 #     lighting to converge.
 #   High: Set these parameters for generating high-quality final renderings.
 IMGVMDEFAULTS = (
-    {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
+    {'ambient_divisions': 1000, 'ambient_bounces': 2, 'limit_weight': 0.0001,
      'sampling_rays_count': 1},
-    {'ambientDivisions': 3000, 'ambientBounces': 4, 'limitWeight': 3.33E-05,
+    {'ambient_divisions': 3000, 'ambient_bounces': 4, 'limit_weight': 3.33E-05,
      'sampling_rays_count': 5},
-    {'ambientDivisions': 10000, 'ambientBounces': 5, 'limitWeight': 1E-05,
+    {'ambient_divisions': 10000, 'ambient_bounces': 5, 'limit_weight': 1E-05,
      'sampling_rays_count': 6}
 )
 
@@ -82,9 +82,9 @@ IMGVMDEFAULTS = (
 # High: Complex room or envrionment, like an Aircraft cabin (!) with lots
 # of detailing and occulding surfaces.
 VMDEFAULTS = (
-    {'ambientDivisions': 1000, 'ambientBounces': 3, 'limitWeight': 0.00001},
-    {'ambientDivisions': 5000, 'ambientBounces': 5, 'limitWeight': 0.00002},
-    {'ambientDivisions': 20000, 'ambientBounces': 7, 'limitWeight': 5E-7}
+    {'ambient_divisions': 1000, 'ambient_bounces': 3, 'limit_weight': 0.00001},
+    {'ambient_divisions': 5000, 'ambient_bounces': 5, 'limit_weight': 0.00002},
+    {'ambient_divisions': 20000, 'ambient_bounces': 7, 'limit_weight': 5E-7}
 )
 
 # Daylight Matrix
@@ -95,19 +95,19 @@ VMDEFAULTS = (
 # High: Room is surrounded by several shapes..The glazing might not have a direct view
 # of the sky.
 DMDEFAULTS = (
-    {'ambientDivisions': 1024, 'ambientBounces': 2, 'limitWeight': 0.00001,
+    {'ambient_divisions': 1024, 'ambient_bounces': 2, 'limit_weight': 0.00001,
      'sampling_rays_count': 1000},
-    {'ambientDivisions': 3000, 'ambientBounces': 4, 'limitWeight': 3.33E-06,
+    {'ambient_divisions': 3000, 'ambient_bounces': 4, 'limit_weight': 3.33E-06,
      'sampling_rays_count': 1000},
-    {'ambientDivisions': 10000, 'ambientBounces': 6, 'limitWeight': 0.000001,
+    {'ambient_divisions': 10000, 'ambient_bounces': 6, 'limit_weight': 0.000001,
      'sampling_rays_count': 1000}
 )
 
 # Sun-matrix
 # These settings are set such that every solar disc disc in the celestial hemisphere is
 # accounted for and participates in shadow testing.
-SMDEFAULTS = {'ambientBounces': 0, 'directJitter': 0, 'directCertainty': 1,
-              'directThreshold': 0}
+SMDEFAULTS = {'ambient_bounces': 0, 'direct_jitter': 0, 'direct_certainty': 1,
+              'direct_threshold': 0}
 
 # ~~~~~~~~~~~ENDING DEFAULT PARAMETERS
 

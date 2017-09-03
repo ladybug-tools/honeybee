@@ -48,30 +48,30 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
         self.add_radiance_number('ab', descriptive_name='ambient bounces',
-                                 attribute_name="ambientBounces", num_type=int)
-        self.ambientBounces = None
+                                 attribute_name="ambient_bounces", num_type=int)
+        self.ambient_bounces = None
         """ Number of ambient bounces. This is the maximum number of diffuse
             bounces computed by the indirect calculation. A value of zero
             implies no indirect calculation."""
 
         self.add_radiance_number('ad', descriptive_name='ambient divisions',
-                                 attribute_name="ambientDivisions", num_type=int)
-        self.ambientDivisions = None
+                                 attribute_name="ambient_divisions", num_type=int)
+        self.ambient_divisions = None
         """ Number of ambient divisions. The error in the Monte Carlo calculation
             of indirect illuminance will be inversely proportional to the square
             root of this number. A value of zero implies no indirect calculation.
         """
 
         self.add_radiance_number('as', descriptive_name='ambient super samples',
-                                 attribute_name='ambientSupersamples', num_type=int)
-        self.ambientSupersamples = None
+                                 attribute_name='ambient_supersamples', num_type=int)
+        self.ambient_supersamples = None
         """ Number of ambient super-samples. Super-samples are applied only to
             the ambient divisions which show a significant change.
         """
 
         self.add_radiance_number('ar', descriptive_name='ambient resolution',
-                                 attribute_name='ambientResolution', num_type=int)
-        self.ambientResolution = None
+                                 attribute_name='ambient_resolution', num_type=int)
+        self.ambient_resolution = None
         """ Number of ambient resolution. This number will determine the maximum
             density of ambient values used in interpolation. Error will start to
             increase on surfaces spaced closer than the scene size divided by the
@@ -79,15 +79,15 @@ class ImageBasedParameters(AdvancedRadianceParameters):
             size times the ambient accuracy."""
 
         self.add_radiance_number('aa', descriptive_name='ambient accuracy',
-                                 attribute_name='ambientAccuracy', num_type=float)
-        self.ambientAccuracy = None
+                                 attribute_name='ambient_accuracy', num_type=float)
+        self.ambient_accuracy = None
         """Number of ambient accuracy. This value will approximately equal the
         error from indirect illuminance interpolation. A value of zero implies
         no interpolation."""
 
         self.add_radiance_number('dj', descriptive_name='direct source jitter',
-                                 attribute_name='directJitter', num_type=float)
-        self.directJitter = None
+                                 attribute_name='direct_jitter', num_type=float)
+        self.direct_jitter = None
         """
         -dj frac
         Set the direct jittering to frac. A value of zero samples each source
@@ -102,8 +102,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('ds', descriptive_name='direct sampling',
-                                 attribute_name='directSampling', num_type=float)
-        self.directSampling = None
+                                 attribute_name='direct_sampling', num_type=float)
+        self.direct_sampling = None
         """
         -ds frac
         Set the direct sampling ratio to frac. A light source will be subdivided
@@ -115,8 +115,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('dt', descriptive_name='direct thresholding',
-                                 num_type=float, attribute_name='directThreshold')
-        self.directThreshold = None
+                                 num_type=float, attribute_name='direct_threshold')
+        self.direct_threshold = None
         """
         -dt frac
 
@@ -129,8 +129,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('dc', descriptive_name='direct certainty',
-                                 num_type=float, attribute_name='directCertainty')
-        self.directCertainty = None
+                                 num_type=float, attribute_name='direct_certainty')
+        self.direct_certainty = None
         """
         -dc frac
 
@@ -142,8 +142,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('dr', descriptive_name='direct relays',
-                                 num_type=float, attribute_name='directSecRelays')
-        self.directSecRelays = None
+                                 num_type=float, attribute_name='direct_sec_relays')
+        self.direct_sec_relays = None
         """
         -dr N
 
@@ -155,8 +155,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('dp', descriptive_name='direct presampling density',
-                                 num_type=int, attribute_name='directPresampDensity')
-        self.directPresampDensity = None
+                                 num_type=int, attribute_name='direct_presamp_density')
+        self.direct_presamp_density = None
         """
         -dp D
 
@@ -170,8 +170,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.add_radiance_number('st', descriptive_name='specular threshold',
                                  num_type=float,
-                                 attribute_name='specularThreshold')
-        self.specularThreshold = None
+                                 attribute_name='specular_threshold')
+        self.specular_threshold = None
         """
         -st frac
 
@@ -186,8 +186,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('lw', descriptive_name='limit weight', num_type=float,
-                                 attribute_name='limitWeight')
-        self.limitWeight = None
+                                 attribute_name='limit_weight')
+        self.limit_weight = None
         """
         -lw frac
 
@@ -201,8 +201,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.add_radiance_number('lr', descriptive_name='limit reflections',
                                  num_type=int,
-                                 attribute_name='limitReflections')
-        self.limitReflections = None
+                                 attribute_name='limit_reflections')
+        self.limit_reflections = None
         """
         -lr N
         Limit reflections to a maximum of N, if N is a positive integer. If N
@@ -215,8 +215,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
 
         self.add_radiance_number('ss', descriptive_name='specular sampling',
                                  num_type=float,
-                                 attribute_name='specularSampling')
-        self.specularSampling = None
+                                 attribute_name='specular_sampling')
+        self.specular_sampling = None
         """
         -ss samp
 
@@ -230,9 +230,9 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('ps', descriptive_name='pixel sampling rate',
-                                 num_type=int, attribute_name='pixelSampling')
+                                 num_type=int, attribute_name='pixel_sampling')
 
-        self.pixelSampling = None
+        self.pixel_sampling = None
         """
         -ps size
 
@@ -240,8 +240,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         sample spacing (in pixels) for adaptive subdivision on the image plane.
         """
         self.add_radiance_number('pt', descriptive_name='pixel sampling tolerance',
-                                 num_type=float, attribute_name='pixelTolerance')
-        self.pixelTolerance = None
+                                 num_type=float, attribute_name='pixel_tolerance')
+        self.pixel_tolerance = None
         """
         -pt frac
 
@@ -250,8 +250,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('pj', descriptive_name='anti-aliazing jitter',
-                                 num_type=float, attribute_name='pixelJitter')
-        self.pixelJitter = None
+                                 num_type=float, attribute_name='pixel_jitter')
+        self.pixel_jitter = None
         """-pj frac
 
         Set the pixel sample jitter to frac. Distributed ray-tracing performs
@@ -262,8 +262,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('pa', descriptive_name='pixel aspect ratio',
-                                 num_type=float, attribute_name='pixelAspectRatio')
-        self.pixelAspectRatio = None
+                                 num_type=float, attribute_name='pixel_aspect_ratio')
+        self.pixel_aspect_ratio = None
         """
         -pa rat
 
@@ -274,8 +274,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('pm', descriptive_name='pixel motion blur',
-                                 num_type=float, attribute_name='pixelMotionBlur')
-        self.pixelMotionBlur = None
+                                 num_type=float, attribute_name='pixel_motion_blur')
+        self.pixel_motion_blur = None
         """
         -pm frac
 
@@ -292,8 +292,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('pd', descriptive_name='pixel depth-of-field',
-                                 num_type=float, attribute_name='pixelDepthOfField')
-        self.pixelDepthOfField = None
+                                 num_type=float, attribute_name='pixel_depth_of_field')
+        self.pixel_depth_of_field = None
         """
         -pd dia
 
@@ -308,8 +308,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_tuple('av', descriptive_name='ambient value', tuple_size=3,
-                                attribute_name='ambientValue', num_type=float)
-        self.ambientValue = None
+                                attribute_name='ambient_value', num_type=float)
+        self.ambient_value = None
         """
         -av red grn blu
 
@@ -321,8 +321,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('aw', descriptive_name='ambient weight', num_type=int,
-                                 attribute_name='ambientWeight')
-        self.ambientWeight = None
+                                 attribute_name='ambient_weight')
+        self.ambient_weight = None
         """
         -aw N
 
@@ -337,8 +337,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_bool_flag('dv', descriptive_name='light source visibility',
-                                    attribute_name='directVisibility')
-        self.directVisibility = None
+                                    attribute_name='direct_visibility')
+        self.direct_visibility = None
         """
         -dv
 
@@ -380,8 +380,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_bool_flag('u', descriptive_name='uncorrelated random sampling',
-                                    attribute_name='uncorRandSamp')
-        self.uncorRandSamp = None
+                                    attribute_name='uncor_rand_samp')
+        self.uncor_rand_samp = None
         """
         -u
 

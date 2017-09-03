@@ -66,10 +66,10 @@ class SolarAccessGridBased(GenericGridBased):
 
         self._radiance_parameters = RcontribParameters()
         self._radiance_parameters.irradiance_calc = True
-        self._radiance_parameters.ambientBounces = 0
-        self._radiance_parameters.directCertainty = 1
-        self._radiance_parameters.directThreshold = 0
-        self._radiance_parameters.directJitter = 0
+        self._radiance_parameters.ambient_bounces = 0
+        self._radiance_parameters.direct_certainty = 1
+        self._radiance_parameters.direct_threshold = 0
+        self._radiance_parameters.direct_jitter = 0
 
     @classmethod
     def from_points_and_vectors(cls, sun_vectors, hoys, point_groups, vector_groups=[],
@@ -297,7 +297,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         # 2.1.add sun list to modifiers
         self._radiance_parameters.mod_file = self.relpath(sunsList, project_folder)
-        self._radiance_parameters.yDimension = self.total_point_count
+        self._radiance_parameters.y_dimension = self.total_point_count
 
         # 3.write batch file
         if header:

@@ -88,7 +88,7 @@ class RadianceParameters(object):
                 The radiance parameter name(e.g. ab, aa, f, c)
             alias:
                 The alias name that will be used to create the attribute
-                (e.g. ambientBounces, ambientAccuracy, freeze, color)
+                (e.g. ambient_bounces, ambient_accuracy, freeze, color)
         """
         assert hasattr(self.__class__, alias), \
             "Can't find '%s' in %s attributes." % (alias, self.__class__.__name__)

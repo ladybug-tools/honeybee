@@ -404,8 +404,8 @@ class DaylightCoeffImageBased(GenericImageBased):
                             self.is_sun_mtx_created(project_folder, view, wg, state):
                         self._commands.append(':: :: 1.2 blacked scene daylight matrix')
 
-                        ab = int(self.daylight_mtx_parameters.ambientBounces)
-                        self.daylight_mtx_parameters.ambientBounces = 1
+                        ab = int(self.daylight_mtx_parameters.ambient_bounces)
+                        self.daylight_mtx_parameters.ambient_bounces = 1
 
                         # output pattern is set in receiver
                         rflux_direct = image_based_view_coeff_matrix_commands(
@@ -448,7 +448,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         self._commands.extend(cmd.to_rad_string()
                                               for cmd in sun_commands)
-                        self.daylight_mtx_parameters.ambientBounces = ab
+                        self.daylight_mtx_parameters.ambient_bounces = ab
 
                     else:
                         print(
