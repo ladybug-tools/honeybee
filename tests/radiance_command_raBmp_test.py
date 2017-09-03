@@ -2,45 +2,43 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from honeybee.radiance.command.raBmp import RaBmp
-from honeybee.radiance.parameters.raBmp import RaBmpParameters
+from honeybee.radiance.command.ra_bmp import ra_bmp
+from honeybee.radiance.parameters.ra_bmp import ra_bmp_parameters
 import os
 
 
 class RaBmpTestCase(unittest.TestCase):
-    """Test for (honeybee/radiance/command/raBmp.py)."""
+    """Test for (honeybee/radiance/command/ra_bmp.py)."""
 
-    #test prep
+    # test prep
     def setUp(self):
-        raBmpPara = RaBmpParameters()
-        raBmpPara.exposure = '-3'
+        ra_bmp_para = ra_bmp_parameters()
+        ra_bmp_para.exposure = '-3'
 
-        self.raBmp = RaBmp()
-        self.raBmp.inputHdrFile='assets/sample.hdr'
-        self.raBmp.raBmpParameters = raBmpPara
-        self.raBmp.outputBmpFile = 'assets/sample.bmp'
+        self.ra_bmp = ra_bmp()
+        self.ra_bmp.input_hdr_file = 'assets/sample.hdr'
+        self.ra_bmp.ra_bmp_parameters = ra_bmp_para
+        self.ra_bmp.output_bmp_file = 'assets/sample.bmp'
 
     def tearDown(self):
-        #cleanup
+        # cleanup
         os.remove('assets/sample.bmp')
 
-
     def test_default_values(self):
-        #Two tests will be conducted:
-        #   First one checks if raBmp created the file correctly.
+        # Two tests will be conducted:
+        #   First one checks if ra_bmp created the file correctly.
         #   Second one checks if the file size is greater than zero.
-        self.raBmp.execute()
+        self.ra_bmp.execute()
         self.assertTrue(os.path.exists('assets/sample.bmp'),
-                        'The file that should have been created by raBmp was not'
+                        'The file that should have been created by ra_bmp was not'
                         'found.')
 
-        fileSize = os.stat('assets/sample.bmp').st_size
+        file_size = os.stat('assets/sample.bmp').st_size
 
-        self.assertGreater(fileSize,10,
-                           'The size of the file created by raBmp does not appear to'
+        self.assertGreater(file_size, 10,
+                           'The size of the file created by ra_bmp does not appear to'
                            ' be correct')
 
 
 if __name__ == "__main__":
     unittest.main()
-

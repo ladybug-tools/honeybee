@@ -11,20 +11,22 @@ class DataTypeTestCase(unittest.TestCase):
         """Set up the test case by initiating the class."""
         class RadTest(object):
             # create an attribute for each type
-            ab = RadianceNumber('ab', 'ambinent bounces', validRange=None,
-                                acceptedInputs=None, numType=int,
-                                checkPositive=True, defaultValue=None)
-            ad = RadianceNumber('ad', 'ambinent divisions', validRange=[1, 128],
-                                acceptedInputs=None, numType=None,
-                                checkPositive=True, defaultValue=None)
-            d = RadianceBoolFlag('d', 'sun mtx only', defaultValue=None, isDualSign=False)
-            i = RadianceBoolFlag('I', 'illuminance', defaultValue=None, isDualSign=True)
+            ab = RadianceNumber('ab', 'ambinent bounces', valid_range=None,
+                                accepted_inputs=None, num_type=int,
+                                check_positive=True, default_value=None)
+            ad = RadianceNumber('ad', 'ambinent divisions', valid_range=[1, 128],
+                                accepted_inputs=None, num_type=None,
+                                check_positive=True, default_value=None)
+            d = RadianceBoolFlag('d', 'sun mtx only', default_value=None,
+                                 is_dual_sign=False)
+            i = RadianceBoolFlag('I', 'illuminance', default_value=None,
+                                 is_dual_sign=True)
 
-            c = RadianceTuple('C', 'color', defaultValue=None, numType=int,
-                                     validRange=[0, 255])
+            c = RadianceTuple('C', 'color', default_value=None, num_type=int,
+                              valid_range=[0, 255])
 
-            o = RadianceValue('o', 'output format', defaultValue=None,
-                              acceptedInputs=('f', 'd'), isJoined=True)
+            o = RadianceValue('o', 'output format', default_value=None,
+                              accepted_inputs=('f', 'd'), isJoined=True)
 
             weaFile = RadiancePath('weaFile', 'Weather File Path', relativePath=None,
                                    checkExists=False, extension='.wea')
@@ -32,38 +34,40 @@ class DataTypeTestCase(unittest.TestCase):
             def __init__(self):
                 pass
 
-            def toRadString(self):
+            def to_rad_string(self):
                 _radString = " ".join(
-                    [self.ab.toRadString(), self.ad.toRadString(),
-                     self.d.toRadString(), self.i.toRadString(),
-                     self.c.toRadString(), self.o.toRadString()]) + " > " + \
-                     self.weaFile.toRadString()
+                    [self.ab.to_rad_string(), self.ad.to_rad_string(),
+                     self.d.to_rad_string(), self.i.to_rad_string(),
+                     self.c.to_rad_string(), self.o.to_rad_string()]) + " > " + \
+                    self.wea_file.to_rad_string()
 
                 return _radString.strip()
 
         class RadTestWithDefaults(RadTest):
             # create an attribute for each type
-            ab = RadianceNumber('ab', 'ambinent bounces', validRange=None,
-                                acceptedInputs=None, numType=int,
-                                checkPositive=True, defaultValue=2)
-            ad = RadianceNumber('ad', 'ambinent divisions', validRange=[1, 128],
-                                acceptedInputs=None, numType=None,
-                                checkPositive=True, defaultValue=5)
+            ab = RadianceNumber('ab', 'ambinent bounces', valid_range=None,
+                                accepted_inputs=None, num_type=int,
+                                check_positive=True, default_value=2)
+            ad = RadianceNumber('ad', 'ambinent divisions', valid_range=[1, 128],
+                                accepted_inputs=None, num_type=None,
+                                check_positive=True, default_value=5)
 
-            d = RadianceBoolFlag('d', 'sun mtx only', defaultValue=False, isDualSign=False)
-            i = RadianceBoolFlag('I', 'illuminance', defaultValue=False, isDualSign=True)
+            d = RadianceBoolFlag('d', 'sun mtx only', default_value=False,
+                                 is_dual_sign=False)
+            i = RadianceBoolFlag('I', 'illuminance', default_value=False,
+                                 is_dual_sign=True)
 
-            c = RadianceTuple('C', 'color', defaultValue=(250, 250, 250),
-                                     numType=int, validRange=[0, 255])
+            c = RadianceTuple('C', 'color', default_value=(250, 250, 250),
+                              num_type=int, valid_range=[0, 255])
 
-            o = RadianceValue('o', 'output format', defaultValue='f',
-                              acceptedInputs=('f', 'd'), isJoined=True)
+            o = RadianceValue('o', 'output format', default_value='f',
+                              accepted_inputs=('f', 'd'), isJoined=True)
 
             def __init__(self):
-                self.weaFile = "c:\ladybug\\test.wea"
+                self.wea_file = "c:\ladybug\\test.wea"
 
         self.rad = RadTest()
-        self.radWDef = RadTestWithDefaults()
+        self.rad_with_def = RadTestWithDefaults()
 
     # ending the test
     def tearDown(self):
@@ -73,36 +77,37 @@ class DataTypeTestCase(unittest.TestCase):
     # test default values
     def test_default_values(self):
         """Make sure default values are set correctly."""
-        self.assertEqual(self.radWDef.toRadString(),
-                         "-ab 2 -ad 5  -I -C 250 250 250 -of > c:\\ladybug\\test.wea")
-        self.assertEqual(self.radWDef.ab, 2)
-        self.assertEqual(self.radWDef.ad, 5)
-        self.assertEqual(self.radWDef.c, (250, 250, 250))
-        self.assertEqual(self.radWDef.weaFile, "c:\ladybug\\test.wea")
-        self.assertEqual(self.radWDef.i, False)
-        self.assertEqual(self.radWDef.d, False)
-        self.assertEqual(self.radWDef.o, 'f')
+        self.assertEqual(self.rad_with_def.to_rad_string(),
+                         "-ab 2 -ad 5  -I -C 250 250 250 -of > "
+                         "c:\\ladybug\\test.wea")
+        self.assertEqual(self.rad_with_def.ab, 2)
+        self.assertEqual(self.rad_with_def.ad, 5)
+        self.assertEqual(self.rad_with_def.c, (250, 250, 250))
+        self.assertEqual(self.rad_with_def.wea_file, "c:\ladybug\\test.wea")
+        self.assertEqual(self.rad_with_def.i, False)
+        self.assertEqual(self.rad_with_def.d, False)
+        self.assertEqual(self.rad_with_def.o, 'f')
 
     # test for assertion and exceptions
     def test_assertions_exceptions(self):
         """Make sure the class catches wrong inputs, etc."""
         try:
-            self.radWDef.c = 200
+            self.rad_with_def.c = 200
         except ValueError as e:
             self.assertEqual(type(e), ValueError)
-            self.assertEqual(self.radWDef.c, (250, 250, 250))
+            self.assertEqual(self.rad_with_def.c, (250, 250, 250))
 
         try:
-            self.radWDef.ad = 200
+            self.rad_with_def.ad = 200
         except ValueError as e:
             self.assertEqual(type(e), ValueError)
             # This is quite strange!
-            # self.assertEqual(self.radWDef.ad, 50)
+            # self.assertEqual(self.rad_with_def.ad, 50)
 
     # test for specific cases
-    def test_None_values(self):
+    def test_none_values(self):
         """Make sure values with None will return empty string as radianceString."""
-        self.assertEqual(self.rad.toRadString(), ">")
+        self.assertEqual(self.rad.to_rad_string(), ">")
 
     def test_setting_up_values(self):
         """Make sure values will be set as expected."""
@@ -115,8 +120,8 @@ class DataTypeTestCase(unittest.TestCase):
         self.rad.c = (0, 0, 0)
         self.assertEqual(self.rad.c, (0, 0, 0))
 
-        self.rad.weaFile = "c:\ladybug\\test.wea"
-        self.assertEqual(self.rad.weaFile, "c:\ladybug\\test.wea")
+        self.rad.wea_file = "c:\ladybug\\test.wea"
+        self.assertEqual(self.rad.wea_file, "c:\ladybug\\test.wea")
 
         self.rad.d = True
         self.assertEqual(self.rad.d, True)
@@ -129,50 +134,53 @@ class DataTypeTestCase(unittest.TestCase):
 
     def test_updating_values(self):
         """Make sure values will be updated as expected."""
-        self.radWDef.ab = 12
-        self.assertEqual(self.radWDef.ab, 12)
+        self.rad_with_def.ab = 12
+        self.assertEqual(self.rad_with_def.ab, 12)
 
-        self.radWDef.ad = 15
-        self.assertEqual(self.radWDef.ad, 15)
+        self.rad_with_def.ad = 15
+        self.assertEqual(self.rad_with_def.ad, 15)
 
-        self.radWDef.c = (10, 10, 10)
-        self.assertEqual(self.radWDef.c, (10, 10, 10))
+        self.rad_with_def.c = (10, 10, 10)
+        self.assertEqual(self.rad_with_def.c, (10, 10, 10))
 
-        self.radWDef.weaFile = "c:\ladybug\\test2.wea"
-        self.assertEqual(self.radWDef.weaFile, "c:\ladybug\\test2.wea")
+        self.rad_with_def.wea_file = "c:\ladybug\\test2.wea"
+        self.assertEqual(self.rad_with_def.wea_file, "c:\ladybug\\test2.wea")
 
-        self.radWDef.d = False
-        self.assertEqual(self.radWDef.d, False)
+        self.rad_with_def.d = False
+        self.assertEqual(self.rad_with_def.d, False)
 
-        self.radWDef.i = True
-        self.assertEqual(self.radWDef.i, True)
+        self.rad_with_def.i = True
+        self.assertEqual(self.rad_with_def.i, True)
 
-        self.radWDef.o = 'd'
-        self.assertEqual(self.radWDef.o, 'd')
+        self.rad_with_def.o = 'd'
+        self.assertEqual(self.rad_with_def.o, 'd')
 
-    def test_toRadString_method(self):
-        """Check toRadString method for all the types."""
-        self.assertEqual(self.radWDef.ab.toRadString(), '-ab 2')
-        self.assertEqual(self.radWDef.ad.toRadString(), '-ad 5')
-        self.assertEqual(self.radWDef.c.toRadString(), '-C 250 250 250')
-        self.assertEqual(self.radWDef.weaFile.toRadString(), "c:\ladybug\\test.wea")
-        self.assertEqual(self.radWDef.i.toRadString(), '-I')
-        self.assertEqual(self.radWDef.d.toRadString(), '')
-        self.assertEqual(self.radWDef.o.toRadString(), '-of')
+    def test_to_rad_string_method(self):
+        """Check to_rad_string method for all the types."""
+        self.assertEqual(self.rad_with_def.ab.to_rad_string(), '-ab 2')
+        self.assertEqual(self.rad_with_def.ad.to_rad_string(), '-ad 5')
+        self.assertEqual(self.rad_with_def.c.to_rad_string(), '-C 250 250 250')
+        self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
+                         "c:\ladybug\\test.wea")
+        self.assertEqual(self.rad_with_def.i.to_rad_string(), '-I')
+        self.assertEqual(self.rad_with_def.d.to_rad_string(), '')
+        self.assertEqual(self.rad_with_def.o.to_rad_string(), '-of')
 
     def test_value_type_for_numbers(self):
         """Check float values will be converted to intger for int value type."""
-        self.radWDef.ab = 2.45
-        self.assertEqual(self.radWDef.ab, 2)
+        self.rad_with_def.ab = 2.45
+        self.assertEqual(self.rad_with_def.ab, 2)
 
-        self.radWDef.ab = 2.99
-        self.assertEqual(self.radWDef.ab, 2)
+        self.rad_with_def.ab = 2.99
+        self.assertEqual(self.rad_with_def.ab, 2)
 
     def test_relative_path(self):
         """Check relative path."""
-        self.assertEqual(self.radWDef.weaFile.toRadString(), "c:\ladybug\\test.wea")
-        self.radWDef.weaFile.relPath = "c:\\ladybug\\test\\gridbased"
-        self.assertEqual(self.radWDef.weaFile.toRadString(), r"..\..\test.wea")
+        self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
+                         "c:\ladybug\\test.wea")
+        self.rad_with_def.wea_file.relPath = "c:\\ladybug\\test\\gridbased"
+        self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
+                         r"..\..\test.wea")
 
 
 if __name__ == '__main__':

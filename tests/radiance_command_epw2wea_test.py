@@ -11,13 +11,13 @@ class Epw2weaTestCase(unittest.TestCase):
     # preparing to test.
     def setUp(self):
         # Locate the current directory and then name the test epw file.
-        testRoomFolder = os.path.join(os.getcwd(), 'room')
-        testEpw = os.path.join(testRoomFolder, 'test.epw')
+        test_room_folder = os.path.join(os.getcwd(), 'room')
+        test_epw = os.path.join(test_room_folder, 'test.epw')
         # Derive the wea fileName directly to test with the one derived from
         # the Epw2wea class.
-        self.testWea = os.path.splitext(testEpw)[0] + '.wea'
-        self.epw2Wea = Epw2wea()
-        self.epw2Wea.epwFile = testEpw
+        self.test_wea = os.path.splitext(test_epw)[0] + '.wea'
+        self.epw2wea = Epw2wea()
+        self.epw2wea.epw_file = test_epw
 
     def tearDown(self):
         """Nothing to tear down as nothing gets written to file."""
@@ -25,7 +25,7 @@ class Epw2weaTestCase(unittest.TestCase):
 
     def test_default_values(self):
         """Test if the command correctly creates a wea file name as output."""
-        self.assertEqual(self.epw2Wea.outputWeaFile, self.testWea)
+        self.assertEqual(self.epw2wea.output_wea_file, self.test_wea)
 
 
 if __name__ == "__main__":

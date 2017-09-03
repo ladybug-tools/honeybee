@@ -12,23 +12,23 @@ class SunlighthoursTestCase(unittest.TestCase):
     # preparing to test
     def setUp(self):
         """Set up the test case by initiating the class."""
-        self.testPts = [(0, 0, 0)]
-        self.testVec = [(-1, 0, 0)]
-        self.sunVectors = (
+        self.test_pts = [(0, 0, 0)]
+        self.test_vec = [(-1, 0, 0)]
+        self.sun_vectors = (
             (-0.810513, 0.579652, -0.084093), (-0.67166, 0.702357, -0.235729),
             (-0.487065, 0.798284, -0.354275), (-0.269301, 0.8609, -0.431657),
             (-0.033196, 0.885943, -0.462605), (0.20517, 0.871705, -0.445013),
             (0.429563, 0.819156, -0.380077), (0.624703, 0.731875, -0.272221),
             (0.777301, 0.615806, -0.128788))
-        self.sunVectors = []
-        self.baseFolder = os.path.abspath("./tests/room/testrun")
-        self.runFolder = os.path.abspath("./tests/room/testrun/test/sunlighthour")
+        self.sun_vectors = []
+        self.base_folder = os.path.abspath("./tests/room/testrun")
+        self.run_folder = os.path.abspath("./tests/room/testrun/test/sunlighthour")
         self.epwfile = os.path.abspath("./tests/room/test.epw")
 
     # ending the test
     def tearDown(self):
         """Cleaning up after the test."""
-        files = [self.runFolder + "/" + f for f in os.listdir(self.runFolder)]
+        files = [self.run_folder + "/" + f for f in os.listdir(self.run_folder)]
 
         for f in files:
             try:
@@ -40,9 +40,9 @@ class SunlighthoursTestCase(unittest.TestCase):
 
     def test_init_func(self):
         """Test normal init function."""
-        slh = SolarAccessGridBased(self.sunVectors, self.testPts, self.testVec)
+        slh = SolarAccessGridBased(self.sun_vectors, self.test_pts, self.test_vec)
 
-        slh.writeToFile(self.baseFolder, projectName="test")
+        slh.write_to_file(self.base_folder, project_name="test")
 
         if slh.run():
             self.assertEqual(slh.results(), [4])
@@ -51,12 +51,12 @@ class SunlighthoursTestCase(unittest.TestCase):
         """Make sure default values are set correctly."""
         location = EPW(self.epwfile).location
 
-        ap = AnalysisPeriod(stMonth=1, endMonth=3)
+        ap = AnalysisPeriod(st_month=1, end_month=3)
 
         slh = SolarAccessGridBased.fromLocationAndAnalysisPeriod(
-            location, ap, self.testPts, self.testVec)
+            location, ap, self.test_pts, self.test_vec)
 
-        slh.writeToFile(self.baseFolder, projectName="test")
+        slh.write_to_file(self.base_folder, project_name="test")
 
         if slh.run():
             self.assertEqual(slh.results(), [475])
@@ -68,9 +68,9 @@ class SunlighthoursTestCase(unittest.TestCase):
         hoys = range(1, 24)
 
         slh = SolarAccessGridBased.fromLocationAndHoys(
-            location, hoys, self.testPts, self.testVec)
+            location, hoys, self.test_pts, self.test_vec)
 
-        slh.writeToFile(self.baseFolder, projectName="test")
+        slh.write_to_file(self.base_folder, project_name="test")
 
         if slh.run():
             self.assertEqual(slh.results(), [4])

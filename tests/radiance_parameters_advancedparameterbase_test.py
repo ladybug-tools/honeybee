@@ -1,5 +1,6 @@
 import unittest
-from honeybee.radiance.parameters._advancedparametersbase import AdvancedRadianceParameters
+from honeybee.radiance.parameters._advancedparametersbase import \
+    AdvancedRadianceParameters
 from honeybee.radiance.parameters._frozen import frozen
 
 
@@ -16,15 +17,15 @@ class AdvancedParametersTestCase(unittest.TestCase):
         self.rp = CustomParameters()
 
         # add parameters
-        self.rp.addRadianceNumber('ab', 'ambient bounces')
+        self.rp.add_radiance_number('ab', 'ambient bounces')
         self.rp.ab = 20
-        self.rp.addRadianceValue('o', 'o f', isJoined=True)
+        self.rp.add_radiance_value('o', 'o f', isJoined=True)
         self.rp.o = 'f'
-        self.rp.addRadianceTuple('c', 'color', numType=int)
+        self.rp.add_radiance_tuple('c', 'color', numType=int)
         self.rp.c = (0, 0, 254)
-        self.rp.addRadianceBoolFlag('I', 'irradiance switch', isDualSign=True)
+        self.rp.add_radiance_bool_flag('I', 'irradiance switch', isDualSign=True)
         self.rp.I = True
-        self.rp.addRadiancePath('wea', 'wea file')
+        self.rp.add_radiance_path('wea', 'wea file')
         self.rp.wea = 'c:\\ladybug\\test.wea'
 
     # ending the test
@@ -36,7 +37,7 @@ class AdvancedParametersTestCase(unittest.TestCase):
     def test_default_values(self):
         """Make sure default values are set correctly."""
         for v in ('-ab 20', '-of', '-c 0 0 254', '+I', 'c:\\ladybug\\test.wea'):
-            self.assertIn(v, self.rp.toRadString())
+            self.assertIn(v, self.rp.to_rad_string())
 
     # test for assertion and exceptions
     def test_assertions_exceptions(self):
@@ -51,7 +52,7 @@ class AdvancedParametersTestCase(unittest.TestCase):
         self.rp.c = (0, 0, 0)
         self.rp.I = False
         for v in ('-ab 10', '-od', '-c 0 0 0', '-I', 'c:\\ladybug\\test.wea'):
-            self.assertIn(v, self.rp.toRadString())
+            self.assertIn(v, self.rp.to_rad_string())
 
 
 if __name__ == '__main__':
