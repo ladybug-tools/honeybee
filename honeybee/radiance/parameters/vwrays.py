@@ -1,6 +1,4 @@
 # coding=utf-8
-
-
 from ._advancedparametersbase import AdvancedRadianceParameters
 from ._frozen import frozen
 
@@ -12,7 +10,8 @@ class VwraysParameters(AdvancedRadianceParameters):
                  sampling_rays_count=None):
         AdvancedRadianceParameters.__init__(self)
 
-        self.add_radiance_bool_flag('i', 'pixel position specified through standard input',
+        self.add_radiance_bool_flag('i',
+                                    'pixel position specified through standard input',
                                     attribute_name='pixel_positions_stdin')
         self.pixel_positions_stdin = pixel_positions_stdin
 

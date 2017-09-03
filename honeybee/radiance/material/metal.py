@@ -13,15 +13,20 @@ class MetalMaterial(RadianceMaterial):
         """Create metal material.
 
         Attributes:
-            name: Material name as a string. Do not use white space and special character.
-            r_reflectance: Reflectance for red. The value should be between 0 and 1 (Default: 0).
-            g_reflectance: Reflectance for green. The value should be between 0 and 1 (Default: 0).
-            b_reflectance: Reflectance for blue. The value should be between 0 and 1 (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-                not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-                corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-                surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
+            name: Material name as a string. Do not use white space and special
+                character.
+            r_reflectance: Reflectance for red. The value should be between 0 and 1
+                (Default: 0).
+            g_reflectance: Reflectance for green. The value should be between 0 and 1
+                (Default: 0).
+            b_reflectance: Reflectance for blue. The value should be between 0 and 1
+                (Default: 0).
+            specularity: Fraction of specularity. Specularity fractions greater than 0.1
+                are not realistic (Default: 0).
+            roughness: Roughness is specified as the rms slope of surface facets. A value
+                of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
+                a very rough surface. Roughness values greater than 0.2 are not very
+                realistic. (Default: 0).
             modifier: Material modifier (Default: "void").
 
         Usage:
@@ -40,8 +45,9 @@ class MetalMaterial(RadianceMaterial):
            realistic (Default: 0)."""
         self.roughness = roughness
         """Roughness is specified as the rms slope of surface facets. A value of 0
-           corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-           surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
+           corresponds to a perfectly smooth surface, and a value of 1 would be a very
+           rough surface. Roughness values greater than 0.2 are not very realistic.
+           (Default: 0)."""
 
     @classmethod
     def by_single_reflect_value(cls, name, rgb_reflectance=0, specularity=0,
@@ -49,14 +55,16 @@ class MetalMaterial(RadianceMaterial):
         """Create metal material with single reflectance value.
 
         Attributes:
-            name: Material name as a string. Do not use white space and special character.
+            name: Material name as a string. Do not use white space and special
+                character.
             rgb_reflectance: Reflectance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-                not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-                corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-                surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
+            specularity: Fraction of specularity. Specularity fractions greater than 0.1
+                are not realistic (Default: 0).
+            roughness: Roughness is specified as the rms slope of surface facets. A value
+                of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
+                a very rough surface. Roughness values greater than 0.2 are not very
+                realistic. (Default: 0).
             modifier: Material modifier (Default: "void").
 
         Usage:
@@ -131,12 +139,12 @@ class MetalMaterial(RadianceMaterial):
         """Return full radiance definition."""
         __base_string = self.head_line + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
 
-        metal_definition = __baseString % (
+        metal_definition = __base_string % (
             self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness
         )
 
-        return metalDefinition.replace("\n", " ") if minimal else metalDefinition
+        return metal_definition.replace("\n", " ") if minimal else metal_definition
 
 
 if __name__ == "__main__":

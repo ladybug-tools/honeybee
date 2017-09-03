@@ -64,7 +64,7 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
         260, 280, 300, 320, 340, 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
         0, 60, 120, 180, 240, 300, 0]
 
-    whtefficacy = 179.0  # luminous efficacy of uniform white light
+    WHTEFFICACY = 179.0  # luminous efficacy of uniform white light
 
     # calculate solar direction
     daynumber = datetime(2017, month, day, int(hour)).timetuple().tm_yday
@@ -194,25 +194,25 @@ def get_numlin(epsilon):
     return 7
 
 
-def theta_phi_to_dzeta_gamma(theta, phi, Z):
+def theta_phi_to_dzeta_gamma(theta, phi, z):
     """Calculation of the angles dzeta and gamma."""
     dzeta = theta
 
-    if ((math.cos(Z) * math.cos(theta) + math.sin(Z) * math.sin(theta) *
-         math.cos(phi)) > 1 and (math.cos(Z) * math.cos(theta) + math.sin(Z) *
+    if ((math.cos(z) * math.cos(theta) + math.sin(z) * math.sin(theta) *
+         math.cos(phi)) > 1 and (math.cos(z) * math.cos(theta) + math.sin(z) *
                                  math.sin(theta) * math.cos(phi) < 1.1)):
         gamma = 0
-    elif math.cos(Z) * math.cos(theta) + math.sin(Z) * math.sin(theta) * \
+    elif math.cos(z) * math.cos(theta) + math.sin(z) * math.sin(theta) * \
             math.cos(phi) > 1.1:
         raise ValueError("error in calculation of gamma (angle between point and sun)")
     else:
-        gamma = math.acos(math.cos(Z) * math.cos(theta) + math.sin(Z) *
+        gamma = math.acos(math.cos(z) * math.cos(theta) + math.sin(z) *
                           math.sin(theta) * math.cos(phi))
 
     return dzeta, gamma
 
 
-def calc_rel_lum_perez(dzeta, gamma, Z, epsilon, delta, coeff_perez):
+def calc_rel_lum_perez(dzeta, gamma, z, epsilon, delta, coeff_perez):
     """/* sky luminance perez model * /"""
     x = [[], [], [], [], []]
     c_perez = range(5)
@@ -239,15 +239,15 @@ def calc_rel_lum_perez(dzeta, gamma, Z, epsilon, delta, coeff_perez):
 
     if num_lin:
         for i in xrange(5):
-            c_perez[i] = x[i][0] + x[i][1] * Z + delta * (x[i][2] + x[i][3] * Z)
+            c_perez[i] = x[i][0] + x[i][1] * z + delta * (x[i][2] + x[i][3] * z)
     else:
-        c_perez[0] = x[0][0] + x[0][1] * Z + delta * (x[0][2] + x[0][3] * Z)
-        c_perez[1] = x[1][0] + x[1][1] * Z + delta * (x[1][2] + x[1][3] * Z)
-        c_perez[4] = x[4][0] + x[4][1] * Z + delta * (x[4][2] + x[4][3] * Z)
+        c_perez[0] = x[0][0] + x[0][1] * z + delta * (x[0][2] + x[0][3] * z)
+        c_perez[1] = x[1][0] + x[1][1] * z + delta * (x[1][2] + x[1][3] * z)
+        c_perez[4] = x[4][0] + x[4][1] * z + delta * (x[4][2] + x[4][3] * z)
         c_perez[2] = math.exp(
-            math.pow(delta * (x[2][0] + x[2][1] * Z), x[2][2])) - x[2][3]
+            math.pow(delta * (x[2][0] + x[2][1] * z), x[2][2])) - x[2][3]
         c_perez[3] = -math.exp(
-            delta * (x[3][0] + x[3][1] * Z)) + x[3][2] + delta * x[3][3]
+            delta * (x[3][0] + x[3][1] * z)) + x[3][2] + delta * x[3][3]
 
     return (1 + c_perez[0] * math.exp(c_perez[1] / math.cos(dzeta))) * \
         (1 + c_perez[2] * math.exp(c_perez[3] * gamma) +
@@ -281,10 +281,10 @@ def sky_brightness(diffuseirradiance, sunzenith, day_angle):
 
 def get_eccentricity(day_angle):
     """enter day number, return E0 = square(R0/R): eccentricity correction factor."""
-    E0 = 1.00011 + 0.034221 * math.cos(day_angle) + 0.00128 * math.sin(day_angle) + \
+    e0 = 1.00011 + 0.034221 * math.cos(day_angle) + 0.00128 * math.sin(day_angle) + \
         0.000719 * math.cos(2 * day_angle) + 0.000077 * math.sin(2 * day_angle)
 
-    return E0
+    return e0
 
 
 def air_mass(sunzenith):
@@ -420,7 +420,7 @@ def check_input_values(directilluminance, diffuseilluminance, altitude):
     return directilluminance, diffuseilluminance
 
 
-def coeff_lum_perez(Z, epsilon, delta, coeff_perez):
+def coeff_lum_perez(z, epsilon, delta, coeff_perez):
     """coefficients for the sky luminance perez model"""
     x = [[], [], [], [], []]
     c_perez = range(5)
@@ -450,13 +450,13 @@ def coeff_lum_perez(Z, epsilon, delta, coeff_perez):
 
     if (num_lin):
         for i in range(5):
-            c_perez[i] = x[i][0] + x[i][1] * Z + delta * (x[i][2] + x[i][3] * Z)
+            c_perez[i] = x[i][0] + x[i][1] * z + delta * (x[i][2] + x[i][3] * z)
 
     else:
-        c_perez[0] = x[0][0] + x[0][1] * Z + delta * (x[0][2] + x[0][3] * Z)
-        c_perez[1] = x[1][0] + x[1][1] * Z + delta * (x[1][2] + x[1][3] * Z)
-        c_perez[4] = x[4][0] + x[4][1] * Z + delta * (x[4][2] + x[4][3] * Z)
-        c_perez[2] = math.exp(math.pow(delta * (x[2][0] + x[2][1] * Z), x[2][2])) \
+        c_perez[0] = x[0][0] + x[0][1] * z + delta * (x[0][2] + x[0][3] * z)
+        c_perez[1] = x[1][0] + x[1][1] * z + delta * (x[1][2] + x[1][3] * z)
+        c_perez[4] = x[4][0] + x[4][1] * z + delta * (x[4][2] + x[4][3] * z)
+        c_perez[2] = math.exp(math.pow(delta * (x[2][0] + x[2][1] * z), x[2][2])) \
             - x[2][3]
-        c_perez[3] = -math.exp(delta * (x[3][0] + x[3][1] * Z)) + x[3][2] + \
+        c_perez[3] = -math.exp(delta * (x[3][0] + x[3][1] * z)) + x[3][2] + \
             delta * x[3][3]

@@ -45,7 +45,7 @@ class PcombImage(RadianceCommand):
         scl_fact = self.scaling_factor.to_rad_string()
         rgb = self.rgb_color_multiplier.to_rad_string()
         img = self.input_image_file.to_rad_string()
-        rad_string = "{} {} {} {}".format(pixelInput, scl_fact, rgb, img)
+        rad_string = "{} {} {} {}".format(pixel_input, scl_fact, rgb, img)
         return rad_string
 
     @property
@@ -110,6 +110,6 @@ class Pcomb(RadianceCommand):
         input_images = " ".join(self.image_list)
         op_image_path = self.output_file.to_rad_string()
         output_images = " > %s" % op_image_path if op_image_path else ''
-        rad_string = "{} {} {} {}".format(cmdPath, pcomb_param, inputImages,
-                                          outputImages)
+        rad_string = "{} {} {} {}".format(cmd_path, pcomb_param, input_images,
+                                          output_images)
         return ' '.join(rad_string.split())

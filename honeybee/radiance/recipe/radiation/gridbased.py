@@ -7,7 +7,7 @@ See: https://github.com/ladybug-tools/honeybee/issues/167#issue-245745189
 
 """
 from ..recipeutil import write_extra_files
-from ..recipedcutil import write_rad_filesDaylightCoeff, get_commands_radiation_sky
+from ..recipedcutil import write_rad_files_daylight_coeff, get_commands_radiation_sky
 from ..recipedcutil import get_commands_scene_daylight_coeff
 from ..recipedcutil import get_commands_w_groups_daylight_coeff
 from ..daylightcoeff.gridbased import DaylightCoeffGridBased
@@ -75,8 +75,8 @@ class GridBased(DaylightCoeffGridBased):
 
     @classmethod
     def from_points_file(cls, epw_file, points_file, sky_density=1,
-                         radiance_parameters=None, reuse_daylight_mtx=True, hb_objects=None,
-                         sub_folder="gridbased_radiation"):
+                         radiance_parameters=None, reuse_daylight_mtx=True,
+                         hb_objects=None, sub_folder="gridbased_radiation"):
         """Create grid based daylight coefficient recipe from points file."""
         try:
             with open(points_file, "rb") as inf:
@@ -109,7 +109,7 @@ class GridBased(DaylightCoeffGridBased):
             )
 
         # write geometry and material files
-        opqfiles, glzfiles, wgsfiles = write_rad_filesDaylightCoeff(
+        opqfiles, glzfiles, wgsfiles = write_rad_files_daylight_coeff(
             project_folder + '/scene', project_name, self.opaque_rad_file,
             self.glazing_rad_file, self.window_groups_rad_files
         )
@@ -138,7 +138,7 @@ class GridBased(DaylightCoeffGridBased):
             inputfiles, points_file, self.total_point_count, self.radiance_parameters,
             self.reuse_daylight_mtx, self.total_runs_count, radiation_only=True)
 
-        self._resultFiles.extend(
+        self._result_files.extend(
             os.path.join(project_folder, str(result)) for result in results
         )
 
@@ -147,13 +147,13 @@ class GridBased(DaylightCoeffGridBased):
         if self.window_groups:
             # calculate the contribution for all window groups
             commands, results = get_commands_w_groups_daylight_coeff(
-                project_name, self.sky_matrix.sky_density, project_folder, self.window_groups,
-                skyfiles, inputfiles, points_file, self.total_point_count,
-                self.radiance_parameters, self.reuse_daylight_mtx, self.total_runs_count,
-                radiation_only=True)
+                project_name, self.sky_matrix.sky_density, project_folder,
+                self.window_groups, skyfiles, inputfiles, points_file,
+                self.total_point_count, self.radiance_parameters,
+                self.reuse_daylight_mtx, self.total_runs_count, radiation_only=True)
 
             self._add_commands(skycommands, commands)
-            self._resultFiles.extend(
+            self._result_files.extend(
                 os.path.join(project_folder, str(result)) for result in results
             )
 
@@ -161,6 +161,6 @@ class GridBased(DaylightCoeffGridBased):
         batch_file = os.path.join(project_folder, 'commands.bat')
 
         # add echo to commands and write them to file
-        write_to_file(batchFile, '\n'.join(self.preproc_commands()))
+        write_to_file(batch_file, '\n'.join(self.preproc_commands()))
 
-        return batchFile
+        return batch_file

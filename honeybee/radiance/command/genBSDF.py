@@ -18,15 +18,17 @@ class GenBSDF(RadianceCommand):
         'output_file',
         'output BSDF file in XML format',
         extension='.xml')
-    normal_orientation = RadianceValue('normal_orientation',
-                                       'the orientation of the normal for the BSDF geometry',
-                                       accepted_inputs=('+X', '+Y', '+Z', '-X', '-Y', '-Z',
-                                                        '+x', '+y', '+z', '-x', '-y', '-z'))
+    normal_orientation = RadianceValue(
+        'normal_orientation',
+        'the orientation of the normal for the BSDF geometry',
+        accepted_inputs=('+X', '+Y', '+Z', '-X', '-Y', '-Z',
+                         '+x', '+y', '+z', '-x', '-y', '-z'))
     prepare_geometry = RadianceBoolFlag('prepare_geometry',
                                         'prepare geometry for BSDF')
 
-    def __init__(self, input_geometry=None, gen_bsdf_parameters=None, grid_based_parameters=None,
-                 output_file=None, normal_orientation=None, prepare_geometry=True):
+    def __init__(self, input_geometry=None, gen_bsdf_parameters=None,
+                 grid_based_parameters=None, output_file=None, normal_orientation=None,
+                 prepare_geometry=True):
         RadianceCommand.__init__(self, executable_name='genBSDF.pl')
 
         self.grid_based_parameters = grid_based_parameters
@@ -82,7 +84,8 @@ class GenBSDF(RadianceCommand):
     def grid_based_parameters(self, grid_based_parameters):
         if grid_based_parameters:
             assert isinstance(grid_based_parameters, GridBasedParameters),\
-                'The input for rcontribOptions should be an instance of Gridbased parameters'
+                'The input for rcontribOptions should be an instance of '\
+                'Gridbased parameters'
             self.__grid_based_parameters = grid_based_parameters
         else:
             self.__grid_based_parameters = None
@@ -99,16 +102,16 @@ class GenBSDF(RadianceCommand):
         temp_for_getbox = tempfile.mktemp(prefix='getb')
 
         get_b = Getbbox()
-        getB.rad_files = self.input_geometry
-        getB.output_file = temp_for_getbox
-        getB.header_suppress = True
-        getB.execute()
+        get_b.rad_files = self.input_geometry
+        get_b.output_file = temp_for_getbox
+        get_b.header_suppress = True
+        get_b.execute()
 
-        with open(tempForGetbox) as getBoxData:
-            get_box_value = get_boxData.read().strip().split()
-            xMin, xMax, yMin, yMax, zMin, zMax = map(float, getBoxValue)
+        with open(temp_for_getbox) as get_box_data:
+            get_box_value = get_box_data.read().strip().split()
+            xMin, xMax, yMin, yMax, zMin, zMax = map(float, get_box_value)
 
-        os.remove(tempForGetbox)
+        os.remove(temp_for_getbox)
 
         temp_for_xform = tempfile.mktemp(prefix='xform')
 
@@ -120,26 +123,26 @@ class GenBSDF(RadianceCommand):
                          '+z': '', '-z': ''}
         rotation_normal = self.normal_orientation._value.lower()
 
-        rot_tr = rotation_dict[rotationNormal]
+        rot_tr = rotation_dict[rotation_normal]
         xfr = Xform()
         xfr.rad_file = [os.path.abspath(geo) for geo in self.input_geometry]
-        xfr.transforms = "-t %s %s %s %s" % (xTr, yTr, zTr, rotTr)
+        xfr.transforms = "-t %s %s %s %s" % (xTr, yTr, zTr, rot_tr)
         xfr.output_file = temp_for_xform
         xfr.execute()
 
-        return tempForXform
+        return temp_for_xform
 
     def to_rad_string(self, relative_path=False):
         exe_name = 'genBSDF.pl' if os.name == 'nt' else 'genBSDF'
-        cmd_path = self.normspace(os.path.join(self.radbin_path, exeName))
+        cmd_path = self.normspace(os.path.join(self.radbin_path, exe_name))
 
         perl_path = self.normspace(self.perl_exe_path) if os.name == 'nt' else ''
         if os.name == 'nt':
-            if not perlPath:
+            if not perl_path:
                 raise IOError('Failed to find perl installation.\n'
                               'genBSDF.pl needs perl to run successfully.')
             else:
-                cmd_path = "%s %s" % (perlPath, cmdPath)
+                cmd_path = "%s %s" % (perl_path, cmd_path)
 
         if self.grid_based_parameters:
             if os.name == 'nt':
@@ -161,10 +164,10 @@ class GenBSDF(RadianceCommand):
 
         file_path = " ".join(self.normspace(f) for f in self.input_geometry)
 
-        command_string = "%s %s %s %s %s" % (cmdPath, gen_bsdf_para,
-                                             gridBased, file_path, output_file)
+        command_string = "%s %s %s %s %s" % (cmd_path, gen_bsdf_para,
+                                             grid_based, file_path, output_file)
 
-        return commandString
+        return command_string
 
     @property
     def input_files(self):

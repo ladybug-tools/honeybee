@@ -70,6 +70,6 @@ class RcontribParameters(GridBasedParameters):
         """[-x int] X dimension of an image."""
 
         self.add_radiance_value('o', 'output file name format',
-                                attribute_name='output_filenameFormat')
+                                attribute_name='output_filename_format')
         self.output_filename_format = output_filename_format
         """[-0 str] output format e.g. %04f.hdr."""

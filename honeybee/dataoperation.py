@@ -60,11 +60,11 @@ def match_points_and_vectors(pts_t, vec_t):
         except BaseException:
             v = []
 
-        tempPts, temp_vectors = match_data(
+        temp_pts, temp_vectors = match_data(
             list(flatten(p)), list(flatten(v))
         )
 
-        if len(tempPts) > 0:
+        if len(temp_pts) > 0:
             pts[i] = temp_pts
             vec[i] = temp_vectors
         else:
@@ -76,7 +76,7 @@ def match_points_and_vectors(pts_t, vec_t):
 
 
 # TODO: move this method to list operation library
-def match_data(guide, follower, noneValue=(0, 0, 1)):
+def match_data(guide, follower, none_value=(0, 0, 1)):
     """Match data between two lists and reomove None values.
 
     Args:
@@ -89,7 +89,7 @@ def match_data(guide, follower, noneValue=(0, 0, 1)):
 
     for c, dp in enumerate(guide):
         if dp is not None:
-            tempPts[c] = dp
+            temp_pts[c] = dp
             # match vector in vector list
             try:
                 # check if there is a vector with the same index
@@ -100,19 +100,19 @@ def match_data(guide, follower, noneValue=(0, 0, 1)):
                     dv = follower[-1]
                 except IndexError:
                     # use default value
-                    dv = noneValue
+                    dv = none_value
             finally:
                 if dv is None:
                     # use default value
-                    dv = noneValue
+                    dv = none_value
 
-                tempVectors[c] = dv
+                temp_vectors[c] = dv
         else:
             # empty list
-            tempPts.remove(c)
-            tempVectors.remove(c)
+            temp_pts.remove(c)
+            temp_vectors.remove(c)
 
-    return tempPts, tempVectors
+    return temp_pts, temp_vectors
 
 
 def flatten(input_list):

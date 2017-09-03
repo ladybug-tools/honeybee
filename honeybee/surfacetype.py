@@ -3,7 +3,7 @@ from radiance.material.plastic import PlasticMaterial
 from radiance.material.glass import GlassMaterial
 
 
-class surface_typeBase(object):
+class SurfaceTypeBase(object):
     """Base class for surface types."""
 
     # define materials as static property
@@ -28,7 +28,7 @@ class surface_typeBase(object):
         return "Surface Type: %s" % (self.__class__.__name__)
 
 
-class Wall(surface_typeBase):
+class Wall(SurfaceTypeBase):
     """Wall."""
 
     typeId = 0.0
@@ -37,7 +37,7 @@ class Wall(surface_typeBase):
     """Default Radiance material."""
 
 
-class UndergroundWall(surface_typeBase):
+class UndergroundWall(SurfaceTypeBase):
     """Underground wall."""
 
     typeId = 0.5
@@ -46,7 +46,7 @@ class UndergroundWall(surface_typeBase):
     """Default Radiance material."""
 
 
-class Roof(surface_typeBase):
+class Roof(SurfaceTypeBase):
     """Roof."""
 
     typeId = 1.0
@@ -55,7 +55,7 @@ class Roof(surface_typeBase):
     """Default Radiance material."""
 
 
-class UndergroundCeiling(surface_typeBase):
+class UndergroundCeiling(SurfaceTypeBase):
     """Underground Ceiling."""
 
     typeId = 1.5
@@ -64,7 +64,7 @@ class UndergroundCeiling(surface_typeBase):
     """Default Radiance material."""
 
 
-class Floor(surface_typeBase):
+class Floor(SurfaceTypeBase):
     """Floor."""
 
     typeId = 2.0
@@ -73,7 +73,7 @@ class Floor(surface_typeBase):
     """Default Radiance material."""
 
 
-class UndergroundSlab(surface_typeBase):
+class UndergroundSlab(SurfaceTypeBase):
     """Underground slab.
 
     Any floor that is located under ground (z < 0)
@@ -85,7 +85,7 @@ class UndergroundSlab(surface_typeBase):
     """Default Radiance material."""
 
 
-class SlabOnGrade(surface_typeBase):
+class SlabOnGrade(SurfaceTypeBase):
     """Slab on Grade.
 
     Any floor that is touching the ground. z=0
@@ -97,7 +97,7 @@ class SlabOnGrade(surface_typeBase):
     """Default Radiance material."""
 
 
-class ExposedFloor(surface_typeBase):
+class ExposedFloor(SurfaceTypeBase):
     """Exposed Floor.
 
     Part of the floor/slab the is cantilevered.
@@ -109,7 +109,7 @@ class ExposedFloor(surface_typeBase):
     """Default Radiance material."""
 
 
-class Ceiling(surface_typeBase):
+class Ceiling(SurfaceTypeBase):
     """Ceiling."""
 
     typeId = 3
@@ -118,7 +118,7 @@ class Ceiling(surface_typeBase):
     """Default Radiance material."""
 
 
-class AirWall(surface_typeBase):
+class AirWall(SurfaceTypeBase):
     """Air wall.
 
     Virtual wall to define zones inside a space. AirWalls don't exist in reality.
@@ -130,7 +130,7 @@ class AirWall(surface_typeBase):
     """Default Radiance material."""
 
 
-class Window(surface_typeBase):
+class Window(SurfaceTypeBase):
     """Window surfaces."""
 
     typeId = 5
@@ -139,7 +139,7 @@ class Window(surface_typeBase):
     """Default Radiance material."""
 
 
-class Context(surface_typeBase):
+class Context(SurfaceTypeBase):
     """Context surfaces."""
 
     typeId = 6
@@ -217,14 +217,14 @@ class SurfaceTypes(object):
             points: List of surface points. If not provided the base type will
                 be returned.
         Returns:
-            Surface type as surface_typeBase object.
+            Surface type as SurfaceTypeBase object.
         """
         _srf_type = cls.get_base_type_by_normal_angle(normal_angle)
 
         # if len(points) > 3:
-        #     _srf_type = cls.re_evaluate_surface_type(_srfType, points)
+        #     _srf_type = cls.re_evaluate_surface_type(_srf_type, points)
 
-        return cls._types[_srfType]
+        return cls._types[_srf_type]
 
     @staticmethod
     def get_base_type_by_normal_angle(angle_to_z_axis, maximum_roof_angle=30):
@@ -238,7 +238,8 @@ class SurfaceTypes(object):
         Returns:
             An integer between 0-2 0: Wall, 1: Roof, 2: Floor
         """
-        if angle_to_z_axis < maximum_roof_angle or angle_to_z_axis > 360 - maximum_roof_angle:
+        if angle_to_z_axis < maximum_roof_angle \
+                or angle_to_z_axis > 360 - maximum_roof_angle:
             return 1  # roof
         elif 160 < angle_to_z_axis < 200:
             return 2  # floor

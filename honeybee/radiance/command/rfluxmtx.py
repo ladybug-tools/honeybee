@@ -71,12 +71,12 @@ class Rfluxmtx(RadianceCommand):
                                                    output_file=ground_file_format)
 
         ground_string = Rfluxmtx.add_control_parameters(Rfluxmtx.ground_string,
-                                                        {'ground_glow': groundParam})
+                                                        {'ground_glow': ground_param})
         sky_string = Rfluxmtx.add_control_parameters(Rfluxmtx.sky_string,
-                                                     {'sky_glow': skyParam})
+                                                     {'sky_glow': sky_param})
 
         with open(file_name, 'w')as skyFile:
-            skyFile.write(groundString + '\n' + skyString)
+            skyFile.write(ground_string + '\n' + sky_string)
 
         return file_name
 
@@ -90,31 +90,31 @@ class Rfluxmtx(RadianceCommand):
 
         output_string = ''
         check_dict = dict.fromkeys(modifier_dict.keys(), None)
-        for lines in fileData.split('\n'):
+        for lines in file_data.split('\n'):
             for key, value in modifier_dict.items():
-                if key in lines and not checkDict[key] and \
+                if key in lines and not check_dict[key] and \
                         not lines.strip().startswith('#'):
                     output_string += str(value) + '\n'
-                    checkDict[key] = True
+                    check_dict[key] = True
             else:
                 output_string += lines.strip() + '\n'
 
-        for key, value in checkDict.items():
+        for key, value in check_dict.items():
             assert value, "The modifier %s was not found in the string specified" % key
 
         if os.path.exists(input_string):
             new_output_file = input_string[:-4] + '_cp_added' + input_string[-4:]
-            with open(newOutputFile, 'w') as newoutput:
-                newoutput.write(outputString)
+            with open(new_output_file, 'w') as newoutput:
+                newoutput.write(output_string)
             output_string = new_output_file
 
-        return outputString
+        return output_string
 
     @staticmethod
     def check_for_rflux_parameters(file_val):
         with open(file_val)as rfluxFile:
             rflux_string = rfluxFile.read()
-        assert '#@rfluxmtx' in rfluxString, \
+        assert '#@rfluxmtx' in rflux_string, \
             "The file %s does not have any rfluxmtx control parameters."
         return True
 
@@ -175,9 +175,9 @@ class Rfluxmtx(RadianceCommand):
 
     @property
     def output_filename_format(self):
-        return self._output_filenameFormat
+        return self._output_filename_format
 
-    @output_filenameFormat.setter
+    @output_filename_format.setter
     def output_filename_format(self, value):
         # TODO: Add testing logic for this !
         self._output_filename_format = value or None
@@ -214,7 +214,8 @@ class Rfluxmtx(RadianceCommand):
                     self.number_of_points = sum(1 for line in pfile if line.strip())
             elif self.number_of_points == 0:
                 print('Warning: Failed to find the points_file at "{}".'
-                      ' Use number_of_points method to set the number_of_points eparately.')
+                      ' Use number_of_points method to set the number_of_points'
+                      'separately.')
 
             self._points_file = value
         else:
@@ -250,17 +251,18 @@ class Rfluxmtx(RadianceCommand):
         verbose = self.verbose.to_rad_string()
 
         number_of_processors = self.num_processors.to_rad_string()
-        number_of_points = '-y %s' % self.number_of_points if self.number_of_points > 0 else ''
+        number_of_points = '-y %s' % self.number_of_points \
+            if self.number_of_points > 0 else ''
         points_file = self.normspace(self.points_file)
         points_file = '< %s' % points_file if points_file else ''
 
         view_file_samples = self.normspace(self.view_rays_file.to_rad_string())
         view_file_samples = '< %s' % view_file_samples if view_file_samples else ''
 
-        assert not (points_file and view_fileSamples),\
+        assert not (points_file and view_file_samples),\
             'View file and points file cannot be specified at the same time!'
 
-        input_rays = points_file or view_fileSamples
+        input_rays = points_file or view_file_samples
 
         output_matrix = self.normspace(self.output_matrix.to_rad_string())
         output_matrix = "> %s" % output_matrix if output_matrix else ''
@@ -278,7 +280,7 @@ class Rfluxmtx(RadianceCommand):
         rad_string = ["%s " % self.normspace(os.path.join(self.radbin_path, 'rfluxmtx'))]
         rad_string.append(add_to_str(output_data_format))
         rad_string.append(add_to_str(verbose))
-        rad_string.append(add_to_str(numberOfProcessors))
+        rad_string.append(add_to_str(number_of_processors))
         rad_string.append(add_to_str(number_of_points))
         rad_string.append(add_to_str(self._view_fileDimensions))
         if str(self.sender).strip() == '-':
@@ -288,13 +290,13 @@ class Rfluxmtx(RadianceCommand):
             rflux_par = add_to_str(
                 self.rfluxmtx_parameters.to_rad_string()).replace(
                 '-I', '')
-            rad_string.append(rfluxPar)
-        rad_string.append(add_to_str(output_filenameFormat))
+            rad_string.append(rflux_par)
+        rad_string.append(add_to_str(output_filename_format))
         rad_string.append(add_to_str(self.sender))
         rad_string.append(add_to_str(self.normspace(self.receiver_file.to_rad_string())))
         rad_string.append(add_to_str(" ".join(self.rad_files)))
         rad_string.append(add_to_str(octree))
-        rad_string.append(add_to_str(inputRays))
+        rad_string.append(add_to_str(input_rays))
         rad_string.append(add_to_str(output_matrix))
 
         return ''.join(rad_string)
@@ -333,7 +335,7 @@ class RfluxmtxControlParameters(object):
     def hemisphere_type(self):
         return self._hemisphereType
 
-    @hemisphereType.setter
+    @hemisphere_type.setter
     def hemisphere_type(self, value):
         """Hemisphere type.
 
@@ -386,13 +388,13 @@ class RfluxmtxControlParameters(object):
                     scN for shirley-chiu subdivisions.
                 The value entered was %s
                 """ % (value)
-                raise Exception(exceptStr)
+                raise Exception(except_str)
 
     @property
     def hemisphere_up_direction(self):
         return self._hemisphere_upDirection
 
-    @hemisphere_upDirection.setter
+    @hemisphere_up_direction.setter
     def hemisphere_up_direction(self, value):
         """hemisphere direction.
 
@@ -409,9 +411,9 @@ class RfluxmtxControlParameters(object):
             self._hemisphere_upDirection = ','.join((str(v) for v in value))
 
         elif value:
-            assert value in allowedValues, "The value for hemisphere_upDirection" \
-                                           "should be one of the following: %s" \
-                                           % (','.join(allowedValues))
+            assert value in allowed_values, "The value for hemisphere_upDirection" \
+                "should be one of the following: %s" \
+                % (','.join(allowed_values))
 
             self._hemisphere_upDirection = value
         else:
@@ -421,4 +423,4 @@ class RfluxmtxControlParameters(object):
         output_file_spec = "o=%s" % self.output_file if self.output_file else ''
         return "#@rfluxmtx h=%s u=%s %s" % (self.hemisphere_type,
                                             self.hemisphere_up_direction,
-                                            output_fileSpec)
+                                            output_file_spec)

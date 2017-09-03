@@ -115,16 +115,16 @@ class ImageCollection(object):
             if v['id'] == sid:
                 source_name = k
                 break
-        assert sourceName, \
+        assert source_name, \
             ValueError('Failed to find source name for sid [{}]'.format(sid))
 
         # find state name
         try:
-            return sourceName, self._sources[sourceName]['state'][stateid]
+            return source_name, self._sources[source_name]['state'][stateid]
         except IndexError:
             raise IndexError(
                 'State id [{}] is not valid. {} has {} states.'
-                .format(stateid, source_name, len(self._sources[sourceName]['state'])))
+                .format(stateid, source_name, len(self._sources[source_name]['state'])))
 
     @property
     def states(self):
@@ -146,9 +146,9 @@ class ImageCollection(object):
             return [None, None, None]
 
         current_sources = self._sources.keys()
-        if source not in currentSources:
+        if source not in current_sources:
             self._sources[source] = {
-                'id': len(currentSources),
+                'id': len(current_sources),
                 'state': []
             }
 
@@ -282,7 +282,7 @@ class ImageCollection(object):
 
         return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
 
-    def get_imageById(self, hoy, sid=None, stateid=None):
+    def get_image_by_id(self, hoy, sid=None, stateid=None):
         """Get list of images for an hour in the year."""
         if hoy not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
@@ -290,7 +290,7 @@ class ImageCollection(object):
 
         return self._values[sid][stateid][hoy]
 
-    def get_imagesById(self, hoys, sid=None, stateid=None):
+    def get_images_by_id(self, hoys, sid=None, stateid=None):
         """Get list of images for an hour in the year."""
         for hoy in hoys:
             if hoy not in self._values[sid][stateid]:
@@ -324,7 +324,7 @@ class ImageCollection(object):
     def generate_image_by_id(self, hoy, sid=None, stateid=None, mode=0, output=None):
         """Generate the image for an hour of the year for input blindStates."""
         # find the id for source and state
-        images = self.get_imageById(hoy, sid, stateid)
+        images = self.get_image_by_id(hoy, sid, stateid)
         if mode > 0:
             return images[mode - 1]
         else:
@@ -355,11 +355,11 @@ class ImageCollection(object):
                 for hoy in hoys
             )
         if mode > 0:
-            return tuple(images[mode - 1] for images in imageCol)
+            return tuple(images[mode - 1] for images in image_col)
         else:
             results = []
             # generate the image.
-            for images, hoy, output in izip(imageCol, hoys, outputs):
+            for images, hoy, output in izip(image_col, hoys, outputs):
                 fpt, fpd, fps = images
                 ti = PcombImage(input_image_file=fpt)
                 di = PcombImage(input_image_file=fpd, scaling_factor=-1)
@@ -373,7 +373,7 @@ class ImageCollection(object):
     def generate_images_by_id(self, hoys, sid=None, stateid=None, mode=0, outputs=None):
         """Generate images for several hours of the year for input blindStates."""
         # find the id for source and state
-        image_col = self.get_imagesById(hoys, sid, stateid)
+        image_col = self.get_images_by_id(hoys, sid, stateid)
         if not outputs:
             outputs = tuple(
                 os.path.join(self.output_folder,
@@ -382,11 +382,11 @@ class ImageCollection(object):
                 for hoy in hoys
             )
         if mode > 0:
-            return tuple(images[mode - 1] for images in imageCol)
+            return tuple(images[mode - 1] for images in image_col)
         else:
             results = []
             # generate the image.
-            for images, hoy, output in izip(imageCol, hoys, outputs):
+            for images, hoy, output in izip(image_col, hoys, outputs):
                 fpt, fpd, fps = images
                 ti = PcombImage(input_image_file=fpt)
                 di = PcombImage(input_image_file=fpd, scaling_factor=-1)
@@ -426,7 +426,7 @@ class ImageCollection(object):
                 if hoy not in self._values[sid][stateid]:
                     raise ValueError('Hourly values are not available for {}.'
                                      .format(dt.DateTime.fromHoy(hoy)))
-                imageCol.append(self.get_imageById(hoy, sid, stateid))
+                image_col.append(self.get_image_by_id(hoy, sid, stateid))
 
         if not output:
             name = '_'.join('%d_%d' % (sid, stateid)
@@ -438,20 +438,20 @@ class ImageCollection(object):
 
         if mode > 0:
             pcomb_images = tuple(PcombImage(input_image_file=images[mode - 1])
-                                 for images in imageCol)
+                                 for images in image_col)
         else:
             # the output is going to be the combined of all the sources
             pcomb_images = []
-            for images in imageCol:
+            for images in image_col:
                 # generate the image.
                 fpt, fpd, fps = images
 
                 ti = PcombImage(input_image_file=fpt)
                 di = PcombImage(input_image_file=fpd, scaling_factor=-1)
                 si = PcombImage(input_image_file=fps)
-                pcombImages.extend((ti, di, si))
+                pcomb_images.extend((ti, di, si))
 
-        res = Pcomb(pcombImages, output)
+        res = Pcomb(pcomb_images, output)
         return res.execute()
 
     def generate_combined_images_by_id(self, hoys=None, blinds_state_ids=None, mode=0,
@@ -460,8 +460,8 @@ class ImageCollection(object):
 
         Args:
             hoys: A collection of hours of the year.
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
 
         Returns:
             Return a generator for (total, direct) values.
@@ -472,7 +472,7 @@ class ImageCollection(object):
                 hours_count = len(hoys)
             except TypeError:
                 raise TypeError('hoys must be an iterable object: {}'.format(hoys))
-            blinds_state_ids = [[0] * len(self._sources)] * hoursCount
+            blinds_state_ids = [[0] * len(self._sources)] * hours_count
 
         assert len(hoys) == len(blinds_state_ids), \
             'There should be a list of states for each hour. #states[{}] != #hours[{}]' \
@@ -489,8 +489,8 @@ class ImageCollection(object):
                     if hoy not in self._values[sid][stateid]:
                         raise ValueError('Hourly values are not available for {}.'
                                          .format(dt.DateTime.fromHoy(hoy)))
-                    imageCol.append(self.get_imageById(hoy, sid, stateid))
-            assert imageCol, \
+                    image_col.append(self.get_image_by_id(hoy, sid, stateid))
+            assert image_col, \
                 ValueError('All the state ids cannot be -1.')
 
             # create outputs
@@ -507,20 +507,20 @@ class ImageCollection(object):
 
             if mode > 0:
                 pcomb_images = tuple(PcombImage(input_image_file=images[mode - 1])
-                                     for images in imageCol)
+                                     for images in image_col)
             else:
                 # the output is going to be the combined of all the sources
                 pcomb_images = []
-                for images in imageCol:
+                for images in image_col:
                     # generate the image.
                     fpt, fpd, fps = images
 
                     ti = PcombImage(input_image_file=fpt)
                     di = PcombImage(input_image_file=fpd, scaling_factor=-1)
                     si = PcombImage(input_image_file=fps)
-                    pcombImages.extend((ti, di, si))
+                    pcomb_images.extend((ti, di, si))
 
-            res = Pcomb(pcombImages, output)
+            res = Pcomb(pcomb_images, output)
             results.append(res.execute().to_rad_string())
 
         return results

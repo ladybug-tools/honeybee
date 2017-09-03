@@ -326,7 +326,7 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
         Usage:
 
-            rp = low_quality()
+            rp = LowQuality()
             print rp.getParameterValue("ab")
             >> 2
         """
@@ -342,7 +342,7 @@ class GridBasedParameters(AdvancedRadianceParameters):
         return rtrace_number_parameters[__key]["values"][self.quality]
 
 
-class low_quality(GridBasedParameters):
+class LowQuality(GridBasedParameters):
     """Radiance parmaters for a quick analysis."""
 
     def __init__(self):
@@ -350,7 +350,7 @@ class low_quality(GridBasedParameters):
         GridBasedParameters.__init__(self, quality=0)
 
 
-class medium_quality(GridBasedParameters):
+class MediumQuality(GridBasedParameters):
     """Medium quality Radiance parmaters."""
 
     def __init__(self):
@@ -358,7 +358,7 @@ class medium_quality(GridBasedParameters):
         GridBasedParameters.__init__(self, quality=1)
 
 
-class high_quality(GridBasedParameters):
+class HighQuality(GridBasedParameters):
     """High quality radiance parameters."""
 
     def __init__(self):

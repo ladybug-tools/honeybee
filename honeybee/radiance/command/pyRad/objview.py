@@ -111,7 +111,7 @@ class Objview(ProcMixin):
             else:
                 cmd_string = ['rad'] + self.rad_options + [self.rifFile]
 
-        self.call_one(cmdString, 'start rad')
+        self.call_one(cmd_string, 'start rad')
 
     def create_temp(self):
         """Create temporary files and directories needed for objview"""
@@ -122,7 +122,8 @@ class Objview(ProcMixin):
             self.raise_on_error("Create a temp folder", e)
 
         # create strings for files that are to be written to.
-        def create_in_temp(file_name): return os.path.join(self.tempDir, file_name)
+        def create_in_temp(file_name):
+            return os.path.join(self.tempDir, file_name)
         self.octree_file = create_in_temp('scene.oct')
         self.lightsFile = create_in_temp('lights.rad')
         self.rifFile = create_in_temp('scene.rif')
@@ -133,8 +134,10 @@ class Objview(ProcMixin):
         and also set rendering options."""
 
         # If the output device is specified by the user, use that.
-        if self.output_device:
-            output_device = self.output_device
+        # TODO(sarith): I'm not sure what is happening here. What is the deal with
+        # output_device. It doesn't get used after the assignement
+        # if self.output_device:
+        # output_device = self.output_device
 
         render_options = ''
         if self.backFaceVisible:
@@ -144,49 +147,49 @@ class Objview(ProcMixin):
         rad_options_set = False
         gl_rad_options_set = False
         if self.disable_warnings:
-            radOptions.append("-w")
+            rad_options.append("-w")
         if self.numProc:
-            radOptions.extend(['-N', str(self.numProc)])
+            rad_options.extend(['-N', str(self.numProc)])
             rad_options_set = True
         if self.verbose_display:
-            radOptions.append('-e')
+            rad_options.append('-e')
             rad_options_set = True
         if self.gl_rad_full_screen:
-            radOptions.append('-S')
+            rad_options.append('-S')
             gl_rad_options_set = True
         if self.run_silently:
-            radOptions.append('-s')
+            rad_options.append('-s')
         if self.print_viewsStdin:
-            radOptions.append('-V')
+            rad_options.append('-V')
             rad_options_set = True
 
         if rad_options_set and self.useGl:
             self.raise_on_error("setting rad options",
                                 'One among the following options :() are not '
-                                'compatible with Open GL'.format(",".join(radOptions)))
+                                'compatible with Open GL'.format(",".join(rad_options)))
 
         elif gl_rad_options_set and not self.useGl:
             self.raise_on_error('set glRad options.',
                                 "Although glRad options have been set the "
                                 "rendering is being run through RAD.")
 
-        return radOptions, renderOptions
+        return rad_options, render_options
 
     def create_rif_list(self):
         """Create a list of RifFile variables based on user input and defaults."""
         rif_list = ['scene= %s' % s for s in self.rad_files]
-        rifList.append('EXPOSURE= %s' % (self.scene_exposure or 0.5))
-        rifList.append('UP= %s' % (self.upDirection or 'Z'))
+        rif_list.append('EXPOSURE= %s' % (self.scene_exposure or 0.5))
+        rif_list.append('UP= %s' % (self.upDirection or 'Z'))
 
-        rifList.append('OCTREE= %s' % self.octree_file)
-        rifList.append('AMBF= %s' % self.ambFile)
-        rifList.append('render=%s' % self.render_options)
+        rif_list.append('OCTREE= %s' % self.octree_file)
+        rif_list.append('AMBF= %s' % self.ambFile)
+        rif_list.append('render=%s' % self.render_options)
         if self.view_file:
             self.view_file = '-vf %s' % "".join(self.view_file)
-            rifList.append('view= %s' % (self.view_file or ''))
+            rif_list.append('view= %s' % (self.view_file or ''))
         else:
-            rifList.append('view= %s' % (self.viewDetials or 'XYZ'))
-        return rifList
+            rif_list.append('view= %s' % (self.viewDetials or 'XYZ'))
+        return rif_list
 
     def write_files(self):
         # Write lights and join to the input rad files.

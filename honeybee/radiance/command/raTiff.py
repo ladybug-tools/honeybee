@@ -47,15 +47,15 @@ class RaTiff(RadianceCommand):
         if '-compress' in params:
             params_split = params.split()
             flag_index = params_split.index('-compress')
-            flag_value = '-' + paramsSplit[flagIndex + 1]
-            paramsSplit[flagIndex + 1] = flag_value
-            paramsSplit.pop(flagIndex)
-            params = " ".join(paramsSplit)
+            flag_value = '-' + params_split[flag_index + 1]
+            params_split[flag_index + 1] = flag_value
+            params_split.pop(flag_index)
+            params = " ".join(params_split)
 
         input_file = self.input_hdr_file.to_rad_string()
         output_file = self.output_tiff_file.to_rad_string()
 
-        rad_string = "%s %s %s %s" % (cmdName, params, input_file, output_file)
+        rad_string = "%s %s %s %s" % (cmd_name, params, input_file, output_file)
 
         return rad_string
 

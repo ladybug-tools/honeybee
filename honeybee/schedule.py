@@ -55,13 +55,13 @@ class Schedule(object):
 
         # create daily schedules
         for h in xrange(*occ_hours):
-            dailyHours[h] = default_value
+            daily_hours[h] = default_value
 
         for h in xrange(*off_hours):
-            dailyHours[h] = 0
+            daily_hours[h] = 0
 
         # create annual schedule
-        values = [dailyHours[h % 24] for h in xrange(8760)]
+        values = [daily_hours[h % 24] for h in xrange(8760)]
 
         # set the values to 0 for weekendHours
         # assuming the year starts on a Monday

@@ -64,10 +64,10 @@ class HBShadingSurface(HBAnalysisSurface):
         else:
             raise ValueError("%s is an invalid shading type." % _type)
 
-        _pts = range((len(_segments) - startItem) / 3)
+        _pts = range((len(_segments) - start_item) / 3)
 
         # create points
-        for count, i in enumerate(xrange(startItem, len(_segments), 3)):
+        for count, i in enumerate(xrange(start_item, len(_segments), 3)):
             try:
                 _pts[count] = [float(c) for c in _segments[i: i + 3]]
             except ValueError:

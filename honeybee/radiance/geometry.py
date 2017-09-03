@@ -12,7 +12,8 @@ def polygon(name, material_name, pts, minimal=False):
 
     Args:
         name:Surface name. Surface name can't have white space.
-        material_name: Name of the radiance material. Material name can't have white space.
+        material_name: Name of the radiance material. Material name can't have white
+            space.
         pts: List of points as (x, y, z). Number of points can't be less than 3.
         minimal: Set to True to get the definition in as single line.
     """
@@ -27,11 +28,11 @@ def polygon(name, material_name, pts, minimal=False):
     except AttributeError:
         pt_coordinates = "\n".join([" ".join(map(str, pt)) for pt in pts])
 
-    definition = __baseString % (
+    definition = __base_string % (
         __norm_name(material_name),
         __norm_name(name),
         3 * len(pts),
-        ptCoordinates
+        pt_coordinates
     )
 
     return definition.replace("\t", "").replace("\n", " ") if minimal else definition

@@ -71,6 +71,7 @@ class SolarAccessGridBased(GenericGridBased):
         self._radiance_parameters.directThreshold = 0
         self._radiance_parameters.directJitter = 0
 
+    @classmethod
     def from_points_and_vectors(cls, sun_vectors, hoys, point_groups, vector_groups=[],
                                 timestep=1, hb_objects=None, sub_folder='sunlighthour'):
         """Create sunlighthours recipe from points and vectors.
@@ -132,7 +133,7 @@ class SolarAccessGridBased(GenericGridBased):
         """Create sunlighthours recipe from Location and hours of year."""
         sp = Sunpath.fromLocation(location)
 
-        suns = (sp.calculateSunFromHOY(HOY) for hoy in hoys)
+        suns = (sp.calculateSunFromHOY(hoy) for hoy in hoys)
 
         sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
 
@@ -150,7 +151,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         sp = Sunpath.fromLocation(location)
 
-        suns = (sp.calculateSunFromHOY(HOY) for hoy in analysis_period.floatHOYs)
+        suns = (sp.calculateSunFromHOY(hoy) for hoy in analysis_period.floatHOYs)
 
         sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
         hoys = tuple(s.hoy for s in suns if s.isDuringDay)
@@ -308,7 +309,7 @@ class SolarAccessGridBased(GenericGridBased):
             extrafiles.fp
 
         oc = Oconv(project_name)
-        oc.scene_files = tuple(self.relpath(f, project_folder) for f in octSceneFiles)
+        oc.scene_files = tuple(self.relpath(f, project_folder) for f in oct_scene_files)
 
         # # 4.2.prepare Rcontrib
         rct = Rcontrib('result\\' + project_name,
@@ -328,7 +329,7 @@ class SolarAccessGridBased(GenericGridBased):
         self._result_files = os.path.join(project_folder, str(rmtx.output_file))
 
         batch_file = os.path.join(project_folder, "commands.bat")
-        return write_to_file(batchFile, '\n'.join(self.commands))
+        return write_to_file(batch_file, '\n'.join(self.commands))
 
     def results(self):
         """Return results for this analysis."""
@@ -341,7 +342,7 @@ class SolarAccessGridBased(GenericGridBased):
             ag.unload()
 
         hours = tuple(int(self.timestep * h) for h in self.hoys)
-        rf = self._resultFiles
+        rf = self._result_files
         start_line = 0
         for count, analysisGrid in enumerate(self.analysis_grids):
             if count:

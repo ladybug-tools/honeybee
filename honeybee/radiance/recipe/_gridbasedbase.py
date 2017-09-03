@@ -22,8 +22,9 @@ class GenericGridBased(AnalysisRecipe):
     sunlighthours recipe and annual analysis recipe.
 
     Attributes:
-        analysis_grids: A collection of honeybee AnalysisGrid. Use from_points_and_vectors
-            classmethod to create the recipe by points and vectors.
+        analysis_grids: A collection of honeybee AnalysisGrid. Use
+            from_points_and_vectors classmethod to create the recipe by points and
+            vectors.
         hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
         sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
     """

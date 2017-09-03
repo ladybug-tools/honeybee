@@ -84,7 +84,7 @@ def nukedir(target_dir, rmdir=False):
             print "Failed to remove %s" % d
 
 
-def write_to_fileByName(folder, fname, data, mkdir=False):
+def write_to_file_by_name(folder, fname, data, mkdir=False):
     """Write a string of data to file by filename and folder.
 
     Args:
@@ -118,7 +118,7 @@ def write_to_file(file_path, data, mkdir=False):
         mkdir: Set to True to create the directory if doesn't exist (Default: False)
     """
     folder, fname = os.path.split(file_path)
-    return write_to_fileByName(folder, fname, data, mkdir)
+    return write_to_file_by_name(folder, fname, data, mkdir)
 
 
 def copy_files_to_folder(files, target_folder, overwrite=True):

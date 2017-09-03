@@ -18,7 +18,7 @@ def get_radiance_objects_from_string(full_string):
         full_string + "\n",
         re.MULTILINE)
 
-    return [("").join(radObject[:-1]) for radObject in rawRadObjects]
+    return [("").join(radObject[:-1]) for radObject in raw_rad_objects]
 
 
 def get_radiance_objects_from_file(file_path):
@@ -51,5 +51,5 @@ def import_radiance_materials_from_file(file_path):
     radiance_objects = get_radiance_objects_from_file(file_path)
 
     # find materials and create honeybee materials from the string
-    for radObj in radianceObjects:
+    for radObj in radiance_objects:
         raise NotImplementedError

@@ -1,7 +1,6 @@
 # coding=utf-8
-
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath, RadianceBoolFlag, RadianceValue
+from ..datatype import RadianceBoolFlag, RadianceValue
 from ..datatype import RadianceNumber
 import os
 
@@ -65,7 +64,7 @@ class Objview(RadianceCommand):
 
     def to_rad_string(self, relative_path=False):
         objview_python_path = objview.__file__
-        cmd_path = self.normspace(objviewPythonPath)
+        cmd_path = self.normspace(objview_python_path)
 
         use_open_gl = self.use_open_gl.to_rad_string()
         hemisphere_up = self.hemisphere_up.to_rad_string()
@@ -82,16 +81,17 @@ class Objview(RadianceCommand):
         run_silently = self.run_silently.to_rad_string()
         print_views = self.print_views.to_rad_string()
 
-        rad_string = "%s %s " % (self.python_exe_path, cmdPath)
+        rad_string = "%s %s " % (self.python_exe_path, cmd_path)
 
         # Lambda shortcut for adding an input or nothing to the command
-        def add_to_str(val): return "%s " % val if val else ''
+        def add_to_str(val):
+            return "%s " % val if val else ''
         objview_param = (use_open_gl, hemisphere_up, back_face_visibility, view_details,
                          num_processors, output_device, verbose_display,
                          disable_warnings, gl_rad_full_screen, view_file, scene_exposure,
                          no_lights, run_silently, print_views)
 
-        for parameter in objviewParam:
+        for parameter in objview_param:
             rad_string += add_to_str(parameter)
 
         rad_string += " %s" % (" ".join(self.scene_files))

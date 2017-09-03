@@ -2,7 +2,7 @@
 
 Create, modify and generate radiance files from a collection of hbobjects.
 """
-from ..futil import write_to_fileByName, copy_files_to_folder, preparedir
+from ..futil import write_to_file_by_name, copy_files_to_folder, preparedir
 from .geometry import polygon
 from .material.plastic import BlackMaterial
 from .material.glow import WhiteGlowMaterial
@@ -112,9 +112,9 @@ class RadFile(object):
         basefolder = os.path.split(os.path.normpath(target_folder))[0]
         target_folder = os.path.join(basefolder, 'bsdf')
         is_created = preparedir(target_folder)
-        assert isCreated, 'Failed to create {}'.format(target_folder)
+        assert is_created, 'Failed to create {}'.format(target_folder)
         # copy the xml file locally
-        copy_files_to_folder(bsdfFiles, target_folder)
+        copy_files_to_folder(bsdf_files, target_folder)
         # replace the full path with relative path
         # The root folder in Radiance is the place that commands are executed
         # which in honeybee is the root so the relative path is scene\glazing\bsdf
@@ -158,7 +158,8 @@ class RadFile(object):
             if blacked:
                 mt_base = [BlackMaterial(srf.radiance_material.name).to_rad_string()
                            for srf in self.hb_surfaces]
-                mt_child = [BlackMaterial(childSrf.radiance_material.name).to_rad_string()
+                mt_child = [BlackMaterial(childSrf.radiance_material.name)
+                            .to_rad_string()
                             for srf in self.hb_surfaces
                             for childSrf in srf.children_surfaces
                             if srf.has_child_surfaces]
@@ -187,7 +188,8 @@ class RadFile(object):
                          for childSrf in srf.children_surfaces
                          if srf.has_child_surfaces)
             elif glowed:
-                mt = set(WhiteGlowMaterial(childSrf.radiance_material.name).to_rad_string()
+                mt = set(WhiteGlowMaterial(childSrf.radiance_material.name)
+                         .to_rad_string()
                          for srf in self.hb_surfaces
                          for childSrf in srf.children_surfaces
                          if srf.has_child_surfaces)
@@ -214,17 +216,17 @@ class RadFile(object):
         get_polygon = self.get_surface_rad_string
         if mode == 0:
             # do not include children surface
-            geo = (getPolygon(srf, flipped) for srf in self.hb_surfaces)
+            geo = (get_polygon(srf, flipped) for srf in self.hb_surfaces)
 
         elif mode == 1:
             # do not include children surface
-            geo_base = [getPolygon(srf, flipped) for srf in self.hb_surfaces]
-            geo_child = [getPolygon(childSrf, flipped) for srf in self.hb_surfaces
+            geo_base = [get_polygon(srf, flipped) for srf in self.hb_surfaces]
+            geo_child = [get_polygon(childSrf, flipped) for srf in self.hb_surfaces
                          for childSrf in srf.children_surfaces if srf.has_child_surfaces]
             geo = geo_base + geo_child
         elif mode == 2:
             # only child surfaces
-            geo = (getPolygon(childSrf, flipped) for srf in self.hb_surfaces
+            geo = (get_polygon(childSrf, flipped) for srf in self.hb_surfaces
                    for childSrf in srf.children_surfaces if srf.has_child_surfaces)
 
         return '\n'.join(geo) if join else tuple(geo)
@@ -274,7 +276,7 @@ class RadFile(object):
                 data, self.find_bsdf_materials(mode), folder
             )
         text = self.header() + '\n\n' + data
-        return write_to_fileByName(folder, filename, text, mkdir)
+        return write_to_file_by_name(folder, filename, text, mkdir)
 
     def write_materials(self, folder, filename, mode=1, blacked=False, glowed=False,
                         mkdir=False):
@@ -301,7 +303,7 @@ class RadFile(object):
                 data, self.find_bsdf_materials(mode), folder
             )
         text = self.header() + '\n\n' + data
-        return write_to_fileByName(folder, filename, text, mkdir)
+        return write_to_file_by_name(folder, filename, text, mkdir)
 
     def write_geometries(self, folder, filename, mode=1, flipped=False, mkdir=False):
         """write geometries to a file.
@@ -317,17 +319,17 @@ class RadFile(object):
         """
         data = self.to_rad_string(mode, False, flipped, False)
         text = self.header() + '\n\n' + data
-        return write_to_fileByName(folder, filename, text, mkdir)
+        return write_to_file_by_name(folder, filename, text, mkdir)
 
     def write_black_material(self, folder, filename, mkdir=False):
         """Write black material to a file."""
         text = self.header() + '\n\n' + BlackMaterial().to_rad_string()
-        return write_to_fileByName(folder, filename, text, mkdir)
+        return write_to_file_by_name(folder, filename, text, mkdir)
 
     # TODO(): fix the bug for multiple surfaces. The material only changes for
     # the first one.
-    def write_geometriesBlacked(self, folder, filename, mode=0, flipped=False,
-                                mkdir=False):
+    def write_geometries_blacked(self, folder, filename, mode=0, flipped=False,
+                                 mkdir=False):
         """Write all the surfaces to a file with BlackMaterial.
 
         Use this method to write objects like window-groups.
@@ -338,15 +340,15 @@ class RadFile(object):
         names = self.radiance_material_names(mode)
 
         for name in names:
-            geo = geo.replace(name, matName)
+            geo = geo.replace(name, mat_name)
 
         text = self.header() + '\n\n' + geo
-        return write_to_fileByName(folder, filename, text, mkdir)
+        return write_to_file_by_name(folder, filename, text, mkdir)
 
     def write_glow_material(self, folder, filename, mkdir=False):
         """Write white glow material to a file."""
         text = self.header() + '\n\n' + WhiteGlowMaterial().to_rad_string()
-        return write_to_fileByName(folder, filename, text, mkdir)
+        return write_to_file_by_name(folder, filename, text, mkdir)
 
     def write_geometries_glowed(self, folder, filename, mode=0, flipped=False,
                                 mkdir=False):
@@ -360,10 +362,10 @@ class RadFile(object):
         names = self.radiance_material_names(mode)
 
         for name in names:
-            geo = geo.replace(name, matName)
+            geo = geo.replace(name, mat_name)
 
         text = self.header() + '\n\n' + geo
-        return write_to_fileByName(folder, filename, text, mkdir)
+        return write_to_file_by_name(folder, filename, text, mkdir)
 
     @staticmethod
     def header():
@@ -386,7 +388,7 @@ class RadFile(object):
 
         # create a place holder for each point group (face)
         # for a planar surface sub_srf_count is one
-        place_holder = range(subSrfCount)
+        place_holder = range(sub_srf_count)
 
         for ptCount, pts in enumerate(points):
 
@@ -394,9 +396,9 @@ class RadFile(object):
             _name = name if sub_srf_count == 1 else '{}_{}'.format(name, ptCount)
 
             # collect definition for each subsurface
-            placeHolder[ptCount] = polygon(_name, surface.radiance_material.name, pts)
+            place_holder[ptCount] = polygon(_name, surface.radiance_material.name, pts)
 
-        return '\n'.join(placeHolder)
+        return '\n'.join(place_holder)
 
     def to_string(self):
         """Overwrite .NET's ToString."""

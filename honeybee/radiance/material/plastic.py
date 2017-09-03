@@ -143,7 +143,7 @@ class PlasticMaterial(RadianceMaterial):
             self.specularity, self.roughness
         )
 
-        return plasticDefinition.replace("\n", " ") if minimal else plasticDefinition
+        return plastic_definition.replace("\n", " ") if minimal else plastic_definition
 
 
 class BlackMaterial(PlasticMaterial):

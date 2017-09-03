@@ -49,11 +49,13 @@ class RadianceProperties(object):
         except ValueError:
             # user is passing a list or tuple with one ValueError
             _newMaterial = values[0]
-            _is_material_set_by_user = False  # if not indicated assume it is not set by user
+            # if not indicated assume it is not set by user
+            _is_material_set_by_user = False
         except TypeError:
             # user just passed a single value which is the material
             _newMaterial = values
-            _is_material_set_by_user = False  # if not indicated assume it is not set by user
+            # if not indicated assume it is not set by user
+            _is_material_set_by_user = False
         finally:
 
             if _newMaterial:

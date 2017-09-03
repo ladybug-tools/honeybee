@@ -5,8 +5,8 @@
 from ._advancedparametersbase import AdvancedRadianceParameters
 from ._frozen import frozen
 
-# TODO: Didn't add inputs for red,green,blue channels as the chances of that being used are..
-# TODO:..almost zero.
+# TODO: Didn't add inputs for red,green,blue channels as the chances of that being used
+#    are almost zero.
 
 
 @frozen
@@ -81,8 +81,8 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         Radiance images.
         """
 
-        self.add_radiance_number('n', 'number of contours', attribute_name='contour_quant',
-                                 num_type=int)
+        self.add_radiance_number('n', 'number of contours',
+                                 attribute_name='contour_quant', num_type=int)
         self.contour_quant = contour_quant
         """
         -n

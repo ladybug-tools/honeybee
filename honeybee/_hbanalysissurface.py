@@ -267,7 +267,7 @@ class HBAnalysisSurface(HBObject):
         # Now let's check the input for surface type
         if _surface_type is not None:
             # it is either a number or already a valid type
-            if isinstance(_surface_type, surfacetype.surface_typeBase):
+            if isinstance(_surface_type, surfacetype.SurfaceTypeBase):
                 self._surface_type = _surface_type
             else:
                 try:
@@ -358,7 +358,7 @@ class HBAnalysisSurface(HBObject):
             # re-evaluate the type if it hasn't been set by user
             self._surface_type = self._surface_type_from_points()
 
-    def add_pointList(self, pts, remove_current_points=False):
+    def add_point_list(self, pts, remove_current_points=False):
         """Add new list of points to surface points.
 
         Args:
@@ -433,9 +433,9 @@ class HBAnalysisSurface(HBObject):
         base = normals[0]
         for norm in normals:
             angle = go.vector_angle(base, norm)
-            if angle > maxAngle:
+            if angle > max_angle:
                 max_angle = angle
-        return maxAngle
+        return max_angle
 
     @property
     def upnormal(self):
@@ -508,7 +508,7 @@ class HBAnalysisSurface(HBObject):
 
             face_points = self.absolute_points[0]
 
-            vertices = (AnalsysiSurfacePolyline(facePoints, glassPoints).polyline,)
+            vertices = (AnalsysiSurfacePolyline(face_points, glass_points).polyline,)
 
         if flipped:
             return tuple(tuple(reversed(pts)) for pts in vertices)
@@ -532,8 +532,8 @@ class HBAnalysisSurface(HBObject):
         mode = mode or 1
         return RadFile((self,)).to_rad_string(mode, include_materials, flipped, blacked)
 
-    def rad_string_to_file(self, file_path, mode=1, include_materials=False, flipped=False,
-                           blacked=False):
+    def rad_string_to_file(self, file_path, mode=1, include_materials=False,
+                           flipped=False, blacked=False):
         """Write Radiance definition for this surface to a file.
 
         Args:
@@ -661,9 +661,9 @@ class AnalsysiSurfacePolyline(object):
         sorted_targets = sorted(
             targets, key=lambda target: self.__shortest_distance(source, target)[0])
 
-        self.__add_points(source, sortedTargets[0])
+        self.__add_points(source, sorted_targets[0])
 
-        if len(sortedTargets) > 1:
-            self.__calculate_polyline(sortedTargets[0], sortedTargets[1:])
+        if len(sorted_targets) > 1:
+            self.__calculate_polyline(sorted_targets[0], sorted_targets[1:])
         else:
-            self.__add_points(sortedTargets[0], sortedTargets[0])
+            self.__add_points(sorted_targets[0], sorted_targets[0])

@@ -26,19 +26,19 @@ class Room(HBZone):
     """
 
     def __init__(self, origin=(0, 0, 0), width=3, depth=6, height=3.2,
-                 rotationAngle=0):
+                 rotation_angle=0):
         """Init room."""
         self.origin = Point3(*tuple(origin)) if origin else Point3(0, 0, 0)
         self.width = float(width)
         self.depth = float(depth)
         self.height = float(height)
-        self.rotationAngle = float(rotationAngle)
+        self.rotationAngle = float(rotation_angle)
 
         self._z_axis = Vector3(0, 0, 1)
         self._x_axis = Vector3(1, 0, 0).rotate_around(
-            self._zAxis, math.radians(rotationAngle))
+            self._zAxis, math.radians(rotation_angle))
         self._y_axis = Vector3(0, 1, 0).rotate_around(
-            self._zAxis, math.radians(rotationAngle))
+            self._zAxis, math.radians(rotation_angle))
 
         # create 8 points
         self.__calculate_vertices()
@@ -94,21 +94,21 @@ class Room(HBZone):
         """
         # find number of divisions in width
         u_count = int(self.width / grid_size)
-        u_step = 1.0 / uCount
-        u_values = tuple((i * uStep) + (grid_size / (2.0 * self.width))
-                         for i in xrange(uCount))
+        u_step = 1.0 / u_count
+        u_values = tuple((i * u_step) + (grid_size / (2.0 * self.width))
+                         for i in xrange(u_count))
 
         # find number of divisions in depth
         v_count = int(self.depth / grid_size)
-        v_step = 1.0 / vCount
-        v_values = tuple((i * vStep) + (grid_size / (2.0 * self.depth))
-                         for i in xrange(vCount))
+        v_step = 1.0 / v_count
+        v_values = tuple((i * v_step) + (grid_size / (2.0 * self.depth))
+                         for i in xrange(v_count))
 
         z = float(height) / self.height
 
         return tuple(self.get_location(u, v, z)
-                     for v in vValues
-                     for u in uValues
+                     for v in v_values
+                     for u in u_values
                      )
 
     def get_location(self, u=0.5, v=0.5, z=0.5):

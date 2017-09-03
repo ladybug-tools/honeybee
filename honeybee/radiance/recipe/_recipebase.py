@@ -46,7 +46,7 @@ class AnalysisRecipe(object):
     @property
     def result_files(self):
         """Get list of result files for this recipe."""
-        return self._resultFiles
+        return self._result_files
 
     @property
     def commands(self):
@@ -157,9 +157,9 @@ class AnalysisRecipe(object):
         dir_line = "%s\ncd %s\n" % (os.path.splitdrive(target_folder)[0], target_folder)
 
         if includ_rad_path:
-            return '\n'.join((get_radiance_path_lines(), dirLine))
+            return '\n'.join((get_radiance_path_lines(), dir_line))
         else:
-            return dirLine
+            return dir_line
 
     # TODO: Get commands without running write method.
     def to_rad_string(self):

@@ -260,21 +260,22 @@ class AdvancedRadianceParameters(RadianceParameters):
                             attribute_name
                             )
 
-    @classmethod
-    def check_incompatible_inputs(self, *args):
+    @staticmethod
+    def check_incompatible_inputs(*args):
         """This method maybe used to check for inputs that are mutually incompatible.
         For example, a sky cannot be cloudy and clear at the same time. So, the idea is
         to specify those inputs as args and then check that no more than one of them
         is set during runtime.
 
-        A recommended way to use this method is to call it by reimplementing to_rad_string.
+        A recommended way to use this method is to call it by reimplementing
+        to_rad_string.
 
         One usecase can be found in gendaylit.
         """
         if any(args):
             input_values = ['"%s"' % value for value in args if value]
-            assert len(inputValues) < 2,\
+            assert len(input_values) < 2,\
                 'Only one of these inputs can be specified at any given time: ' \
-                '%s' % ", ".join(map(str, inputValues))
+                '%s' % ", ".join(map(str, input_values))
 
         return None

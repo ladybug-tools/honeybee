@@ -87,8 +87,8 @@ class Gendaylit(RadianceCommand):
     def to_rad_string(self, relative_path=False):
         """Return full command as a string."""
         # generate the name from self.wea_file
-        month_day_hour = self.month_day_hour.to_rad_string().replace("-month_day_hour ", "") if \
-            self.month_day_hour else ''
+        month_day_hour = self.month_day_hour.to_rad_string()\
+            .replace("-month_day_hour ", "") if self.month_day_hour else ''
 
         if self.rotation != 0:
             rad_string = "%s %s %s | xform -rz %.3f > %s" % (

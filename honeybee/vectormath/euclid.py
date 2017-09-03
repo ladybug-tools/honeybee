@@ -586,7 +586,10 @@ class Vector3:
                        self.z - d * normal.z)
 
     def rotate_around(self, axis, theta):
-        """Return the vector rotated around axis through angle theta. Right hand rule applies"""
+        """Return the vector rotated around axis through angle theta.
+
+        Right hand rule applies.
+        """
 
         # Adapted from equations published by Glenn Murray.
         # http://inside.mines.edu/~gmurray/ArbitraryAxisRotation/ArbitraryAxisRotation.html

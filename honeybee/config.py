@@ -118,9 +118,9 @@ class Folders(object):
                           in os.listdir('C:\\Program Files')
                           if (f.lower().startswith('openstudio') and
                               os.path.isdir('C:\\Program Files\\' + f))]
-            if not osFolders:
+            if not os_folders:
                 return
-            return sorted(osFolders, key=getversion, reverse=True)[0]
+            return sorted(os_folders, key=getversion, reverse=True)[0]
         else:
             return
 
@@ -139,7 +139,7 @@ class Folders(object):
         """Path to Radiance library folder."""
         return self._radlib
 
-    @radiancePath.setter
+    @radiance_path.setter
     def radiance_path(self, path):
         if not path:
             if os.name == 'nt':
@@ -189,35 +189,35 @@ class Folders(object):
     @property
     def perl_path(self):
         """Path to the folder containing Perl binary files."""
-        return self._perlPath
+        return self._perl_path
 
     @property
     def perl_exe_path(self):
         """Path to perl executable file."""
         return self._perlExePath
 
-    @perlPath.setter
+    @perl_path.setter
     def perl_path(self, path):
         """Path to the folder containing Perl binary files."""
         self._perl_path = path or ""
         self._perlExePath = path + "\\perl"
 
-        if not self._perlPath:
+        if not self._perl_path:
             if os.name == 'nt':
-                self._perlPath, self._perlExePath = self._which("perl.exe")
+                self._perl_path, self._perlExePath = self._which("perl.exe")
             elif os.name == 'posix':
-                self._perlPath, self._perlExePath = self._which("perl")
+                self._perl_path, self._perlExePath = self._which("perl")
 
-        if not self._perlPath and self.open_studio_path:
+        if not self._perl_path and self.open_studio_path:
             # try to find perl under openstudio
             p = os.path.join(self.open_studio_path,
                              'strawberry-perl-5.16.2.1-32bit-portable-reduced')
             if os.path.isfile(os.path.join(p, 'perl\\bin\\perl.exe')):
-                self._perlPath, self._perlExePath = p, \
+                self._perl_path, self._perlExePath = p, \
                     os.path.join(p, 'perl\\bin\\perl.exe')
 
-        if not self.mute and self._perlPath:
-            print "Path to perl is set to: %s" % self._perlPath
+        if not self.mute and self._perl_path:
+            print "Path to perl is set to: %s" % self._perl_path
 
     @property
     def ep_folder(self):

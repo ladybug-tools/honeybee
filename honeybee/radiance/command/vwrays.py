@@ -62,11 +62,11 @@ class Vwrays(RadianceCommand):
         cmd_path = self.normspace(os.path.join(self.radbin_path, 'vwrays'))
         vwrays_param = self.vwrays_parameters.to_rad_string()
         view_file_path = self.view_file.to_rad_string()
-        view_file = "-vf %s" % self.normspace(view_filePath) if view_file_path else ''
+        view_file = "-vf %s" % self.normspace(view_file_path) if view_file_path else ''
         output_file = "> %s" % self.output_file if self.output_file else ''
         output_data_format = self.output_data_format.to_rad_string()
         rad_string = "{0} {1} {2} {3} {4}".format(
-            cmdPath, output_data_format, vwrays_param, view_file, output_file)
+            cmd_path, output_data_format, vwrays_param, view_file, output_file)
         self.check_input_files(rad_string)
 
         return rad_string

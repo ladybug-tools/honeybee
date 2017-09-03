@@ -147,15 +147,15 @@ class HBZone(HBObject):
                      for childrenSurfaces in srf.children_surfaces
                      )
 
-    def add_surface(self, HBSurface):
+    def add_surface(self, surface):
         """Add a surface to Honeybee zone."""
-        assert hasattr(HBSurface, "isHBSurface"), \
-            "%s input is not a Honeybee surface." % str(HBSurface)
+        assert hasattr(surface, "isHBSurface"), \
+            "%s input is not a Honeybee surface." % str(surface)
 
-        self._surfaces.append(HBSurface)
+        self._surfaces.append(surface)
 
         # update surface parent
-        HBSurface._parent = self
+        surface._parent = self
 
     @property
     def radiance_materials(self):
@@ -186,10 +186,11 @@ class HBZone(HBObject):
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
         mode = mode or 1
-        return self.to_rad_file().to_rad_string(mode, include_materials, flipped, blacked)
+        return self.to_rad_file().to_rad_string(mode, include_materials, flipped,
+                                                blacked)
 
-    def rad_string_to_file(self, file_path, mode=1, include_materials=False, flipped=False,
-                           blacked=False):
+    def rad_string_to_file(self, file_path, mode=1, include_materials=False,
+                           flipped=False, blacked=False):
         """Write Radiance definition for this surface to a file.
 
         Args:

@@ -10,7 +10,7 @@ class RadianceMaterial(object):
 
     Attributes:
         name: Material name as a string. Do not use white space and special character.
-        material_type: One of Radiance standard Material types (e.g. glass, plastic, etc).
+        material_type: One of Radiance standard Material types (e.g. glass, plastic).
         modifier: Material modifier (Default: "void").
     """
 

@@ -2,7 +2,7 @@
 from ..command.xform import Xform, XformParameters
 from ..material.plastic import BlackMaterial
 from ..radfile import RadFile
-from ...futil import write_to_fileByName, copy_files_to_folder, preparedir
+from ...futil import write_to_file_by_name, copy_files_to_folder, preparedir
 
 import os
 from collections import Counter, namedtuple
@@ -101,22 +101,22 @@ def write_extra_files(rad_scene, target_dir, add_blacked=False):
         scene_rad_files = rad_scene.files.rad
         scene_oct_files = rad_scene.files.oct
 
-    rad_files = scene_mat_files, scene_rad_files, sceneOctFiles
+    rad_files = scene_mat_files, scene_rad_files, scene_oct_files
 
     # use xform to generate the blacked version
     blacked = []
     if add_blacked:
         black_mat = RadFile.header() + '\n\n' + BlackMaterial().to_rad_string()
         xfr_para = XformParameters()
-        xfrPara.mod_replace = BlackMaterial().name
+        xfr_para.mod_replace = BlackMaterial().name
 
         # Note: Xform has this thing it only works well if the paths are absolute.
-        for f in sceneRadFiles:
+        for f in scene_rad_files:
             # copy black material file if doesn't exist and add it to blacked
             folder, name = os.path.split(f)
             materialfile = os.path.join(folder, 'black.mat')
             if not os.path.exists(materialfile):
-                write_to_fileByName(folder, 'black.mat', blackMat)
+                write_to_file_by_name(folder, 'black.mat', black_mat)
                 blacked.append(materialfile)
             # create blacked rad scene
             xfr = Xform()

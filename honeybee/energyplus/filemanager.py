@@ -25,7 +25,7 @@ def get_energy_plus_objects_from_string(ep_file_string):
         "\n" + ep_file_string + "\n",
         re.MULTILINE)
 
-    for obj in rawEPObjects:
+    for obj in raw_ep_objects:
         # seperate each segment of EnergyPlus object
         segments = [seg.split("!")[0]
                     for seg in re.findall(r'.+[,|;]', obj, re.MULTILINE)]

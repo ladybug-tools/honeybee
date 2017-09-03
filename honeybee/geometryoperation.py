@@ -58,7 +58,7 @@ def up_vector_from_points(pts):
 
     normal = Vector3(*normal_from_points(pts))
 
-    return tuple(normal.cross(xAxis).normalize())
+    return tuple(normal.cross(x_axis).normalize())
 
 
 def center_point_from_points(pts):
@@ -79,17 +79,17 @@ def center_point_from_points(pts):
     except TypeError:
         raise TypeError("Pts should be a list or a tuple of points.")
 
-    return x / ptCount, y / ptCount, z / ptCount
+    return x / pt_count, y / pt_count, z / pt_count
 
 
-def vector_angleToZAxis(vector):
+def vector_angle_to_z_axis(vector):
     """Calculate angle between vectoe and (0, 0, 1) in degrees."""
     z_axis = Vector3(0, 0, 1)
     try:
-        return math.degrees(zAxis.angle(Vector3(*vector)))
+        return math.degrees(z_axis.angle(Vector3(*vector)))
     except TypeError:
         # Vectors from Dynamo are not iterable!
-        return math.degrees(zAxis.angle(Vector3(vector.X, vector.Y, vector.Z)))
+        return math.degrees(z_axis.angle(Vector3(vector.X, vector.Y, vector.Z)))
 
 
 def vector_angle(vector1, vector2):
@@ -110,5 +110,5 @@ if __name__ == "__main__":
     pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))
     srfVector = normal_from_points(pts)
 
-    print vector_angleToZAxis(srfVector)
+    print vector_angle_to_z_axis(srfVector)
     print center_point_from_points(pts)

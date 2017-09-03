@@ -1,5 +1,5 @@
 from ._skyBase import RadianceSky
-from ...futil import write_to_fileByName
+from ...futil import write_to_file_by_name
 from ladybug.dt import DateTime
 from ladybug.location import Location
 
@@ -125,7 +125,7 @@ class PointInTimeSky(RadianceSky):
         filename = filename or 'groundSky.rad'
         if not filename.lower().endswith('.rad'):
             filename += '.rad'
-        return write_to_fileByName(folder, filename, self.SKYGROUNDMATERIAL, True)
+        return write_to_file_by_name(folder, filename, self.SKYGROUNDMATERIAL, True)
 
     def command(self, folder):
         """Get sky radiance command."""

@@ -3,7 +3,8 @@ from ..parameters import get_radiance_parameters_grid_based
 from ..recipeutil import write_extra_files
 from ..recipedcutil import get_commands_scene_daylight_coeff, get_commands_sky
 
-from ..recipexphaseutil import matrix_calculation_three_phase, write_rad_filesMultiPhase
+from ..recipexphaseutil import matrix_calculation_three_phase, \
+    write_rad_files_multi_phase
 from ..recipexphaseutil import get_commands_view_daylight_matrices
 
 from ..daylightcoeff.gridbased import DaylightCoeffGridBased
@@ -93,8 +94,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
 
         return cls(
             sky_mtx, analysis_grids, simulation_type, view_mtx_parameters,
-            daylight_mtx_parameters, reuse_view_mtx, reuse_daylight_mtx, hb_window_surfaces,
-            hb_objects, sub_folder)
+            daylight_mtx_parameters, reuse_view_mtx, reuse_daylight_mtx,
+            hb_window_surfaces, hb_objects, sub_folder)
 
     @classmethod
     def from_points_file(
@@ -113,8 +114,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
 
         return cls.from_weather_file_points_and_vectors(
             epw_file, point_groups, vector_groups, sky_density, simulation_type,
-            view_mtx_parameters, daylight_mtx_parameters, reuse_view_mtx, reuse_daylight_mtx,
-            hb_window_surfaces, hb_objects, sub_folder)
+            view_mtx_parameters, daylight_mtx_parameters, reuse_view_mtx,
+            reuse_daylight_mtx, hb_window_surfaces, hb_objects, sub_folder)
 
     @property
     def view_mtx_parameters(self):
@@ -181,7 +182,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
             )
 
         # write geometry and material files
-        opqfiles, glzfiles, wgsfiles = write_rad_filesMultiPhase(
+        opqfiles, glzfiles, wgsfiles = write_rad_files_multi_phase(
             project_folder + '/scene', project_name, self.opaque_rad_file,
             self.glazing_rad_file, self.window_groups_rad_files
         )
@@ -218,7 +219,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
             self.reuse_daylight_mtx, self.total_runs_count)
 
         self._commands.extend(commands)
-        self._resultFiles.extend(
+        self._result_files.extend(
             os.path.join(project_folder, str(result)) for result in results
         )
 
@@ -228,7 +229,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
             commands, v_matrix, d_matrix = get_commands_view_daylight_matrices(
                 project_folder, wg, count, inputfiles, points_file, number_of_points,
                 self.sky_matrix.sky_density, self.view_mtx_parameters,
-                self.daylight_mtx_parameters, self.reuse_view_mtx, self.reuse_daylight_mtx)
+                self.daylight_mtx_parameters, self.reuse_view_mtx,
+                self.reuse_daylight_mtx)
 
             self._commands.extend(commands)
 
@@ -237,10 +239,10 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
                 project_folder, wg, v_matrix, d_matrix, skyfiles.sky_mtx_total)
 
             self._commands.extend(cmd)
-            self._resultFiles.extend(results)
+            self._result_files.extend(results)
 
         # # 5. write batch file
         batch_file = os.path.join(project_folder, "commands.bat")
-        write_to_file(batchFile, '\n'.join(self.preproc_commands()))
+        write_to_file(batch_file, '\n'.join(self.preproc_commands()))
 
-        return batchFile
+        return batch_file

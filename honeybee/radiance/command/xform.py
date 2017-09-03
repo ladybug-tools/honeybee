@@ -2,7 +2,6 @@
 """xform - transform a RADIANCE scene description"""
 
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath
 from ..parameters.xform import XformParameters
 
 import os
@@ -66,7 +65,7 @@ class Xform(RadianceCommand):
 
                 for idx, value in enumerate(xform_list):
                     try:
-                        testfordigits = float(value)
+                        float(value)
                     except ValueError:
                         assert value in xformcmds.keys(),\
                             "{} is not a valid xform flag. Valid xform flags " \
@@ -125,8 +124,7 @@ class Xform(RadianceCommand):
                             # Which is incorrect. Attribute Error is arbitrary
                             # here.
                             try:
-                                testfordigits2 = float(xform_list[idx + 1])
-
+                                float(xform_list[idx + 1])
                                 assert False, \
                                     "{} in {} should not be followed by a " \
                                     "number.".format(xform_list[idx],
@@ -176,9 +174,9 @@ class Xform(RadianceCommand):
         input_path = " ".join(self.normspace(f) for f in self.rad_file)
         output_path = self.normspace(self.output_file)
 
-        rad_string = "{0} {1} {2} {3} > {4}".format(cmdPath, xform_param,
+        rad_string = "{0} {1} {2} {3} > {4}".format(cmd_path, xform_param,
                                                     self.transforms, input_path,
-                                                    outputPath)
+                                                    output_path)
         self.check_input_files(rad_string)
 
         return rad_string

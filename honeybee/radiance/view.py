@@ -216,18 +216,18 @@ class View(object):
         # to fit the aspect ratio. In case the size doesn't match it reverses
         # the process.
         if max_y <= max_x:
-            newx = int(round(hvRatio * max_y))
+            newx = int(round(hv_ratio * max_y))
             if newx <= max_x:
                 return newx, max_y
             else:
-                newy = int(round(max_x / hvRatio))
+                newy = int(round(max_x / hv_ratio))
                 return max_x, newy
         else:
-            newy = int(round(max_x / hvRatio))
+            newy = int(round(max_x / hv_ratio))
             if newy <= max_y:
                 return max_x, newy
             else:
-                newx = int(round(hvRatio * max_y))
+                newx = int(round(hv_ratio * max_y))
                 return newx, max_y
 
     def calculate_view_grid(self, x_div_count=1, y_div_count=1):

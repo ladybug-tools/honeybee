@@ -72,8 +72,8 @@ class SkyVector(RadianceSky):
         epw = EPW(epw_file)
         location = epw.location
         hoy = DateTime(month, day, hour).hoy
-        dnr = epw.direct_normal_radiation.values()[HOY]
-        dhr = epw.diffuse_horizontal_radiation.values()[HOY]
+        dnr = epw.direct_normal_radiation.values()[hoy]
+        dhr = epw.diffuse_horizontal_radiation.values()[hoy]
 
         return cls.from_radiation_values(location, dnr, dhr, month, day, hour,
                                          sky_density, north)

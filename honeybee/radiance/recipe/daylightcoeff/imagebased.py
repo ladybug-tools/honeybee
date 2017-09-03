@@ -1,6 +1,6 @@
 """Radiance Daylight Coefficient Image-Based Analysis Recipe."""
 from ..recipeutil import write_extra_files, glz_srf_towin_group
-from ..recipedcutil import write_rad_filesDaylightCoeff, create_reference_map_command
+from ..recipedcutil import write_rad_files_daylight_coeff, create_reference_map_command
 from ..recipedcutil import image_based_view_sampling_commands, \
     image_based_view_coeff_matrix_commands, imaged_based_sun_coeff_matrix_commands
 from ...command.oconv import Oconv
@@ -28,7 +28,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         simulation_type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 2)
         rad_parameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: imagebased.low_qualityImage)
+            (Default: imagebased.LowQualityImage)
         hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
         sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
 
@@ -56,11 +56,11 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         self.daylight_mtx_parameters = daylight_mtx_parameters
         """Radiance parameters for image based analysis (rfluxmtx).
-            (Default: imagebased.low_qualityImage)"""
+            (Default: imagebased.LowQualityImage)"""
 
         self.vwrays_parameters = vwrays_parameters
         """Radiance parameters for vwrays.
-            (Default: imagebased.low_qualityImage)"""
+            (Default: imagebased.LowQualityImage)"""
 
         self.reuse_daylight_mtx = reuse_daylight_mtx
 
@@ -137,7 +137,8 @@ class DaylightCoeffImageBased(GenericImageBased):
         else:
             assert hasattr(par, 'isVwraysParameters'), \
                 TypeError('Expected VwraysParameters not {}'.format(type(par)))
-        assert par.sampling_rays_count == self.daylight_mtx_parameters.sampling_rays_count, \
+        assert par.sampling_rays_count == \
+            self.daylight_mtx_parameters.sampling_rays_count, \
             ValueError(
                 'Number of sampling_rays_count should be equal between '
                 'daylight_mtx_parameters [{}] and vwrays_parameters [{}].'
@@ -210,7 +211,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             )
 
         # write geometry and material files
-        opqfiles, glzfiles, wgsfiles = write_rad_filesDaylightCoeff(
+        opqfiles, glzfiles, wgsfiles = write_rad_files_daylight_coeff(
             project_folder + '\\scene', project_name, self.opaque_rad_file,
             self.glazing_rad_file, self.window_groups_rad_files
         )
@@ -242,7 +243,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         # surfaces. The current limitation is that HBDynamicSurface can't have several
         # surfaces with different materials.
         all_window_groups = [glz_srf_towin_group()]
-        allWindowGroups.extend(self.window_groups)
+        all_window_groups.extend(self.window_groups)
         all_wgs_files = [glzfiles] + list(wgsfiles)
 
         # create the base octree for the scene
@@ -265,7 +266,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         oc = Oconv(project_name)
         oc.scene_files = tuple(self.relpath(f, project_folder)
-                               for f in octSceneFiles)
+                               for f in oct_scene_files)
 
         self._commands.append(oc.to_rad_string())
 
@@ -289,10 +290,10 @@ class DaylightCoeffImageBased(GenericImageBased):
             self.commands.append(':: 1 view sampling')
             view_info_file, vwr_samp = image_based_view_sampling_commands(
                 project_folder, view, view_file, self.vwrays_parameters)
-            self.commands.append(vwrSamp.to_rad_string())
+            self.commands.append(vwr_samp.to_rad_string())
 
             # set up the geometries
-            for count, wg in enumerate(allWindowGroups):
+            for count, wg in enumerate(all_window_groups):
                 if count == 0:
                     if len(wgsfiles) > 0:
                         blkmaterial = [wgsfiles[0].fpblk[0]]
@@ -302,7 +303,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                         wgsblacked = []
                 else:
                     # add material file
-                    blkmaterial = [allWgsFiles[count].fpblk[0]]
+                    blkmaterial = [all_wgs_files[count].fpblk[0]]
                     # add all the blacked window groups but the one in use
                     # and finally add non-window group glazing as black
                     wgsblacked = \
@@ -320,17 +321,17 @@ class DaylightCoeffImageBased(GenericImageBased):
                         # normal glazing
                         non_blacked_wgfiles = all_wgs_files[count].fp
                     else:
-                        non_blacked_wgfiles = (allWgsFiles[count].fp[scount],)
+                        non_blacked_wgfiles = (all_wgs_files[count].fp[scount],)
 
                     rflux_scene = (
                         f for fl in
-                        (nonBlackedWgfiles, opqfiles.fp, extrafiles.fp,
+                        (non_blacked_wgfiles, opqfiles.fp, extrafiles.fp,
                          blkmaterial, wgsblacked)
                         for f in fl)
 
                     rflux_scene_blacked = (
                         f for fl in
-                        (nonBlackedWgfiles, opqfiles.fpblk, extrafiles.fpblk,
+                        (non_blacked_wgfiles, opqfiles.fpblk, extrafiles.fpblk,
                          blkmaterial, wgsblacked)
                         for f in fl)
 
@@ -368,15 +369,16 @@ class DaylightCoeffImageBased(GenericImageBased):
                     )
 
                     rad_files_blacked = tuple(self.relpath(f, project_folder)
-                                              for f in rfluxSceneBlacked)
+                                              for f in rflux_scene_blacked)
                     # Daylight matrix
                     if not self.reuse_daylight_mtx or not \
-                            self.is_daylight_mtx_created(project_folder, view, wg, state):
+                            self.is_daylight_mtx_created(project_folder, view, wg,
+                                                         state):
 
                         self.reuse_daylight_mtx = False
 
                         rad_files = tuple(self.relpath(f, project_folder)
-                                          for f in rfluxScene)
+                                          for f in rflux_scene)
 
                         self._commands.append(
                             ':: :: 1. daylight matrix {}, {} > state {}'.format(
@@ -389,7 +391,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                         rflux = image_based_view_coeff_matrix_commands(
                             self.relpath(receiver, project_folder),
                             rad_files, sender, view_info_file,
-                            view_file, str(vwrSamp.output_file),
+                            view_file, str(vwr_samp.output_file),
                             self.daylight_mtx_parameters)
 
                         self.commands.append(rflux.to_rad_string())
@@ -407,12 +409,12 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         # output pattern is set in receiver
                         rflux_direct = image_based_view_coeff_matrix_commands(
-                            self.relpath(receiverDir, project_folder),
-                            rad_filesBlacked, sender, view_info_file,
-                            view_file, str(vwrSamp.output_file),
+                            self.relpath(receiver_dir, project_folder),
+                            rad_files_blacked, sender, view_info_file,
+                            view_file, str(vwr_samp.output_file),
                             self.daylight_mtx_parameters)
 
-                        self._commands.append(rfluxDirect.to_rad_string())
+                        self._commands.append(rflux_direct.to_rad_string())
 
                         self._commands.append(':: :: 1.3 blacked scene analemma matrix')
 
@@ -426,8 +428,8 @@ class DaylightCoeffImageBased(GenericImageBased):
                                     view.name, wg.name, state.name)
 
                         sun_commands = imaged_based_sun_coeff_matrix_commands(
-                            output_filenameFormat, view, str(vwrSamp.output_file),
-                            rad_filesBlacked, self.relpath(analemma, project_folder),
+                            output_filename_format, view, str(vwr_samp.output_file),
+                            rad_files_blacked, self.relpath(analemma, project_folder),
                             self.relpath(sunlist, project_folder))
 
                         # delete the files if they are already created
@@ -444,7 +446,8 @@ class DaylightCoeffImageBased(GenericImageBased):
                                 if os.path.isfile(fp):
                                     print('Failed to remove {}:\n{}'.format(sf, e))
 
-                        self._commands.extend(cmd.to_rad_string() for cmd in sunCommands)
+                        self._commands.extend(cmd.to_rad_string()
+                                              for cmd in sun_commands)
                         self.daylight_mtx_parameters.ambientBounces = ab
 
                     else:
@@ -473,7 +476,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                         self._commands.append(':: :: 2.2.0 direct matrix calculations')
                         dct_direct = image_based_view_matrix_calculation(
                             view, wg, state, sky_mtx_direct, 'direct')
-                        self._commands.append(dctDirect.to_rad_string())
+                        self._commands.append(dct_direct.to_rad_string())
                     else:
                         print(
                             'reusing the direct dalight matrix for {}:{} from '
@@ -488,7 +491,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                             view, wg, state,
                             self.relpath(analemmaMtx, project_folder), 'isun', 4)
 
-                        self._commands.append(dctSun.to_rad_string())
+                        self._commands.append(dct_sun.to_rad_string())
 
                         # multiply the sun matrix with the reference map
                         # TODO: move this to a separate function
@@ -507,7 +510,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                             out = 'result\\hdr\\sun\\{:04d}_{}..{}..{}.hdr'.format(
                                 hourcount + 1, view.name, wg.name, state.name
                             )
-                            images = PcombImage(input_image_file=inp), refmapImage
+                            images = PcombImage(input_image_file=inp), refmap_image
 
                             pcb = Pcomb(images, out, par)
                             self._commands.append(pcb.to_rad_string())
@@ -524,16 +527,16 @@ class DaylightCoeffImageBased(GenericImageBased):
                         for count, h in enumerate(self.sky_matrix.hoys)
                     )
 
-                    self._resultFiles[viewCount].append(
-                        (wg.name, state.name, resultFiles))
+                    self._result_files[viewCount].append(
+                        (wg.name, state.name, result_files))
 
         # # 4.3 write batch file
         batch_file = os.path.join(project_folder, "commands.bat")
 
-        write_to_file(batchFile, "\n".join(self.commands))
+        write_to_file(batch_file, "\n".join(self.commands))
 
         print "Files are written to: %s" % project_folder
-        return batchFile
+        return batch_file
 
     def results(self):
         """Return results for this analysis."""
@@ -542,7 +545,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             "to run the analysis before loading the results."
         hoys = self.sky_matrix.hoys
 
-        for viewCount, viewResults in enumerate(self._resultFiles):
+        for viewCount, viewResults in enumerate(self._result_files):
             imgc = ImageCollection(self.views[viewCount].name)
 
         for source, state, files in viewResults:
@@ -551,9 +554,9 @@ class DaylightCoeffImageBased(GenericImageBased):
                 fpt = i % 'total'
                 fpd = i % 'direct'
                 fps = i % 'sun'
-                sourceFiles.append((fpt, fpd, fps))
+                source_files.append((fpt, fpd, fps))
 
-            imgc.add_coupled_image_files(sourceFiles, hoys, source, state)
+            imgc.add_coupled_image_files(source_files, hoys, source, state)
 
         # TODO(mostapha): Add properties to the class for output file addresses
         imgc.output_folder = fpt.split('result\\hdr')[0] + 'result\\hdr\\combined'

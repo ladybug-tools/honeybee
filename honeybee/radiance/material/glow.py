@@ -45,7 +45,7 @@ class GlowMaterial(RadianceMaterial):
             self.red._value, self.green._value, self.blue._value, self.max_radius._value
         )
 
-        return glowDefinition.replace("\n", " ") if minimal else glowDefinition
+        return glow_definition.replace("\n", " ") if minimal else glow_definition
 
 
 class WhiteGlowMaterial(GlowMaterial):

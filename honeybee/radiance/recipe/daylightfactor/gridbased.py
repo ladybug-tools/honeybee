@@ -11,7 +11,7 @@ class GridBased(PITGridBased):
     Attributes:
         analysis_grids: List of analysis grids.
         rad_parameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.low_quality)
+            (Default: gridbased.LowQuality)
         hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
         sub_folder: Analysis subfolder for this recipe. (Default: "daylightfactor")
 
@@ -45,7 +45,7 @@ class GridBased(PITGridBased):
                 represents direction of corresponding point in testPts. If the
                 vector is not provided (0, 0, 1) will be assigned.
             rad_parameters: Radiance parameters for grid based analysis (rtrace).
-                (Default: gridbased.low_quality)
+                (Default: gridbased.LowQuality)
             hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
             sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
         """
@@ -75,7 +75,7 @@ class GridBased(PITGridBased):
         # all the results will be divided by this value to calculated the percentage
         div = self.SKYILLUM / 100.0
 
-        rf = self._resultFiles
+        rf = self._result_files
         start_line = 0
         for count, analysisGrid in enumerate(self.analysis_grids):
             if count:

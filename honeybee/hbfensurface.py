@@ -97,8 +97,8 @@ class HBFenSurface(HBAnalysisSurface):
         return cls(name, sorted_points=_pts, is_name_set_by_user=True)
 
     @classmethod
-    def from_geometry(cls, name, geometry, is_name_set_by_user=False, rad_properties=None,
-                      ep_properties=None, states=None, group=False):
+    def from_geometry(cls, name, geometry, is_name_set_by_user=False,
+                      rad_properties=None, ep_properties=None, states=None, group=False):
         """Create a honeybee fenestration surface from Grasshopper geometry."""
         assert honeybee.isplus, \
             '"fromGeometries" method can only be used in [+] libraries.'
@@ -120,15 +120,15 @@ class HBFenSurface(HBAnalysisSurface):
         if not group:
             hbsrfs = []
             # create a separate surface for each geometry.
-            for gcount, srf in enumerate(srfData):
+            for gcount, srf in enumerate(srf_data):
                 for scount, (geo, pts) in enumerate(srf):
                     try:
                         _name = '%s_%d_%d' % (names[gcount], gcount, scount)
                     except IndexError:
                         _name = '%s_%d_%d' % (names[-1], gcount, scount)
 
-                    _srf = cls(_name, pts, is_name_set_by_user, rad_properties, ep_properties,
-                               states)
+                    _srf = cls(_name, pts, is_name_set_by_user, rad_properties,
+                               ep_properties, states)
                     _srf.geometry = geo
                     hbsrfs.append(_srf)
 
@@ -147,13 +147,13 @@ class HBFenSurface(HBAnalysisSurface):
             _geos = []
             _pts = []
             # collect all the points in a single list
-            for srf in srfData:
+            for srf in srf_data:
                 for geo, pts in srf:
                     _pts.extend(pts)
                     _geos.append(geo)
 
-            _srf = cls(names[0], _pts, is_name_set_by_user, rad_properties, ep_properties,
-                       states)
+            _srf = cls(names[0], _pts, is_name_set_by_user, rad_properties,
+                       ep_properties, states)
             _srf.geometry = _geos
             return _srf
 

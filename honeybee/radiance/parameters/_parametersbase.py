@@ -35,7 +35,7 @@ class RadianceParameters(object):
 
         # static parameters are the parameters which are set from a string.
         # static parameters are collected here
-        self._additionalParameters = []
+        self._additional_parameters = []
 
         setattr(self, 'is{}'.format(self.__class__.__name__), True)
 
@@ -47,7 +47,7 @@ class RadianceParameters(object):
     @property
     def parameters(self):
         """Return list of current parameters."""
-        return set(self._defaultParameters.keys() + self._additionalParameters)
+        return set(self._defaultParameters.keys() + self._additional_parameters)
 
     @property
     def default_parameters(self):
@@ -57,11 +57,11 @@ class RadianceParameters(object):
     @property
     def additional_parameters(self):
         """Return list of default parameters."""
-        return set(self._additionalParameters)
+        return set(self._additional_parameters)
 
-    @additionalParameters.setter
+    @additional_parameters.setter
     def additional_parameters(self, values):
-        self._additionalParameters = values
+        self._additional_parameters = values
 
     @property
     def values(self):
@@ -102,7 +102,7 @@ class RadianceParameters(object):
         for name in self.additional_parameters:
             delattr(self, name)
         self._defaultParameters = {}
-        self._additionalParameters = []
+        self._additional_parameters = []
 
     def remove_parameter(self, name):
         """Remove a single parameter by name."""
@@ -113,11 +113,11 @@ class RadianceParameters(object):
         elif name in self._defaultParameters.values():
             _i = self._defaultParameters.values().index(name)
             alias_name = self._defaultParameters.keys()[_i]
-            del self._defaultParameters[aliasName]
-            print "Removed %s from default parameters." % str(aliasName)
+            del self._defaultParameters[alias_name]
+            print "Removed %s from default parameters." % str(alias_name)
         elif name in self.additional_parameters:
             delattr(self, name)
-            self._additionalParameters.remove(name)
+            self._additional_parameters.remove(name)
             print "Removed %s from additional parameters." % str(name)
         else:
             warnings.warn("Couldn't find %s in parameters!" % str(name))
@@ -148,7 +148,7 @@ class RadianceParameters(object):
             if name != alias_name:
                 raise ValueError(
                     "'{0}' is already set as an attribute by the name of {1}. "
-                    "Use 'self.{1}' to change the value".format(name, aliasName)
+                    "Use 'self.{1}' to change the value".format(name, alias_name)
                 )
 
         if name in self.parameters:
@@ -161,7 +161,7 @@ class RadianceParameters(object):
         try:
             self.try_to_unfreeze()
             setattr(self, name, str(value))
-            self._additionalParameters.append(name)
+            self._additional_parameters.append(name)
         except TypeError:
             raise ValueError("Value should be a string or convertable to a string.")
         else:
@@ -187,7 +187,7 @@ class RadianceParameters(object):
                 _i = self._defaultParameters.values().index(key)
                 alias_name = self._defaultParameters.keys()[_i]
                 setattr(self, alias_name, value)
-                print "Updated value for %s to %s" % (aliasName, value)
+                print "Updated value for %s to %s" % (alias_name, value)
             except Exception:
                 # paramter already exists. just update the value
                 setattr(self, key, value)
@@ -208,12 +208,12 @@ class RadianceParameters(object):
         rad_par = OrderedDict()
 
         if parameters_string is None:
-            return radPar
+            return rad_par
 
         # split input string: each part will look like key value (eg ad 1)
         par_list = parameters_string.split("-")
 
-        for p in parList:
+        for p in par_list:
             key, sep, value = p.partition(" ")
 
             # convert the value to number
@@ -235,9 +235,9 @@ class RadianceParameters(object):
                         except Exception:
                             value = ""
 
-            radPar[key.strip()] = value
+            rad_par[key.strip()] = value
 
-        return radPar
+        return rad_par
 
     def to_rad_string(self):
         """Get parameters as a radiance definition."""
@@ -247,14 +247,14 @@ class RadianceParameters(object):
             if getattr(self, key).to_rad_string() != ""
         ]
 
-        _additionalParameters = [
+        _additional_parameters = [
             "-%s %s" % (key, getattr(self, key))
             if str(getattr(self, key)).strip() != ""
             else "-%s" % key
             for key in self.additional_parameters
         ]
 
-        return " ".join(_defaultParameters + _additionalParameters)
+        return " ".join(_defaultParameters + _additional_parameters)
 
     def to_string(self):
         """Overwrite .NET ToString method."""

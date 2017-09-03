@@ -78,16 +78,16 @@ class Rmtxop(RadianceCommand):
 
     #direct dc matrix. -1 indicates that this one is being subtracted from dc matrix.
     dc_direct_matrix = RmtxopMatrix()
-    dcDirect_matrix.matrix_file = y.ill
-    dcDirect_matrix.scalar_factors = [-1]
+    dc_direct_matrix.matrix_file = y.ill
+    dc_direct_matrix.scalar_factors = [-1]
 
     #Sun coefficient matrix.
     sun_coeff_matrix = RmtxopMatrix()
-    sunCoeffMatrix.matrix_file = z.ill
+    sun_coeff_matrix.matrix_file = z.ill
 
     #combine the matrices together. Sequence is extremely important
-    finalMatrix.rmtxop_matrices  = [dc_matrix,dcDirect_matrix,sunCoeffMatrix]
-    finalMatrix.output_file = res.ill
+    final_matrix.rmtxop_matrices  = [dc_matrix,dc_direct_matrix,sun_coeff_matrix]
+    final_matrix.output_file = res.ill
 
     #Then the to_rad_string will be:
         c:\radiance\bin\rmtxop     x.ill + -s -1 y.ill + z.ill > res.ill
@@ -141,7 +141,7 @@ class Rmtxop(RadianceCommand):
                         self.__rmtxop_matrices.append(matrix)
                 except Exception:
                     raise Exception(
-                        "The input for rmtxop_matrices should either be a single instance"
+                        "The input for rmtxop_matrices should either be an instance"
                         "of the class RmtxopMatrix or a list/tuple/iterable containing"
                         " multiple instances of the RmtxopMatrix.")
         else:
@@ -175,13 +175,13 @@ class Rmtxop(RadianceCommand):
             matrix_files = " + ".join(self.matrix_files)
             # If compound matrices have already been specified, then add a plus in
             # the beginning.
-            if compoundMatrices:
+            if compound_matrices:
                 matrix_files = "+ %s" % matrix_files
 
         rad_string = "%s %s %s %s > %s" % (
             self.normspace(os.path.join(self.radbin_path, 'rmtxop')),
             self.rmtxop_parameters.to_rad_string(),
-            compoundMatrices,
+            compound_matrices,
             matrix_files,
             self.normspace(self.output_file.to_rad_string())
         )

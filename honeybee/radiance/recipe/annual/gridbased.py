@@ -72,7 +72,7 @@ class GridBased(DaylightCoeffGridBased):
             ag.unload()
 
         # results are merged as a single file
-        for rf in self._resultFiles:
+        for rf in self._result_files:
             folder, name = os.path.split(rf)
             df = os.path.join(folder, 'sun..%s' % name)
             mode = 179 if self.simulation_type == 1 else 0

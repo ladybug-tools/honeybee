@@ -1,6 +1,6 @@
 import os
 from ._commandbase import RadianceCommand
-from ..parameters.gridbased import low_quality
+from ..parameters.gridbased import LowQuality
 from ..datatype import RadiancePath
 
 
@@ -17,7 +17,7 @@ class Rtrace(RadianceCommand):
             0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         radiance_parameters: Radiance parameters for this analysis.
-            (Default: girdbased.low_quality)
+            (Default: girdbased.LowQuality)
     """
 
     output_file = RadiancePath("res", "results file", extension=".res")
@@ -43,7 +43,7 @@ class Rtrace(RadianceCommand):
 
         self.radiance_parameters = radiance_parameters
         """Radiance parameters for this analysis
-        (Default: RadianceParameters.low_quality)."""
+        (Default: RadianceParameters.LowQuality)."""
 
         # add -h to parameters to get no header, True is no header
         self.radiance_parameters.add_radiance_bool_flag("h", "output header switch")
@@ -98,7 +98,7 @@ class Rtrace(RadianceCommand):
     @radiance_parameters.setter
     def radiance_parameters(self, rad_parameters):
         if not rad_parameters:
-            rad_parameters = low_quality()
+            rad_parameters = LowQuality()
         assert hasattr(rad_parameters, 'isGridBasedRadianceParameters'), \
             "%s is not a radiance parameters." % type(rad_parameters)
         self._rad_parameters = rad_parameters

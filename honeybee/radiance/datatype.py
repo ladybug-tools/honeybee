@@ -335,28 +335,28 @@ class RadianceNumber(RadianceDefault):
                             final_value = value
                     if self._check_positive:
                         msg = "The value for %s should be greater than 0." \
-                              " The value specified was %s" % (varName, value)
+                              " The value specified was %s" % (var_name, value)
                         assert int(value) >= 0, msg
                 # Value error will be raised if the input was anything else
                 # other than a number.
                 except ValueError:
                     msg = "The value for %s should be a number. " \
-                          "%s was specified instead " % (varName, value)
+                          "%s was specified instead " % (var_name, value)
                     raise ValueError(msg)
                 except TypeError:
                     msg = "The type of input for %s should a float or int. " \
-                          "%s was specified instead" % (varName, value)
+                          "%s was specified instead" % (var_name, value)
                     raise TypeError(msg)
                 except AttributeError:
                     msg = "The type of input for %s should a float or int. " \
-                          "%s was specified instead" % (varName, value)
+                          "%s was specified instead" % (var_name, value)
                     raise AttributeError(msg)
 
             # Raise a warning if the number got modified.
-            if hash(finalValue) != hash(value) and self._type:
+            if hash(final_value) != hash(value) and self._type:
                 msg = "The expected type for %s is %s." \
                       "The provided input %s has been converted to %s" % \
-                      (varName, self._type, value, finalValue)
+                      (var_name, self._type, value, final_value)
                 warnings.warn(msg)
 
             # Raise a warning if the number isn't in the valid range.
@@ -365,11 +365,11 @@ class RadianceNumber(RadianceDefault):
                 if not (minVal <= final_value <= maxVal):
                     msg = "The specified input for %s is %s. This is beyond " \
                           "the valid range. The value for %s should be " \
-                          "between %s and %s" % (varName, final_value, varName,
+                          "between %s and %s" % (var_name, final_value, var_name,
                                                  maxVal, minVal)
                     raise ValueError(msg)
 
-            setattr(instance, self._name, RadianceNumberType(self._name, finalValue))
+            setattr(instance, self._name, RadianceNumberType(self._name, final_value))
 
 
 class RadianceTuple(RadianceDefault):
@@ -447,28 +447,28 @@ class RadianceTuple(RadianceDefault):
 
             try:
                 if self._test_type:
-                    final_value = map(num_type, finalValue)
+                    final_value = map(num_type, final_value)
             except TypeError:
                 msg = "The specified input for %s is %s. " \
                       "The value should be a list or a tuple." \
-                      % (self._nameString, finalValue)
+                      % (self._nameString, final_value)
 
                 raise ValueError(msg)
 
             if self._tuple_size:
-                assert len(finalValue) == self._tuple_size, \
+                assert len(final_value) == self._tuple_size, \
                     "The number of inputs required for %s are %s. " \
                     "The provided input was %s" % \
-                    (self._nameString, self._tuple_size, finalValue)
+                    (self._nameString, self._tuple_size, final_value)
 
             if self._valid_range:
                 minVal, maxVal = self._valid_range
                 allin_range = True
-                for numValue in finalValue:
+                for numValue in final_value:
                     if not (minVal <= numValue <= maxVal):
                         allin_range = False
                         break
-                if not allinRange:
+                if not allin_range:
                     msg = "The specified input for %s is %s. " \
                           "One or more numbers are not in the valid range" \
                           ". The values should be between %s and %s" \
@@ -476,7 +476,7 @@ class RadianceTuple(RadianceDefault):
                     raise ValueError(msg)
 
             setattr(instance, self._name,
-                    RadianceDataType(self._name, tuple(finalValue)))
+                    RadianceDataType(self._name, tuple(final_value)))
 
     def __getitem__(self, i):
         """Get item i from tuple."""

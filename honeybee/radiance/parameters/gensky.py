@@ -132,7 +132,8 @@ class GenskyParameters(AdvancedRadianceParameters):
         """[-r rad] A float number to indicate solar radiance in
         watts/steradians/meter-sq."""
 
-        self.add_radiance_number('R', 'solar radiance from horizontal diffuse irradiance',
+        self.add_radiance_number('R',
+                                 'solar radiance from horizontal diffuse irradiance',
                                  attribute_name='solar_rad_horz_diff',
                                  num_type=float)
         self.solar_rad_horz_diff = solar_rad_horz_diff

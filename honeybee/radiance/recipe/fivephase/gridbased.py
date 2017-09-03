@@ -1,5 +1,5 @@
 from ..recipeutil import write_extra_files
-from ..recipexphaseutil import write_rad_filesMultiPhase, matrix_calculation_five_phase
+from ..recipexphaseutil import write_rad_files_multi_phase, matrix_calculation_five_phase
 from ..recipedcutil import get_commands_scene_daylight_coeff, get_commands_sky
 from ..recipexphaseutil import get_commands_view_daylight_matrices
 from ..recipexphaseutil import get_commands_direct_view_daylight_matrices
@@ -76,7 +76,7 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             )
 
         # write geometry and material files
-        opqfiles, glzfiles, wgsfiles = write_rad_filesMultiPhase(
+        opqfiles, glzfiles, wgsfiles = write_rad_files_multi_phase(
             project_folder + '/scene', project_name, self.opaque_rad_file,
             self.glazing_rad_file, self.window_groups_rad_files
         )
@@ -113,7 +113,7 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             self.reuse_daylight_mtx, self.total_runs_count)
 
         self._commands.extend(commands)
-        self._resultFiles.extend(
+        self._result_files.extend(
             os.path.join(project_folder, str(result)) for result in results
         )
 
@@ -123,8 +123,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             commands, v_matrix, d_matrix = get_commands_view_daylight_matrices(
                 project_folder, wg, count, inputfiles, points_file, number_of_points,
                 self.sky_matrix.sky_density, self.view_mtx_parameters,
-                self.daylight_mtx_parameters, self.reuse_view_mtx, self.reuse_daylight_mtx,
-                phases_count=5)
+                self.daylight_mtx_parameters, self.reuse_view_mtx,
+                self.reuse_daylight_mtx, phases_count=5)
 
             self._commands.extend(commands)
 
@@ -132,7 +132,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             commands, dv_matrix, dd_matrix = get_commands_direct_view_daylight_matrices(
                 project_folder, wg, count, inputfiles, points_file, number_of_points,
                 self.sky_matrix.sky_density, self.view_mtx_parameters,
-                self.daylight_mtx_parameters, self.reuse_view_mtx, self.reuse_daylight_mtx)
+                self.daylight_mtx_parameters, self.reuse_view_mtx,
+                self.reuse_daylight_mtx)
 
             self._commands.extend(commands)
 
@@ -143,15 +144,16 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             # otherwise we won't be able to support multiple grids.
             cmd, results = matrix_calculation_five_phase(
                 project_name, self.sky_matrix.sky_density, project_folder, wg, skyfiles,
-                inputfiles, points_file, self.total_point_count, self.daylight_mtx_parameters,
-                v_matrix, d_matrix, dv_matrix, dd_matrix, count, self.reuse_view_mtx,
-                self.reuse_daylight_mtx, (counter, self.total_runs_count))
+                inputfiles, points_file, self.total_point_count,
+                self.daylight_mtx_parameters, v_matrix, d_matrix, dv_matrix, dd_matrix,
+                count, self.reuse_view_mtx, self.reuse_daylight_mtx,
+                (counter, self.total_runs_count))
 
             self._commands.extend(cmd)
-            self._resultFiles.extend(results)
+            self._result_files.extend(results)
 
         # # 5. write batch file
         batch_file = os.path.join(project_folder, "commands.bat")
-        write_to_file(batchFile, '\n'.join(self.preproc_commands()))
+        write_to_file(batch_file, '\n'.join(self.preproc_commands()))
 
-        return batchFile
+        return batch_file

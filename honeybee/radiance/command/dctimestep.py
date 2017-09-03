@@ -23,7 +23,7 @@ class Dctimestep(RadianceCommand):
 
     def __init__(self, tmatrix_file=None, dmatrix_file=None, sky_vector_file=None,
                  vmatrix_spec=None, dctimestep_parameters=None,
-                 output_filenameFormat=None, output_name=None,
+                 output_filename_format=None, output_name=None,
                  daylight_coeff_spec=None):
         RadianceCommand.__init__(self)
 
@@ -59,9 +59,9 @@ class Dctimestep(RadianceCommand):
         starting from 1. In this way, multiple output pictures may be produced,
         or separate result vectors (one per timestep).
         """
-        return self._output_filenameFormat
+        return self._output_filename_format
 
-    @output_filenameFormat.setter
+    @output_filename_format.setter
     def output_filename_format(self, value):
         # TODO: Add testing logic for this !
         if value:
@@ -84,22 +84,22 @@ class Dctimestep(RadianceCommand):
         output_file_name = '> %s' % output_file_name if output_file_name else ''
         daylight_coeff_spec = self.normspace(self.daylight_coeff_spec.to_rad_string())
 
-        assert not (threePhaseInputs and daylight_coeff_spec),\
+        assert not (three_phase_inputs and daylight_coeff_spec),\
             'The inputs for both daylight coefficients as well as the 3 Phase method' \
             ' have been specified. Only one of those methods should be used for ' \
             'calculation at a given time. Please check your inputs.'
 
         # Creating the string this way because it might change again in the
         # future.
-        rad_string = [cmdPath]
-        rad_string.append(dctimestepParam or '')
-        rad_string.append(output_fileNameFormat or '')
+        rad_string = [cmd_path]
+        rad_string.append(dctimestep_param or '')
+        rad_string.append(output_file_name_format or '')
         rad_string.append(vmatrix or '')
         rad_string.append(tmatrix or '')
         rad_string.append(dmatrix or '')
         rad_string.append(daylight_coeff_spec or '')
-        rad_string.append(skyVector or '')
-        rad_string.append(output_fileName or '')
+        rad_string.append(sky_vector or '')
+        rad_string.append(output_file_name or '')
 
         rad_string = ' '.join(' '.join(rad_string).split())
         self.check_input_files(rad_string)
@@ -108,7 +108,7 @@ class Dctimestep(RadianceCommand):
     @property
     def input_files(self):
         dc_input = self.daylight_coeff_spec.to_rad_string()
-        if dcInput:
+        if dc_input:
             return self.sky_vector_file.to_rad_string(),
         else:
             return (self.tmatrix_file.to_rad_string(), self.dmatrix_file.to_rad_string(),

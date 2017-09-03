@@ -41,7 +41,7 @@ class RaBmp(RadianceCommand):
         input_file = self.input_hdr_file.to_rad_string()
         output_file = self.output_bmp_file.to_rad_string()
 
-        rad_string = "%s %s %s > %s" % (cmdName, params, input_file, output_file)
+        rad_string = "%s %s %s > %s" % (cmd_name, params, input_file, output_file)
 
         return rad_string
 

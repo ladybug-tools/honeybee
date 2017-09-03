@@ -66,7 +66,7 @@ class BSDFMaterial(RadianceMaterial):
                                  self.up_orientation[1],
                                  self.up_orientation[2])
 
-        return matDef.replace("\n", " ") if minimal else matDef
+        return mat_def.replace("\n", " ") if minimal else mat_def
 
 
 if __name__ == "__main__":

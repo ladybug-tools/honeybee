@@ -68,7 +68,7 @@ class ClimateBased(PointInTimeSky):
                    suffix=suffix)
 
     @property
-    def is_climate_based(slef):
+    def is_climate_based(self):
         """Return True if the sky is climated-based."""
         return True
 

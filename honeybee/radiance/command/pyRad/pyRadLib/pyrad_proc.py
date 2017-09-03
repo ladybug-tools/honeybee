@@ -3,7 +3,7 @@
 2016 - Georg Mischler
 
 Use as:
-	from pyradlib.pyrad_proc import PIPE, Error, ProcMixin
+    from pyradlib.pyrad_proc import PIPE, Error, ProcMixin
 
 For a single-file installation, include the contents of this file
 at the same place (minus the __future__ import below).
@@ -149,18 +149,20 @@ class ProcMixin():
             sys.stderr.write(self.qjoin(cmdl) + instr + outstr + '\n')
         if not getattr(self, 'donothing', None):
             try:
-                p = subprocess.Popen(cmdl,
-                                     stdin=stdin, stdout=stdout, stderr=self._stderr,
-                                     universal_newlines=universal_newlines, **self._pipeargs)
+                p = subprocess.Popen(
+                    cmdl,
+                    stdin=stdin, stdout=stdout, stderr=self._stderr,
+                    universal_newlines=universal_newlines, **self._pipeargs)
             except Exception as e:
                 self.raise_on_error(actstr, e)
             if stdin != PIPE and stdout != PIPE:
                 # caller needs to wait after reading or writing (else deadlock)
                 res = p.wait()
                 if res != 0:
-                    self.raise_on_error(actstr,
-                                        'Nonzero exit (%d) from command [%s].'
-                                        % (res, self.qjoin(cmdl) + instr + outstr + '\n'))
+                    self.raise_on_error(
+                        actstr,
+                        'Nonzero exit (%d) from command [%s].'
+                        % (res, self.qjoin(cmdl) + instr + outstr + '\n'))
             return p
 
     def call_two(self, cmdl_1, cmdl_2, actstr_1, actstr_2, _in=None, out=None,
@@ -189,9 +191,10 @@ class ProcMixin():
             sys.stderr.write(self.qjoin(cmdl_2) + outstr + '\n')
         if not getattr(self, 'donothing', None):
             try:
-                p2 = subprocess.Popen(cmdl_2,
-                                      stdin=p1.stdout, stdout=stdout, stderr=self._stderr,
-                                      universal_newlines=universal_newlines, **self._pipeargs)
+                p2 = subprocess.Popen(
+                    cmdl_2,
+                    stdin=p1.stdout, stdout=stdout, stderr=self._stderr,
+                    universal_newlines=universal_newlines, **self._pipeargs)
                 p1.stdout.close()
             except Exception as e:
                 self.raise_on_error(actstr_2, e)
@@ -235,8 +238,9 @@ class ProcMixin():
             sys.stderr.write(self.qjoin(cmdlines[0]) + instr + ' | ')
         if not getattr(self, 'donothing', None):
             try:
-                prevproc = subprocess.Popen(cmdlines[0], stdin=stdin,
-                                            stdout=PIPE, stderr=self._stderr, **self._pipeargs)
+                prevproc = subprocess.Popen(
+                    cmdlines[0], stdin=stdin,
+                    stdout=PIPE, stderr=self._stderr, **self._pipeargs)
                 procs.append(prevproc)
             except Exception as e:
                 self.raise_on_error(actstr, e)
@@ -246,8 +250,9 @@ class ProcMixin():
                 sys.stderr.write(self.qjoin(cmdl) + ' | ')
             if not getattr(self, 'donothing', None):
                 try:
-                    nextproc = subprocess.Popen(cmdl, stdin=prevproc.stdout,
-                                                stdout=PIPE, stderr=self._stderr, **self._pipeargs)
+                    nextproc = subprocess.Popen(
+                        cmdl, stdin=prevproc.stdout,
+                        stdout=PIPE, stderr=self._stderr, **self._pipeargs)
                     procs.append(nextproc)
                     prevproc.stdout.close()
                     prevproc = nextproc
@@ -258,9 +263,10 @@ class ProcMixin():
             sys.stderr.write(self.qjoin(cmdlines[-1]) + outstr + '\n')
         if not getattr(self, 'donothing', None):
             try:
-                lastproc = subprocess.Popen(cmdlines[-1], stdin=prevproc.stdout,
-                                            stdout=stdout, stderr=self._stderr,
-                                            universal_newlines=universal_newlines, **self._pipeargs)
+                lastproc = subprocess.Popen(
+                    cmdlines[-1], stdin=prevproc.stdout,
+                    stdout=stdout, stderr=self._stderr,
+                    universal_newlines=universal_newlines, **self._pipeargs)
                 prevproc.stdout.close()
                 procs.append(lastproc)
                 prevproc.stdout.close()

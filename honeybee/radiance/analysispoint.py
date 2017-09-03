@@ -214,9 +214,9 @@ class AnalysisPoint(object):
             return [None, None]
 
         current_sources = self._sources.keys()
-        if source not in currentSources:
+        if source not in current_sources:
             self._sources[source] = {
-                'id': len(currentSources),
+                'id': len(current_sources),
                 'state': []
             }
 
@@ -452,7 +452,7 @@ class AnalysisPoint(object):
 
         return self._values[sid][stateid][hoy]
 
-    def coupled_valuesById(self, hoys=None, source_id=None, state_id=None):
+    def coupled_values_by_id(self, hoys=None, source_id=None, state_id=None):
         """Get total and direct values for several hours of year by source id.
 
         Use this method to load the values if you have the ids for source and state.
@@ -520,8 +520,8 @@ class AnalysisPoint(object):
 
         Args:
             hoys: A collection of hours of the year.
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
 
         Returns:
             Return a generator for (total, direct) values.
@@ -533,7 +533,7 @@ class AnalysisPoint(object):
                 hours_count = len(hoys)
             except TypeError:
                 raise TypeError('hoys must be an iterable object: {}'.format(hoys))
-            blinds_state_ids = [[0] * len(self._sources)] * hoursCount
+            blinds_state_ids = [[0] * len(self._sources)] * hours_count
 
         assert len(hoys) == len(blinds_state_ids), \
             'There should be a list of states for each hour. #states[{}] != #hours[{}]' \
@@ -570,8 +570,8 @@ class AnalysisPoint(object):
 
         Args:
             hoys: A collection of hours of the year.
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
 
         Returns:
             Return a tuple for sum of (total, direct) values.
@@ -595,8 +595,8 @@ class AnalysisPoint(object):
 
         Args:
             hoys: A collection of hours of the year.
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
 
         Returns:
             Return a tuple for sum of (total, direct) values.
@@ -634,9 +634,9 @@ class AnalysisPoint(object):
 
             # find state ids for each state if inputs are state names
             try:
-                for c, comb in enumerate(combIds):
+                for c, comb in enumerate(comb_ids):
                     for count, source in enumerate(sources):
-                        combIds[c][count] = self.blind_state_id(source, comb[count])
+                        comb_ids[c][count] = self.blind_state_id(source, comb[count])
             except IndexError:
                 raise ValueError(
                     'Length of each state should be equal to number of sources: {}'
@@ -646,37 +646,37 @@ class AnalysisPoint(object):
             comb_ids = self.longest_state_ids
 
         print("Blinds combinations:\n{}".format(
-              '\n'.join(str(ids) for ids in combIds)))
+              '\n'.join(str(ids) for ids in comb_ids)))
 
         # collect the results for each combination
-        results = range(len(combIds))
-        for count, state in enumerate(combIds):
+        results = range(len(comb_ids))
+        for count, state in enumerate(comb_ids):
             results[count] = tuple(self.combined_values_by_id(hoys, [state] * len(hoys)))
 
         # assume the last state happens for all
         hours_count = len(hoys)
-        blinds_index = [len(combIds) - 1] * hoursCount
-        ill_values = [None] * hoursCount
-        dir_values = [None] * hoursCount
-        success = [0] * hoursCount
+        blinds_index = [len(comb_ids) - 1] * hours_count
+        ill_values = [None] * hours_count
+        dir_values = [None] * hours_count
+        success = [0] * hours_count
 
         for count, h in enumerate(hoys):
-            for state in range(len(combIds)):
+            for state in range(len(comb_ids)):
                 ill, ill_dir = results[state][count]
                 if not self.logic(ill, ill_dir, h, args, kwargs):
-                    blindsIndex[count] = state
-                    illValues[count] = ill
-                    dirValues[count] = ill_dir
+                    blinds_index[count] = state
+                    ill_values[count] = ill
+                    dir_values[count] = ill_dir
                     if state > 0:
                         success[count] = 1
                     break
             else:
                 success[count] = -1
-                illValues[count] = ill
-                dirValues[count] = ill_dir
+                ill_values[count] = ill
+                dir_values[count] = ill_dir
 
-        blinds_state = tuple(combIds[ids] for ids in blindsIndex)
-        return blindsState, blinds_index, illValues, dir_values, success
+        blinds_state = tuple(comb_ids[ids] for ids in blinds_index)
+        return blinds_state, blinds_index, ill_values, dir_values, success
 
     def annual_metrics(self, da_threshhold=None, udi_min_max=None, blinds_state_ids=None,
                        occ_schedule=None):
@@ -688,8 +688,8 @@ class AnalysisPoint(object):
             da_threshhold: Threshhold for daylight autonomy in lux (default: 300).
             udi_min_max: A tuple of min, max value for useful daylight illuminance
                 (default: (100, 2000)).
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
             occ_schedule: An annual occupancy schedule (default: Office Schedule).
 
         Returns:
@@ -709,8 +709,8 @@ class AnalysisPoint(object):
         Args:
             udi_min_max: A tuple of min, max value for useful daylight illuminance
                 (default: (100, 2000)).
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
             occ_schedule: An annual occupancy schedule.
 
         Returns:
@@ -739,8 +739,8 @@ class AnalysisPoint(object):
         if total_hour_count == 0:
             raise ValueError('There is 0 hours available in the schedule.')
 
-        return 100 * udi / totalHourCount, 100 * udi_l / totalHourCount, \
-            100 * udi_m / totalHourCount
+        return 100 * udi / total_hour_count, 100 * udi_l / total_hour_count, \
+            100 * udi_m / total_hour_count
 
     def daylight_autonomy(self, da_threshhold=None, blinds_state_ids=None,
                           occ_schedule=None):
@@ -748,8 +748,8 @@ class AnalysisPoint(object):
 
         Args:
             da_threshhold: Threshhold for daylight autonomy in lux (default: 300).
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
             occ_schedule: An annual occupancy schedule.
 
         Returns:
@@ -775,7 +775,7 @@ class AnalysisPoint(object):
         if total_hour_count == 0:
             raise ValueError('There is 0 hours available in the schedule.')
 
-        return 100 * DA / totalHourCount, 100 * cda / totalHourCount
+        return 100 * DA / total_hour_count, 100 * cda / total_hour_count
 
     def annual_solar_exposure(self, threshhold=None, blinds_state_ids=None,
                               occ_schedule=None, target_hours=None):
@@ -820,9 +820,9 @@ class AnalysisPoint(object):
                 continue
             if v > threshhold:
                 ase += 1
-                problematicHours.append(h)
+                problematic_hours.append(h)
 
-        return ase < target_hours, ase, problematicHours
+        return ase < target_hours, ase, problematic_hours
 
     @staticmethod
     def _calculate_annual_metrics(
@@ -858,9 +858,9 @@ class AnalysisPoint(object):
         if total_hour_count == 0:
             raise ValueError('There is 0 hours available in the schedule.')
 
-        return 100 * DA / totalHourCount, 100 * cda / totalHourCount, \
-            100 * udi / totalHourCount, 100 * udi_l / totalHourCount, \
-            100 * udi_m / totalHourCount
+        return 100 * DA / total_hour_count, 100 * cda / total_hour_count, \
+            100 * udi / total_hour_count, 100 * udi_l / total_hour_count, \
+            100 * udi_m / total_hour_count
 
     @staticmethod
     def parse_blind_states(blinds_state_ids):

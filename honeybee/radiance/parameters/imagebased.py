@@ -168,7 +168,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         tested for shadows if it is tested at all.
         """
 
-        self.add_radiance_number('st', descriptive_name='specular threshold', num_type=float,
+        self.add_radiance_number('st', descriptive_name='specular threshold',
+                                 num_type=float,
                                  attribute_name='specularThreshold')
         self.specularThreshold = None
         """
@@ -198,7 +199,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         the ray weight divided by the given frac.
         """
 
-        self.add_radiance_number('lr', descriptive_name='limit reflections', num_type=int,
+        self.add_radiance_number('lr', descriptive_name='limit reflections',
+                                 num_type=int,
                                  attribute_name='limitReflections')
         self.limitReflections = None
         """
@@ -211,7 +213,8 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         a setting of 0 (no limit) may cause a stack overflow.
         """
 
-        self.add_radiance_number('ss', descriptive_name='specular sampling', num_type=float,
+        self.add_radiance_number('ss', descriptive_name='specular sampling',
+                                 num_type=float,
                                  attribute_name='specularSampling')
         self.specularSampling = None
         """
@@ -474,3 +477,27 @@ class ImageBasedParameters(AdvancedRadianceParameters):
             "%s is not a valid radiance parameter" % str(parameter)
 
         return rpict_boolean_parameters[_key]["values"][self.quality]
+
+
+class LowQuality(ImageBasedParameters):
+    """Radiance parmaters for a quick analysis."""
+
+    def __init__(self):
+        """Create low quality radiance parameters for quick studies."""
+        ImageBasedParameters.__init__(self, quality=0)
+
+
+class MediumQuality(ImageBasedParameters):
+    """Medium quality Radiance parmaters."""
+
+    def __init__(self):
+        """Create medium quality radiance parameters."""
+        ImageBasedParameters.__init__(self, quality=1)
+
+
+class HighQuality(ImageBasedParameters):
+    """High quality radiance parameters."""
+
+    def __init__(self):
+        """Create high quality radiance parameters."""
+        ImageBasedParameters.__init__(self, quality=2)

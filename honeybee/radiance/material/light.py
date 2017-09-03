@@ -18,8 +18,8 @@ class LightMaterial(RadianceMaterial):
         Create light material
         Attributes:
 
-            name: Material name as a string. The name should not have whitespaces or special
-                characters.
+            name: Material name as a string. The name should not have whitespaces or
+                special characters.
             red: A positive value for the Red channel of the light
             green: A positive value for the Green channel of the light
             blue: A positive value for the Blue channel of the light
@@ -37,7 +37,7 @@ class LightMaterial(RadianceMaterial):
         """Return full Radiance definition"""
         __base_string = self.head_line + "0\n0\n3 %.3f %.3f %.3f"
 
-        light_definition = __baseString % (
+        light_definition = __base_string % (
             self.red._value, self.green._value, self.blue._value)
 
-        return lightDefinition.replace("\n", " ") if minimal else lightDefinition
+        return light_definition.replace("\n", " ") if minimal else light_definition

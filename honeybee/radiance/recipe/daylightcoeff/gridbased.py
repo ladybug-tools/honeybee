@@ -1,6 +1,6 @@
 """Radiance Daylight Coefficient Grid-Based Analysis Recipe."""
 from ..recipeutil import write_extra_files
-from ..recipedcutil import write_rad_filesDaylightCoeff, get_commands_sky
+from ..recipedcutil import write_rad_files_daylight_coeff, get_commands_sky
 from ..recipedcutil import get_commands_scene_daylight_coeff
 from ..recipedcutil import get_commands_w_groups_daylight_coeff
 from .._gridbasedbase import GenericGridBased
@@ -206,7 +206,7 @@ class DaylightCoeffGridBased(GenericGridBased):
         """Check if the commands should be added to self._commands."""
         if self.reuse_daylight_mtx:
             if not skycommands:
-                for f in self._resultFiles:
+                for f in self._result_files:
                     if not os.path.isfile(f):
                         self._commands.extend(commands)
                         break
@@ -239,7 +239,7 @@ class DaylightCoeffGridBased(GenericGridBased):
             )
 
         # write geometry and material files
-        opqfiles, glzfiles, wgsfiles = write_rad_filesDaylightCoeff(
+        opqfiles, glzfiles, wgsfiles = write_rad_files_daylight_coeff(
             project_folder + '/scene', project_name, self.opaque_rad_file,
             self.glazing_rad_file, self.window_groups_rad_files
         )
@@ -268,7 +268,7 @@ class DaylightCoeffGridBased(GenericGridBased):
             inputfiles, points_file, self.total_point_count, self.radiance_parameters,
             self.reuse_daylight_mtx, self.total_runs_count)
 
-        self._resultFiles.extend(
+        self._result_files.extend(
             os.path.join(project_folder, str(result)) for result in results
         )
 
@@ -277,12 +277,13 @@ class DaylightCoeffGridBased(GenericGridBased):
         if self.window_groups:
             # calculate the contribution for all window groups
             commands, results = get_commands_w_groups_daylight_coeff(
-                project_name, self.sky_matrix.sky_density, project_folder, self.window_groups,
-                skyfiles, inputfiles, points_file, self.total_point_count,
-                self.radiance_parameters, self.reuse_daylight_mtx, self.total_runs_count)
+                project_name, self.sky_matrix.sky_density, project_folder,
+                self.window_groups, skyfiles, inputfiles, points_file,
+                self.total_point_count, self.radiance_parameters,
+                self.reuse_daylight_mtx, self.total_runs_count)
 
             self._add_commands(skycommands, commands)
-            self._resultFiles.extend(
+            self._result_files.extend(
                 os.path.join(project_folder, str(result)) for result in results
             )
 
@@ -290,9 +291,9 @@ class DaylightCoeffGridBased(GenericGridBased):
         batch_file = os.path.join(project_folder, 'commands.bat')
 
         # add echo to commands and write them to file
-        write_to_file(batchFile, '\n'.join(self.preproc_commands()))
+        write_to_file(batch_file, '\n'.join(self.preproc_commands()))
 
-        return batchFile
+        return batch_file
 
     def results(self):
         """Return results for this analysis."""
@@ -305,7 +306,7 @@ class DaylightCoeffGridBased(GenericGridBased):
             ag.unload()
 
         # results are merged as a single file
-        for rf in self._resultFiles:
+        for rf in self._result_files:
             fn = os.path.split(rf)[-1][:-4].split("..")
             source = fn[-2]
             state = fn[-1]
@@ -333,7 +334,7 @@ class DaylightCoeffGridBased(GenericGridBased):
                         ' from {}::{}\n{}\n{}\n'.format(
                             analysisGrid.name, source, state, rf, df))
 
-                    analysisGrid.set_coupled_valuesFromFile(
+                    analysisGrid.set_coupled_values_from_file(
                         rf, df, self.sky_matrix.hoys, source, state,
                         start_line=start_line, header=True, check_point_count=False,
                         mode=mode

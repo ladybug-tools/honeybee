@@ -33,7 +33,7 @@ class RadianceCommand(object):
         return config.perl_exe_path
 
     # TODO: Check what is the best way to search/check for the perl executable
-    @perlExePath.setter
+    @perl_exe_path.setter
     def perl_exe_path(self, path):
         # self.__check_executable(radbin_path=path, raise_exception=True)
         # change the path in config so user need to set it up once in a single script
@@ -124,8 +124,8 @@ class RadianceCommand(object):
         # same.
         if os.name == 'nt':
             if self.executable_name:
-                __executable = os.path.normpath(os.path.join(str(radbin_path),
-                                                             self.executable_name.lower()))
+                __executable = os.path.normpath(
+                    os.path.join(str(radbin_path), self.executable_name.lower()))
             else:
                 __executable = os.path.normpath(
                     os.path.join(str(radbin_path),
@@ -137,7 +137,7 @@ class RadianceCommand(object):
             if self.executable_name:
                 exe_name_only = os.path.splitext(self.executable_name)[0]
                 __executable = os.path.normpath(
-                    os.path.join(str(radbin_path), exeNameOnly))
+                    os.path.join(str(radbin_path), exe_name_only))
             else:
                 __executable = os.path.normpath(
                     os.path.join(str(radbin_path), self.__class__.__name__.lower()))

@@ -18,7 +18,7 @@ class ImageBased(GenericImageBased):
         simulation_type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         rad_parameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: imagebased.low_qualityImage)
+            (Default: imagebased.LowQualityImage)
         hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
         sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
 
@@ -57,7 +57,7 @@ class ImageBased(GenericImageBased):
 
         self.radiance_parameters = rad_parameters
         """Radiance parameters for grid based analysis (rtrace).
-            (Default: imagebased.low_qualityImage)"""
+            (Default: imagebased.LowQualityImage)"""
 
         self.simulation_type = simulation_type
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh),
@@ -116,7 +116,7 @@ class ImageBased(GenericImageBased):
     @radiance_parameters.setter
     def radiance_parameters(self, rad_parameters):
         if not rad_parameters:
-            rad_parameters = ImageBasedParameters.low_quality()
+            rad_parameters = ImageBasedParameters.LowQuality()
         assert hasattr(rad_parameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(rad_parameters)
         self._radiance_parameters = rad_parameters
@@ -133,8 +133,8 @@ class ImageBased(GenericImageBased):
                 None.
             sky file <*.sky>: Radiance sky for this analysis.
             batch file <*.bat>: An executable batch file which has the list of commands.
-                oconve <*.sky> <project_name.mat> <project_name.rad> <additional rad_files>
-                > <project_name.oct>
+                oconve <*.sky> <project_name.mat> <project_name.rad>
+                <additional rad_files> > <project_name.oct>
                 rtrace <radiance_parameters> <project_name.oct> > <project_name.res>
             results file <*.hdr>: Results file once the analysis is over.
 
@@ -181,7 +181,7 @@ class ImageBased(GenericImageBased):
 
         oc = Oconv(project_name)
         oc.scene_files = tuple(self.relpath(f, project_folder)
-                               for f in octSceneFiles)
+                               for f in oct_scene_files)
 
         self._commands.append(oc.to_rad_string())
 
@@ -195,15 +195,15 @@ class ImageBased(GenericImageBased):
             rp.view_file = self.relpath(f, project_folder)
 
             self._commands.append(rp.to_rad_string())
-            self._resultFiles.append(
+            self._result_files.append(
                 os.path.join(project_folder, str(rp.output_file)))
 
         # # 4.3 write batch file
         batch_file = os.path.join(project_folder, "commands.bat")
 
-        write_to_file(batchFile, "\n".join(self.commands))
+        write_to_file(batch_file, "\n".join(self.commands))
 
-        return batchFile
+        return batch_file
 
     def results(self):
         """Return results for this analysis."""
@@ -211,7 +211,7 @@ class ImageBased(GenericImageBased):
             "You haven't run the Recipe yet. Use self.run " + \
             "to run the analysis before loading the results."
 
-        return self._resultFiles
+        return self._result_files
 
     def to_string(self):
         """Overwrite .NET ToString method."""

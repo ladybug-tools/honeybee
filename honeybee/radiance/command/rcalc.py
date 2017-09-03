@@ -65,8 +65,8 @@ class Rcalc(RadianceCommand):
         input_path = " ".join(self.normspace(f) for f in self.rad_file)
         output_path = self.normspace(self.output_file)
 
-        rad_string = "{0} {1} {2} > {3}".format(cmdPath, rcalc_param,
-                                                inputPath, outputPath)
+        rad_string = "{0} {1} {2} > {3}".format(cmd_path, rcalc_param,
+                                                input_path, output_path)
 
         self.check_input_files(rad_string)
 

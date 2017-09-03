@@ -12,8 +12,8 @@ class CustomMaterial(RadianceMaterial):
     Attributes:
         name: Material name as a string. Do not use white space and special character.
         material_type: One of Radiance standard Material types (e.g. glass, plastic, etc)
-        values: A dictionary of material data. key is line number and item is the list of values
-              {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
+        values: A dictionary of material data. key is line number and item is the list
+            of values {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000', '0.050']}
         modifier: Material modifier. Default is void
 
     """

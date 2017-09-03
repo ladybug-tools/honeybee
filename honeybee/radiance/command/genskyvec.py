@@ -38,12 +38,12 @@ class Genskyvec(RadianceCommand):
         # TODO: This only works for Windows for now.
         # Need to make the path lookup thing x-platform.
         perl_path = self.normspace(self.perl_exe_path) if os.name == 'nt' else ''
-        if os.name == 'nt' and not perlPath:
+        if os.name == 'nt' and not perl_path:
             raise IOError('Failed to find perl installation.\n'
                           'genskyvec.pl needs perl to run successfully.')
 
         exe_name = 'genskyvec.pl' if os.name == 'nt' else 'genskyvec'
-        cmd_path = self.normspace(os.path.join(self.radbin_path, exeName))
+        cmd_path = self.normspace(os.path.join(self.radbin_path, exe_name))
 
         header_suppress = self.header_suppress.to_rad_string()
         sky_sub_div = self.sky_subdivision.to_rad_string()
@@ -51,17 +51,17 @@ class Genskyvec(RadianceCommand):
         sun_only = self.sun_only_vector.to_rad_string()
 
         input_params = "{} {} {} {}".format(header_suppress,
-                                            skySubDiv,
+                                            sky_sub_div,
                                             sky_color,
-                                            sunOnly)
+                                            sun_only)
         input_sky = self.input_sky_file.to_rad_string()
         input_sky = "< %s" % input_sky if input_sky else ''
 
         output = self.output_file.to_rad_string()
         output = "> %s" % output if output else ''
 
-        rad_string = "{} {} {} {} {}".format(perlPath, cmd_path, inputParams,
-                                             inputSky, output)
+        rad_string = "{} {} {} {} {}".format(perl_path, cmd_path, input_params,
+                                             input_sky, output)
 
         self.check_input_files(rad_string)
 

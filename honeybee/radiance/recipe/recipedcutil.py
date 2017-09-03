@@ -3,20 +3,21 @@ from ..command.rfluxmtx import Rfluxmtx
 from ..command.dctimestep import Dctimestep
 from ..command.rmtxop import Rmtxop, RmtxopMatrix
 from ..command.gendaymtx import Gendaymtx
-from ..sky.sunmatrix import SunMatrix
+from ..sky.sun_matrix import sun_matrix
 from ..command.oconv import Oconv
 from ..command.rpict import Rpict
 from ..command.rcontrib import Rcontrib
 from ..command.vwrays import Vwrays
 from ..parameters.imagebased import ImageBasedParameters
 from .recipeutil import glz_srf_towin_group
-from .parameters import get_radiance_parameters_grid_based, get_radiance_parameters_image_based
+from .parameters import get_radiance_parameters_grid_based, \
+    get_radiance_parameters_image_based
 
 import os
 from collections import namedtuple
 
 
-def write_rad_filesDaylightCoeff(working_dir, project_name, opq, glz, wgs):
+def write_rad_files_daylight_coeff(working_dir, project_name, opq, glz, wgs):
     """Write files to a target directory for daylight coefficeint method.
 
     The files will be written under
@@ -84,8 +85,8 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
     to generate skies number 1 and 2.
 
     Returns a namedtuple for (output_files, commands)
-    output_files in a namedtuple itself (sky_mtx_total, sky_mtx_direct, analemma, sunlist,
-        analemmaMtx).
+    output_files in a namedtuple itself (sky_mtx_total, sky_mtx_direct, analemma,
+        sunlist, analemmaMtx).
     """
     OutputFiles = namedtuple('OutputFiles',
                              'sky_mtx_total sky_mtx_direct analemma sunlist analemmaMtx')
@@ -115,8 +116,8 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
         raise TypeError('You must use a SkyMatrix to generate the sky.')
 
     # # 2.2. Create sun matrix
-    sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys, sky_matrix.sky_type,
-                   suffix=sky_matrix.suffix)
+    sm = sun_matrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
+                    sky_matrix.sky_type, suffix=sky_matrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
 
@@ -135,8 +136,8 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
     to generate sky number 1.
 
     Returns a namedtuple for (output_files, commands)
-    output_files in a namedtuple itself (sky_mtx_total, sky_mtx_direct, analemma, sunlist,
-        analemmaMtx).
+    output_files in a namedtuple itself (sky_mtx_total, sky_mtx_direct, analemma,
+        sunlist, analemmaMtx).
     """
     OutputFiles = namedtuple('OutputFiles',
                              'sky_mtxDiff analemma sunlist analemmaMtx')
@@ -159,12 +160,12 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
     sky_matrix.mode = 0
 
     # # 2.2. Create sun matrix
-    sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys, sky_matrix.sky_type,
-                   suffix=sky_matrix.suffix)
+    sm = sun_matrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
+                    sky_matrix.sky_type, suffix=sky_matrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
 
-    of = OutputFiles(sky_mtxDiff, analemma, sunlist, analemmaMtx)
+    of = OutputFiles(sky_mtx_diff, analemma, sunlist, analemmaMtx)
 
     return SkyCommands(commands, of)
 
@@ -177,14 +178,15 @@ def get_commands_scene_daylight_coeff(
         total_count=1, radiation_only=False):
     """Get commands for the static windows in the scene.
 
-    Use get_commands_w_groups_daylight_coeff to get the commands for the rest of the scene.
+    Use get_commands_w_groups_daylight_coeff to get the commands for the rest of the
+    scene.
 
     Args:
         project_name: A string to generate uniqe file names for this project.
         sky_density: Sky density for this study.
         project_folder: Path to project_folder.
         skyfiles: Collection of path to sky files. The order must be (sky_mtx_total,
-            sky_mtxDirect, analemma, sunlist, analemmaMtx). You can use get_commands_sky
+            sky_mtx_direct, analemma, sunlist, analemmaMtx). You can use get_commands_sky
             function to generate this list.
         inputfiles: Input files for this study. The order must be (opqfiles, glzfiles,
             wgsfiles, extrafiles). Each files object is a namedtuple which includes
@@ -227,7 +229,8 @@ def get_commands_w_groups_daylight_coeff(
         total_count=1, radiation_only=False):
     """Get commands for the static windows in the scene.
 
-    Use get_commands_w_groups_daylight_coeff to get the commands for the rest of the scene.
+    Use get_commands_w_groups_daylight_coeff to get the commands for the rest of the
+    scene.
 
     Args:
         project_name: A string to generate uniqe file names for this project.
@@ -235,7 +238,7 @@ def get_commands_w_groups_daylight_coeff(
         project_folder: Path to project_folder.
         window_groups: List of window_groups.
         skyfiles: Collection of path to sky files. The order must be (sky_mtx_total,
-            sky_mtxDirect, analemma, sunlist, analemmaMtx). You can use get_commands_sky
+            sky_mtx_direct, analemma, sunlist, analemmaMtx). You can use get_commands_sky
             function to generate this list.
         inputfiles: Input files for this study. The order must be (opqfiles, glzfiles,
             wgsfiles, extrafiles). Each files object is a namedtuple which includes
@@ -278,8 +281,8 @@ def get_commands_w_groups_daylight_coeff(
 def _get_commands_daylight_coeff(
         project_name, sky_density, project_folder, window_group, skyfiles, inputfiles,
         points_file, total_point_count, blkmaterial, wgsblacked, rfluxmtx_parameters,
-        window_groupCount=0, window_groupfiles=None, reuse_daylight_mtx=False, counter=None,
-        radiation_only=False):
+        window_group_count=0, window_groupfiles=None, reuse_daylight_mtx=False,
+        counter=None, radiation_only=False):
     """Get commands for the daylight coefficient recipe.
 
     This function is used by get_commands_scene_daylight_coeff and
@@ -317,7 +320,7 @@ def _get_commands_daylight_coeff(
 
         if not window_groupfiles:
             # in case window group is not already provided
-            window_groupfiles = (wgsfiles[window_groupCount].fp[scount],)
+            window_groupfiles = (wgsfiles[window_group_count].fp[scount],)
 
         rflux_scene = (
             f for fl in
@@ -342,7 +345,7 @@ def _get_commands_daylight_coeff(
 
         if not os.path.isfile(os.path.join(project_folder, d_matrix)) \
                 or not reuse_daylight_mtx:
-            rad_files = tuple(os.path.relpath(f, project_folder) for f in rfluxScene)
+            rad_files = tuple(os.path.relpath(f, project_folder) for f in rflux_scene)
             sender = '-'
             receiver = sky_receiver(
                 os.path.join(project_folder, 'sky\\rfluxSky.rad'), sky_density
@@ -367,7 +370,7 @@ def _get_commands_daylight_coeff(
             commands.append(rflux.to_rad_string())
 
             rad_files_blacked = tuple(os.path.relpath(f, project_folder)
-                                      for f in rfluxSceneBlacked)
+                                      for f in rflux_scene_blacked)
 
             commands.append(':: :: [2/3] black scene daylight matrix')
             commands.append(
@@ -379,27 +382,27 @@ def _get_commands_daylight_coeff(
             original_value = int(rfluxmtx_parameters.ambientBounces)
             rfluxmtx_parameters.ambientBounces = 1
             rflux_direct = coeff_matrix_commands(
-                d_matrixDirect, os.path.relpath(receiver, project_folder),
-                rad_filesBlacked, sender, os.path.relpath(points_file, project_folder),
+                d_matrix_direct, os.path.relpath(receiver, project_folder),
+                rad_files_blacked, sender, os.path.relpath(points_file, project_folder),
                 total_point_count, rfluxmtx_parameters
             )
-            commands.append(rfluxDirect.to_rad_string())
+            commands.append(rflux_direct.to_rad_string())
             rfluxmtx_parameters.ambientBounces = original_value
 
             commands.append(':: :: [3/3] black scene analemma daylight matrix')
             commands.append(
-                ':: :: rcontrib - [sunMatrix] [points] [wgroup] [blacked wgroups] '
+                ':: :: rcontrib - [sun_matrix] [points] [wgroup] [blacked wgroups] '
                 '[blacked scene] ^> [analemma dc.mtx]'
             )
             commands.append('::')
             sun_commands = sun_coeff_matrix_commands(
-                sunMatrix, os.path.relpath(points_file, project_folder),
-                rad_filesBlacked, os.path.relpath(analemma, project_folder),
+                sun_matrix, os.path.relpath(points_file, project_folder),
+                rad_files_blacked, os.path.relpath(analemma, project_folder),
                 os.path.relpath(sunlist, project_folder),
                 rfluxmtx_parameters.irradiance_calc
             )
 
-            commands.extend(cmd.to_rad_string() for cmd in sunCommands)
+            commands.extend(cmd.to_rad_string() for cmd in sun_commands)
         else:
             commands.append(':: :: 1. reusing daylight matrices')
             commands.append('::')
@@ -424,14 +427,14 @@ def _get_commands_daylight_coeff(
                 d_matrix=d_matrix, sky_matrix=sky_mtx_total
             )
 
-        commands.append(dctTotal.to_rad_string())
+        commands.append(dct_total.to_rad_string())
 
         if radiation_only:
             commands.append(
                 ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [diffuse results.ill]'
             )
             finalmtx = rgb_matrix_file_to_ill(
-                (dctTotal.output_file,),
+                (dct_total.output_file,),
                 'result\\diffuse..{}..{}.ill'.format(window_group.name, state.name)
             )
         else:
@@ -439,7 +442,7 @@ def _get_commands_daylight_coeff(
                 ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [total results.ill]'
             )
             finalmtx = rgb_matrix_file_to_ill(
-                (dctTotal.output_file,),
+                (dct_total.output_file,),
                 'result\\total..{}..{}.ill'.format(window_group.name, state.name)
             )
 
@@ -455,16 +458,16 @@ def _get_commands_daylight_coeff(
 
             dct_direct = matrix_calculation(
                 'tmp\\direct..{}..{}.rgb'.format(window_group.name, state.name),
-                d_matrix=d_matrixDirect, sky_matrix=sky_mtxDirect
+                d_matrix=d_matrix_direct, sky_matrix=sky_mtx_direct
             )
-            commands.append(dctDirect.to_rad_string())
+            commands.append(dct_direct.to_rad_string())
             commands.append(
                 ':: :: rmtxop -c 47.4 119.9 11.6 [direct results.rgb] ^> '
                 '[direct results.ill]'
             )
             commands.append('::')
             finalmtx = rgb_matrix_file_to_ill(
-                (dctDirect.output_file,),
+                (dct_direct.output_file,),
                 'result\\direct..{}..{}.ill'.format(window_group.name, state.name)
             )
             commands.append(finalmtx.to_rad_string())
@@ -478,10 +481,10 @@ def _get_commands_daylight_coeff(
             ':: :: dctimestep [black dc.mtx] [analemma only sky] ^> [sun results.rgb]')
         dct_sun = sun_matrix_calculation(
             'tmp\\sun..{}..{}.rgb'.format(window_group.name, state.name),
-            dc_matrix=sunMatrix,
+            dc_matrix=sun_matrix,
             sky_matrix=os.path.relpath(analemmaMtx, project_folder)
         )
-        commands.append(dctSun.to_rad_string())
+        commands.append(dct_sun.to_rad_string())
 
         commands.append(
             ':: :: rmtxop -c 47.4 119.9 11.6 [sun results.rgb] ^> '
@@ -489,7 +492,7 @@ def _get_commands_daylight_coeff(
         )
         commands.append('::')
         finalmtx = rgb_matrix_file_to_ill(
-            (dctSun.output_file,),
+            (dct_sun.output_file,),
             'result\\sun..{}..{}.ill'.format(window_group.name, state.name)
         )
         commands.append(finalmtx.to_rad_string())
@@ -526,11 +529,11 @@ def _get_commands_daylight_coeff(
         commands.append('::')
         commands.append('::')
 
-        resultFiles.append(
+        result_files.append(
             os.path.join(project_folder, str(fmtx.output_file))
         )
 
-    return commands, resultFiles
+    return commands, result_files
 
 
 def image_based_view_sampling_commands(
@@ -540,7 +543,7 @@ def image_based_view_sampling_commands(
     vwr_dim_file = os.path.join(
         project_folder, r'view\\{}.dim'.format(view.name))
     x, y = view.get_view_dimension()
-    with open(vwrDimFile, 'wb') as vdfile:
+    with open(vwr_dim_file, 'wb') as vdfile:
         vdfile.write('-x %d -y %d -ld-\n' % (x, y))
 
     # calculate sampling for each view
@@ -549,25 +552,25 @@ def image_based_view_sampling_commands(
     vwrays_parameters.y_resolution = view.y_res
 
     vwr_samp = Vwrays()
-    vwrSamp.vwrays_parameters = vwrays_parameters
-    vwrSamp.view_file = os.path.relpath(view_file, project_folder)
-    vwrSamp.output_file = r'view\\{}.rays'.format(view.name)
-    vwrSamp.output_data_format = 'f'
+    vwr_samp.vwrays_parameters = vwrays_parameters
+    vwr_samp.view_file = os.path.relpath(view_file, project_folder)
+    vwr_samp.output_file = r'view\\{}.rays'.format(view.name)
+    vwr_samp.output_data_format = 'f'
 
-    return vwrDimFile, vwrSamp
+    return vwr_dim_file, vwr_samp
 
 
 def create_reference_map_command(view, view_file, outputfolder, octree_file):
     """Create a reference map to conver illuminance to luminance."""
     # set the parameters / options
     img_par = ImageBasedParameters()
-    imgPar.ambientAccuracy = 0
-    imgPar.ambientValue = [0.31831] * 3
-    imgPar.pixelSampling = 1
-    imgPar.pixelJitter = 1
+    img_par.ambientAccuracy = 0
+    img_par.ambientValue = [0.31831] * 3
+    img_par.pixelSampling = 1
+    img_par.pixelJitter = 1
     x, y = view.get_view_dimension()
-    imgPar.x_resolution = x
-    imgPar.y_resolution = y
+    img_par.x_resolution = x
+    img_par.y_resolution = y
 
     rp = Rpict()
     rp.rpict_parameters = img_par
@@ -578,7 +581,7 @@ def create_reference_map_command(view, view_file, outputfolder, octree_file):
 
 
 def imaged_based_sun_coeff_matrix_commands(
-        output_filenameFormat, view, view_rays_file, scene_files, analemma, sunlist):
+        output_filename_format, view, view_rays_file, scene_files, analemma, sunlist):
     # output, point_file, scene_files, analemma, sunlist, irradiance_calc
 
     octree = Oconv()
@@ -588,12 +591,12 @@ def imaged_based_sun_coeff_matrix_commands(
     # Creating sun coefficients
     # -ab 0 -i -ffc -dj 0 -dc 1 -dt 0
     rctb_param = get_radiance_parameters_image_based(0, 1).smtx
-    rctbParam.xDimension, rctbParam.yDimension = view.get_view_dimension()
-    rctbParam.mod_file = sunlist
-    rctbParam.output_data_format = 'fc'
-    rctbParam.irradiance_calc = None  # -I
-    rctbParam.iIrradianceCalc = True  # -i
-    rctbParam.output_filename_format = output_filename_format
+    rctb_param.xDimension, rctb_param.yDimension = view.get_view_dimension()
+    rctb_param.mod_file = sunlist
+    rctb_param.output_data_format = 'fc'
+    rctb_param.irradiance_calc = None  # -I
+    rctb_param.iIrradianceCalc = True  # -i
+    rctb_param.output_filename_format = output_filename_format
 
     rctb = Rcontrib()
     rctb.octree_file = octree.output_file
@@ -694,7 +697,7 @@ def window_group_to_receiver(filepath, upnormal, material_name='vmtx_glow'):
     """Take a filepath to a window group and create a receiver."""
     rec_ctrl_par = Rfluxmtx.control_parameters(
         hemi_type='kf', hemi_up_direction=upnormal)
-    wg_m = Rfluxmtx.add_control_parameters(filepath, {material_name: recCtrlPar})
+    wg_m = Rfluxmtx.add_control_parameters(filepath, {material_name: rec_ctrl_par})
     return wg_m
 
 
@@ -773,9 +776,9 @@ def sun_coeff_matrix_commands(output, point_file, scene_files, analemma, sunlist
             put them together in a single file.
         scene_files: A list fo scene files. Usually black scene.
         analemma: Path to analemma file. You can generate analemma file using
-            SunMatrix class. Analemma has list of sun positions with their respective
+            sun_matrix class. Analemma has list of sun positions with their respective
             values.
-        sunlist: Path to sunlist. Use SunMatrix to generate sunlist.
+        sunlist: Path to sunlist. Use sun_matrix to generate sunlist.
         simulation_type:
     Returns:
         octree and rcontrib commands ready to be executed.
@@ -786,8 +789,8 @@ def sun_coeff_matrix_commands(output, point_file, scene_files, analemma, sunlist
 
     # Creating sun coefficients
     rctb_param = get_radiance_parameters_grid_based(0, 1).smtx
-    rctbParam.mod_file = sunlist
-    rctbParam.irradiance_calc = irradiance_calc
+    rctb_param.mod_file = sunlist
+    rctb_param.irradiance_calc = irradiance_calc
 
     rctb = Rcontrib()
     rctb.octree_file = octree.output_file
@@ -808,18 +811,18 @@ def final_matrix_addition(skymtx, skydirmtx, sunmtx, output):
 
     # direct dc matrix. -1 indicates that this one is being subtracted from dc matrix.
     dc_direct_matrix = RmtxopMatrix()
-    dcDirect_matrix.matrix_file = skydirmtx
-    dcDirect_matrix.scalar_factors = [-1]
+    dc_direct_matrix.matrix_file = skydirmtx
+    dc_direct_matrix.scalar_factors = [-1]
 
     # Sun coefficient matrix.
     sun_coeff_matrix = RmtxopMatrix()
-    sunCoeffMatrix.matrix_file = sunmtx
+    sun_coeff_matrix.matrix_file = sunmtx
 
     # combine the matrices together. Sequence is extremely important
-    finalMatrix.rmtxop_matrices = [dc_matrix, dc_direct_matrix, sunCoeffMatrix]
-    finalMatrix.output_file = output
+    final_matrix.rmtxop_matrices = [dc_matrix, dc_direct_matrix, sun_coeff_matrix]
+    final_matrix.output_file = output
 
-    return finalMatrix
+    return final_matrix
 
 
 def final_matrix_addition_radiation(skydifmtx, sunmtx, output):
@@ -833,13 +836,13 @@ def final_matrix_addition_radiation(skydifmtx, sunmtx, output):
 
     # Sun coefficient matrix.
     sun_coeff_matrix = RmtxopMatrix()
-    sunCoeffMatrix.matrix_file = sunmtx
+    sun_coeff_matrix.matrix_file = sunmtx
 
     # combine the matrices together. Sequence is extremely important
-    finalMatrix.rmtxop_matrices = [dc_matrix, sunCoeffMatrix]
-    finalMatrix.output_file = output
+    final_matrix.rmtxop_matrices = [dc_matrix, sun_coeff_matrix]
+    final_matrix.output_file = output
 
-    return finalMatrix
+    return final_matrix
 
 
 def rgb_matrix_file_to_ill(input, output):

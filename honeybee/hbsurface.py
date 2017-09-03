@@ -137,7 +137,7 @@ class HBSurface(HBAnalysisSurface):
                 print('ep_properties.duplicate must be implemented to honeybee surface.')
             hbsrfs = []
             # create a separate surface for each geometry.
-            for gcount, srf in enumerate(srfData):
+            for gcount, srf in enumerate(srf_data):
                 for scount, (geo, pts) in enumerate(srf):
                     try:
                         _name = '%s_%d_%d' % (names[gcount], gcount, scount)
@@ -150,7 +150,8 @@ class HBSurface(HBAnalysisSurface):
                                    ep_properties, states)
                     else:
                         _srf = cls(_name, pts, surface_type, is_name_set_by_user,
-                                   is_type_set_by_user, rad_properties, ep_properties, states)
+                                   is_type_set_by_user, rad_properties, ep_properties,
+                                   states)
 
                     _srf.geometry = geo
                     hbsrfs.append(_srf)
@@ -170,13 +171,13 @@ class HBSurface(HBAnalysisSurface):
             _geos = []
             _pts = []
             # collect all the points in a single list
-            for srf in srfData:
+            for srf in srf_data:
                 for geo, pts in srf:
                     _pts.extend(pts)
                     _geos.append(geo)
 
-            _srf = cls(names[0], _pts, surface_type, is_name_set_by_user, is_type_set_by_user,
-                       rad_properties, ep_properties, states)
+            _srf = cls(names[0], _pts, surface_type, is_name_set_by_user,
+                       is_type_set_by_user, rad_properties, ep_properties, states)
             _srf.geometry = _geos
             return _srf
 
@@ -261,20 +262,21 @@ class HBSurface(HBAnalysisSurface):
 
             assert srf_width > width, \
                 'Opening width [{}] should be smaller than ' \
-                'HBSurface width [{}].'.format(srfWidth, width)
+                'HBSurface width [{}].'.format(srf_width, width)
 
             assert srf_height > height + sill_height, \
                 'Opening height plus sill height [{}] should be smaller than ' \
-                'HBSurface height [{}].'.format(srfHeight + sill_height, height)
+                'HBSurface height [{}].'.format(srf_height + sill_height, height)
 
             # create fenestration surface
-            x_gap = (srfWidth - width) / 2.0
-            glz_pt0 = pt0 + (xGap * xAxis) + (sill_height * yAxis)
-            glz_pt1 = pt0 + ((xGap + width) * xAxis) + (sill_height * yAxis)
-            glz_pt2 = pt0 + ((xGap + width) * xAxis) + ((sill_height + height) * yAxis)
-            glz_pt3 = pt0 + (xGap * xAxis) + ((sill_height + height) * yAxis)
+            x_gap = (srf_width - width) / 2.0
+            glz_pt0 = pt0 + (x_gap * x_axis) + (sill_height * y_axis)
+            glz_pt1 = pt0 + ((x_gap + width) * x_axis) + (sill_height * y_axis)
+            glz_pt2 = pt0 + ((x_gap + width) * x_axis) + \
+                ((sill_height + height) * y_axis)
+            glz_pt3 = pt0 + (x_gap * x_axis) + ((sill_height + height) * y_axis)
 
-            glzsrf = HBFenSurface(name, [glzPt0, glz_pt1, glzPt2, glzPt3])
+            glzsrf = HBFenSurface(name, [glz_pt0, glz_pt1, glz_pt2, glz_pt3])
 
             if radiance_material:
                 glzsrf.radiance_material = radiance_material

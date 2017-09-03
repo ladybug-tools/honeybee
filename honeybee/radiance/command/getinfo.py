@@ -24,9 +24,9 @@ class Getinfo(RadianceCommand):
     @property
     def input_file(self):
         """Get and set rad files."""
-        return self.__inputFile
+        return self.__input_file
 
-    @inputFile.setter
+    @input_file.setter
     def input_file(self, files):
         if files:
             if isinstance(files, basestring):
@@ -41,7 +41,7 @@ class Getinfo(RadianceCommand):
         cmd_path = self.normspace(os.path.join(self.radbin_path, 'getinfo'))
         output_file_path = self.output_file.to_rad_string()
         output_file = ">%s" % output_file_path if output_file_path else ''
-        rad_string = "{0} {1} {2} {3}".format(cmdPath, warning, rad_files,
+        rad_string = "{0} {1} {2} {3}".format(cmd_path, warning, rad_files,
                                               output_file)
         self.check_input_files(rad_string)
 

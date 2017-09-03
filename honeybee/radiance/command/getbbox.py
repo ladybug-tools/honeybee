@@ -43,7 +43,7 @@ class Getbbox(RadianceCommand):
         cmd_path = self.normspace(os.path.join(self.radbin_path, 'getbbox'))
         output_file_path = self.output_file.to_rad_string()
         output_file = ">%s" % output_file_path if output_file_path else ''
-        rad_string = "{0} {1} {2} {3} {4}".format(cmdPath, header, warning, rad_files,
+        rad_string = "{0} {1} {2} {3} {4}".format(cmd_path, header, warning, rad_files,
                                                   output_file)
         self.check_input_files(rad_string)
 

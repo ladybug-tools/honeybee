@@ -43,19 +43,19 @@ class Falsecolor(RadianceCommand):
     def to_rad_string(self, relative_path=False):
         """"Return full command as string"""
         perl_path = self.normspace(self.perl_exe_path) if os.name == 'nt' else ''
-        if os.name == 'nt' and not perlPath:
+        if os.name == 'nt' and not perl_path:
             raise IOError('Failed to find perl installation.\n'
                           'genskyvec.pl needs perl to run successfully.')
 
         exe_name = 'falsecolor.pl' if os.name == 'nt' else 'falsecolor'
-        cmd_path = self.normspace(os.path.join(self.radbin_path, exeName))
+        cmd_path = self.normspace(os.path.join(self.radbin_path, exe_name))
 
         input_params = self.falsecolor_parameters.to_rad_string()
         input_file = self.input_image_file.to_rad_string()
         input_file = "-i %s" % input_file if input_file else ''
         output_file = self.output_file.to_rad_string().replace("output_file", '')
 
-        rad_string = "%s %s %s > %s" % (cmdPath, input_params, inputFile, output_file)
+        rad_string = "%s %s %s > %s" % (cmd_path, input_params, input_file, output_file)
 
         return rad_string
 

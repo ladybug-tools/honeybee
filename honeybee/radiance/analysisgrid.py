@@ -207,7 +207,7 @@ class AnalysisGrid(object):
                     assert len(self._analysis_points) == points_count, \
                         "Length of points [{}] must match the number " \
                         "of rows [{}].".format(
-                            len(self._analysis_points), pointsCount)
+                            len(self._analysis_points), points_count)
 
             elif start_line == 0 and line[:5] == 'NCOLS':
                 hours_count = int(line.split('=')[-1])
@@ -215,9 +215,9 @@ class AnalysisGrid(object):
                     assert hours_count == len(hoys), \
                         "Number of hours [{}] must match the " \
                         "number of columns [{}]." \
-                        .format(len(hoys), hoursCount)
+                        .format(len(hoys), hours_count)
                 else:
-                    hoys = xrange(0, hoursCount)
+                    hoys = xrange(0, hours_count)
 
         return inf, hoys
 
@@ -274,7 +274,7 @@ class AnalysisGrid(object):
                 self.analysis_points[count].set_values(
                     hourlyValues, hoys, source, state, is_direct)
 
-    def set_coupled_valuesFromFile(
+    def set_coupled_values_from_file(
             self, total_file_path, direct_file_path, hoys=None, source=None, state=None,
             start_line=None, header=True, check_point_count=True, mode=0):
         """Load direct and total values for test points from two files.
@@ -333,7 +333,7 @@ class AnalysisGrid(object):
                     for count in xrange(end))
 
             # assign the values to points
-            for count, hourlyValues in enumerate(coupledValues):
+            for count, hourlyValues in enumerate(coupled_values):
                 self.analysis_points[count].set_coupled_values(
                     hourlyValues, hoys, source, state)
 
@@ -358,8 +358,8 @@ class AnalysisGrid(object):
 
         Args:
             hoys: A collection of hours of the year.
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
 
         Returns:
             Return a generator for (total, direct) values.
@@ -376,8 +376,8 @@ class AnalysisGrid(object):
 
         Args:
             hoys: A collection of hours of the year.
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
 
         Returns:
             Return a collection of sum values as (total, direct) values.
@@ -392,8 +392,8 @@ class AnalysisGrid(object):
 
         Args:
             hoys: A collection of hours of the year.
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
 
         Returns:
             Return a tuple for sum of (total, direct) values.
@@ -413,8 +413,8 @@ class AnalysisGrid(object):
             da_threshhold: Threshhold for daylight autonomy in lux (default: 300).
             udi_min_max: A tuple of min, max value for useful daylight illuminance
                 (default: (100, 3000)).
-            blinds_state_ids: List of state ids for all the sources for input hoys. If you
-                want a source to be removed set the state to -1.
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
             occ_schedule: An annual occupancy schedule.
 
         Returns:
@@ -441,7 +441,7 @@ class AnalysisGrid(object):
         hoys = self.hoys
         occ_schedule = occ_schedule or Schedule.from_workday_hours()
 
-        if resultsLoaded:
+        if results_loaded:
             blinds_state_ids = blinds_state_ids or [[0] * len(self.sources)] * len(hoys)
 
             for sensor in self.analysis_points:
@@ -485,7 +485,7 @@ class AnalysisGrid(object):
                     for count in xrange(end):
                         values = (int(float(r)) for r in inf.next().split())
                         for c, r in enumerate(
-                            calculateAnnualMetrics(
+                            calculate_annual_metrics(
                                 values, hoys, da_threshhold, udi_min_max,
                                 blinds_state_ids, occ_schedule)):
 
@@ -517,7 +517,7 @@ class AnalysisGrid(object):
         hoys = self.hoys
         occ_schedule = occ_schedule or Schedule.from_workday_hours()
 
-        if resultsLoaded:
+        if results_loaded:
             blinds_state_ids = blinds_state_ids or [[0] * len(self.sources)] * len(hoys)
 
             # get the annual results for each sensor
@@ -570,9 +570,9 @@ class AnalysisGrid(object):
             if count > target:
                 met_hours += 1
             else:
-                problematicHours.append(hr)
+                problematic_hours.append(hr)
 
-        return 100 * met_hours / len(occ_schedule.occupied_hours), problematicHours
+        return 100 * met_hours / len(occ_schedule.occupied_hours), problematic_hours
 
     def annual_solar_exposure(self, threshhold=None, blinds_state_ids=None,
                               occ_schedule=None, target_hours=None, target_area=None):
@@ -621,7 +621,7 @@ class AnalysisGrid(object):
         hoys = self.hoys
         occ_schedule = occ_schedule or set(hoys)
 
-        if resultsLoaded:
+        if results_loaded:
             blinds_state_ids = blinds_state_ids or [[0] * len(self.sources)] * len(hoys)
 
             for sensor in self.analysis_points:
@@ -666,7 +666,7 @@ class AnalysisGrid(object):
                     for count in xrange(end):
                         values = (int(float(r)) for r in inf.next().split())
                         for c, r in enumerate(
-                            calculateAnnualSolarExposure(
+                            calculate_annual_solar_exposure(
                                 values, hoys, threshhold, blinds_state_ids, occ_schedule,
                                 target_hours)):
 
@@ -679,16 +679,16 @@ class AnalysisGrid(object):
         problematic_hours = []
         ase_values = []
         for i, (success, ase, pHours) in enumerate(izip(*res)):
-            aseValues.append(ase)  # collect annual ase values for each point
+            ase_values.append(ase)  # collect annual ase values for each point
             if success:
                 continue
             problematic_point_count += 1
-            problematicPoints.append(ap[i])
-            problematicHours.append(pHours)
+            problematic_points.append(ap[i])
+            problematic_hours.append(pHours)
 
         per_problematic = 100 * problematic_point_count / len(ap)
-        return per_problematic < target_area, ase_values, perProblematic, \
-            problematicPoints, problematicHours
+        return per_problematic < target_area, ase_values, per_problematic, \
+            problematic_points, problematic_hours
 
     def parse_blind_states(self, blinds_state_ids):
         """Parse input blind states.
@@ -716,9 +716,9 @@ class AnalysisGrid(object):
         self._totalFiles = []
         self._directFiles = []
         # pass
-        if r_files and dFiles:
+        if r_files and d_files:
             # both results are available
-            for rf, df in izip(rFiles, dFiles):
+            for rf, df in izip(r_files, d_files):
                 rfPath, hoys, start_line, header, mode = rf
                 dfPath, hoys, start_line, header, mode = df
                 fn = os.path.split(rfPath)[-1][:-4].split("..")
@@ -728,12 +728,12 @@ class AnalysisGrid(object):
                     '\nloading total and direct results for {} AnalysisGrid'
                     ' from {}::{}\n{}\n{}\n'.format(
                         self.name, source, state, rfPath, dfPath))
-                self.set_coupled_valuesFromFile(
+                self.set_coupled_values_from_file(
                     rfPath, dfPath, hoys, source, state, start_line, header,
                     False, mode
                 )
-        elif rFiles:
-            for rf in rFiles:
+        elif r_files:
+            for rf in r_files:
                 rfPath, hoys, start_line, header, mode = rf
                 fn = os.path.split(rfPath)[-1][:-4].split("..")
                 source = fn[-2]
@@ -744,8 +744,8 @@ class AnalysisGrid(object):
                     rf, hoys, source, state, start_line, is_direct=False,
                     header=header, check_point_count=False, mode=mode
                 )
-        elif dFiles:
-            for rf in dFiles:
+        elif d_files:
+            for rf in d_files:
                 rfPath, hoys, start_line, header, mode = rf
                 fn = os.path.split(rfPath)[-1][:-4].split("..")
                 source = fn[-2]

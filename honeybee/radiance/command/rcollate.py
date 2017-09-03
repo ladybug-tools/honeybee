@@ -1,9 +1,7 @@
 # coding=utf-8
 from _commandbase import RadianceCommand
 import os
-import sys
-from ..datatype import *
-from ..parameters.rcollate import RcollateParameters
+from ..datatype import RadiancePath
 
 
 class Rcollate(RadianceCommand):

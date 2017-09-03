@@ -124,7 +124,7 @@ def get_radiance_parameters_grid_based(quality, rec_type):
 
     Returns:
         radiance_parameters, viewMatrixParameters, daylight_matrixParameters,
-        sunMatrixParameters
+        sun_matrixParameters
     """
 
     if rec_type == 0:

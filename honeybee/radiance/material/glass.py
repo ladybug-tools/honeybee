@@ -123,14 +123,14 @@ class GlassMaterial(RadianceMaterial):
         """Return full radiance definition."""
         __base_string = self.head_line + "0\n0\n4 %.3f %.3f %.3f %.3f"
 
-        glass_definition = __baseString % (
+        glass_definition = __base_string % (
             self.get_transmissivity(self.r_transmittance),
             self.get_transmissivity(self.g_transmittance),
             self.get_transmissivity(self.b_transmittance),
             self.refractionIndex
         )
 
-        return glassDefinition.replace("\n", " ") if minimal else glassDefinition
+        return glass_definition.replace("\n", " ") if minimal else glass_definition
 
 
 if __name__ == "__main__":

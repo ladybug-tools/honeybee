@@ -1,7 +1,7 @@
 """Radiance Grid-based Analysis Recipe."""
 from .._gridbasedbase import GenericGridBased
 from ..recipeutil import write_rad_files, write_extra_files
-from ...parameters.gridbased import low_quality
+from ...parameters.gridbased import LowQuality
 from ...command.oconv import Oconv
 from ...command.rtrace import Rtrace
 from ...command.rcalc import Rcalc
@@ -21,7 +21,7 @@ class GridBased(GenericGridBased):
         simulation_type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         rad_parameters: Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.low_quality)
+            (Default: gridbased.LowQuality)
         hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
         sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
 
@@ -60,7 +60,7 @@ class GridBased(GenericGridBased):
 
         self.radiance_parameters = rad_parameters
         """Radiance parameters for grid based analysis (rtrace).
-            (Default: gridbased.low_quality)"""
+            (Default: gridbased.LowQuality)"""
 
         self.simulation_type = simulation_type
         """Simulation type: 0: Illuminance(lux), 1: Radiation (wh),
@@ -85,7 +85,7 @@ class GridBased(GenericGridBased):
             simulation_type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance
                 (Candela) (Default: 0).
             rad_parameters: Radiance parameters for grid based analysis (rtrace).
-                (Default: gridbased.low_quality)
+                (Default: gridbased.LowQuality)
             hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
             sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
         """
@@ -142,7 +142,7 @@ class GridBased(GenericGridBased):
     @radiance_parameters.setter
     def radiance_parameters(self, rad_parameters):
         if not rad_parameters:
-            rad_parameters = low_quality()
+            rad_parameters = LowQuality()
         assert hasattr(rad_parameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(rad_parameters)
         self._radiance_parameters = rad_parameters
@@ -159,8 +159,8 @@ class GridBased(GenericGridBased):
                 is None.
             sky file <*.sky>: Radiance sky for this analysis.
             batch file <*.bat>: An executable batch file which has the list of commands.
-                oconve <*.sky> <project_name.mat> <project_name.rad> <additional rad_files>
-                    > <project_name.oct>
+                oconve <*.sky> <project_name.mat> <project_name.rad>
+                <additional rad_files> > <project_name.oct>
                 rtrace <radiance_parameters> <project_name.oct> > <project_name.res>
             results file <*.res>: Results file once the analysis is over.
 
@@ -205,7 +205,7 @@ class GridBased(GenericGridBased):
              skyground] + opqfiles + glzfiles + wgsfiles + extrafiles.fp
 
         oc = Oconv(project_name)
-        oc.scene_files = tuple(self.relpath(f, project_folder) for f in octSceneFiles)
+        oc.scene_files = tuple(self.relpath(f, project_folder) for f in oct_scene_files)
 
         # # 4.2.prepare rtrace
         rt = Rtrace('result\\' + project_name,
@@ -230,11 +230,11 @@ class GridBased(GenericGridBased):
 
         batch_file = os.path.join(project_folder, "commands.bat")
 
-        write_to_file(batchFile, "\n".join(self.commands))
+        write_to_file(batch_file, "\n".join(self.commands))
 
         self._result_files = os.path.join(project_folder, str(rc.output_file))
 
-        return batchFile
+        return batch_file
 
     def results(self):
         """Return results for this analysis."""
@@ -250,7 +250,7 @@ class GridBased(GenericGridBased):
         dt = DateTime(sky.month, sky.day, int(sky.hour),
                       int(60 * (sky.hour - int(sky.hour))))
 
-        rf = self._resultFiles
+        rf = self._result_files
         start_line = 0
         mode = 179 if self.simulation_type == 1 else 0
 
