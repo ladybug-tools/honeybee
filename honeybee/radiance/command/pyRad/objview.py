@@ -49,147 +49,146 @@ bright source sun2 0 0 4 .3 1 1 5
 bright source sun3 0 0 4 -1 -.7 1 5"""
 
 
-
-
 class Objview(ProcMixin):
     def __init__(self, args):
         self.useGl = args.useGl
         self.upDirection = args.upDirection
         self.backFaceVisible = args.backFaceVisible
-        self.viewDetials = args.viewDetails
+        self.viewDetials = args.view_details
         self.numProc = args.numProc
-        self.outputDevice = args.outputDevice
-        self.verboseDisplay = args.verboseDisplay
-        self.disableWarnings = args.disableWarnings
-        self.glRadFullScreen = args.glRadFullScreen
-        self.viewFile = args.viewFile
-        self.sceneExposure = args.sceneExposure
-        #Wrap all radfiles in quotes.
-        self.radFiles =['"%s"'%radFile for radFile in args.Radfiles[0]]
-        self.noLights = args.noLights
-        self.runSilently = args.runSilently
-        self.printViewsStdin = args.printViewsStdin
+        self.output_device = args.output_device
+        self.verbose_display = args.verbose_display
+        self.disable_warnings = args.disable_warnings
+        self.gl_rad_full_screen = args.gl_rad_full_screen
+        self.view_file = args.view_file
+        self.scene_exposure = args.scene_exposure
+        # Wrap all radfiles in quotes.
+        self.rad_files = ['"%s"' % rad_file for rad_file in args.Radfiles[0]]
+        self.no_lights = args.no_lights
+        self.run_silently = args.run_silently
+        self.print_viewsStdin = args.print_viewsStdin
         self.tempDir = None
-        try: self.run()
+        try:
+            self.run()
         finally:
             if self.tempDir:
                 shutil.rmtree(self.tempDir)
 
     def run(self):
-        outputDevice = 'x11'
+        output_device = 'x11'
         if self.useGl and os.name == 'nt':
             self.raise_on_error("set glRad variables.",
-                    "Glrad is only available in an X11 environment")
+                                "Glrad is only available in an X11 environment")
 
-        self.createTemp()
+        self.create_temp()
 
-        if not self.noLights:
-            self.radFiles.append(self.lightsFile)
-        self.radOptions, self.renderOptions = self.createRadRenderOptions()
+        if not self.no_lights:
+            self.rad_files.append(self.lightsFile)
+        self.rad_options, self.render_options = self.create_rad_render_options()
 
         # If the OS is Windows then make the path Rad friendly by switching
         # slashes and set the output device to qt.
         if os.name == 'nt':
-            self.radFiles = [s.replace('\\', '/') for s in self.radFiles]
-            self.octreeFile, self.lightsFile, self.rifFile, self.ambFile\
+            self.rad_files = [s.replace('\\', '/') for s in self.rad_files]
+            self.octree_file, self.lightsFile, self.rifFile, self.ambFile\
                 = [
-                s.replace('\\', '/') for s in (self.octreeFile,self.lightsFile,
-                                               self.rifFile, self.ambFile)]
+                    s.replace('\\', '/') for s in (self.octree_file, self.lightsFile,
+                                                   self.rifFile, self.ambFile)]
 
-            if self.viewFile:
-                self.viewFile = [s.replace('\\', '/') for s in self.viewFile]
-            outputDevice = 'qt'
+            if self.view_file:
+                self.view_file = [s.replace('\\', '/') for s in self.view_file]
+            output_device = 'qt'
 
-
-        self.rifLines = self.createRifList()
-        self.writeFiles()
+        self.rifLines = self.create_rif_list()
+        self.write_files()
 
         if self.useGl:
-            cmdString = ['glrad']+self.radOptions+[self.rifFile]
+            cmd_string = ['glrad'] + self.rad_options + [self.rifFile]
         else:
-            if outputDevice:
-                cmdString = ['rad']+['-o',outputDevice]+self.radOptions+[self.rifFile]
+            if output_device:
+                cmd_string = ['rad'] + ['-o', output_device] + \
+                    self.rad_options + [self.rifFile]
             else:
-                cmdString = ['rad'] +  self.radOptions + [self.rifFile]
+                cmd_string = ['rad'] + self.rad_options + [self.rifFile]
 
-        self.call_one(cmdString,'start rad')
+        self.call_one(cmdString, 'start rad')
 
-    def createTemp(self):
+    def create_temp(self):
         """Create temporary files and directories needed for objview"""
         # Try creating a temp folder. Exit if not possible.
         try:
             self.tempDir = tempfile.mkdtemp('RAD')
         except IOError as e:
-            self.raise_on_error("Create a temp folder",e)
+            self.raise_on_error("Create a temp folder", e)
 
         # create strings for files that are to be written to.
-        createInTemp = lambda fileName: os.path.join(self.tempDir, fileName)
-        self.octreeFile = createInTemp('scene.oct')
-        self.lightsFile = createInTemp('lights.rad')
-        self.rifFile = createInTemp('scene.rif')
-        self.ambFile = createInTemp('scene.amb')
+        def create_in_temp(file_name): return os.path.join(self.tempDir, file_name)
+        self.octree_file = create_in_temp('scene.oct')
+        self.lightsFile = create_in_temp('lights.rad')
+        self.rifFile = create_in_temp('scene.rif')
+        self.ambFile = create_in_temp('scene.amb')
 
-    def createRadRenderOptions(self):
+    def create_rad_render_options(self):
         """Based on the inputs provided, create options for running Rad/Glrad
         and also set rendering options."""
 
         # If the output device is specified by the user, use that.
-        if self.outputDevice:
-            outputDevice = self.outputDevice
+        if self.output_device:
+            output_device = self.output_device
 
-        renderOptions = ''
+        render_options = ''
         if self.backFaceVisible:
-            renderOptions += '-bv '
+            render_options += '-bv '
 
-        radOptions = []
-        radOptionsSet = False
-        glRadOptionsSet = False
-        if self.disableWarnings:
+        rad_options = []
+        rad_options_set = False
+        gl_rad_options_set = False
+        if self.disable_warnings:
             radOptions.append("-w")
         if self.numProc:
             radOptions.extend(['-N', str(self.numProc)])
-            radOptionsSet = True
-        if self.verboseDisplay:
+            rad_options_set = True
+        if self.verbose_display:
             radOptions.append('-e')
-            radOptionsSet = True
-        if self.glRadFullScreen:
+            rad_options_set = True
+        if self.gl_rad_full_screen:
             radOptions.append('-S')
-            glRadOptionsSet = True
-        if self.runSilently:
+            gl_rad_options_set = True
+        if self.run_silently:
             radOptions.append('-s')
-        if self.printViewsStdin:
+        if self.print_viewsStdin:
             radOptions.append('-V')
-            radOptionsSet = True
+            rad_options_set = True
 
-        if radOptionsSet and self.useGl:
+        if rad_options_set and self.useGl:
             self.raise_on_error("setting rad options",
                                 'One among the following options :() are not '
                                 'compatible with Open GL'.format(",".join(radOptions)))
 
-        elif glRadOptionsSet and not self.useGl:
+        elif gl_rad_options_set and not self.useGl:
             self.raise_on_error('set glRad options.',
-                                 "Although glRad options have been set the "
-                                 "rendering is being run through RAD.")
+                                "Although glRad options have been set the "
+                                "rendering is being run through RAD.")
 
-        return radOptions,renderOptions
+        return radOptions, renderOptions
 
-    def createRifList(self):
+    def create_rif_list(self):
         """Create a list of RifFile variables based on user input and defaults."""
-        rifList = ['scene= %s' % s for s in self.radFiles]
-        rifList.append('EXPOSURE= %s'%(self.sceneExposure or 0.5))
+        rif_list = ['scene= %s' % s for s in self.rad_files]
+        rifList.append('EXPOSURE= %s' % (self.scene_exposure or 0.5))
         rifList.append('UP= %s' % (self.upDirection or 'Z'))
 
-        rifList.append('OCTREE= %s' % self.octreeFile)
+        rifList.append('OCTREE= %s' % self.octree_file)
         rifList.append('AMBF= %s' % self.ambFile)
-        rifList.append('render=%s' % self.renderOptions)
-        if self.viewFile:
-            self.viewFile = '-vf %s'%"".join(self.viewFile)
-            rifList.append('view= %s'%(self.viewFile or ''))
+        rifList.append('render=%s' % self.render_options)
+        if self.view_file:
+            self.view_file = '-vf %s' % "".join(self.view_file)
+            rifList.append('view= %s' % (self.view_file or ''))
         else:
             rifList.append('view= %s' % (self.viewDetials or 'XYZ'))
         return rifList
 
-    def writeFiles(self):
+    def write_files(self):
         # Write lights and join to the input rad files.
         with open(self.lightsFile, 'w')as lightRad:
             lightRad.write(lights)
@@ -200,7 +199,7 @@ class Objview(ProcMixin):
 
 def main():
     parser = argparse.ArgumentParser(add_help=False,
-                                     description='Render a RADIANCE object ' \
+                                     description='Render a RADIANCE object '
                                                  'interactively')
     parser.add_argument('-g', action='store_true', dest='useGl',
                         help='Use OpenGL to render the scene')
@@ -211,39 +210,39 @@ def main():
 
     parser.add_argument('-bv', action='store_true', dest='backFaceVisible',
                         help='Enable back-face visibility in the scene.')
-    parser.add_argument('-v', action='store', dest='viewDetails',
+    parser.add_argument('-v', action='store', dest='view_details',
                         help='Specify view details.', type=str,
-                        metavar='viewDetails')
+                        metavar='view_details')
     parser.add_argument('-N', action='store', dest='numProc',
                         help='Number of parallel processes to render the scene.',
                         type=int, metavar='numProc')
-    parser.add_argument('-o', action='store', dest='outputDevice',
+    parser.add_argument('-o', action='store', dest='output_device',
                         help='Specify an output device for rendering',
-                        type=str, metavar='outputDevice')
+                        type=str, metavar='output_device')
 
     parser.add_argument('-w', action='store_true',
-                        dest='disableWarnings',
+                        dest='disable_warnings',
                         help='Disable warnings about multiply and misassigned'
                              ' variables.')
 
     parser.add_argument('-s', action='store_true',
-                        dest='runSilently',
+                        dest='run_silently',
                         help='Process the radiance scene silently')
 
-    parser.add_argument('-S',action='store_true',dest='glRadFullScreen',
+    parser.add_argument('-S', action='store_true', dest='gl_rad_full_screen',
                         help='Enable full-screen stereo options with OpenGL')
-						
+
     parser.add_argument('-exp', action='store',
-                        dest='sceneExposure',
+                        dest='scene_exposure',
                         help='Set the exposure value')
-							 
+
     parser.add_argument('-e', action='store_true',
-                        dest='verboseDisplay',
+                        dest='verbose_display',
                         help='Display Radiance variables and  error messages in'
                              ' standard output')
 
     parser.add_argument('-V', action='store_true',
-                        dest='printViewsStdin',
+                        dest='print_viewsStdin',
                         help='Print each view on the standard output before being'
                              ' applied')
 
@@ -253,10 +252,10 @@ def main():
 
     parser.add_argument('-H', action='help', help='Help: print this text to '
                                                   'stderr and exit.')
-    parser.add_argument('-vf',action='store',help='Specify a view file.',
-                        dest='viewFile')
-    parser.add_argument('-nL',action='store_true',dest='noLights',
-                         help="Use lights in the scene only. Don't add additional lights")
+    parser.add_argument('-vf', action='store', help='Specify a view file.',
+                        dest='view_file')
+    parser.add_argument('-nL', action='store_true', dest='no_lights',
+                        help="Use lights in the scene only. Don't add additional lights")
 
     Objview(parser.parse_args())
 

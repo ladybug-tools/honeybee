@@ -16,11 +16,11 @@ class HBSurface(HBAnalysisSurface):
 
     Attributes:
         name: A unique string for surface name
-        sortedPoints: A list of 3 points or more as tuple or list with three items
+        sorted_points: A list of 3 points or more as tuple or list with three items
             (x, y, z). Points should be sorted. This class won't sort the points.
             If surfaces has multiple subsurfaces you can pass lists of point lists
             to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
-        surfaceType: Optional input for surface type. You can use any of the surface
+        surface_type: Optional input for surface type. You can use any of the surface
             types available from surfacetype libraries or use a float number to
             indicate the type. If not indicated it will be assigned based on normal
             angle of the surface which will be calculated from surface points.
@@ -30,21 +30,21 @@ class HBSurface(HBAnalysisSurface):
                 2.5: SlabOnGrade    2.75: ExposedFloor
                 3.0: Ceiling        4.0: AirWall
                 6.0: Context
-        isNameSetByUser: If you want the name to be changed by honeybee any case
-            set isNameSetByUser to True. Default is set to False which let Honeybee
+        is_name_set_by_user: If you want the name to be changed by honeybee any case
+            set is_name_set_by_user to True. Default is set to False which let Honeybee
             to rename the surface in cases like creating a newHBZone.
-        radProperties: Radiance properties for this surface. If empty default
+        rad_properties: Radiance properties for this surface. If empty default
             RADProperties will be assigned to surface by Honeybee.
-        epProperties: EnergyPlus properties for this surface. If empty default
-            epProperties will be assigned to surface by Honeybee.
+        ep_properties: EnergyPlus properties for this surface. If empty default
+            ep_properties will be assigned to surface by Honeybee.
 
     Usage:
 
         pts = ((0, 0, 0), (10, 0, 0), (0, 0, 10))
-        hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True,
-                          isTypeSetByUser=True)
+        hbsrf = HBSurface("001", pts, surface_type=None, is_name_set_by_user=True,
+                          is_type_set_by_user=True)
 
-        print hbsrf.toRadString(includeMaterials=True)
+        print hbsrf.to_rad_string(include_materials=True)
 
         > void plastic generic_wall
         > 0
@@ -59,19 +59,19 @@ class HBSurface(HBAnalysisSurface):
         > 0 10 10
     """
 
-    def __init__(self, name, sortedPoints=[], surfaceType=None,
-                 isNameSetByUser=False, isTypeSetByUser=False,
-                 radProperties=None, epProperties=None, states=None):
+    def __init__(self, name, sorted_points=[], surface_type=None,
+                 is_name_set_by_user=False, is_type_set_by_user=False,
+                 rad_properties=None, ep_properties=None, states=None):
         """Init honeybee surface."""
         states = states or ()
 
-        HBAnalysisSurface.__init__(self, name, sortedPoints, surfaceType,
-                                   isNameSetByUser, isTypeSetByUser)
+        HBAnalysisSurface.__init__(self, name, sorted_points, surface_type,
+                                   is_name_set_by_user, is_type_set_by_user)
 
-        sp = SurfaceProperties(self.surfaceType, radProperties, epProperties)
+        sp = SurfaceProperties(self.surface_type, rad_properties, ep_properties)
         self._states[0] = SurfaceState('default', sp)
         for state in states:
-            self.addSurfaceState(state)
+            self.add_surface_state(state)
 
         self._parent = None
         self._childSurfaces = []
@@ -79,20 +79,20 @@ class HBSurface(HBAnalysisSurface):
 
     # TODO: Parse EnergyPlus properties
     @classmethod
-    def fromEPString(cls, EPString):
-        """Init Honeybee surface from an EPString.
+    def fromep_string(cls, ep_string):
+        """Init Honeybee surface from an ep_string.
 
         Args:
-            EPString: The full EPString for an EnergyPlus surface.
+            ep_string: The full ep_string for an EnergyPlus surface.
         """
         types = {'Wall': 0, 'Roof': 1, 'Floor': 2, 'Ceiling': 3}
 
-        # clean input EPString - split based on comma
-        segments = EPString.replace("\t", "") \
+        # clean input ep_string - split based on comma
+        segments = ep_string.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
         name = segments[1]
-        srfType = types[segments[2].capitalize()]
+        srf_type = types[segments[2].capitalize()]
         pts = range((len(segments) - 11) / 3)
 
         # create points
@@ -105,12 +105,13 @@ class HBSurface(HBAnalysisSurface):
                 )
 
         # create the surfaceString
-        return cls(name, pts, srfType, isNameSetByUser=True, isTypeSetByUser=True)
+        return cls(name, pts, srf_type, is_name_set_by_user=True,
+                   is_type_set_by_user=True)
 
     @classmethod
-    def fromGeometry(cls, name, geometry, surfaceType=None,
-                     isNameSetByUser=False, isTypeSetByUser=False,
-                     radProperties=None, epProperties=None, states=None, group=False):
+    def from_geometry(cls, name, geometry, surface_type=None,
+                      is_name_set_by_user=False, is_type_set_by_user=False,
+                      rad_properties=None, ep_properties=None, states=None, group=False):
         """Create honeybee surface[s] from a Grasshopper geometry.
 
         If group is False it will return a list of HBSurfaces.
@@ -118,7 +119,7 @@ class HBSurface(HBAnalysisSurface):
         assert honeybee.isplus, \
             '"fromGeometries" method can only be used in [+] libraries.'
 
-        name = name or util.randomName()
+        name = name or util.random_name()
 
         if isinstance(name, basestring):
             names = (name,)
@@ -129,11 +130,11 @@ class HBSurface(HBAnalysisSurface):
 
         namescount = len(names) - 1
 
-        srfData = plus.extractGeometryPoints(geometry)
+        srf_data = plus.extractGeometryPoints(geometry)
         cls._isCreatedFromGeo = True
         if not group:
-            if epProperties:
-                print('epProperties.duplicate must be implemented to honeybee surface.')
+            if ep_properties:
+                print('ep_properties.duplicate must be implemented to honeybee surface.')
             hbsrfs = []
             # create a separate surface for each geometry.
             for gcount, srf in enumerate(srfData):
@@ -143,13 +144,13 @@ class HBSurface(HBAnalysisSurface):
                     except IndexError:
                         _name = '%s_%d_%d' % (names[-1], gcount, scount)
 
-                    if radProperties:
-                        _srf = cls(_name, pts, surfaceType, isNameSetByUser,
-                                   isTypeSetByUser, radProperties.duplicate(),
-                                   epProperties, states)
+                    if rad_properties:
+                        _srf = cls(_name, pts, surface_type, is_name_set_by_user,
+                                   is_type_set_by_user, rad_properties.duplicate(),
+                                   ep_properties, states)
                     else:
-                        _srf = cls(_name, pts, surfaceType, isNameSetByUser,
-                                   isTypeSetByUser, radProperties, epProperties, states)
+                        _srf = cls(_name, pts, surface_type, is_name_set_by_user,
+                                   is_type_set_by_user, rad_properties, ep_properties, states)
 
                     _srf.geometry = geo
                     hbsrfs.append(_srf)
@@ -174,28 +175,28 @@ class HBSurface(HBAnalysisSurface):
                     _pts.extend(pts)
                     _geos.append(geo)
 
-            _srf = cls(names[0], _pts, surfaceType, isNameSetByUser, isTypeSetByUser,
-                       radProperties, epProperties, states)
+            _srf = cls(names[0], _pts, surface_type, is_name_set_by_user, is_type_set_by_user,
+                       rad_properties, ep_properties, states)
             _srf.geometry = _geos
             return _srf
 
     @property
-    def isCreatedFromGeometry(self):
+    def is_created_from_geometry(self):
         """Return True if the surface is created from a geometry not points."""
         return self._isCreatedFromGeo
 
     @property
-    def isHBSurface(self):
+    def is_hb_surface(self):
         """Return True for HBSurface."""
         return True
 
     @property
-    def isChildSurface(self):
+    def is_child_surface(self):
         """Return False for HBSurface."""
         return False
 
     @property
-    def hasChildSurfaces(self):
+    def has_child_surfaces(self):
         """Return True if Honeybee surface has Fenestration surrfaces."""
         return len(self._childSurfaces) != 0
 
@@ -205,7 +206,7 @@ class HBSurface(HBAnalysisSurface):
         return self._parent
 
     @property
-    def childrenSurfaces(self):
+    def children_surfaces(self):
         """Get children surfaces."""
         return self._childSurfaces
 
@@ -214,7 +215,7 @@ class HBSurface(HBAnalysisSurface):
         """Return geometry."""
         assert honeybee.isplus, \
             '"geometry" property can only be used in [+] libraries.'
-        if self.isCreatedFromGeometry:
+        if self.is_created_from_geometry:
             return self._geometry
         else:
             return self.profile
@@ -235,57 +236,57 @@ class HBSurface(HBAnalysisSurface):
         assert honeybee.isplus, \
             '"profile" property can only be used in [+] libraries.'
         return plus.polygon(
-            tuple(plus.xyzToGeometricalPoints(self.absolutePoints))
+            tuple(plus.xyzToGeometricalPoints(self.absolute_points))
         )
 
-    def addFenestrationSurfaceBySize(self, name, width, height, sillHeight=1,
-                                     radianceMaterial=None):
+    def add_fenestration_surface_by_size(self, name, width, height, sill_height=1,
+                                         radiance_material=None):
         """Add rectangular fenestration surface to surface.
 
         Args:
             width: Opening width. Opening will be centered in HBSurface.
             height: Opening height.
-            sillHeight: Sill height (default: 1).
-            radianceMaterial: Optional radiance material for this fenestration.
+            sill_height: Sill height (default: 1).
+            radiance_material: Optional radiance material for this fenestration.
         """
         for pts in self.points:
             assert len(pts) == 4, 'Length of points should be 4.'
             pt0 = Point3(*pts[0])
             pt1 = Point3(*pts[1])
             pt3 = Point3(*pts[-1])
-            xAxis = Vector3(*(pt1 - pt0)).normalized()
-            yAxis = Vector3(*(pt3 - pt0)).normalized()
-            srfWidth = pt0.distance(pt1)
-            srfHeight = pt0.distance(pt3)
+            x_axis = Vector3(*(pt1 - pt0)).normalized()
+            y_axis = Vector3(*(pt3 - pt0)).normalized()
+            srf_width = pt0.distance(pt1)
+            srf_height = pt0.distance(pt3)
 
-            assert srfWidth > width, \
+            assert srf_width > width, \
                 'Opening width [{}] should be smaller than ' \
                 'HBSurface width [{}].'.format(srfWidth, width)
 
-            assert srfHeight > height + sillHeight, \
+            assert srf_height > height + sill_height, \
                 'Opening height plus sill height [{}] should be smaller than ' \
-                'HBSurface height [{}].'.format(srfHeight + sillHeight, height)
+                'HBSurface height [{}].'.format(srfHeight + sill_height, height)
 
             # create fenestration surface
-            xGap = (srfWidth - width) / 2.0
-            glzPt0 = pt0 + (xGap * xAxis) + (sillHeight * yAxis)
-            glzPt1 = pt0 + ((xGap + width) * xAxis) + (sillHeight * yAxis)
-            glzPt2 = pt0 + ((xGap + width) * xAxis) + ((sillHeight + height) * yAxis)
-            glzPt3 = pt0 + (xGap * xAxis) + ((sillHeight + height) * yAxis)
+            x_gap = (srfWidth - width) / 2.0
+            glz_pt0 = pt0 + (xGap * xAxis) + (sill_height * yAxis)
+            glz_pt1 = pt0 + ((xGap + width) * xAxis) + (sill_height * yAxis)
+            glz_pt2 = pt0 + ((xGap + width) * xAxis) + ((sill_height + height) * yAxis)
+            glz_pt3 = pt0 + (xGap * xAxis) + ((sill_height + height) * yAxis)
 
-            glzsrf = HBFenSurface(name, [glzPt0, glzPt1, glzPt2, glzPt3])
+            glzsrf = HBFenSurface(name, [glzPt0, glz_pt1, glzPt2, glzPt3])
 
-            if radianceMaterial:
-                glzsrf.radianceMaterial = radianceMaterial
+            if radiance_material:
+                glzsrf.radiance_material = radiance_material
 
-            self.addFenestrationSurface(glzsrf)
+            self.add_fenestration_surface(glzsrf)
 
-    def addFenestrationSurface(self, fenestrationSurface):
+    def add_fenestration_surface(self, fenestration_surface):
         """Add a fenestration surface to HB surface."""
-        assert hasattr(fenestrationSurface, 'isHBFenSurface'), \
-            '{} is not a HBFenSurfaces'.format(type(fenestrationSurface))
+        assert hasattr(fenestration_surface, 'isHBFenSurface'), \
+            '{} is not a HBFenSurfaces'.format(type(fenestration_surface))
 
-        self._childSurfaces.append(fenestrationSurface)
+        self._childSurfaces.append(fenestration_surface)
 
         # set up parent object if it's not set
-        fenestrationSurface._parent = self
+        fenestration_surface._parent = self

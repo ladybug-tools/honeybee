@@ -9,17 +9,17 @@ from _materialbase import RadianceMaterial
 class GlassMaterial(RadianceMaterial):
     """Radiance glass material."""
 
-    def __init__(self, name, rTransmittance=0, gTransmittance=0, bTransmittance=0,
+    def __init__(self, name, r_transmittance=0, g_transmittance=0, b_transmittance=0,
                  refraction=1.52, modifier="void"):
         """Create glass material.
 
         Attributes:
             name: Material name as a string. Do not use white space and special character
-            rTransmittance: Transmittance for red. The value should be between 0 and 1
+            r_transmittance: Transmittance for red. The value should be between 0 and 1
                 (Default: 0).
-            gTransmittance: Transmittance for green. The value should be between 0 and 1
+            g_transmittance: Transmittance for green. The value should be between 0 and 1
                 (Default: 0).
-            bTransmittance: Transmittance for blue. The value should be between 0 and 1
+            b_transmittance: Transmittance for blue. The value should be between 0 and 1
                 (Default: 0).
             refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
                 (Default: 1.52).
@@ -29,40 +29,40 @@ class GlassMaterial(RadianceMaterial):
             glassMaterial = GlassMaterial("generic glass", .65, .65, .65)
             print glassMaterial
         """
-        RadianceMaterial.__init__(self, name, materialType="glass", modifier="void")
-        self.rTransmittance = rTransmittance
+        RadianceMaterial.__init__(self, name, material_type="glass", modifier="void")
+        self.r_transmittance = r_transmittance
         """Transmittance for red. The value should be between 0 and 1 (Default: 0)."""
-        self.gTransmittance = gTransmittance
+        self.g_transmittance = g_transmittance
         """Transmittance for green. The value should be between 0 and 1 (Default: 0)."""
-        self.bTransmittance = bTransmittance
+        self.b_transmittance = b_transmittance
         """Transmittance for blue. The value should be between 0 and 1 (Default: 0)."""
         self.refractionIndex = refraction
         """Index of refraction. 1.52 for glass and 1.4 for ETFE (Default: 1.52)."""
 
     @classmethod
-    def bySingleTransValue(cls, name, rgbTransmittance=0,
-                           refraction=1.52, modifier="void"):
+    def by_single_trans_value(cls, name, rgb_transmittance=0,
+                              refraction=1.52, modifier="void"):
         """Create glass material with single transmittance value.
 
         Attributes:
             name: Material name as a string. Do not use white space and special
                 character.
-            rgbTransmittance: Transmittance for red, green and blue. The value should be
+            rgb_transmittance: Transmittance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
             refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
                 (Default: 1.52).
             modifier: Material modifier (Default: "void").
 
         Usage:
-            glassMaterial = GlassMaterial.bySingleTransValue("generic glass", .65)
+            glassMaterial = GlassMaterial.by_single_trans_value("generic glass", .65)
             print glassMaterial
         """
         return cls(
-            name, rTransmittance=rgbTransmittance, gTransmittance=rgbTransmittance,
-            bTransmittance=rgbTransmittance, refraction=1.52, modifier="void")
+            name, r_transmittance=rgb_transmittance, g_transmittance=rgb_transmittance,
+            b_transmittance=rgb_transmittance, refraction=1.52, modifier="void")
 
     @property
-    def isGlassMaterial(self):
+    def is_glass_material(self):
         """Indicate if this object has glass Material.
 
         This property will be used to separate the glass surfaces in a separate
@@ -71,43 +71,43 @@ class GlassMaterial(RadianceMaterial):
         return True
 
     @property
-    def rTransmittance(self):
+    def r_transmittance(self):
         """Red transmittance."""
         return self.__r
 
-    @rTransmittance.setter
-    def rTransmittance(self, value):
+    @r_transmittance.setter
+    def r_transmittance(self, value):
         assert 0 <= value <= 1, "Red transmittance should be between 0 and 1"
         self.__r = value
 
     @property
-    def gTransmittance(self):
+    def g_transmittance(self):
         """Green transmittance."""
         return self.__g
 
-    @gTransmittance.setter
-    def gTransmittance(self, value):
+    @g_transmittance.setter
+    def g_transmittance(self, value):
         assert 0 <= value <= 1, "Green transmittance should be between 0 and 1"
         self.__g = value
 
     @property
-    def bTransmittance(self):
+    def b_transmittance(self):
         """Blue transmittance."""
         return self.__b
 
-    @bTransmittance.setter
-    def bTransmittance(self, value):
+    @b_transmittance.setter
+    def b_transmittance(self, value):
         assert 0 <= value <= 1, "Blue transmittance should be between 0 and 1"
         self.__b = value
 
     @property
-    def averageTransmittance(self):
+    def average_transmittance(self):
         """Calculate average transmittance."""
-        return 0.265 * self.rTransmittance + \
-            0.670 * self.gTransmittance + 0.065 * self.bTransmittance
+        return 0.265 * self.r_transmittance + \
+            0.670 * self.g_transmittance + 0.065 * self.b_transmittance
 
     @staticmethod
-    def getTransmissivity(transmittance):
+    def get_transmissivity(transmittance):
         """Calculate transmissivity based on transmittance value.
 
         "Transmissivity is the amount of light not absorbed in one traversal of
@@ -119,14 +119,14 @@ class GlassMaterial(RadianceMaterial):
         return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
                 0.9166530661) / 0.0036261119 / transmittance
 
-    def toRadString(self, minimal=False):
+    def to_rad_string(self, minimal=False):
         """Return full radiance definition."""
-        __baseString = self.headLine + "0\n0\n4 %.3f %.3f %.3f %.3f"
+        __base_string = self.head_line + "0\n0\n4 %.3f %.3f %.3f %.3f"
 
-        glassDefinition = __baseString % (
-            self.getTransmissivity(self.rTransmittance),
-            self.getTransmissivity(self.gTransmittance),
-            self.getTransmissivity(self.bTransmittance),
+        glass_definition = __baseString % (
+            self.get_transmissivity(self.r_transmittance),
+            self.get_transmissivity(self.g_transmittance),
+            self.get_transmissivity(self.b_transmittance),
             self.refractionIndex
         )
 
@@ -135,6 +135,6 @@ class GlassMaterial(RadianceMaterial):
 
 if __name__ == "__main__":
     # some test code
-    glassMaterial = GlassMaterial.bySingleTransValue("generic glass", .65)
+    glassMaterial = GlassMaterial.by_single_trans_value("generic glass", .65)
     print glassMaterial
-    print glassMaterial.toRadString(minimal=True)
+    print glassMaterial.to_rad_string(minimal=True)

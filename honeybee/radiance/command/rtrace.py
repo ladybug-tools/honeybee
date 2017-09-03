@@ -1,6 +1,6 @@
 import os
 from ._commandbase import RadianceCommand
-from ..parameters.gridbased import LowQuality
+from ..parameters.gridbased import low_quality
 from ..datatype import RadiancePath
 
 
@@ -10,66 +10,66 @@ class Rtrace(RadianceCommand):
     Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html
 
     Attributes:
-        outputName: Name of output file (Default: untitled).
-        octreeFile: Full path to input oct files (Default: None)
-        pointsFile: Full path to input pt files (Default: None)
-        simulationType: An integer to define type of analysis.
+        output_name: Name of output file (Default: untitled).
+        octree_file: Full path to input oct files (Default: None)
+        points_file: Full path to input pt files (Default: None)
+        simulation_type: An integer to define type of analysis.
             0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
-        radianceParameters: Radiance parameters for this analysis.
-            (Default: girdbased.LowQuality)
+        radiance_parameters: Radiance parameters for this analysis.
+            (Default: girdbased.low_quality)
     """
 
-    outputFile = RadiancePath("res", "results file", extension=".res")
-    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+    output_file = RadiancePath("res", "results file", extension=".res")
+    octree_file = RadiancePath("oct", "octree file", extension=".oct")
+    points_file = RadiancePath("points", "test point file", extension=".pts")
 
-    def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
-                 simulationType=0, radianceParameters=None):
+    def __init__(self, output_name='untitled', octree_file=None, points_file=None,
+                 simulation_type=0, radiance_parameters=None):
         """Initialize the class."""
         # Initialize base class to make sure path to radiance is set correctly
         RadianceCommand.__init__(self)
 
-        self.outputFile = outputName if outputName.lower().endswith(".res") \
-            else outputName + ".res"
+        self.output_file = output_name if output_name.lower().endswith(".res") \
+            else output_name + ".res"
         """oct file name which is usually the same as the project name
         (Default: untitled)"""
 
-        self.octreeFile = octreeFile
+        self.octree_file = octree_file
         """Full path to input oct file."""
 
-        self.pointsFile = pointsFile
+        self.points_file = points_file
         """Full path to input points file."""
 
-        self.radianceParameters = radianceParameters
+        self.radiance_parameters = radiance_parameters
         """Radiance parameters for this analysis
-        (Default: RadianceParameters.LowQuality)."""
+        (Default: RadianceParameters.low_quality)."""
 
         # add -h to parameters to get no header, True is no header
-        self.radianceParameters.addRadianceBoolFlag("h", "output header switch")
-        self.radianceParameters.h = True
+        self.radiance_parameters.add_radiance_bool_flag("h", "output header switch")
+        self.radiance_parameters.h = True
 
         # add error file as an extra parameter for rtrace.
         # this can be added under default radiance parameters later.
-        self.radianceParameters.addRadianceValue("e", "error output file")
-        self.radianceParameters.e = "error.txt"
+        self.radiance_parameters.add_radiance_value("e", "error output file")
+        self.radiance_parameters.e = "error.txt"
         """Error log file."""
 
-        self.simulationType = simulationType
+        self.simulation_type = simulation_type
         """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
         """
 
     @property
-    def simulationType(self):
+    def simulation_type(self):
         """Get/set simulation Type.
 
         0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
         """
         return self._simType
 
-    @simulationType.setter
-    def simulationType(self, value):
+    @simulation_type.setter
+    def simulation_type(self, value):
         try:
             value = int(value)
         except Exception:
@@ -85,40 +85,40 @@ class Rtrace(RadianceCommand):
         # the input origin and direction interpreted instead as measurement point
         # and orientation.
         if self._simType in (0, 1):
-            self.radianceParameters.irradianceCalc = True
+            self.radiance_parameters.irradiance_calc = True
         else:
             # luminance
-            self.radianceParameters.irradianceCalc = False
+            self.radiance_parameters.irradiance_calc = False
 
     @property
-    def radianceParameters(self):
+    def radiance_parameters(self):
         """Get and set Radiance parameters."""
-        return self._radParameters
+        return self._rad_parameters
 
-    @radianceParameters.setter
-    def radianceParameters(self, radParameters):
-        if not radParameters:
-            radParameters = LowQuality()
-        assert hasattr(radParameters, 'isGridBasedRadianceParameters'), \
-            "%s is not a radiance parameters." % type(radParameters)
-        self._radParameters = radParameters
+    @radiance_parameters.setter
+    def radiance_parameters(self, rad_parameters):
+        if not rad_parameters:
+            rad_parameters = low_quality()
+        assert hasattr(rad_parameters, 'isGridBasedRadianceParameters'), \
+            "%s is not a radiance parameters." % type(rad_parameters)
+        self._rad_parameters = rad_parameters
 
     # TODO: Implement relative path
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         """Return full command as a string."""
-        radString = "%s %s %s < %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, "rtrace")),
-            self.radianceParameters.toRadString(),
-            self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputFile.toRadString())
+        rad_string = "%s %s %s < %s > %s" % (
+            self.normspace(os.path.join(self.radbin_path, "rtrace")),
+            self.radiance_parameters.to_rad_string(),
+            self.normspace(self.octree_file.to_rad_string()),
+            self.normspace(self.points_file.to_rad_string()),
+            self.normspace(self.output_file.to_rad_string())
         )
 
         # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+        self.check_input_files(rad_string)
+        return rad_string
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Input files for this command."""
-        return self.octreeFile, self.pointsFile
+        return self.octree_file, self.points_file

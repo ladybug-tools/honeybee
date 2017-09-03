@@ -8,18 +8,18 @@ from _materialbase import RadianceMaterial
 class PlasticMaterial(RadianceMaterial):
     """Radiance plastic material."""
 
-    def __init__(self, name, rReflectance=0, gReflectance=0, bReflectance=0,
+    def __init__(self, name, r_reflectance=0, g_reflectance=0, b_reflectance=0,
                  specularity=0, roughness=0, modifier="void"):
         """Create plastic material.
 
         Attributes:
             name: Material name as a string. Do not use white space and special
                 character.
-            rReflectance: Reflectance for red. The value should be between 0 and 1
+            r_reflectance: Reflectance for red. The value should be between 0 and 1
                 (Default: 0).
-            gReflectance: Reflectance for green. The value should be between 0 and 1
+            g_reflectance: Reflectance for green. The value should be between 0 and 1
                 (Default: 0).
-            bReflectance: Reflectance for blue. The value should be between 0 and 1
+            b_reflectance: Reflectance for blue. The value should be between 0 and 1
                 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
                 are not realistic (Default: 0).
@@ -33,12 +33,12 @@ class PlasticMaterial(RadianceMaterial):
             wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
             print wallMaterial
         """
-        RadianceMaterial.__init__(self, name, materialType="plastic", modifier="void")
-        self.rReflectance = rReflectance
+        RadianceMaterial.__init__(self, name, material_type="plastic", modifier="void")
+        self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
-        self.gReflectance = gReflectance
+        self.g_reflectance = g_reflectance
         """Reflectance for green. The value should be between 0 and 1 (Default: 0)."""
-        self.bReflectance = bReflectance
+        self.b_reflectance = b_reflectance
         """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
         self.specularity = specularity
         """Fraction of specularity. Specularity fractions greater than 0.1 are not
@@ -50,13 +50,13 @@ class PlasticMaterial(RadianceMaterial):
            (Default: 0)."""
 
     @classmethod
-    def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
-                             roughness=0, modifier="void"):
+    def by_single_reflect_value(cls, name, rgb_reflectance=0, specularity=0,
+                                roughness=0, modifier="void"):
         """Create plastic material with single reflectance value.
 
         Attributes:
             name: Material name as a string. Do not use white space and special character
-            rgbReflectance: Reflectance for red, green and blue. The value should be
+            rgb_reflectance: Reflectance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
                 are not realistic (Default: 0).
@@ -67,40 +67,40 @@ class PlasticMaterial(RadianceMaterial):
             modifier: Material modifier (Default: "void").
 
         Usage:
-            wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
+            wallMaterial = PlasticMaterial.by_single_reflect_value("generic wall", .55)
             print wallMaterial
         """
-        return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-                   bReflectance=rgbReflectance, specularity=specularity,
+        return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
+                   b_reflectance=rgb_reflectance, specularity=specularity,
                    roughness=roughness, modifier="void")
 
     @property
-    def rReflectance(self):
+    def r_reflectance(self):
         """Red reflectance."""
         return self._r
 
-    @rReflectance.setter
-    def rReflectance(self, value):
+    @r_reflectance.setter
+    def r_reflectance(self, value):
         assert 0 <= value <= 1, "Red reflectance should be between 0 and 1"
         self._r = value
 
     @property
-    def gReflectance(self):
+    def g_reflectance(self):
         """Green reflectance."""
         return self._g
 
-    @gReflectance.setter
-    def gReflectance(self, value):
+    @g_reflectance.setter
+    def g_reflectance(self, value):
         assert 0 <= value <= 1, "Green reflectance should be between 0 and 1"
         self._g = value
 
     @property
-    def bReflectance(self):
+    def b_reflectance(self):
         """Blue reflectance."""
         return self._b
 
-    @bReflectance.setter
-    def bReflectance(self, value):
+    @b_reflectance.setter
+    def b_reflectance(self, value):
         assert 0 <= value <= 1, "Blue reflectance should be between 0 and 1"
         self._b = value
 
@@ -129,17 +129,17 @@ class PlasticMaterial(RadianceMaterial):
         self._rough = value
 
     @property
-    def averageReflectance(self):
+    def average_reflectance(self):
         """Calculate average reflectance of plastic material."""
-        return (0.265 * self.rReflectance + 0.670 * self.gReflectance +
-                0.065 * self.bReflectance) * (1 - self.specularity) + self.specularity
+        return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
+                0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
 
-    def toRadString(self, minimal=False):
+    def to_rad_string(self, minimal=False):
         """Return full radiance definition."""
-        baseString = self.headLine + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
+        base_string = self.head_line + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
 
-        plasticDefinition = baseString % (
-            self.rReflectance, self.gReflectance, self.bReflectance,
+        plastic_definition = base_string % (
+            self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness
         )
 
@@ -155,7 +155,7 @@ class BlackMaterial(PlasticMaterial):
 
 if __name__ == "__main__":
     # some test code
-    wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
+    wallMaterial = PlasticMaterial.by_single_reflect_value("generic wall", .55)
     print(wallMaterial)
 
     wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)

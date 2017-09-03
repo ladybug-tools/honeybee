@@ -9,60 +9,60 @@ import os
 
 class Genskyvec(RadianceCommand):
 
-    headerSuppress = RadianceBoolFlag('h', 'suppress information header')
-    skySubdivision = RadianceNumber('m', 'reinhart sky subdivision', numType=int)
-    skyColorRgb = RadianceTuple('c', 'RGB value for sky color', tupleSize=3)
-    sunOnlyVector = RadianceBoolFlag('d', 'produce a sky vector with sun only')
-    inputSkyFile = RadiancePath('inputSkyFile', 'input sky file from gensky',
-                                relativePath=None)
-    outputFile = RadiancePath('outputFile', 'output sky vector file',
-                              relativePath=None)
+    header_suppress = RadianceBoolFlag('h', 'suppress information header')
+    sky_subdivision = RadianceNumber('m', 'reinhart sky subdivision', num_type=int)
+    sky_color_rgb = RadianceTuple('c', 'RGB value for sky color', tuple_size=3)
+    sun_only_vector = RadianceBoolFlag('d', 'produce a sky vector with sun only')
+    input_sky_file = RadiancePath('input_sky_file', 'input sky file from gensky',
+                                  relative_path=None)
+    output_file = RadiancePath('output_file', 'output sky vector file',
+                               relative_path=None)
 
-    def __init__(self, headerSuppress=None, skySubdivision=None, skyColorRgb=None,
-                 sunOnlyVector=None, inputSkyFile=None, outputFile=None):
+    def __init__(self, header_suppress=None, sky_subdivision=None, sky_color_rgb=None,
+                 sun_only_vector=None, input_sky_file=None, output_file=None):
 
-        RadianceCommand.__init__(self, executableName='genskyvec.pl')
+        RadianceCommand.__init__(self, executable_name='genskyvec.pl')
 
-        self.headerSuppress = headerSuppress
-        self.skySubdivision = skySubdivision
-        self.skyColorRgb = skyColorRgb
-        self.sunOnlyVector = sunOnlyVector
-        self.inputSkyFile = inputSkyFile
-        self.outputFile = outputFile
+        self.header_suppress = header_suppress
+        self.sky_subdivision = sky_subdivision
+        self.sky_color_rgb = sky_color_rgb
+        self.sun_only_vector = sun_only_vector
+        self.input_sky_file = input_sky_file
+        self.output_file = output_file
 
     @property
-    def inputFiles(self):
-        return self.inputSkyFile.toRadString()
+    def input_files(self):
+        return self.input_sky_file.to_rad_string()
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         # TODO: This only works for Windows for now.
         # Need to make the path lookup thing x-platform.
-        perlPath = self.normspace(self.perlExePath) if os.name == 'nt' else ''
+        perl_path = self.normspace(self.perl_exe_path) if os.name == 'nt' else ''
         if os.name == 'nt' and not perlPath:
             raise IOError('Failed to find perl installation.\n'
                           'genskyvec.pl needs perl to run successfully.')
 
-        exeName = 'genskyvec.pl' if os.name == 'nt' else 'genskyvec'
-        cmdPath = self.normspace(os.path.join(self.radbinPath, exeName))
+        exe_name = 'genskyvec.pl' if os.name == 'nt' else 'genskyvec'
+        cmd_path = self.normspace(os.path.join(self.radbin_path, exeName))
 
-        headerSuppress = self.headerSuppress.toRadString()
-        skySubDiv = self.skySubdivision.toRadString()
-        skyColor = self.skyColorRgb.toRadString()
-        sunOnly = self.sunOnlyVector.toRadString()
+        header_suppress = self.header_suppress.to_rad_string()
+        sky_sub_div = self.sky_subdivision.to_rad_string()
+        sky_color = self.sky_color_rgb.to_rad_string()
+        sun_only = self.sun_only_vector.to_rad_string()
 
-        inputParams = "{} {} {} {}".format(headerSuppress,
-                                           skySubDiv,
-                                           skyColor,
-                                           sunOnly)
-        inputSky = self.inputSkyFile.toRadString()
-        inputSky = "< %s" % inputSky if inputSky else ''
+        input_params = "{} {} {} {}".format(header_suppress,
+                                            skySubDiv,
+                                            sky_color,
+                                            sunOnly)
+        input_sky = self.input_sky_file.to_rad_string()
+        input_sky = "< %s" % input_sky if input_sky else ''
 
-        output = self.outputFile.toRadString()
+        output = self.output_file.to_rad_string()
         output = "> %s" % output if output else ''
 
-        radString = "{} {} {} {} {}".format(perlPath, cmdPath, inputParams,
-                                            inputSky, output)
+        rad_string = "{} {} {} {} {}".format(perlPath, cmd_path, inputParams,
+                                             inputSky, output)
 
-        self.checkInputFiles(radString)
+        self.check_input_files(rad_string)
 
-        return radString
+        return rad_string

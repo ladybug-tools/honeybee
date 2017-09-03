@@ -17,7 +17,7 @@ from datetime import datetime
 
 
 def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
-              outputType=0):
+              output_type=0):
     """Get sun position and RGB values for sky.
 
     altitude: Sun altitude in degrees.
@@ -64,7 +64,7 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
         260, 280, 300, 320, 340, 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
         0, 60, 120, 180, 240, 300, 0]
 
-    WHTEFFICACY = 179.0  # luminous efficacy of uniform white light
+    whtefficacy = 179.0  # luminous efficacy of uniform white light
 
     # calculate solar direction
     daynumber = datetime(2017, month, day, int(hour)).timetuple().tm_yday
@@ -98,10 +98,10 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
 
     # diffuse horizontal illuminance
     diffuseilluminance = diffuseirradiance * \
-        glob_h_diffuse_effi_PEREZ(skyclearness, skybrightness, sunzenith)
+        glob_h_diffuse_effi_perez(skyclearness, skybrightness, sunzenith)
 
     directilluminance = directirradiance * \
-        direct_n_effi_PEREZ(skyclearness, skybrightness, sunzenith)
+        direct_n_effi_perez(skyclearness, skybrightness, sunzenith)
 
     directilluminance, diffuseilluminance = \
         check_input_values(directilluminance, diffuseilluminance, altitude)
@@ -137,19 +137,19 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
     diffnormalization = integ_lv(lv_mod, theta_o)
 
     # normalization coefficient in lumen or in watt * /
-    if outputType == 0:
+    if output_type == 0:
         diffnormalization = diffuseilluminance / diffnormalization / WHTEFFICACY
-    elif outputType == 1:
+    elif output_type == 1:
         diffnormalization = diffuseirradiance / diffnormalization
-    elif outputType == 2:
+    elif output_type == 2:
         diffnormalization = diffuseilluminance / diffnormalization
 
     #  calculation for the solar source * /
-    if outputType == 0:
+    if output_type == 0:
         solarradiance = directilluminance / \
             (2 * math.pi * (1 - math.cos(half_sun_angle * math.pi / 180))) / WHTEFFICACY
 
-    elif outputType == 1:
+    elif output_type == 1:
         solarradiance = directirradiance / \
             (2 * math.pi * (1 - math.cos(half_sun_angle * math.pi / 180)))
 
@@ -212,7 +212,7 @@ def theta_phi_to_dzeta_gamma(theta, phi, Z):
     return dzeta, gamma
 
 
-def calc_rel_lum_perez(dzeta, gamma, Z, epsilon, Delta, coeff_perez):
+def calc_rel_lum_perez(dzeta, gamma, Z, epsilon, delta, coeff_perez):
     """/* sky luminance perez model * /"""
     x = [[], [], [], [], []]
     c_perez = range(5)
@@ -226,8 +226,8 @@ def calc_rel_lum_perez(dzeta, gamma, Z, epsilon, Delta, coeff_perez):
 
     #  correction de modele de Perez solar energy ...* /
     if epsilon > 1.065 and epsilon < 2.8:
-        if (Delta < 0.2):
-            Delta = 0.2
+        if (delta < 0.2):
+            delta = 0.2
 
     num_lin = get_numlin(epsilon)
     # print "nline %d epsilon %f\n" % (num_lin, epsilon)
@@ -239,15 +239,15 @@ def calc_rel_lum_perez(dzeta, gamma, Z, epsilon, Delta, coeff_perez):
 
     if num_lin:
         for i in xrange(5):
-            c_perez[i] = x[i][0] + x[i][1] * Z + Delta * (x[i][2] + x[i][3] * Z)
+            c_perez[i] = x[i][0] + x[i][1] * Z + delta * (x[i][2] + x[i][3] * Z)
     else:
-        c_perez[0] = x[0][0] + x[0][1] * Z + Delta * (x[0][2] + x[0][3] * Z)
-        c_perez[1] = x[1][0] + x[1][1] * Z + Delta * (x[1][2] + x[1][3] * Z)
-        c_perez[4] = x[4][0] + x[4][1] * Z + Delta * (x[4][2] + x[4][3] * Z)
+        c_perez[0] = x[0][0] + x[0][1] * Z + delta * (x[0][2] + x[0][3] * Z)
+        c_perez[1] = x[1][0] + x[1][1] * Z + delta * (x[1][2] + x[1][3] * Z)
+        c_perez[4] = x[4][0] + x[4][1] * Z + delta * (x[4][2] + x[4][3] * Z)
         c_perez[2] = math.exp(
-            math.pow(Delta * (x[2][0] + x[2][1] * Z), x[2][2])) - x[2][3]
+            math.pow(delta * (x[2][0] + x[2][1] * Z), x[2][2])) - x[2][3]
         c_perez[3] = -math.exp(
-            Delta * (x[3][0] + x[3][1] * Z)) + x[3][2] + Delta * x[3][3]
+            delta * (x[3][0] + x[3][1] * Z)) + x[3][2] + delta * x[3][3]
 
     return (1 + c_perez[0] * math.exp(c_perez[1] / math.cos(dzeta))) * \
         (1 + c_perez[2] * math.exp(c_perez[3] * gamma) +
@@ -336,7 +336,7 @@ def check_parametrization(skyclearness, skybrightness):
     return skyclearness, skybrightness
 
 
-def glob_h_diffuse_effi_PEREZ(skyclearness, skybrightness, sunzenith):
+def glob_h_diffuse_effi_perez(skyclearness, skybrightness, sunzenith):
     """#  global horizontal diffuse efficacy model, according to PEREZ */"""
     # #  initialize category bounds (clearness index bounds) */
     atm_preci_water = 2
@@ -370,7 +370,7 @@ def glob_h_diffuse_effi_PEREZ(skyclearness, skybrightness, sunzenith):
     return value
 
 
-def direct_n_effi_PEREZ(skyclearness, skybrightness, sunzenith):
+def direct_n_effi_perez(skyclearness, skybrightness, sunzenith):
     """#  direct normal efficacy model, according to PEREZ * /"""
     atm_preci_water = 2
     # #  initialize category bounds(clearness index bounds) * /
@@ -420,7 +420,7 @@ def check_input_values(directilluminance, diffuseilluminance, altitude):
     return directilluminance, diffuseilluminance
 
 
-def coeff_lum_perez(Z, epsilon, Delta, coeff_perez):
+def coeff_lum_perez(Z, epsilon, delta, coeff_perez):
     """coefficients for the sky luminance perez model"""
     x = [[], [], [], [], []]
     c_perez = range(5)
@@ -434,10 +434,10 @@ def coeff_lum_perez(Z, epsilon, Delta, coeff_perez):
 
     # /* correction du modele de Perez solar energy ...*/
     if epsilon > 1.065 and epsilon < 2.8:
-        if Delta < 0.2:
-            Delta = 0.2
+        if delta < 0.2:
+            delta = 0.2
 
-    return Delta
+    return delta
 
     # This part of the code won't be executed and is only important for prez sky
     num_lin = get_numlin(epsilon)
@@ -450,13 +450,13 @@ def coeff_lum_perez(Z, epsilon, Delta, coeff_perez):
 
     if (num_lin):
         for i in range(5):
-            c_perez[i] = x[i][0] + x[i][1] * Z + Delta * (x[i][2] + x[i][3] * Z)
+            c_perez[i] = x[i][0] + x[i][1] * Z + delta * (x[i][2] + x[i][3] * Z)
 
     else:
-        c_perez[0] = x[0][0] + x[0][1] * Z + Delta * (x[0][2] + x[0][3] * Z)
-        c_perez[1] = x[1][0] + x[1][1] * Z + Delta * (x[1][2] + x[1][3] * Z)
-        c_perez[4] = x[4][0] + x[4][1] * Z + Delta * (x[4][2] + x[4][3] * Z)
-        c_perez[2] = math.exp(math.pow(Delta * (x[2][0] + x[2][1] * Z), x[2][2])) \
+        c_perez[0] = x[0][0] + x[0][1] * Z + delta * (x[0][2] + x[0][3] * Z)
+        c_perez[1] = x[1][0] + x[1][1] * Z + delta * (x[1][2] + x[1][3] * Z)
+        c_perez[4] = x[4][0] + x[4][1] * Z + delta * (x[4][2] + x[4][3] * Z)
+        c_perez[2] = math.exp(math.pow(delta * (x[2][0] + x[2][1] * Z), x[2][2])) \
             - x[2][3]
-        c_perez[3] = -math.exp(Delta * (x[3][0] + x[3][1] * Z)) + x[3][2] + \
-            Delta * x[3][3]
+        c_perez[3] = -math.exp(delta * (x[3][0] + x[3][1] * Z)) + x[3][2] + \
+            delta * x[3][3]

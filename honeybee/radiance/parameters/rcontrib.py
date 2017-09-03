@@ -13,7 +13,7 @@ class RcontribParameters(GridBasedParameters):
     https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf
 
     Attributes:
-        modFile: [-M file] File path to a file with a list of modifiers
+        mod_file: [-M file] File path to a file with a list of modifiers
             (Default: None)
 
         * For the full list of attributes try self.parameters
@@ -26,11 +26,11 @@ class RcontribParameters(GridBasedParameters):
 
         # paramters returns an empty string which means rcontrib will use
         # default values.
-        print rcp.toRadString()
+        print rcp.to_rad_string()
         >
 
         # add modifiers file
-        rcp.modFile = "c:/ladybug/suns.txt"
+        rcp.mod_file = "c:/ladybug/suns.txt"
 
         # set number of ambient bounces and ambient divisions
         # these are rtrace (gridbased) paramters
@@ -39,37 +39,37 @@ class RcontribParameters(GridBasedParameters):
         rcp.I = True
 
         # check radiance parameters with the new values
-        print rcp.toRadString()
+        print rcp.to_rad_string()
         > -ab 0 -ad 10000 -M c:/ladybug/suns.txt -I
 
         # or you can set all the parameter for rtrace based on quality
         rcp.quality = 1
-        print rcp.toRadString()
+        print rcp.to_rad_string()
         > -aa 0.2 -ab 0 -ad 10000 -M c:/ladybug/suns.txt -I -dc 0.5 -st 0.5 -lw 0.01
             -as 2048 -ar 64 -lr 6 -dt 0.25 -dr 1 -ds 0.25 -dp 256
     """
 
-    def __init__(self, modFile=None, x=None, y=None, outputFilenameFormat=None):
+    def __init__(self, mod_file=None, x=None, y=None, output_filename_format=None):
         """Init paramters."""
         GridBasedParameters.__init__(self)
 
         # add parameters
-        self.addRadianceValue('M', 'modifiers file', attributeName='modFile')
-        self.modFile = modFile
+        self.add_radiance_value('M', 'modifiers file', attribute_name='mod_file')
+        self.mod_file = mod_file
         """[-M file] File path to a file with a list of modifiers
         (Default: None)"""
 
-        self.addRadianceNumber('y', 'number of total points or pixels in y direction',
-                               attributeName='yDimension')
+        self.add_radiance_number('y', 'number of total points or pixels in y direction',
+                                 attribute_name='yDimension')
         self.yDimension = y
         """[-y int] Y dimension of an image or number of total points in points file."""
 
-        self.addRadianceNumber('x', 'number of pixels in x direction',
-                               attributeName='xDimension')
+        self.add_radiance_number('x', 'number of pixels in x direction',
+                                 attribute_name='xDimension')
         self.xDimension = x
         """[-x int] X dimension of an image."""
 
-        self.addRadianceValue('o', 'output file name format',
-                              attributeName='outputFilenameFormat')
-        self.outputFilenameFormat = outputFilenameFormat
+        self.add_radiance_value('o', 'output file name format',
+                                attribute_name='output_filenameFormat')
+        self.output_filename_format = output_filename_format
         """[-0 str] output format e.g. %04f.hdr."""

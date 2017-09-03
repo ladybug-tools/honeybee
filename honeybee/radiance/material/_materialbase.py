@@ -2,7 +2,7 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Materials
 """
-from ...utilcol import checkName
+from ...utilcol import check_name
 
 
 class RadianceMaterial(object):
@@ -10,7 +10,7 @@ class RadianceMaterial(object):
 
     Attributes:
         name: Material name as a string. Do not use white space and special character.
-        materialType: One of Radiance standard Material types (e.g. glass, plastic, etc).
+        material_type: One of Radiance standard Material types (e.g. glass, plastic, etc).
         modifier: Material modifier (Default: "void").
     """
 
@@ -18,22 +18,22 @@ class RadianceMaterial(object):
     TYPES = set(("plastic", "glass", "trans", "metal", "mirror", "texfunc", "illum",
                  "mixedfunc", "dielectric", "transdata", "light", "glow", "BSDF"))
 
-    def __init__(self, name, materialType, modifier="void"):
+    def __init__(self, name, material_type, modifier="void"):
         """Create material base."""
         self.name = name
         """Material name as a string. Do not use white space and special character."""
-        self.type = materialType
+        self.type = material_type
         """One of Radiance standard Material types (e.g. glass, plastic, etc)"""
         self.modifier = modifier
         """Material modifier. Default is void"""
 
     @property
-    def isRadianceMaterial(self):
+    def is_radiance_material(self):
         """Indicate that this object is a Radiance Material."""
         return True
 
     @property
-    def isGlassMaterial(self):
+    def is_glass_material(self):
         """Indicate if this object has glass Material.
 
         This property will be used to separate the glass surfaces in a separate
@@ -52,7 +52,7 @@ class RadianceMaterial(object):
             '%s is a radiance material type and' \
             ' should not be used as a material name.' % name
         self._name = name.rstrip().replace(" ", "_")
-        checkName(self._name)
+        check_name(self._name)
 
     @property
     def modifier(self):
@@ -69,19 +69,19 @@ class RadianceMaterial(object):
         return self._type
 
     @type.setter
-    def type(self, materialType):
-        assert materialType in self.TYPES, \
-            "%s is not a supported material type." % materialType + \
+    def type(self, material_type):
+        assert material_type in self.TYPES, \
+            "%s is not a supported material type." % material_type + \
             "Try one of these materials:\n%s" % str(self.TYPES)
 
-        self._type = materialType
+        self._type = material_type
 
     @property
-    def headLine(self):
+    def head_line(self):
         """Return first line of Material definition."""
         return "%s %s %s\n" % (self.modifier, self.type, self.name)
 
-    def toRadString(self, minimal=False):
+    def to_rad_string(self, minimal=False):
         """Return full radiance definition.
 
         Args:
@@ -89,10 +89,10 @@ class RadianceMaterial(object):
         """
         raise NotImplementedError
 
-    def ToString(self):
+    def to_string(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
 
     def __repr__(self):
         """Return material definition."""
-        return self.toRadString()
+        return self.to_rad_string()

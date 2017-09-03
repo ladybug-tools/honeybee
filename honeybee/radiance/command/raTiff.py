@@ -8,35 +8,36 @@ from ..datatype import RadiancePath
 
 
 class RaTiff(RadianceCommand):
-    inputHdrFile = RadiancePath('inputHdr', 'inputHDR file')
-    outputTiffFile = RadiancePath('outputTiff', 'output TIFF file', extension='.tiff')
+    input_hdr_file = RadiancePath('inputHdr', 'inputHDR file')
+    output_tiff_file = RadiancePath('outputTiff', 'output TIFF file', extension='.tiff')
 
-    def __init__(self, inputHdrFile=None, outputTiffFile=None, raTiffParameters=None):
-        RadianceCommand.__init__(self, executableName='ra_tiff.exe')
-        self.inputHdrFile = inputHdrFile
+    def __init__(self, input_hdr_file=None, output_tiff_file=None,
+                 ra_tiff_parameters=None):
+        RadianceCommand.__init__(self, executable_name='ra_tiff.exe')
+        self.input_hdr_file = input_hdr_file
         """Path for input HDR file"""
-        self.outputTiffFile = outputTiffFile
+        self.output_tiff_file = output_tiff_file
         """Path for output tiff file"""
 
-        self.raTiffParameters = raTiffParameters
+        self.ra_tiff_parameters = ra_tiff_parameters
         """An instance of RaTiff parameters"""
 
     @property
-    def raTiffParameters(self):
-        """Get and set raTiffParameters."""
-        return self.__raTiffParameters
+    def ra_tiff_parameters(self):
+        """Get and set ra_tiff_parameters."""
+        return self.__ra_tiff_parameters
 
-    @raTiffParameters.setter
-    def raTiffParameters(self, raTiffParam):
-        self.__raTiffParameters = raTiffParam if raTiffParam is not None \
+    @ra_tiff_parameters.setter
+    def ra_tiff_parameters(self, ra_tiff_param):
+        self.__ra_tiff_parameters = ra_tiff_param if ra_tiff_param is not None \
             else RaTiffParameters()
 
-        assert hasattr(self.raTiffParameters, "isRadianceParameters"), \
-            "input raTiffParameters is not a valid parameters type."
+        assert hasattr(self.ra_tiff_parameters, "isRadianceParameters"), \
+            "input ra_tiff_parameters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
-        cmdName = self.normspace(os.path.join(self.radbinPath, 'ra_tiff'))
-        params = self.raTiffParameters.toRadString()
+    def to_rad_string(self, relative_path=False):
+        cmd_name = self.normspace(os.path.join(self.radbin_path, 'ra_tiff'))
+        params = self.ra_tiff_parameters.to_rad_string()
 
         # This is kind of an overkill to fix compression parameters,
         # It checks if the compressiion option is specified and then fixes the flag.
@@ -44,20 +45,20 @@ class RaTiff(RadianceCommand):
         # interface really clunky wherein just one attribute is in the main class and
         # everything else is in params.
         if '-compress' in params:
-            paramsSplit = params.split()
-            flagIndex = paramsSplit.index('-compress')
-            flagValue = '-' + paramsSplit[flagIndex + 1]
-            paramsSplit[flagIndex + 1] = flagValue
+            params_split = params.split()
+            flag_index = params_split.index('-compress')
+            flag_value = '-' + paramsSplit[flagIndex + 1]
+            paramsSplit[flagIndex + 1] = flag_value
             paramsSplit.pop(flagIndex)
             params = " ".join(paramsSplit)
 
-        inputFile = self.inputHdrFile.toRadString()
-        outputFile = self.outputTiffFile.toRadString()
+        input_file = self.input_hdr_file.to_rad_string()
+        output_file = self.output_tiff_file.to_rad_string()
 
-        radString = "%s %s %s %s" % (cmdName, params, inputFile, outputFile)
+        rad_string = "%s %s %s %s" % (cmdName, params, input_file, output_file)
 
-        return radString
+        return rad_string
 
     @property
-    def inputFiles(self):
-        return self.inputHdrFile,
+    def input_files(self):
+        return self.input_hdr_file,

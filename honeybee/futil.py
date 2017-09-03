@@ -15,49 +15,49 @@ def normspace(path):
         return path
 
 
-def getRadiancePathLines():
+def get_radiance_path_lines():
     """Return path to radiance folders."""
-    if config.radbinPath.find(' ') != -1:
+    if config.radbin_path.find(' ') != -1:
         msg = 'Radiance path {} has a whitespace. Some of the radiance ' \
             'commands may fail.\nWe strongly suggest you to install radiance ' \
             'under a path with no withspace (e.g. c:/radiance)'.format(
-                config.radbinPath
+                config.radbin_path
             )
         print msg
     if os.name == 'nt':
         return "SET RAYPATH=.;{}\nPATH={};$PATH".format(
-            normspace(config.radlibPath),
-            normspace(config.radbinPath))
+            normspace(config.radlib_path),
+            normspace(config.radbin_path))
     else:
         return ""
 
 
-def preparedir(targetDir, removeContent=True):
+def preparedir(target_dir, remove_content=True):
     """Prepare a folder for analysis.
 
     This method creates the folder if it is not created, and removes the file in
     the folder if the folder already existed.
     """
-    if os.path.isdir(targetDir):
-        if removeContent:
-            nukedir(targetDir, False)
+    if os.path.isdir(target_dir):
+        if remove_content:
+            nukedir(target_dir, False)
         return True
     else:
         try:
-            os.makedirs(targetDir)
+            os.makedirs(target_dir)
             return True
         except Exception as e:
-            print "Failed to create folder: %s\n%s" % (targetDir, e)
+            print "Failed to create folder: %s\n%s" % (target_dir, e)
             return False
 
 
-def nukedir(targetDir, rmdir=False):
-    """Delete all the files inside targetDir.
+def nukedir(target_dir, rmdir=False):
+    """Delete all the files inside target_dir.
 
     Usage:
         nukedir("c:/ladybug/libs", True)
     """
-    d = os.path.normpath(targetDir)
+    d = os.path.normpath(target_dir)
 
     if not os.path.isdir(d):
         return
@@ -84,7 +84,7 @@ def nukedir(targetDir, rmdir=False):
             print "Failed to remove %s" % d
 
 
-def writeToFileByName(folder, fname, data, mkdir=False):
+def write_to_fileByName(folder, fname, data, mkdir=False):
     """Write a string of data to file by filename and folder.
 
     Args:
@@ -99,29 +99,29 @@ def writeToFileByName(folder, fname, data, mkdir=False):
         else:
             raise ValueError("Failed to find %s." % folder)
 
-    filePath = os.path.join(folder, fname)
+    file_path = os.path.join(folder, fname)
 
-    with open(filePath, "w") as outf:
+    with open(file_path, "w") as outf:
         try:
             outf.write(str(data))
-            return filePath
+            return file_path
         except Exception as e:
             raise IOError("Failed to write %s to file:\n\t%s" % (fname, str(e)))
 
 
-def writeToFile(filePath, data, mkdir=False):
+def write_to_file(file_path, data, mkdir=False):
     """Write a string of data to file.
 
     Args:
-        filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+        file_path: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
         data: Any data as string
         mkdir: Set to True to create the directory if doesn't exist (Default: False)
     """
-    folder, fname = os.path.split(filePath)
-    return writeToFileByName(folder, fname, data, mkdir)
+    folder, fname = os.path.split(file_path)
+    return write_to_fileByName(folder, fname, data, mkdir)
 
 
-def copyFilesToFolder(files, targetFolder, overwrite=True):
+def copy_files_to_folder(files, target_folder, overwrite=True):
     """Copy a list of files to a new target folder.
 
     Returns:
@@ -131,7 +131,7 @@ def copyFilesToFolder(files, targetFolder, overwrite=True):
         return []
 
     for f in files:
-        target = os.path.join(targetFolder, os.path.split(f)[-1])
+        target = os.path.join(target_folder, os.path.split(f)[-1])
 
         if target == f:
             # both file path are the same!
@@ -150,7 +150,7 @@ def copyFilesToFolder(files, targetFolder, overwrite=True):
                 continue
         else:
             print 'Copying %s to %s' % (os.path.split(f)[-1],
-                                        os.path.normpath(targetFolder))
-            shutil.copy(f, targetFolder)
+                                        os.path.normpath(target_folder))
+            shutil.copy(f, target_folder)
 
-    return [os.path.join(targetFolder, os.path.split(f)[-1]) for f in files]
+    return [os.path.join(target_folder, os.path.split(f)[-1]) for f in files]

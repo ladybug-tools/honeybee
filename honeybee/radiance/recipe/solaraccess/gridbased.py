@@ -1,11 +1,11 @@
 """Radiance Solar Access Grid-based Analysis Recipe."""
 from .._gridbasedbase import GenericGridBased
-from ..recipeutil import writeRadFiles, writeExtraFiles
-from ..recipedcutil import RGBMatrixFileToIll
+from ..recipeutil import write_rad_files, write_extra_files
+from ..recipedcutil import rgb_matrix_file_to_ill
 from ...parameters.rcontrib import RcontribParameters
 from ...command.oconv import Oconv
 from ...command.rcontrib import Rcontrib
-from ....futil import writeToFile
+from ....futil import write_to_file
 from ....vectormath.euclid import Vector3
 
 from ladybug.sunpath import Sunpath
@@ -21,144 +21,144 @@ class SolarAccessGridBased(GenericGridBased):
     This class calculates number of sunlight hours for a group of test points.
 
     Attributes:
-        sunVectors: A list of ladybug sun vectors as (x, y, z) values. Z value
+        sun_vectors: A list of ladybug sun vectors as (x, y, z) values. Z value
             for sun vectors should be negative (coming from sun toward earth)
         hoys: A list of hours of the year for each sun vector.
-        analysisGrids: List of analysis grids.
+        analysis_grids: List of analysis grids.
         timestep: The number of timesteps per hour for sun vectors. This number
             should be smaller than 60 and divisible by 60. The default is set to
             1 such that one sun vector is generated for each hour (Default: 1).
-        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+        hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+        sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
 
     Usage:
-        # initiate analysisRecipe
-        analysisRecipe = SolarAccess(sunVectors, analysisGrids)
+        # initiate analysis_recipe
+        analysis_recipe = SolarAccess(sun_vectors, analysis_grids)
 
         # add honeybee object
-        analysisRecipe.hbObjects = HBObjs
+        analysis_recipe.hb_objects = HBObjs
 
         # write analysis files to local drive
-        analysisRecipe.writeToFile(_folder_, _name_)
+        analysis_recipe.write_to_file(_folder_, _name_)
 
         # run the analysis
-        analysisRecipe.run(debaug=False)
+        analysis_recipe.run(debaug=False)
 
         # get the results
-        print analysisRecipe.results()
+        print analysis_recipe.results()
     """
 
-    def __init__(self, sunVectors, hoys, analysisGrids, timestep=1, hbObjects=None,
-                 subFolder='solaraccess'):
+    def __init__(self, sun_vectors, hoys, analysis_grids, timestep=1, hb_objects=None,
+                 sub_folder='solaraccess'):
         """Create sunlighthours recipe."""
         GenericGridBased.__init__(
-            self, analysisGrids, hbObjects, subFolder
+            self, analysis_grids, hb_objects, sub_folder
         )
 
-        assert len(hoys) == len(sunVectors), \
+        assert len(hoys) == len(sun_vectors), \
             ValueError(
-                'Length of sunVectors [] must be equall to '
-                'the length of hoys []'.format(len(sunVectors), len(hoys))
+                'Length of sun_vectors [] must be equall to '
+                'the length of hoys []'.format(len(sun_vectors), len(hoys))
         )
-        self.sunVectors = sunVectors
+        self.sun_vectors = sun_vectors
         self._hoys = hoys
         self.timestep = timestep
 
-        self._radianceParameters = RcontribParameters()
-        self._radianceParameters.irradianceCalc = True
-        self._radianceParameters.ambientBounces = 0
-        self._radianceParameters.directCertainty = 1
-        self._radianceParameters.directThreshold = 0
-        self._radianceParameters.directJitter = 0
+        self._radiance_parameters = RcontribParameters()
+        self._radiance_parameters.irradiance_calc = True
+        self._radiance_parameters.ambientBounces = 0
+        self._radiance_parameters.directCertainty = 1
+        self._radiance_parameters.directThreshold = 0
+        self._radiance_parameters.directJitter = 0
 
-    def fromPointsAndVectors(cls, sunVectors, hoys, pointGroups, vectorGroups=[],
-                             timestep=1, hbObjects=None, subFolder='sunlighthour'):
+    def from_points_and_vectors(cls, sun_vectors, hoys, point_groups, vector_groups=[],
+                                timestep=1, hb_objects=None, sub_folder='sunlighthour'):
         """Create sunlighthours recipe from points and vectors.
 
         Args:
-            sunVectors: A list of ladybug sun vectors as (x, y, z) values. Z value
+            sun_vectors: A list of ladybug sun vectors as (x, y, z) values. Z value
                 for sun vectors should be negative (coming from sun toward earth)
             hoys: A list of hours of the year for each sun vector.
-            pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test
+            point_groups: A list of (x, y, z) test points or lists of (x, y, z) test
                 points. Each list of test points will be converted to a
                 TestPointGroup. If testPts is a single flattened list only one
                 TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+            vector_groups: An optional list of (x, y, z) vectors. Each vector
                 represents direction of corresponding point in testPts. If the
                 vector is not provided (0, 0, 1) will be assigned.
             timestep: The number of timesteps per hour for sun vectors. This number
                 should be smaller than 60 and divisible by 60. The default is set to
                 1 such that one sun vector is generated for each hour (Default: 1).
-            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-            subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+            hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+            sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
         """
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
-        return cls(sunVectors, hoys, analysisGrids, timestep, hbObjects, subFolder)
+        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
+                                                                    vector_groups)
+        return cls(sun_vectors, hoys, analysis_grids, timestep, hb_objects, sub_folder)
 
     @classmethod
-    def fromSuns(cls, suns, pointGroups, vectorGroups=[], timestep=1,
-                 hbObjects=None, subFolder='sunlighthour'):
+    def from_suns(cls, suns, point_groups, vector_groups=[], timestep=1,
+                  hb_objects=None, sub_folder='sunlighthour'):
         """Create sunlighthours recipe from LB sun objects.
 
         Attributes:
             suns: A list of ladybug suns.
-            pointGroups: A list of (x, y, z) test points or lists of (x, y, z) test
+            point_groups: A list of (x, y, z) test points or lists of (x, y, z) test
                 points. Each list of test points will be converted to a
                 TestPointGroup. If testPts is a single flattened list only one
                 TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+            vector_groups: An optional list of (x, y, z) vectors. Each vector
                 represents direction of corresponding point in testPts. If the
                 vector is not provided (0, 0, 1) will be assigned.
             timestep: The number of timesteps per hour for sun vectors. This number
                 should be smaller than 60 and divisible by 60. The default is set to
                 1 such that one sun vector is generated for each hour (Default: 1).
-            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-            subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+            hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+            sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
         """
         try:
-            sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
+            sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
             hoys = tuple(s.hoy for s in suns if s.isDuringDay)
         except AttributeError:
             raise TypeError('The input is not a valid LBSun.')
 
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
-        return cls(sunVectors, hoys, analysisGrids, timestep, hbObjects, subFolder)
+        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
+                                                                    vector_groups)
+        return cls(sun_vectors, hoys, analysis_grids, timestep, hb_objects, sub_folder)
 
     @classmethod
-    def fromLocationAndHoys(cls, location, hoys, pointGroups, vectorGroups=[],
-                            timestep=1, hbObjects=None, subFolder='sunlighthour'):
+    def from_location_and_hoys(cls, location, hoys, point_groups, vector_groups=[],
+                               timestep=1, hb_objects=None, sub_folder='sunlighthour'):
         """Create sunlighthours recipe from Location and hours of year."""
         sp = Sunpath.fromLocation(location)
 
-        suns = (sp.calculateSunFromHOY(HOY) for HOY in hoys)
+        suns = (sp.calculateSunFromHOY(HOY) for hoy in hoys)
 
-        sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
+        sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
 
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
-        return cls(sunVectors, hoys, analysisGrids, timestep, hbObjects, subFolder)
+        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
+                                                                    vector_groups)
+        return cls(sun_vectors, hoys, analysis_grids, timestep, hb_objects, sub_folder)
 
     @classmethod
-    def fromLocationAndAnalysisPeriod(
-        cls, location, analysisPeriod, pointGroups, vectorGroups=None,
-        hbObjects=None, subFolder='sunlighthour'
+    def from_location_and_analysis_period(
+        cls, location, analysis_period, point_groups, vector_groups=None,
+        hb_objects=None, sub_folder='sunlighthour'
     ):
         """Create sunlighthours recipe from Location and analysis period."""
-        vectorGroups = vectorGroups or ()
+        vector_groups = vector_groups or ()
 
         sp = Sunpath.fromLocation(location)
 
-        suns = (sp.calculateSunFromHOY(HOY) for HOY in analysisPeriod.floatHOYs)
+        suns = (sp.calculateSunFromHOY(HOY) for hoy in analysis_period.floatHOYs)
 
-        sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
+        sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
         hoys = tuple(s.hoy for s in suns if s.isDuringDay)
 
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
-        return cls(sunVectors, hoys, analysisGrids, analysisPeriod.timestep,
-                   hbObjects, subFolder)
+        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
+                                                                    vector_groups)
+        return cls(sun_vectors, hoys, analysis_grids, analysis_period.timestep,
+                   hb_objects, sub_folder)
 
     @property
     def hoys(self):
@@ -166,24 +166,24 @@ class SolarAccessGridBased(GenericGridBased):
         return self._hoys
 
     @property
-    def sunVectors(self):
+    def sun_vectors(self):
         """A list of ladybug sun vectors as (x, y, z) values."""
-        return self._sunVectors
+        return self._sun_vectors
 
-    @sunVectors.setter
-    def sunVectors(self, vectors):
+    @sun_vectors.setter
+    def sun_vectors(self, vectors):
         try:
-            self._sunVectors = tuple(Vector3(*v).flipped() for v in vectors
-                                     if v[2] < 0)
+            self._sun_vectors = tuple(Vector3(*v).flipped() for v in vectors
+                                      if v[2] < 0)
         except TypeError:
-            self._sunVectors = tuple(Vector3(v.X, v.Y, v.Z).flipped()
-                                     for v in vectors if v.Z < 0)
+            self._sun_vectors = tuple(Vector3(v.X, v.Y, v.Z).flipped()
+                                      for v in vectors if v.Z < 0)
         except IndexError:
             raise ValueError("Failed to create the sun vectors!")
 
-        if len(self.sunVectors) != len(vectors):
+        if len(self.sun_vectors) != len(vectors):
             print '%d vectors with positive z value are found and removed ' \
-                'from sun vectors' % (len(vectors) - len(self.sunVectors))
+                'from sun vectors' % (len(vectors) - len(self.sun_vectors))
 
     @property
     def timestep(self):
@@ -203,62 +203,62 @@ class SolarAccessGridBased(GenericGridBased):
         assert self._timestep != 0, 'ValueError: TimeStep cannot be 0.'
 
     @property
-    def legendParameters(self):
+    def legend_parameters(self):
         """Legend parameters for solar access analysis."""
         col = Colorset.Ecotect()
         return LegendParameters([0, 'max'], colors=col)
 
-    def writeSuns(self, targetDir, projectName, mkdir=False):
+    def write_suns(self, target_dir, project_name, mkdir=False):
         """Write sunlist, sun geometry and sun material files.
 
         Args:
-            targetDir: Path to project directory (e.g. c:/ladybug)
-            projectName: Project name as string. Suns will be saved as
-                projectName.sun
+            target_dir: Path to project directory (e.g. c:/ladybug)
+            project_name: Project name as string. Suns will be saved as
+                project_name.sun
 
         Returns:
             A tuple of paths to sunlist file, sun materials and sun geometries
 
         Exceptions:
-            ValueError if targetDir doesn't exist and mkdir is False.
+            ValueError if target_dir doesn't exist and mkdir is False.
         """
-        assert isinstance(projectName, str), "projectName should be a string."
+        assert isinstance(project_name, str), "project_name should be a string."
 
-        _suns = range(len(self.sunVectors))
-        _mat = range(len(self.sunVectors))
-        _geo = range(len(self.sunVectors))
+        _suns = range(len(self.sun_vectors))
+        _mat = range(len(self.sun_vectors))
+        _geo = range(len(self.sun_vectors))
 
         # create data
-        for count, v in enumerate(self.sunVectors):
+        for count, v in enumerate(self.sun_vectors):
             _suns[count] = 'solar%d' % count
             _mat[count] = 'void light solar%d 0 0 3 1.0 1.0 1.0' % count
             _geo[count] = \
                 'solar{0} source sun{0} 0 0 4 {1} {2} {3} 0.533'.format(
                     count, v.X, v.Y, v.Z)
 
-        _sunsf = writeToFile(os.path.join(targetDir, projectName + '.sun'),
-                             '\n'.join(_suns) + '\n', mkdir)
-        _matf = writeToFile(os.path.join(targetDir, projectName + '_suns.mat'),
-                            '\n'.join(_mat) + '\n', mkdir)
-        _geof = writeToFile(os.path.join(targetDir, projectName + '_suns.rad'),
-                            '\n'.join(_geo) + '\n', mkdir)
+        _sunsf = write_to_file(os.path.join(target_dir, project_name + '.sun'),
+                               '\n'.join(_suns) + '\n', mkdir)
+        _matf = write_to_file(os.path.join(target_dir, project_name + '_suns.mat'),
+                              '\n'.join(_mat) + '\n', mkdir)
+        _geof = write_to_file(os.path.join(target_dir, project_name + '_suns.rad'),
+                              '\n'.join(_geo) + '\n', mkdir)
 
         if _sunsf and _matf and _geof:
             return _sunsf, _matf, _geof
         else:
             raise IOError('Failed to write sun vectors!')
 
-    def write(self, targetFolder, projectName='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
 
         Files for sunlight hours analysis are:
-            test points <projectName.pts>: List of analysis points.
+            test points <project_name.pts>: List of analysis points.
             suns file <*.sun>: list of sun sources .
             suns material file <*_suns.mat>: Radiance materials for sun sources.
             suns geometry file <*_suns.rad>: Radiance geometries for sun sources.
-            material file <*.mat>: Radiance materials. Will be empty if HBObjects is
+            material file <*.mat>: Radiance materials. Will be empty if hb_objects is
                 None.
-            geometry file <*.rad>: Radiance geometries. Will be empty if HBObjects is
+            geometry file <*.rad>: Radiance geometries. Will be empty if hb_objects is
                 None.
             batch file <*.bat>: An executable batch file which has the list of commands.
                 oconv [material file] [geometry file] [sun materials file] [sun
@@ -267,68 +267,68 @@ class SolarAccessGridBased(GenericGridBased):
                     file] > [rcontrib results file]
 
         Args:
-            targetFolder: Path to parent folder. Files will be created under
-                targetFolder/gridbased. use self.subFolder to change subfolder name.
-            projectName: Name of this project as a string.
+            target_folder: Path to parent folder. Files will be created under
+                target_folder/gridbased. use self.sub_folder to change subfolder name.
+            project_name: Name of this project as a string.
 
         Returns:
             True in case of success.
         """
         # 0.prepare target folder
-        # create main folder targetFolder\projectName
-        projectFolder = \
-            super(GenericGridBased, self).writeContent(targetFolder, projectName)
+        # create main folder target_folder\project_name
+        project_folder = \
+            super(GenericGridBased, self).write_content(target_folder, project_name)
 
         # write geometry and material files
-        opqfiles, glzfiles, wgsfiles = writeRadFiles(
-            projectFolder + '/scene', projectName, self.opaqueRadFile,
-            self.glazingRadFile, self.windowGroupsRadFiles
+        opqfiles, glzfiles, wgsfiles = write_rad_files(
+            project_folder + '/scene', project_name, self.opaque_rad_file,
+            self.glazing_rad_file, self.window_groups_rad_files
         )
         # additional radiance files added to the recipe as scene
-        extrafiles = writeExtraFiles(self.scene, projectFolder + '/scene')
+        extrafiles = write_extra_files(self.scene, project_folder + '/scene')
 
         # 1.write points
-        pointsFile = self.writeAnalysisGrids(projectFolder, projectName)
+        points_file = self.write_analysis_grids(project_folder, project_name)
 
         # 2.write sun files
         sunsList, sunsMat, sunsGeo = \
-            self.writeSuns(projectFolder + '\\sky', projectName)
+            self.write_suns(project_folder + '\\sky', project_name)
 
         # 2.1.add sun list to modifiers
-        self._radianceParameters.modFile = self.relpath(sunsList, projectFolder)
-        self._radianceParameters.yDimension = self.totalPointCount
+        self._radiance_parameters.mod_file = self.relpath(sunsList, project_folder)
+        self._radiance_parameters.yDimension = self.total_point_count
 
         # 3.write batch file
         if header:
-            self._commands.append(self.header(projectFolder))
+            self._commands.append(self.header(project_folder))
 
-        # TODO(Mostapha): add windowGroups here if any!
+        # TODO(Mostapha): add window_groups here if any!
         # # 4.1.prepare oconv
-        octSceneFiles = opqfiles + glzfiles + wgsfiles + [sunsMat, sunsGeo] + \
+        oct_scene_files = opqfiles + glzfiles + wgsfiles + [sunsMat, sunsGeo] + \
             extrafiles.fp
 
-        oc = Oconv(projectName)
-        oc.sceneFiles = tuple(self.relpath(f, projectFolder) for f in octSceneFiles)
+        oc = Oconv(project_name)
+        oc.scene_files = tuple(self.relpath(f, project_folder) for f in octSceneFiles)
 
         # # 4.2.prepare Rcontrib
-        rct = Rcontrib('result\\' + projectName,
-                       rcontribParameters=self._radianceParameters)
-        rct.octreeFile = str(oc.outputFile)
-        rct.pointsFile = self.relpath(pointsFile, projectFolder)
+        rct = Rcontrib('result\\' + project_name,
+                       rcontrib_parameters=self._radiance_parameters)
+        rct.octree_file = str(oc.output_file)
+        rct.points_file = self.relpath(points_file, project_folder)
 
-        batchFile = os.path.join(projectFolder, "commands.bat")
-        rmtx = RGBMatrixFileToIll((str(rct.outputFile),),
-                                  'result\\{}.ill'.format(projectName))
+        batch_file = os.path.join(project_folder, "commands.bat")
+        rmtx = rgb_matrix_file_to_ill((str(rct.output_file),),
+                                      'result\\{}.ill'.format(project_name))
 
         # # 4.3 write batch file
-        self._commands.append(oc.toRadString())
-        self._commands.append(rct.toRadString())
-        self._commands.append(rmtx.toRadString())
+        self._commands.append(oc.to_rad_string())
+        self._commands.append(rct.to_rad_string())
+        self._commands.append(rmtx.to_rad_string())
 
-        self._resultFiles = os.path.join(projectFolder, str(rmtx.outputFile))
+        self._result_files = os.path.join(project_folder, str(rmtx.output_file))
 
-        batchFile = os.path.join(projectFolder, "commands.bat")
-        return writeToFile(batchFile, '\n'.join(self.commands))
+        batch_file = os.path.join(project_folder, "commands.bat")
+        return write_to_file(batchFile, '\n'.join(self.commands))
 
     def results(self):
         """Return results for this analysis."""
@@ -337,19 +337,19 @@ class SolarAccessGridBased(GenericGridBased):
             "to run the analysis before loading the results."
 
         print('Unloading the current values from the analysis grids.')
-        for ag in self.analysisGrids:
+        for ag in self.analysis_grids:
             ag.unload()
 
         hours = tuple(int(self.timestep * h) for h in self.hoys)
         rf = self._resultFiles
-        startLine = 0
-        for count, analysisGrid in enumerate(self.analysisGrids):
+        start_line = 0
+        for count, analysisGrid in enumerate(self.analysis_grids):
             if count:
-                startLine += len(self.analysisGrids[count - 1])
+                start_line += len(self.analysis_grids[count - 1])
 
-            analysisGrid.setValuesFromFile(
-                rf, hours, startLine=startLine, header=True, checkPointCount=False,
+            analysisGrid.set_valuesFromFile(
+                rf, hours, start_line=start_line, header=True, check_point_count=False,
                 mode=1
             )
 
-        return self.analysisGrids
+        return self.analysis_grids

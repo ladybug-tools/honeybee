@@ -11,60 +11,60 @@ class Epw2wea(RadianceCommand):
     program.
 
     Attributes:
-        epwFile: Filepath of the epw file that is to be converted into wea
+        epw_file: Filepath of the epw file that is to be converted into wea
             format.
 
     Usage:
     from honeybee.radiance.command.epw2wea import Epw2wea.
 
     #create an epw2wea command.
-    epwWea = Epw2wea(epwFileName='c:/ladybug/test.epw')
+    epwWea = Epw2wea(epw_fileName='c:/ladybug/test.epw')
     """
 
-    _epwFile = RadiancePath('_epwFile',
-                            descriptiveName='Epw weather data file',
-                            relativePath=None, checkExists=False)
-    outputWeaFile = RadiancePath('outputWeaFile',
-                                 descriptiveName='Output wea file',
-                                 relativePath=None, checkExists=False)
+    _epw_file = RadiancePath('_epw_file',
+                             descriptive_name='Epw weather data file',
+                             relative_path=None, check_exists=False)
+    output_wea_file = RadiancePath('output_wea_file',
+                                   descriptive_name='Output wea file',
+                                   relative_path=None, check_exists=False)
 
-    def __init__(self, epwFile=None, outputWeaFile=None):
+    def __init__(self, epw_file=None, output_wea_file=None):
 
         RadianceCommand.__init__(self)
 
-        self.epwFile = epwFile
+        self.epw_file = epw_file
         """The path of the epw file that is to be converted to a wea file."""
 
-        self.outputWeaFile = outputWeaFile
+        self.output_wea_file = output_wea_file
         """The path of the output wea file. Note that this path will be created
          if not specified by the user."""
 
     @property
-    def epwFile(self):
-        return self._epwFile
+    def epw_file(self):
+        return self._epw_file
 
-    @epwFile.setter
-    def epwFile(self, value):
+    @epw_file.setter
+    def epw_file(self, value):
         """The path of the epw file that is to be converted to a wea file."""
         if value:
-            self._epwFile = value
-            if not self.outputWeaFile._value:
-                self.outputWeaFile = os.path.splitext(value)[0] + '.wea'
+            self._epw_file = value
+            if not self.output_wea_file._value:
+                self.output_wea_file = os.path.splitext(value)[0] + '.wea'
         else:
-            self._epwFile = None
+            self._epw_file = None
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         """Return full radiance command as string"""
 
-        radString = "%s %s %s" % (
-            '"%s"' % os.path.join(self.radbinPath, 'epw2wea'),
-            self.epwFile.toRadString(),
-            self.outputWeaFile.toRadString())
+        rad_string = "%s %s %s" % (
+            '"%s"' % os.path.join(self.radbin_path, 'epw2wea'),
+            self.epw_file.to_rad_string(),
+            self.output_wea_file.to_rad_string())
 
-        # self.checkInputFiles(radString)
-        return radString
+        # self.check_input_files(rad_string)
+        return rad_string
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Return input files specified by user."""
-        return self.epwFile.normpath,
+        return self.epw_file.normpath,

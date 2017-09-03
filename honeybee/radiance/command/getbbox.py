@@ -7,49 +7,49 @@ import os
 
 
 class Getbbox(RadianceCommand):
-    warningsSuppress = RadianceBoolFlag('w', 'warningsSuppress')
-    headerSuppress = RadianceBoolFlag('h', 'headerSuppress')
-    outputFile = RadiancePath('output', 'getbbox dimensions', checkExists=False)
+    warnings_suppress = RadianceBoolFlag('w', 'warnings_suppress')
+    header_suppress = RadianceBoolFlag('h', 'header_suppress')
+    output_file = RadiancePath('output', 'getbbox dimensions', check_exists=False)
 
-    def __init__(self, warningsSuppress=None, headerSuppress=None, radFiles=None,
-                 outputFile=None):
+    def __init__(self, warnings_suppress=None, header_suppress=None, rad_files=None,
+                 output_file=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        self.warningsSuppress = warningsSuppress
-        self.headerSuppress = headerSuppress
+        self.warnings_suppress = warnings_suppress
+        self.header_suppress = header_suppress
 
-        self.radFiles = radFiles
-        self.outputFile = outputFile
+        self.rad_files = rad_files
+        self.output_file = output_file
 
     @property
-    def radFiles(self):
+    def rad_files(self):
         """Get and set rad files."""
-        return self.__radFiles
+        return self.__rad_files
 
-    @radFiles.setter
-    def radFiles(self, files):
+    @rad_files.setter
+    def rad_files(self, files):
         if files:
             if isinstance(files, basestring):
                 files = [files]
-            self.__radFiles = [os.path.normpath(f) for f in files]
+            self.__rad_files = [os.path.normpath(f) for f in files]
         else:
-            self.__radFiles = []
+            self.__rad_files = []
 
-    def toRadString(self, relativePath=False):
-        warning = self.warningsSuppress.toRadString()
-        header = self.headerSuppress.toRadString()
-        radFiles = " ".join(self.normspace(f) for f in self.radFiles)
-        cmdPath = self.normspace(os.path.join(self.radbinPath, 'getbbox'))
-        outputFilePath = self.outputFile.toRadString()
-        outputFile = ">%s" % outputFilePath if outputFilePath else ''
-        radString = "{0} {1} {2} {3} {4}".format(cmdPath, header, warning, radFiles,
-                                                 outputFile)
-        self.checkInputFiles(radString)
+    def to_rad_string(self, relative_path=False):
+        warning = self.warnings_suppress.to_rad_string()
+        header = self.header_suppress.to_rad_string()
+        rad_files = " ".join(self.normspace(f) for f in self.rad_files)
+        cmd_path = self.normspace(os.path.join(self.radbin_path, 'getbbox'))
+        output_file_path = self.output_file.to_rad_string()
+        output_file = ">%s" % output_file_path if output_file_path else ''
+        rad_string = "{0} {1} {2} {3} {4}".format(cmdPath, header, warning, rad_files,
+                                                  output_file)
+        self.check_input_files(rad_string)
 
-        return radString
+        return rad_string
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Return input files by user."""
-        return self.radFiles
+        return self.rad_files

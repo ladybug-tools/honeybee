@@ -3,52 +3,52 @@ import re
 import os
 
 
-def getRadianceObjectsFromString(fullString):
+def get_radiance_objects_from_string(full_string):
     """
     separate a Radinace file string into multiple strings for each object.
 
     Args:
-        radFileString: Radiance data as a single string. The string can be multiline.
+        rad_fileString: Radiance data as a single string. The string can be multiline.
 
     Returns:
         A list of strings. Each string represents a differnt Rdiance Object
     """
-    rawRadObjects = re.findall(
+    raw_rad_objects = re.findall(
         r'(\n|^)(\w*(\h*\w.*\n){1,})',
-        fullString + "\n",
+        full_string + "\n",
         re.MULTILINE)
 
     return [("").join(radObject[:-1]) for radObject in rawRadObjects]
 
 
-def getRadianceObjectsFromFile(filePath):
+def get_radiance_objects_from_file(file_path):
     """
     Parse Radinace file and return a list of radiance objects as separate strings.
 
     Args:
-        filePath: Path to Radiance file
+        file_path: Path to Radiance file
 
     Returns:
         A list of strings. Each string represents a differnt Rdiance Object
 
     Usage:
-        getRadianceObjectsFromFile("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")
+        get_radiance_objects_from_file("C:/ladybug/21MAR900/imageBasedSimulation/21MAR900.rad")
     """
-    assert os.path.isfile(filePath), "Can't find %s." % filePath
+    assert os.path.isfile(file_path), "Can't find %s." % file_path
 
-    with open(filePath, "r") as radFile:
-        return getRadianceObjectsFromString("".join(radFile.readlines()))
+    with open(file_path, "r") as rad_file:
+        return get_radiance_objects_from_string("".join(rad_file.readlines()))
 
 
-def importRadianceMaterialsFromFile(filePath):
+def import_radiance_materials_from_file(file_path):
     """
     Parse Radinace file and add return available radiance materials in file.
 
     Args:
-        filePath: Path to a radiance file
+        file_path: Path to a radiance file
     """
     # get all the radiance objects including materials
-    radianceObjects = getRadianceObjectsFromFile(filePath)
+    radiance_objects = get_radiance_objects_from_file(file_path)
 
     # find materials and create honeybee materials from the string
     for radObj in radianceObjects:

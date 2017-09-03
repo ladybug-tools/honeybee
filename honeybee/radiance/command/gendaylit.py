@@ -15,10 +15,10 @@ class Gendaylit(RadianceCommand):
     naming purposes only.
 
     Attributes:
-        outputName: An optional name for output file name (Default: 'untitled').
-        monthDayHour: A tuple containing inputs for month, day and hour.
-        gendaylitParameters: Radiance parameters for gendaylit. If None Default
-            parameters will be set. You can use self.gendaylitParameters to view,
+        output_name: An optional name for output file name (Default: 'untitled').
+        month_day_hour: A tuple containing inputs for month, day and hour.
+        gendaylit_parameters: Radiance parameters for gendaylit. If None Default
+            parameters will be set. You can use self.gendaylit_parameters to view,
             add or remove the parameters before executing the command.
 
     Usage:
@@ -28,11 +28,11 @@ class Gendaylit(RadianceCommand):
 
         # create and modify gendaylit parameters.
         gndayParam = GendaylitParameters()
-        gndayParam.dirNormDifHorzIrrad = (600,100)
+        gndayParam.dir_norm_dif_horz_irrad = (600,100)
 
         # create the gendaylit Command.
-        gnday = Gendaylit(monthDayHour=(1,1,11), gendaylitParameters=gndayParam,
-        outputName = r'd:/sunnyWSun_010111.sky' )
+        gnday = Gendaylit(month_day_hour=(1,1,11), gendaylit_parameters=gndayParam,
+        output_name = r'd:/sunnyWSun_010111.sky' )
 
         # run gendaylit
         gnday.execute()
@@ -41,73 +41,73 @@ class Gendaylit(RadianceCommand):
 
     """
 
-    monthDayHour = RadianceTuple('monthDayHour', 'month day hour', tupleSize=3,
-                                 testType=False)
+    month_day_hour = RadianceTuple('month_day_hour', 'month day hour', tuple_size=3,
+                                   test_type=False)
 
-    outputFile = RadiancePath('outputFile', descriptiveName='output sky file',
-                              relativePath=None, checkExists=False)
+    output_file = RadiancePath('output_file', descriptive_name='output sky file',
+                               relative_path=None, check_exists=False)
 
-    def __init__(self, outputName, monthDayHour, rotation=0,
-                 gendaylitParameters=None):
+    def __init__(self, output_name, month_day_hour, rotation=0,
+                 gendaylit_parameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        outputName = outputName or 'untitled'
-        self.outputFile = outputName if outputName.lower().endswith(".sky") \
-            else outputName + ".sky"
+        output_name = output_name or 'untitled'
+        self.output_file = output_name if output_name.lower().endswith(".sky") \
+            else output_name + ".sky"
         """results file for sky (Default: untitled)"""
 
-        self.monthDayHour = monthDayHour
+        self.month_day_hour = month_day_hour
         self.rotation = rotation
-        self.gendaylitParameters = gendaylitParameters
+        self.gendaylit_parameters = gendaylit_parameters
 
     @classmethod
-    def fromLocationDirectAndDiffuseRadiation(
-        cls, outputName, location, monthDayHour, directRadiation, diffuseRadiation,
+    def from_location_direct_and_diffuse_radiation(
+        cls, output_name, location, month_day_hour, direct_radiation, diffuse_radiation,
             rotation=0):
         par = GendaylitParameters()
         par.latitude = location.latitude
         par.longitude = -location.longitude
-        par.dirNormDifHorzIrrad = (directRadiation, diffuseRadiation)
-        return cls(outputName, monthDayHour, rotation, par)
+        par.dir_norm_dif_horz_irrad = (direct_radiation, diffuse_radiation)
+        return cls(output_name, month_day_hour, rotation, par)
 
     @property
-    def gendaylitParameters(self):
-        """Get and set gendaylitParameters."""
-        return self._gendaylitParameters
+    def gendaylit_parameters(self):
+        """Get and set gendaylit_parameters."""
+        return self._gendaylit_parameters
 
-    @gendaylitParameters.setter
-    def gendaylitParameters(self, gendaylitParam):
-        self._gendaylitParameters = gendaylitParam if gendaylitParam is not None \
+    @gendaylit_parameters.setter
+    def gendaylit_parameters(self, gendaylit_param):
+        self._gendaylit_parameters = gendaylit_param if gendaylit_param is not None \
             else GendaylitParameters()
 
-        assert hasattr(self.gendaylitParameters, "isRadianceParameters"), \
-            "input gendaylitParameters is not a valid parameters type."
+        assert hasattr(self.gendaylit_parameters, "isRadianceParameters"), \
+            "input gendaylit_parameters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         """Return full command as a string."""
-        # generate the name from self.weaFile
-        monthDayHour = self.monthDayHour.toRadString().replace("-monthDayHour ", "") if \
-            self.monthDayHour else ''
+        # generate the name from self.wea_file
+        month_day_hour = self.month_day_hour.to_rad_string().replace("-month_day_hour ", "") if \
+            self.month_day_hour else ''
 
         if self.rotation != 0:
-            radString = "%s %s %s | xform -rz %.3f > %s" % (
-                self.normspace(os.path.join(self.radbinPath, 'gendaylit')),
-                monthDayHour,
-                self.gendaylitParameters.toRadString(),
+            rad_string = "%s %s %s | xform -rz %.3f > %s" % (
+                self.normspace(os.path.join(self.radbin_path, 'gendaylit')),
+                month_day_hour,
+                self.gendaylit_parameters.to_rad_string(),
                 self.rotation,
-                self.normspace(self.outputFile.toRadString())
+                self.normspace(self.output_file.to_rad_string())
             )
         else:
-            radString = "%s %s %s > %s" % (
-                self.normspace(os.path.join(self.radbinPath, 'gendaylit')),
-                monthDayHour,
-                self.gendaylitParameters.toRadString(),
-                self.normspace(self.outputFile.toRadString())
+            rad_string = "%s %s %s > %s" % (
+                self.normspace(os.path.join(self.radbin_path, 'gendaylit')),
+                month_day_hour,
+                self.gendaylit_parameters.to_rad_string(),
+                self.normspace(self.output_file.to_rad_string())
             )
-        return radString
+        return rad_string
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Input files for this command."""
         return None

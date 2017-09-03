@@ -18,48 +18,48 @@ class GridBased(DaylightCoeffGridBased):
     however it can only be used for models with no window groups.
 
     Attributes:
-        skyMtx: A radiance SkyMatrix or SkyVector. For an SkyMatrix the analysis
+        sky_mtx: A radiance SkyMatrix or SkyVector. For an SkyMatrix the analysis
             will be ran for the analysis period.
-        analysisGrids: A list of Honeybee analysis grids. Daylight metrics will
+        analysis_grids: A list of Honeybee analysis grids. Daylight metrics will
             be calculated for each analysisGrid separately.
-        simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+        simulation_type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
-        radianceParameters: Radiance parameters for this analysis. Parameters
+        radiance_parameters: Radiance parameters for this analysis. Parameters
             should be an instance of RfluxmtxParameters.
-        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
+        hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+        sub_folder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
 
     """
 
-    def __init__(self, skyMtx, analysisGrids, simulationType=0,
-                 radianceParameters=None, reuseDaylightMtx=True, hbObjects=None,
-                 subFolder="gridbased_annual"):
+    def __init__(self, sky_mtx, analysis_grids, simulation_type=0,
+                 radiance_parameters=None, reuse_daylight_mtx=True, hb_objects=None,
+                 sub_folder="gridbased_annual"):
         """Create an annual recipe."""
 
         DaylightCoeffGridBased.__init__(
-            self, skyMtx, analysisGrids, simulationType, radianceParameters,
-            reuseDaylightMtx, hbObjects, subFolder)
+            self, sky_mtx, analysis_grids, simulation_type, radiance_parameters,
+            reuse_daylight_mtx, hb_objects, sub_folder)
 
-    def write(self, targetFolder, projectName='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
 
         Args:
-            targetFolder: Path to parent folder. Files will be created under
-                targetFolder/gridbased. use self.subFolder to change subfolder name.
-            projectName: Name of this project as a string.
+            target_folder: Path to parent folder. Files will be created under
+                target_folder/gridbased. use self.sub_folder to change subfolder name.
+            project_name: Name of this project as a string.
             header: A boolean to include the header lines in commands.bat. header
                 includes PATH and cd toFolder
         Returns:
             Full path to command.bat
         """
-        # check for windowGroups
-        assert len(self.windowGroups) == 0, \
-            'You cannot use the annual recipe for a scene with windowGroups. ' \
+        # check for window_groups
+        assert len(self.window_groups) == 0, \
+            'You cannot use the annual recipe for a scene with window_groups. ' \
             'Try daylightcoeff recipe instead.'
-        if self.subFolder == "gridbased_daylightcoeff":
-            self.subFolder == "gridbased_annual"
+        if self.sub_folder == "gridbased_daylightcoeff":
+            self.sub_folder == "gridbased_annual"
 
-        return super(GridBased, self).write(targetFolder, projectName, header)
+        return super(GridBased, self).write(target_folder, project_name, header)
 
     def results(self):
         """Return results for this analysis."""
@@ -68,25 +68,25 @@ class GridBased(DaylightCoeffGridBased):
             "to run the analysis before loading the results."
 
         print('Unloading the current values from the analysis grids.')
-        for ag in self.analysisGrids:
+        for ag in self.analysis_grids:
             ag.unload()
 
         # results are merged as a single file
         for rf in self._resultFiles:
             folder, name = os.path.split(rf)
             df = os.path.join(folder, 'sun..%s' % name)
-            mode = 179 if self.simulationType == 1 else 0
-            startLine = 0
-            for count, analysisGrid in enumerate(self.analysisGrids):
+            mode = 179 if self.simulation_type == 1 else 0
+            start_line = 0
+            for count, analysisGrid in enumerate(self.analysis_grids):
                 if count:
-                    startLine += len(self.analysisGrids[count - 1])
+                    start_line += len(self.analysis_grids[count - 1])
 
                 if not os.path.exists(df):
                     print('\nAdding {} to result files for {}\n'
                           .format(rf, analysisGrid.name))
                     # total value only
-                    analysisGrid.addResultFiles(
-                        rf, self.skyMatrix.hoys, startLine, False, header=True,
+                    analysisGrid.add_result_files(
+                        rf, self.sky_matrix.hoys, start_line, False, header=True,
                         mode=mode
                     )
                 else:
@@ -94,14 +94,14 @@ class GridBased(DaylightCoeffGridBased):
                     print('\nAdding {} and {} to result files for {}\n'
                           .format(rf, df, analysisGrid.name))
 
-                    analysisGrid.addResultFiles(
-                        rf, self.skyMatrix.hoys, startLine, False, header=True,
+                    analysisGrid.add_result_files(
+                        rf, self.sky_matrix.hoys, start_line, False, header=True,
                         mode=mode
                     )
 
-                    analysisGrid.addResultFiles(
-                        df, self.skyMatrix.hoys, startLine, True, header=True,
+                    analysisGrid.add_result_files(
+                        df, self.sky_matrix.hoys, start_line, True, header=True,
                         mode=mode
                     )
 
-        return self.analysisGrids
+        return self.analysis_grids

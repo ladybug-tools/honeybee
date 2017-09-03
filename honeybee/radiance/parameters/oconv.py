@@ -25,12 +25,12 @@ class OconvParameters(AdvancedRadianceParameters):
             This should be greater than or equal to the ratio of the largest and
             smallest dimensions in the scene (ie. surface size or distance between
             surfaces)" (default:16384)
-        maxSetSize: [-n] An integer that "specifies the maximum surface set size
+        max_set_size: [-n] An integer that "specifies the maximum surface set size
             for each voxel. Larger numbers result in quicker octree generation,
             but potentially slower rendering. Smaller values may or may not
             produce faster renderings, since the default number (6) is close to
             optimal for most scenes (Default: 6).
-        turnOffWarns: [-w] A Boolean to suppress warnings (Default: False).
+        turn_off_warns: [-w] A Boolean to suppress warnings (Default: False).
 
         * For the full list of attributes try self.parameters
         ** values between []'s indicate Radiance equivalent keys for advanced users
@@ -41,24 +41,24 @@ class OconvParameters(AdvancedRadianceParameters):
         ocvp = OconvParameters()
 
         # default values.
-        print ocvp.toRadString()
+        print ocvp.to_rad_string()
         > -f
 
         # add modifiers file
-        ocvp.turnOffWarns = True
+        ocvp.turn_off_warns = True
 
         # check radiance parameters with the new values
-        print ocvp.toRadString()
+        print ocvp.to_rad_string()
         > -f -w
     """
 
-    def __init__(self, frozen=True, resolution=None, maxSetSize=None,
-                 turnOffWarns=None):
+    def __init__(self, frozen=True, resolution=None, max_set_size=None,
+                 turn_off_warns=None):
         """Init paramters."""
         AdvancedRadianceParameters.__init__(self)
 
         # add parameters
-        self.addRadianceBoolFlag('f', 'freeze octree', attributeName='frozen')
+        self.add_radiance_bool_flag('f', 'freeze octree', attribute_name='frozen')
         self.frozen = frozen
         """
         [-f] A Boolean to produce "a frozen octree containing all the scene
@@ -71,8 +71,8 @@ class OconvParameters(AdvancedRadianceParameters):
         input octree is frozen, the output will be also. (default: True)
         """
 
-        self.addRadianceNumber('r', 'maximum octree resolution',
-                               checkPositive=True, attributeName='resolution')
+        self.add_radiance_number('r', 'maximum octree resolution',
+                                 check_positive=True, attribute_name='resolution')
         self.resolution = resolution
         """
         [-r] An integer that "specifies the maximum octree resolution.
@@ -81,9 +81,9 @@ class OconvParameters(AdvancedRadianceParameters):
         surfaces)" (default:16384)
         """
 
-        self.addRadianceNumber('n', 'maximum surface set size for each voxel',
-                               checkPositive=True, attributeName='maxSetSize')
-        self.maxSetSize = maxSetSize
+        self.add_radiance_number('n', 'maximum surface set size for each voxel',
+                                 check_positive=True, attribute_name='max_set_size')
+        self.max_set_size = max_set_size
         """
         [-n] An integer that "specifies the maximum surface set size
         for each voxel. Larger numbers result in quicker octree generation,
@@ -92,7 +92,7 @@ class OconvParameters(AdvancedRadianceParameters):
         optimal for most scenes (Default: 6).
         """
 
-        self.addRadianceBoolFlag('w', 'suppress warnings',
-                                 attributeName='turnOffWarns')
-        self.turnOffWarns = turnOffWarns
+        self.add_radiance_bool_flag('w', 'suppress warnings',
+                                    attribute_name='turn_off_warns')
+        self.turn_off_warns = turn_off_warns
         """[-w] A Boolean to suppress warnings (Default: False)."""

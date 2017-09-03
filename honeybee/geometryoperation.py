@@ -2,7 +2,7 @@
 from vectormath.euclid import math, Vector3
 
 
-def stripPointList(pts):
+def strip_point_list(pts):
     """Flatten a list of list of points."""
     if not hasattr(pts[0], '__iter__') or hasattr(pts[0], 'X'):
         return pts
@@ -11,16 +11,16 @@ def stripPointList(pts):
         return pts[0]
     else:
         # pts are nested than what it should be, just strip them onece more
-        return stripPointList(pts[0])
+        return strip_point_list(pts[0])
 
 
-def normalFromPoints(pts):
+def normal_from_points(pts):
     """Calculate normal vector for a list of points.
 
     This method uses the pts[-1], pts[0] and pts[1] to calculate the normal
     assuming the points are representing a planar surface
     """
-    # pts = stripPointList(pts)
+    # pts = strip_point_list(pts)
 
     try:
         # vector between first point and the second point on the list
@@ -50,18 +50,18 @@ def normalFromPoints(pts):
         return tuple(v1.cross(v2).normalize())
 
 
-def upVectorFromPoints(pts):
+def up_vector_from_points(pts):
     """Calculate up vector for a surface from points."""
-    xAxis = Vector3(pts[1][0] - pts[0][0],
-                    pts[1][1] - pts[0][1],
-                    pts[1][2] - pts[0][2])
+    x_axis = Vector3(pts[1][0] - pts[0][0],
+                     pts[1][1] - pts[0][1],
+                     pts[1][2] - pts[0][2])
 
-    normal = Vector3(*normalFromPoints(pts))
+    normal = Vector3(*normal_from_points(pts))
 
     return tuple(normal.cross(xAxis).normalize())
 
 
-def centerPointFromPoints(pts):
+def center_point_from_points(pts):
     """Calculate center point.
 
     This method finds the center point by averging x, y and z values.
@@ -69,7 +69,7 @@ def centerPointFromPoints(pts):
     x, y, z = 0, 0, 0
 
     try:
-        ptCount = float(len(pts))
+        pt_count = float(len(pts))
         for pt in pts:
             x += pt[0]
             y += pt[1]
@@ -82,9 +82,9 @@ def centerPointFromPoints(pts):
     return x / ptCount, y / ptCount, z / ptCount
 
 
-def vectorAngleToZAxis(vector):
+def vector_angleToZAxis(vector):
     """Calculate angle between vectoe and (0, 0, 1) in degrees."""
-    zAxis = Vector3(0, 0, 1)
+    z_axis = Vector3(0, 0, 1)
     try:
         return math.degrees(zAxis.angle(Vector3(*vector)))
     except TypeError:
@@ -92,7 +92,7 @@ def vectorAngleToZAxis(vector):
         return math.degrees(zAxis.angle(Vector3(vector.X, vector.Y, vector.Z)))
 
 
-def vectorAngle(vector1, vector2):
+def vector_angle(vector1, vector2):
     """Calculate vector angle between two vectors."""
     try:
         v1 = Vector3(*vector1)
@@ -108,7 +108,7 @@ def vectorAngle(vector1, vector2):
 
 if __name__ == "__main__":
     pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))
-    srfVector = normalFromPoints(pts)
+    srfVector = normal_from_points(pts)
 
-    print vectorAngleToZAxis(srfVector)
-    print centerPointFromPoints(pts)
+    print vector_angleToZAxis(srfVector)
+    print center_point_from_points(pts)

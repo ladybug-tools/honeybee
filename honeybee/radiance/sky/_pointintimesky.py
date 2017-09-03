@@ -1,5 +1,5 @@
 from ._skyBase import RadianceSky
-from ...futil import writeToFileByName
+from ...futil import write_to_fileByName
 from ladybug.dt import DateTime
 from ladybug.location import Location
 
@@ -50,19 +50,19 @@ class PointInTimeSky(RadianceSky):
         self.suffix = suffix or ''
 
     @classmethod
-    def fromLatLong(cls, city, latitude, longitude, timezone, elevation,
-                    month=6, day=21, hour=9, north=0):
+    def from_lat_long(cls, city, latitude, longitude, timezone, elevation,
+                      month=6, day=21, hour=9, north=0):
         """Create sky from latitude and longitude."""
         loc = Location(city, None, latitude, longitude, timezone, elevation)
         return cls(loc, month, day, hour, north)
 
     @property
-    def isClimateBased(self):
+    def is_climate_based(self):
         """Return True if the sky is generated from values from weather file."""
         return False
 
     @property
-    def isPointInTime(self):
+    def is_point_in_time(self):
         """Return True if the sky is generated for a single poin in time."""
         return True
 
@@ -120,12 +120,12 @@ class PointInTimeSky(RadianceSky):
             '_{}'.format(self.suffix) if self.suffix else ''
         )
 
-    def writeSkyGround(self, folder, filename=None):
+    def write_sky_ground(self, folder, filename=None):
         """Write sky and ground materials to a file."""
         filename = filename or 'groundSky.rad'
         if not filename.lower().endswith('.rad'):
             filename += '.rad'
-        return writeToFileByName(folder, filename, self.SKYGROUNDMATERIAL, True)
+        return write_to_fileByName(folder, filename, self.SKYGROUNDMATERIAL, True)
 
     def command(self, folder):
         """Get sky radiance command."""
@@ -134,9 +134,9 @@ class PointInTimeSky(RadianceSky):
             'like CIE or ClimateBased'.format(self.__class__.__name__)
         )
 
-    def toRadString(self, folder=None):
+    def to_rad_string(self, folder=None):
         """Get sky radiance command."""
-        return self.command(folder).toRadString()
+        return self.command(folder).to_rad_string()
 
     def execute(self, folder=None):
         """Get sky radiance command.
@@ -151,10 +151,10 @@ class PointInTimeSky(RadianceSky):
         return PointInTimeSky(
             self.location, self.month, self.day, self.hour, self.north, self.suffix)
 
-    def ToString(self):
+    def to_string(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 
     def __repr__(self):
         """Sky representation."""
-        return self.command().toRadString()
+        return self.command().to_rad_string()

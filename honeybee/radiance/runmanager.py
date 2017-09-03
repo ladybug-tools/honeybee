@@ -8,28 +8,28 @@ import os
 class AnalysisBase(object):
     """Base analysis class for Radiance analysis."""
 
-    def __init__(self, HBObjects, analysisRecipe, otherRADFiles=None):
-        """Create an analysis by HBSky and HBObjects.
+    def __init__(self, hb_objects, analysis_recipe, other_rad_files=None):
+        """Create an analysis by HBSky and hb_objects.
 
         Args:
             HBSky: A honeybee.radiance.sky
-            analysisRecipe: A honeybee.radiance.analysisRecipe
-            HBObjects: A list of Honeybee surfaces or zones
-            otherRADFiles: An ordered list of additional radiance file to be
+            analysis_recipe: A honeybee.radiance.analysis_recipe
+            hb_objects: A list of Honeybee surfaces or zones
+            other_rad_files: An ordered list of additional radiance file to be
                 added to the analysis.
         """
         self.__isExecuted = False
         self.__done = False
 
     @property
-    def isRunning(self):
+    def is_running(self):
         """Return is analysis is still running."""
         if not self.__isExecuted:
             return False
         return not self.__done
 
     @property
-    def isOver(self):
+    def is_over(self):
         """Return if analysis is done."""
         return self.__done
 
@@ -45,30 +45,30 @@ class AnalysisBase(object):
     def run(self, minimize=False):
         """Run analysis."""
         self.__isExecuted = True
-        self.__executeBatchFiles(minimize=minimize)
+        self.__execute_batch_files(minimize=minimize)
 
     def results(self):
         """Get analysis results."""
         pass
 
-    def __executeBatchFiles(self, batchFiles, maxPRuns=None, minimize=False,
-                            waitingTime=0.5):
+    def __execute_batch_files(self, batch_files, max_p_runs=None, minimize=False,
+                              waiting_time=0.5):
         """Run a list of batch files in parallel.
 
         Args:
-            batchFiles: List of batch files.
-            maxPRuns: Max number of files to be ran in parallel (default: 1).
+            batch_files: List of batch files.
+            max_p_runs: Max number of files to be ran in parallel (default: 1).
             minimize: Set to True if you want NOT to see the cmd window.
         """
-        if not maxPRuns:
-            maxPRuns = 1
-        maxPRuns = int(maxPRuns)
-        total = len(batchFiles)
+        if not max_p_runs:
+            max_p_runs = 1
+        max_p_runs = int(max_p_runs)
+        total = len(batch_files)
 
-        if maxPRuns < 1:
-            maxPRuns = 1
-        if maxPRuns > total:
-            maxPRuns = total
+        if max_p_runs < 1:
+            max_p_runs = 1
+        if max_p_runs > total:
+            max_p_runs = total
 
         running = 0
         self.__done = False
@@ -77,11 +77,15 @@ class AnalysisBase(object):
 
         try:
             while not self.__done:
-                if running < maxPRuns and pid < total:
+                if running < max_p_runs and pid < total:
                     # execute the files
-                    jobs.append(Popen(os.path.normpath(batchFiles[pid]), shell=minimize))
+                    jobs.append(
+                        Popen(
+                            os.path.normpath(
+                                batch_files[pid]),
+                            shell=minimize))
                     pid += 1
-                    time.sleep(waitingTime)
+                    time.sleep(waiting_time)
 
                 # count how many jobs are running and how many are done
                 running = 0
@@ -93,9 +97,9 @@ class AnalysisBase(object):
                     else:
                         finished += 1
 
-                if running == maxPRuns:
+                if running == max_p_runs:
                     # wait for half a second
-                    time.sleep(waitingTime)
+                    time.sleep(waiting_time)
 
                 if finished == total:
                     self.__done = True

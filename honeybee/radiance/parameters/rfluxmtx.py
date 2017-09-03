@@ -10,12 +10,12 @@ from ..datatype import RadianceNumber
 class RfluxmtxParameters(GridBasedParameters):
     """Rfluxmtx parameters."""
 
-    samplingRaysCount = RadianceNumber('c', 'number of sampling rays', numType=int)
+    sampling_rays_count = RadianceNumber('c', 'number of sampling rays', num_type=int)
 
     def __init__(self, quality=None):
         """Init parameters."""
         GridBasedParameters.__init__(self, quality)
-        self.addRadianceNumber('c', descriptiveName='Sampling Rays Count',
-                               attributeName="samplingRaysCount", numType=int)
-        self.samplingRaysCount = None
+        self.add_radiance_number('c', descriptive_name='Sampling Rays Count',
+                                 attribute_name="sampling_rays_count", num_type=int)
+        self.sampling_rays_count = None
         """-c int Number of sampling ray counts."""

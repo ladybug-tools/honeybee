@@ -11,25 +11,25 @@ from ._frozen import frozen
 
 @frozen
 class FalsecolorParameters(AdvancedRadianceParameters):
-    def __init__(self, picForContours=None, contourBands=None, contourLines=None,
-                 printExtremaPoints=None, scale=None, label=None, contourQuant=None,
-                 legendWidth=None, legendHeight=None, log=None, multiplier=None,
+    def __init__(self, pic_for_contours=None, contour_bands=None, contour_lines=None,
+                 print_extrema_points=None, scale=None, label=None, contour_quant=None,
+                 legend_width=None, legend_height=None, log=None, multiplier=None,
                  palette=None):
 
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadiancePath('p', 'picture for contours', checkExists=True,
-                             attributeName='picForContours')
-        self.picForContours = picForContours
+        self.add_radiance_path('p', 'picture for contours', check_exists=True,
+                               attribute_name='pic_for_contours')
+        self.pic_for_contours = pic_for_contours
         """
         -p picture
 
         Contour lines can be placed over another Radiance picture using the -p option.
         """
 
-        self.addRadianceBoolFlag('cb', 'create contour bands',
-                                 attributeName='contourBands')
-        self.contourBands = contourBands
+        self.add_radiance_bool_flag('cb', 'create contour bands',
+                                    attribute_name='contour_bands')
+        self.contour_bands = contour_bands
         """
         -cb
 
@@ -37,9 +37,9 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         thickness of the bands is related to the rate of change in the image.
         """
 
-        self.addRadianceBoolFlag('cl', 'create contour lines',
-                                 attributeName='contourLines')
-        self.contourLines = contourLines
+        self.add_radiance_bool_flag('cl', 'create contour lines',
+                                    attribute_name='contour_lines')
+        self.contour_lines = contour_lines
         """
         -cl
 
@@ -48,11 +48,11 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         picture using the -p  option.
         """
 
-        self.addRadianceBoolFlag(
+        self.add_radiance_bool_flag(
             'e',
             'print extrema points',
-            attributeName='printExtremaPoints')
-        self.printExtremaPoints = printExtremaPoints
+            attribute_name='print_extrema_points')
+        self.print_extrema_points = print_extrema_points
         """
         -e
 
@@ -60,7 +60,7 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         darkest pixels of the input picture.
         """
 
-        self.addRadianceValue('s', 'scaling value', attributeName='scale')
+        self.add_radiance_value('s', 'scaling value', attribute_name='scale')
         self.scale = scale
         """
         -s scale
@@ -71,7 +71,7 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         or irradiance to luminance or illuminance, respectively.
         """
 
-        self.addRadianceValue('l', 'label for legend', attributeName='label')
+        self.add_radiance_value('l', 'label for legend', attribute_name='label')
         self.label = label
         """
         -l label
@@ -81,9 +81,9 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         Radiance images.
         """
 
-        self.addRadianceNumber('n', 'number of contours', attributeName='contourQuant',
-                               numType=int)
-        self.contourQuant = contourQuant
+        self.add_radiance_number('n', 'number of contours', attribute_name='contour_quant',
+                                 num_type=int)
+        self.contour_quant = contour_quant
         """
         -n
 
@@ -91,26 +91,26 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         corresponding legend entries) from the default value of 8.
         """
 
-        self.addRadianceNumber('lw', 'legend width', attributeName='legendWidth',
-                               numType=int)
-        self.legendWidth = legendWidth
+        self.add_radiance_number('lw', 'legend width', attribute_name='legend_width',
+                                 num_type=int)
+        self.legend_width = legend_width
         """
         The -lw and -lh options may be used to change the legend dimensions
         from the default width and height of 100x200. A value of zero in either
         eliminates the legend in the output.
         """
 
-        self.addRadianceNumber('lh', 'legend height', attributeName='legendHeight',
-                               numType=int)
-        self.legendHeight = legendHeight
+        self.add_radiance_number('lh', 'legend height', attribute_name='legend_height',
+                                 num_type=int)
+        self.legend_height = legend_height
         """
         The -lw and -lh options may be used to change the legend dimensions
         from the default width and height of 100x200. A value of zero in either
         eliminates the legend in the output.
         """
 
-        self.addRadianceNumber('log', 'number of decades for log scale',
-                               attributeName='log', numType=int)
+        self.add_radiance_number('log', 'number of decades for log scale',
+                                 attribute_name='log', num_type=int)
         self.log = log
         """
         -log
@@ -119,7 +119,8 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         desired.
         """
 
-        self.addRadianceNumber('m', 'multiplier for scaling', attributeName='multiplier')
+        self.add_radiance_number('m', 'multiplier for scaling',
+                                 attribute_name='multiplier')
         self.multiplier = multiplier
         """
         The default multiplier is 179, which converts from radiance or irradiance
@@ -127,8 +128,8 @@ class FalsecolorParameters(AdvancedRadianceParameters):
         given with -m to get daylight factors or whatever.
         """
 
-        self.addRadianceValue('pal', 'color palettes', attributeName='palette',
-                              acceptedInputs=('spec', 'hot', 'pm3d'))
+        self.add_radiance_value('pal', 'color palettes', attribute_name='palette',
+                                accepted_inputs=('spec', 'hot', 'pm3d'))
         self.palette = palette
         """
         The -pal option provides different color palettes for falsecolor. The

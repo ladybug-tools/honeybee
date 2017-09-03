@@ -9,65 +9,65 @@ import os
 
 class Rcalc(RadianceCommand):
 
-    def __init__(self, outputFile=None, radFile=None, rcalcParameters=None):
+    def __init__(self, output_file=None, rad_file=None, rcalc_parameters=None):
         RadianceCommand.__init__(self)
 
-        self.outputFile = outputFile
-        self.radFile = radFile
-        self.rcalcParameters = rcalcParameters
+        self.output_file = output_file
+        self.rad_file = rad_file
+        self.rcalc_parameters = rcalc_parameters
 
     @property
-    def rcalcParameters(self):
-        """Get and set gendaymtxParameters."""
-        return self._rcalcParameters
+    def rcalc_parameters(self):
+        """Get and set gendaymtx_parameters."""
+        return self._rcalc_parameters
 
-    @rcalcParameters.setter
-    def rcalcParameters(self, parameters):
-        self._rcalcParameters = parameters or RcalcParameters()
+    @rcalc_parameters.setter
+    def rcalc_parameters(self, parameters):
+        self._rcalc_parameters = parameters or RcalcParameters()
 
-        assert hasattr(self._rcalcParameters, "isRadianceParameters"), \
-            "input rcalcParameters is not a valid parameters type."
+        assert hasattr(self._rcalc_parameters, "isRadianceParameters"), \
+            "input rcalc_parameters is not a valid parameters type."
 
     @property
-    def radFile(self):
+    def rad_file(self):
         """Get and set rad files."""
-        return self._radFile
+        return self._rad_file
 
-    @radFile.setter
-    def radFile(self, files):
+    @rad_file.setter
+    def rad_file(self, files):
         if files:
             if isinstance(files, basestring):
                 files = [files]
-            self._radFile = [os.path.normpath(f) for f in files]
+            self._rad_file = [os.path.normpath(f) for f in files]
         else:
-            self._radFile = []
+            self._rad_file = []
 
     @property
-    def outputFile(self):
-        return self._outputFile
+    def output_file(self):
+        return self._output_file
 
-    @outputFile.setter
-    def outputFile(self, filePath):
-        if filePath:
-            self._outputFile = os.path.normpath(filePath)
+    @output_file.setter
+    def output_file(self, file_path):
+        if file_path:
+            self._output_file = os.path.normpath(file_path)
         else:
-            self._outputFile = ''
+            self._output_file = ''
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Return input files by the user."""
-        return self.radFile
+        return self.rad_file
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         """Return full command as a string."""
-        cmdPath = self.normspace(os.path.join(self.radbinPath, 'rcalc'))
-        rcalcParam = self.rcalcParameters.toRadString()
-        inputPath = " ".join(self.normspace(f) for f in self.radFile)
-        outputPath = self.normspace(self.outputFile)
+        cmd_path = self.normspace(os.path.join(self.radbin_path, 'rcalc'))
+        rcalc_param = self.rcalc_parameters.to_rad_string()
+        input_path = " ".join(self.normspace(f) for f in self.rad_file)
+        output_path = self.normspace(self.output_file)
 
-        radString = "{0} {1} {2} > {3}".format(cmdPath, rcalcParam,
-                                               inputPath, outputPath)
+        rad_string = "{0} {1} {2} > {3}".format(cmdPath, rcalc_param,
+                                                inputPath, outputPath)
 
-        self.checkInputFiles(radString)
+        self.check_input_files(rad_string)
 
-        return radString
+        return rad_string

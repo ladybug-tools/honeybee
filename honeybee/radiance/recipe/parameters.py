@@ -34,11 +34,11 @@ from collections import namedtuple
 # external geometry (complex fins,overhangs etc).
 DCDEFAULTS = (
     {'ambientDivisions': 5000, 'ambientBounces': 3, 'limitWeight': 0.000002,
-     'samplingRaysCount': 1},
+     'sampling_rays_count': 1},
     {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.67E-07,
-     'samplingRaysCount': 1},
+     'sampling_rays_count': 1},
     {'ambientDivisions': 25000, 'ambientBounces': 6, 'limitWeight': 4E-07,
-     'samplingRaysCount': 1}
+     'sampling_rays_count': 1}
 )
 
 # Image-based daylight coefficients
@@ -50,11 +50,11 @@ DCDEFAULTS = (
 #   High: Set these parameters for generating high-quality final renderings.
 IMGDCDEFAULTS = (
     {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
-     'samplingRaysCount': 1},
+     'sampling_rays_count': 1},
     {'ambientDivisions': 5000, 'ambientBounces': 4, 'limitWeight': 0.00002,
-     'samplingRaysCount': 5},
+     'sampling_rays_count': 5},
     {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.666E-06,
-     'samplingRaysCount': 6}
+     'sampling_rays_count': 6}
 )
 
 
@@ -67,11 +67,11 @@ IMGDCDEFAULTS = (
 #   High: Set these parameters for generating high-quality final renderings.
 IMGVMDEFAULTS = (
     {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
-     'samplingRaysCount': 1},
+     'sampling_rays_count': 1},
     {'ambientDivisions': 3000, 'ambientBounces': 4, 'limitWeight': 3.33E-05,
-     'samplingRaysCount': 5},
+     'sampling_rays_count': 5},
     {'ambientDivisions': 10000, 'ambientBounces': 5, 'limitWeight': 1E-05,
-     'samplingRaysCount': 6}
+     'sampling_rays_count': 6}
 )
 
 # Illuminance based view matrix parameters.
@@ -96,11 +96,11 @@ VMDEFAULTS = (
 # of the sky.
 DMDEFAULTS = (
     {'ambientDivisions': 1024, 'ambientBounces': 2, 'limitWeight': 0.00001,
-     'samplingRaysCount': 1000},
+     'sampling_rays_count': 1000},
     {'ambientDivisions': 3000, 'ambientBounces': 4, 'limitWeight': 3.33E-06,
-     'samplingRaysCount': 1000},
+     'sampling_rays_count': 1000},
     {'ambientDivisions': 10000, 'ambientBounces': 6, 'limitWeight': 0.000001,
-     'samplingRaysCount': 1000}
+     'sampling_rays_count': 1000}
 )
 
 # Sun-matrix
@@ -114,22 +114,22 @@ SMDEFAULTS = {'ambientBounces': 0, 'directJitter': 0, 'directCertainty': 1,
 Parameters = namedtuple('Parameters', ['rad', 'vmtx', 'dmtx', 'smtx'])
 
 
-def getRadianceParametersGridBased(quality, recType):
+def get_radiance_parameters_grid_based(quality, rec_type):
     """Get Radiance parameters for grid based recipes.
 
     Args:
         quality: 0 > low, 1 > Medium, 2 > High
-        recType: Type of recipe.
+        rec_type: Type of recipe.
             0 > Point-in-time, 1 > Daylight Coeff., 2 > 3Phase, 3 > 5Phase
 
     Returns:
-        radianceParameters, viewMatrixParameters, daylightMatrixParameters,
+        radiance_parameters, viewMatrixParameters, daylight_matrixParameters,
         sunMatrixParameters
     """
 
-    if recType == 0:
+    if rec_type == 0:
         return Parameters(GridBasedParameters(quality), None, None, None)
-    elif recType == 1:
+    elif rec_type == 1:
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
         for k, v in DCDEFAULTS[quality].iteritems():
@@ -160,20 +160,20 @@ def getRadianceParametersGridBased(quality, recType):
         return Parameters(None, vmtxpar, dmtxpar, sunmtxpar)
 
 
-def getRadianceParametersImageBased(quality, recType):
+def get_radiance_parameters_image_based(quality, rec_type):
     """Get Radiance parameters for image based recipes.
 
     Args:
         quality: 0 > low, 1 > Medium, 2 > High
-        recType: Type of recipe.
+        rec_type: Type of recipe.
             0 > Point-in-time, 1 > Daylight Coeff., 2 > 3Phase, 3 > 5Phase
 
     Returns:
-        radianceParameters, viewMatrixParameters, daylightMatrixParameters
+        radiance_parameters, viewMatrixParameters, daylight_matrixParameters
     """
-    if recType == 0:
+    if rec_type == 0:
         return Parameters(ImageBasedParameters(quality), None, None, None)
-    elif recType == 1:
+    elif rec_type == 1:
         # this is a place holder.
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)

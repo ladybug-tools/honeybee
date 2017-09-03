@@ -7,22 +7,22 @@ class RadianceSky(object):
     __slots__ = ()
 
     @property
-    def isRadianceSky(self):
+    def is_radiance_sky(self):
         """Return True for skies."""
         return True
 
     @property
-    def isPointInTime(self):
+    def is_point_in_time(self):
         """Return True if the sky is generated for a single poin in time."""
         return False
 
     @abstractproperty
-    def isClimateBased(self):
+    def is_climate_based(self):
         """Return True if the sky is created based on values from weather file."""
         pass
 
     @abstractmethod
-    def toRadString(self):
+    def to_rad_string(self):
         """Return radiance definition as a string."""
         pass
 
