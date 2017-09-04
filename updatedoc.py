@@ -37,7 +37,7 @@ def html_out(m, html_dir, html=True):
             if not html:
                 out = m.text()
             else:
-                out = m.html(source=True)
+                out = m.html(source=True, top_module='honeybee')
             w.write(out)
             # print(out, file=w)
     except Exception:
