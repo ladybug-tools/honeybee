@@ -52,10 +52,10 @@ def html_out(m, html_dir, html=True):
         html_out(submodule, html_dir, html)
 
 
-root = os.path.dirname(honeybee.__file__)
-with open(os.path.join(root, '__init__.py'), 'wb') as init:
-    init.write('__all__ = ["config"]')
-#     init.write('__all__ = [%s]' % ','.join(listdir(root)))
+# root = os.path.dirname(honeybee.__file__)
+# with open(os.path.join(root, '__init__.py'), 'wb') as init:
+# init.write('__all__ = ["config"]')
+# init.write('__all__ = [%s]' % ','.join(listdir(root)))
 
 html_dir = r'C:\Users\Mostapha\Documents\code\ladybug-tools\honeybee\doc'
 module = pdoc.Module(honeybee, docfilter=None, allsubmodules=True)

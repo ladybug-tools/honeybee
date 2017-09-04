@@ -40,7 +40,7 @@ class HBZone(HBObject):
         self._surfaces = []
 
     @classmethod
-    def fromep_string(cls, ep_string, geometry_rules=None, building_program=None,
+    def from_ep_string(cls, ep_string, geometry_rules=None, building_program=None,
                       zone_program=None, is_conditioned=True):
         """Init Honeybee zone from an ep_string.
 

@@ -79,7 +79,7 @@ class HBSurface(HBAnalysisSurface):
 
     # TODO: Parse EnergyPlus properties
     @classmethod
-    def fromep_string(cls, ep_string):
+    def from_ep_string(cls, ep_string):
         """Init Honeybee surface from an ep_string.
 
         Args:
