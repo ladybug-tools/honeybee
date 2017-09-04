@@ -242,7 +242,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /**
@@ -565,16 +565,19 @@ table {
   }
   #content {
     width: 70%;
-    max-width: 850px;
+    margin-left: 25%;
+    max-width: 90%;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
+    position: fixed;
+    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow: hidden;
+    overflow: auto;
   }
   #nav {
     font-size: 130%;
@@ -651,7 +654,7 @@ table {
 
   code {
     background: #f9f9f9;
-  } 
+  }
 
   pre {
     background: #fefefe;
@@ -668,7 +671,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; } 
+    .codehilite .err { background: #ff3300; color: #fff !important; }
 
   table#module-list {
     font-size: 110%;
@@ -779,7 +782,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-      
+
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -793,7 +796,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: scroll;
+      overflow-y: auto;
       margin-bottom: 15px;
     }
 
@@ -808,12 +811,21 @@ table {
     clear: both;
   }
 
+  .desc {
+    white-space: pre-wrap;
+  }
+
   @media all and (max-width: 950px) {
     #sidebar {
-      width: 35%;
+      position: inherit;
+      float: none;
+      width: auto;
     }
     #content {
-      width: 65%;
+      width: 95%;
+      margin-left: auto;
+      border-left: none;
+      padding: 30px;
     }
   }
   @media all and (max-width: 650px) {
@@ -1032,7 +1044,6 @@ table {
   </script>
 </head>
 <body>
-<a href="#" id="top">Top</a>
 
 <div id="container">
     
@@ -1064,9 +1075,9 @@ table {
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.add_surface_state">add_surface_state</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.duplicate">duplicate</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.duplicate_vertices">duplicate_vertices</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.from_ep_string">from_ep_string</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.from_geometry">from_geometry</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.from_rad_ep_properties">from_rad_ep_properties</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.fromep_string">fromep_string</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.rad_string_to_file">rad_string_to_file</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.radiance_materials">radiance_materials</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.to_rad_string">to_rad_string</a></li>
@@ -1175,7 +1186,7 @@ table {
 
     <span class="c1"># TODO: Parse EnergyPlus properties</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_ep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init Honeybee surface from an ep_string.</span>
 
 <span class="sd">        Args:</span>
@@ -1526,7 +1537,7 @@ print hbsrf.to_rad_string(include_materials=True)
 
     <span class="c1"># TODO: Parse EnergyPlus properties</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_ep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init Honeybee surface from an ep_string.</span>
 
 <span class="sd">        Args:</span>
@@ -2507,6 +2518,52 @@ HBSrf.radiance_material = radMat
   
             
   <div class="item">
+    <div class="name def" id="honeybee.hbsurface.HBSurface.from_ep_string">
+    <p>def <span class="ident">from_ep_string</span>(</p><p>cls, ep_string)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Init Honeybee surface from an ep_string.</p>
+<p>Args:
+    ep_string: The full ep_string for an EnergyPlus surface.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.from_ep_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBSurface.from_ep_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_ep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Init Honeybee surface from an ep_string.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        ep_string: The full ep_string for an EnergyPlus surface.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Wall&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Roof&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Floor&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Ceiling&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+    <span class="c1"># clean input ep_string - split based on comma</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="n">ep_string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">srf_type</span> <span class="o">=</span> <span class="n">types</span><span class="p">[</span><span class="n">segments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()]</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="nb">range</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">-</span> <span class="mi">11</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># create points</span>
+    <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">xrange</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">),</span> <span class="mi">3</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pts</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is an invalid value for points.&quot;</span> <span class="o">%</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="p">)</span>
+    <span class="c1"># create the surfaceString</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">srf_type</span><span class="p">,</span> <span class="n">is_name_set_by_user</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+               <span class="n">is_type_set_by_user</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.hbsurface.HBSurface.from_geometry">
     <p>def <span class="ident">from_geometry</span>(</p><p>cls, name, geometry, surface_type=None, is_name_set_by_user=False, is_type_set_by_user=False, rad_properties=None, ep_properties=None, states=None, group=False)</p>
     </div>
@@ -2625,52 +2682,6 @@ HBSrf.radiance_material = radMat
     <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
         <span class="n">_cls</span><span class="o">.</span><span class="n">add_surface_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_cls</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.fromep_string">
-    <p>def <span class="ident">fromep_string</span>(</p><p>cls, ep_string)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Init Honeybee surface from an ep_string.</p>
-<p>Args:
-    ep_string: The full ep_string for an EnergyPlus surface.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.fromep_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.fromep_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">fromep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Init Honeybee surface from an ep_string.</span>
-<span class="sd">    Args:</span>
-<span class="sd">        ep_string: The full ep_string for an EnergyPlus surface.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">types</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Wall&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Roof&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Floor&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Ceiling&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
-    <span class="c1"># clean input ep_string - split based on comma</span>
-    <span class="n">segments</span> <span class="o">=</span> <span class="n">ep_string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> \
-        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">srf_type</span> <span class="o">=</span> <span class="n">types</span><span class="p">[</span><span class="n">segments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()]</span>
-    <span class="n">pts</span> <span class="o">=</span> <span class="nb">range</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">-</span> <span class="mi">11</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="c1"># create points</span>
-    <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">xrange</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">),</span> <span class="mi">3</span><span class="p">)):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">pts</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]]</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is an invalid value for points.&quot;</span> <span class="o">%</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
-            <span class="p">)</span>
-    <span class="c1"># create the surfaceString</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">srf_type</span><span class="p">,</span> <span class="n">is_name_set_by_user</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-               <span class="n">is_type_set_by_user</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2864,8 +2875,6 @@ HBSrf.radiance_material = radMat
 
     <p>pdoc is in the public domain with the
       <a href="http://unlicense.org">UNLICENSE</a></p>
-
-    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
 </body>

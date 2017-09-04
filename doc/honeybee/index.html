@@ -242,7 +242,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /**
@@ -565,16 +565,19 @@ table {
   }
   #content {
     width: 70%;
-    max-width: 850px;
+    margin-left: 25%;
+    max-width: 90%;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
+    position: fixed;
+    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow: hidden;
+    overflow: auto;
   }
   #nav {
     font-size: 130%;
@@ -651,7 +654,7 @@ table {
 
   code {
     background: #f9f9f9;
-  } 
+  }
 
   pre {
     background: #fefefe;
@@ -668,7 +671,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; } 
+    .codehilite .err { background: #ff3300; color: #fff !important; }
 
   table#module-list {
     font-size: 110%;
@@ -779,7 +782,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-      
+
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -793,7 +796,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: scroll;
+      overflow-y: auto;
       margin-bottom: 15px;
     }
 
@@ -808,12 +811,21 @@ table {
     clear: both;
   }
 
+  .desc {
+    white-space: pre-wrap;
+  }
+
   @media all and (max-width: 950px) {
     #sidebar {
-      width: 35%;
+      position: inherit;
+      float: none;
+      width: auto;
     }
     #content {
-      width: 65%;
+      width: 95%;
+      margin-left: auto;
+      border-left: none;
+      padding: 30px;
     }
   }
   @media all and (max-width: 650px) {
@@ -1032,7 +1044,6 @@ table {
   </script>
 </head>
 <body>
-<a href="#" id="top">Top</a>
 
 <div id="container">
     
@@ -1090,7 +1101,22 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee', this);">Show source &equiv;</a></p>
   <div id="source-honeybee" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;config&quot;</span><span class="p">]</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Honeybee core library.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">_dependencies</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ladybug&#39;</span><span class="p">,)</span>
+<span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">_dependencies</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">lib</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">)))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">__import__</span><span class="p">(</span><span class="n">lib</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;Failed to import {}:</span><span class="se">\n\t</span><span class="s1">{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+<span class="c1"># This is a variable to check if the library is a [+] library.</span>
+<span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="vm">__name__</span><span class="p">],</span> <span class="s1">&#39;isplus&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1269,8 +1295,6 @@ surface or a list of honeybee surfaces.</p></div>
 
     <p>pdoc is in the public domain with the
       <a href="http://unlicense.org">UNLICENSE</a></p>
-
-    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
 </body>

@@ -244,7 +244,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /**
@@ -567,16 +567,19 @@ table {
   }
   #content {
     width: 70%;
-    max-width: 850px;
+    margin-left: 25%;
+    max-width: 90%;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
+    position: fixed;
+    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow: hidden;
+    overflow: auto;
   }
   #nav {
     font-size: 130%;
@@ -653,7 +656,7 @@ table {
 
   code {
     background: #f9f9f9;
-  } 
+  }
 
   pre {
     background: #fefefe;
@@ -670,7 +673,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; } 
+    .codehilite .err { background: #ff3300; color: #fff !important; }
 
   table#module-list {
     font-size: 110%;
@@ -781,7 +784,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-      
+
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -795,7 +798,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: scroll;
+      overflow-y: auto;
       margin-bottom: 15px;
     }
 
@@ -810,12 +813,21 @@ table {
     clear: both;
   }
 
+  .desc {
+    white-space: pre-wrap;
+  }
+
   @media all and (max-width: 950px) {
     #sidebar {
-      width: 35%;
+      position: inherit;
+      float: none;
+      width: auto;
     }
     #content {
-      width: 65%;
+      width: 95%;
+      margin-left: auto;
+      border-left: none;
+      padding: 30px;
     }
   }
   @media all and (max-width: 650px) {
@@ -1034,7 +1046,6 @@ table {
   </script>
 </head>
 <body>
-<a href="#" id="top">Top</a>
 
 <div id="container">
     
@@ -1054,7 +1065,7 @@ table {
     <li class="mono"><a href="#honeybee.room.Room.__init__">__init__</a></li>
     <li class="mono"><a href="#honeybee.room.Room.add_fenestration_surface">add_fenestration_surface</a></li>
     <li class="mono"><a href="#honeybee.room.Room.add_surface">add_surface</a></li>
-    <li class="mono"><a href="#honeybee.room.Room.fromep_string">fromep_string</a></li>
+    <li class="mono"><a href="#honeybee.room.Room.from_ep_string">from_ep_string</a></li>
     <li class="mono"><a href="#honeybee.room.Room.generate_interior_view">generate_interior_view</a></li>
     <li class="mono"><a href="#honeybee.room.Room.generate_test_points">generate_test_points</a></li>
     <li class="mono"><a href="#honeybee.room.Room.get_location">get_location</a></li>
@@ -1868,8 +1879,8 @@ with open(&#39;c:/ladybug/room.rad&#39;, &#39;wb&#39;) as outf:
   
             
   <div class="item">
-    <div class="name def" id="honeybee.room.Room.fromep_string">
-    <p>def <span class="ident">fromep_string</span>(</p><p>cls, ep_string, geometry_rules=None, building_program=None, zone_program=None, is_conditioned=True)</p>
+    <div class="name def" id="honeybee.room.Room.from_ep_string">
+    <p>def <span class="ident">from_ep_string</span>(</p><p>cls, ep_string, geometry_rules=None, building_program=None, zone_program=None, is_conditioned=True)</p>
     </div>
     
 
@@ -1879,10 +1890,10 @@ with open(&#39;c:/ladybug/room.rad&#39;, &#39;wb&#39;) as outf:
 <p>Args:
     ep_string: The full ep_string for an EnergyPlus Zone.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.room.Room.fromep_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.room.Room.fromep_string" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.room.Room.from_ep_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.room.Room.from_ep_string" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">fromep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">,</span> <span class="n">geometry_rules</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">building_program</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">from_ep_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ep_string</span><span class="p">,</span> <span class="n">geometry_rules</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">building_program</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                   <span class="n">zone_program</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">is_conditioned</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Init Honeybee zone from an ep_string.</span>
 <span class="sd">    Args:</span>
@@ -2242,8 +2253,6 @@ zone. For a full definition as a string use to_rad_string method.</p></div>
 
     <p>pdoc is in the public domain with the
       <a href="http://unlicense.org">UNLICENSE</a></p>
-
-    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
 </body>

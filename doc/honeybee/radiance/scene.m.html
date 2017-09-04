@@ -242,7 +242,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /**
@@ -565,16 +565,19 @@ table {
   }
   #content {
     width: 70%;
-    max-width: 850px;
+    margin-left: 25%;
+    max-width: 90%;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
+    position: fixed;
+    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow: hidden;
+    overflow: auto;
   }
   #nav {
     font-size: 130%;
@@ -651,7 +654,7 @@ table {
 
   code {
     background: #f9f9f9;
-  } 
+  }
 
   pre {
     background: #fefefe;
@@ -668,7 +671,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; } 
+    .codehilite .err { background: #ff3300; color: #fff !important; }
 
   table#module-list {
     font-size: 110%;
@@ -779,7 +782,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-      
+
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -793,7 +796,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: scroll;
+      overflow-y: auto;
       margin-bottom: 15px;
     }
 
@@ -808,12 +811,21 @@ table {
     clear: both;
   }
 
+  .desc {
+    white-space: pre-wrap;
+  }
+
   @media all and (max-width: 950px) {
     #sidebar {
-      width: 35%;
+      position: inherit;
+      float: none;
+      width: auto;
     }
     #content {
-      width: 65%;
+      width: 95%;
+      margin-left: auto;
+      border-left: none;
+      padding: 30px;
     }
   }
   @media all and (max-width: 650px) {
@@ -1032,7 +1044,6 @@ table {
   </script>
 </head>
 <body>
-<a href="#" id="top">Top</a>
 
 <div id="container">
     
@@ -1361,8 +1372,6 @@ the geometries and writing the files in parametric studies.</p>
 
     <p>pdoc is in the public domain with the
       <a href="http://unlicense.org">UNLICENSE</a></p>
-
-    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
 </body>
