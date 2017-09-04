@@ -3,7 +3,7 @@ from ..command.rfluxmtx import Rfluxmtx
 from ..command.dctimestep import Dctimestep
 from ..command.rmtxop import Rmtxop, RmtxopMatrix
 from ..command.gendaymtx import Gendaymtx
-from ..sky.sun_matrix import sun_matrix
+from ..sky.sunmatrix import SunMatrix
 from ..command.oconv import Oconv
 from ..command.rpict import Rpict
 from ..command.rcontrib import Rcontrib

@@ -7,11 +7,6 @@
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
-
-  <!-- highlight.js for highlighting source code. -->
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-
   
   <style type="text/css">
   
@@ -247,7 +242,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 /**
@@ -570,20 +565,16 @@ table {
   }
   #content {
     width: 70%;
-    margin-left: 25%;
-    max-width: 90%;
+    max-width: 850px;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
-    position: fixed;
-    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
   #nav {
     font-size: 130%;
@@ -658,6 +649,10 @@ table {
     color: #900;
   }
 
+  code {
+    background: #f9f9f9;
+  } 
+
   pre {
     background: #fefefe;
     border: 1px solid #ddd;
@@ -673,7 +668,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
 
   table#module-list {
     font-size: 110%;
@@ -784,7 +779,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-
+      
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -798,7 +793,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: auto;
+      overflow-y: scroll;
       margin-bottom: 15px;
     }
 
@@ -809,26 +804,16 @@ table {
   .desc h1, .desc h2, .desc h3 {
     font-size: 100% !important;
   }
-
-  .desc {
-    white-space: pre-wrap;
-  }
-
   .clear {
     clear: both;
   }
 
   @media all and (max-width: 950px) {
     #sidebar {
-        position: inherit;
-        float: none;
-        width: auto;
+      width: 35%;
     }
     #content {
-      width: 95%;
-      margin-left: auto;
-      border-left: none;
-      padding: 30px;
+      width: 65%;
     }
   }
   @media all and (max-width: 650px) {
@@ -866,6 +851,77 @@ table {
 
   </style>
 
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
   <style type="text/css">
   
@@ -995,11 +1051,11 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.normspace">normspace</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.checkInputFiles">checkInputFiles</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.check_input_files">check_input_files</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.execute">execute</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.onExecution">onExecution</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.onToRadString">onToRadString</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.on_execution">on_execution</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.on_to_rad_string">on_to_rad_string</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rtrace.Rtrace.to_rad_string">to_rad_string</a></li>
   </ul>
 
         </li>
@@ -1022,134 +1078,132 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace" class="source">
-    <pre><code>import os
-from _commandbase import RadianceCommand
-from ..parameters.gridbased import LowQuality
-from ..datatype import RadiancePath
+    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">._commandbase</span> <span class="kn">import</span> <span class="n">RadianceCommand</span>
+<span class="kn">from</span> <span class="nn">..parameters.gridbased</span> <span class="kn">import</span> <span class="n">LowQuality</span>
+<span class="kn">from</span> <span class="nn">..datatype</span> <span class="kn">import</span> <span class="n">RadiancePath</span>
 
 
-class Rtrace(RadianceCommand):
-    u"""Create a grid-based Radiance ray-tracer.
+<span class="k">class</span> <span class="nc">Rtrace</span><span class="p">(</span><span class="n">RadianceCommand</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;Create a grid-based Radiance ray-tracer.</span>
 
-    Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html
+<span class="sd">    Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html</span>
 
-    Attributes:
-        outputName: Name of output file (Default: untitled).
-        octreeFile: Full path to input oct files (Default: None)
-        pointsFile: Full path to input pt files (Default: None)
-        simulationType: An integer to define type of analysis.
-            0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
-        radianceParameters: Radiance parameters for this analysis.
-            (Default: girdbased.LowQuality)
-    """
+<span class="sd">    Attributes:</span>
+<span class="sd">        output_name: Name of output file (Default: untitled).</span>
+<span class="sd">        octree_file: Full path to input oct files (Default: None)</span>
+<span class="sd">        points_file: Full path to input pt files (Default: None)</span>
+<span class="sd">        simulation_type: An integer to define type of analysis.</span>
+<span class="sd">            0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)</span>
+<span class="sd">            (Default: 0)</span>
+<span class="sd">        radiance_parameters: Radiance parameters for this analysis.</span>
+<span class="sd">            (Default: girdbased.LowQuality)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    outputFile = RadiancePath("res", "results file", extension=".res")
-    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;res&quot;</span><span class="p">,</span> <span class="s2">&quot;results file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.res&quot;</span><span class="p">)</span>
+    <span class="n">octree_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;oct&quot;</span><span class="p">,</span> <span class="s2">&quot;octree file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.oct&quot;</span><span class="p">)</span>
+    <span class="n">points_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;test point file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.pts&quot;</span><span class="p">)</span>
 
-    def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
-                 simulationType=0, radianceParameters=None):
-        """Initialize the class."""
-        # Initialize base class to make sure path to radiance is set correctly
-        RadianceCommand.__init__(self)
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="s1">&#39;untitled&#39;</span><span class="p">,</span> <span class="n">octree_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">simulation_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">radiance_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;</span>
+        <span class="c1"># Initialize base class to make sure path to radiance is set correctly</span>
+        <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        self.outputFile = outputName if outputName.lower().endswith(".res") \
-            else outputName + ".res"
-        """oct file name which is usually the same as the project name (Default: untitled)"""
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.res&quot;</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.res&quot;</span>
+        <span class="sd">&quot;&quot;&quot;oct file name which is usually the same as the project name</span>
+<span class="sd">        (Default: untitled)&quot;&quot;&quot;</span>
 
-        self.octreeFile = octreeFile
-        """Full path to input oct file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span> <span class="o">=</span> <span class="n">octree_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input oct file.&quot;&quot;&quot;</span>
 
-        self.pointsFile = pointsFile
-        """Full path to input points file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span> <span class="o">=</span> <span class="n">points_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input points file.&quot;&quot;&quot;</span>
 
-        self.radianceParameters = radianceParameters
-        """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span> <span class="o">=</span> <span class="n">radiance_parameters</span>
+        <span class="sd">&quot;&quot;&quot;Radiance parameters for this analysis</span>
+<span class="sd">        (Default: RadianceParameters.LowQuality).&quot;&quot;&quot;</span>
 
-        # add -h to parameters to get no header, True is no header
-        self.radianceParameters.addRadianceBoolFlag("h", "output header switch")
-        self.radianceParameters.h = True
+        <span class="c1"># add -h to parameters to get no header, True is no header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">add_radiance_bool_flag</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;output header switch&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="bp">True</span>
 
-        # add error file as an extra parameter for rtrace.
-        # this can be added under default radiance parameters later.
-        self.radianceParameters.addRadianceValue("e", "error output file")
-        self.radianceParameters.e = "error.txt"
-        """Error log file."""
+        <span class="c1"># add error file as an extra parameter for rtrace.</span>
+        <span class="c1"># this can be added under default radiance parameters later.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">add_radiance_value</span><span class="p">(</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;error output file&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="s2">&quot;error.txt&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Error log file.&quot;&quot;&quot;</span>
 
-        self.simulationType = simulationType
-        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_type</span> <span class="o">=</span> <span class="n">simulation_type</span>
+        <span class="sd">&quot;&quot;&quot;Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)</span>
+<span class="sd">            (Default: 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    @property
-    def simulationType(self):
-        """Get/set simulation Type.
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">simulation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get/set simulation Type.</span>
 
-        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
-        """
-        return self.__simType
+<span class="sd">        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simType</span>
 
-    @simulationType.setter
-    def simulationType(self, value):
-        try:
-            value = int(value)
-        except:
-            value = 0
+    <span class="nd">@simulation_type.setter</span>
+    <span class="k">def</span> <span class="nf">simulation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
 
-        assert 0 <= value <= 2, \
-            "Simulation type should be between 0-2. Current value: {}".format(value)
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">,</span> \
+            <span class="s2">&quot;Simulation type should be between 0-2. Current value: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-        # If this is a radiation analysis make sure the sky is climate-based
-        if value == 1:
-            assert self.sky.isClimateBased, \
-                "The sky for radition analysis should be climate-based."
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simType</span> <span class="o">=</span> <span class="n">value</span>
 
-        self.__simType = value
+        <span class="c1"># trun on/off I paramter</span>
+        <span class="c1"># -I &gt; Boolean switch to compute irradiance rather than radiance, with</span>
+        <span class="c1"># the input origin and direction interpreted instead as measurement point</span>
+        <span class="c1"># and orientation.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simType</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">irradiance_calc</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># luminance</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">irradiance_calc</span> <span class="o">=</span> <span class="bp">False</span>
 
-        # trun on/off I paramter
-        # -I > Boolean switch to compute irradiance rather than radiance, with
-        # the input origin and direction interpreted instead as measurement point
-        # and orientation.
-        if self.__simType in (0, 1):
-            self.radianceParameters.irradianceCalc = True
-        else:
-            # luminance
-            self.radianceParameters.irradianceCalc = False
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">radiance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and set Radiance parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rad_parameters</span>
 
-    @property
-    def radianceParameters(self):
-        """Get and set Radiance parameters."""
-        return self.__radParameters
+    <span class="nd">@radiance_parameters.setter</span>
+    <span class="k">def</span> <span class="nf">radiance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rad_parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rad_parameters</span><span class="p">:</span>
+            <span class="n">rad_parameters</span> <span class="o">=</span> <span class="n">LowQuality</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rad_parameters</span><span class="p">,</span> <span class="s1">&#39;isGridBasedRadianceParameters&#39;</span><span class="p">),</span> \
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a radiance parameters.&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">rad_parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rad_parameters</span> <span class="o">=</span> <span class="n">rad_parameters</span>
 
-    @radianceParameters.setter
-    def radianceParameters(self, radParameters):
-        if not radParameters:
-            radParameters = LowQuality()
-        assert hasattr(radParameters, 'isGridBasedRadianceParameters'), \
-            "%s is not a radiance parameters." % type(radParameters)
-        self.__radParameters = radParameters
+    <span class="c1"># TODO: Implement relative path</span>
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+        <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rtrace&quot;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+        <span class="p">)</span>
 
-    # TODO: Implement relative path
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        radString = "%s %s %s < %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, "rtrace")),
-            self.radianceParameters.toRadString(),
-            self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputFile.toRadString())
-        )
+        <span class="c1"># make sure input files are set by user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rad_string</span>
 
-        # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Input files for this command.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span>
+</pre></div>
 
-    @property
-    def inputFiles(self):
-        """Input files for this command."""
-        return self.octreeFile, self.pointsFile
-</code></pre>
   </div>
 
   </header>
@@ -1166,139 +1220,137 @@ class Rtrace(RadianceCommand):
     <div class="desc"><p>Create a grid-based Radiance ray-tracer.</p>
 <p>Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html</p>
 <p>Attributes:
-    outputName: Name of output file (Default: untitled).
-    octreeFile: Full path to input oct files (Default: None)
-    pointsFile: Full path to input pt files (Default: None)
-    simulationType: An integer to define type of analysis.
+    output_name: Name of output file (Default: untitled).
+    octree_file: Full path to input oct files (Default: None)
+    points_file: Full path to input pt files (Default: None)
+    simulation_type: An integer to define type of analysis.
         0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
         (Default: 0)
-    radianceParameters: Radiance parameters for this analysis.
+    radiance_parameters: Radiance parameters for this analysis.
         (Default: girdbased.LowQuality)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace" class="source">
-    <pre><code>class Rtrace(RadianceCommand):
-    u"""Create a grid-based Radiance ray-tracer.
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Rtrace</span><span class="p">(</span><span class="n">RadianceCommand</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;Create a grid-based Radiance ray-tracer.</span>
 
-    Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html
+<span class="sd">    Read more at: http://radsite.lbl.gov/radiance/man_html/rtrace.1.html</span>
 
-    Attributes:
-        outputName: Name of output file (Default: untitled).
-        octreeFile: Full path to input oct files (Default: None)
-        pointsFile: Full path to input pt files (Default: None)
-        simulationType: An integer to define type of analysis.
-            0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
-        radianceParameters: Radiance parameters for this analysis.
-            (Default: girdbased.LowQuality)
-    """
+<span class="sd">    Attributes:</span>
+<span class="sd">        output_name: Name of output file (Default: untitled).</span>
+<span class="sd">        octree_file: Full path to input oct files (Default: None)</span>
+<span class="sd">        points_file: Full path to input pt files (Default: None)</span>
+<span class="sd">        simulation_type: An integer to define type of analysis.</span>
+<span class="sd">            0: Illuminance (lux), 1: Radiation (kWh), 2: Luminance (Candela)</span>
+<span class="sd">            (Default: 0)</span>
+<span class="sd">        radiance_parameters: Radiance parameters for this analysis.</span>
+<span class="sd">            (Default: girdbased.LowQuality)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    outputFile = RadiancePath("res", "results file", extension=".res")
-    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;res&quot;</span><span class="p">,</span> <span class="s2">&quot;results file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.res&quot;</span><span class="p">)</span>
+    <span class="n">octree_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;oct&quot;</span><span class="p">,</span> <span class="s2">&quot;octree file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.oct&quot;</span><span class="p">)</span>
+    <span class="n">points_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;test point file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.pts&quot;</span><span class="p">)</span>
 
-    def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
-                 simulationType=0, radianceParameters=None):
-        """Initialize the class."""
-        # Initialize base class to make sure path to radiance is set correctly
-        RadianceCommand.__init__(self)
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="s1">&#39;untitled&#39;</span><span class="p">,</span> <span class="n">octree_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">simulation_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">radiance_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;</span>
+        <span class="c1"># Initialize base class to make sure path to radiance is set correctly</span>
+        <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        self.outputFile = outputName if outputName.lower().endswith(".res") \
-            else outputName + ".res"
-        """oct file name which is usually the same as the project name (Default: untitled)"""
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.res&quot;</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.res&quot;</span>
+        <span class="sd">&quot;&quot;&quot;oct file name which is usually the same as the project name</span>
+<span class="sd">        (Default: untitled)&quot;&quot;&quot;</span>
 
-        self.octreeFile = octreeFile
-        """Full path to input oct file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span> <span class="o">=</span> <span class="n">octree_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input oct file.&quot;&quot;&quot;</span>
 
-        self.pointsFile = pointsFile
-        """Full path to input points file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span> <span class="o">=</span> <span class="n">points_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input points file.&quot;&quot;&quot;</span>
 
-        self.radianceParameters = radianceParameters
-        """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span> <span class="o">=</span> <span class="n">radiance_parameters</span>
+        <span class="sd">&quot;&quot;&quot;Radiance parameters for this analysis</span>
+<span class="sd">        (Default: RadianceParameters.LowQuality).&quot;&quot;&quot;</span>
 
-        # add -h to parameters to get no header, True is no header
-        self.radianceParameters.addRadianceBoolFlag("h", "output header switch")
-        self.radianceParameters.h = True
+        <span class="c1"># add -h to parameters to get no header, True is no header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">add_radiance_bool_flag</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;output header switch&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="bp">True</span>
 
-        # add error file as an extra parameter for rtrace.
-        # this can be added under default radiance parameters later.
-        self.radianceParameters.addRadianceValue("e", "error output file")
-        self.radianceParameters.e = "error.txt"
-        """Error log file."""
+        <span class="c1"># add error file as an extra parameter for rtrace.</span>
+        <span class="c1"># this can be added under default radiance parameters later.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">add_radiance_value</span><span class="p">(</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;error output file&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="s2">&quot;error.txt&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Error log file.&quot;&quot;&quot;</span>
 
-        self.simulationType = simulationType
-        """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-            (Default: 0)
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_type</span> <span class="o">=</span> <span class="n">simulation_type</span>
+        <span class="sd">&quot;&quot;&quot;Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)</span>
+<span class="sd">            (Default: 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    @property
-    def simulationType(self):
-        """Get/set simulation Type.
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">simulation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get/set simulation Type.</span>
 
-        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)
-        """
-        return self.__simType
+<span class="sd">        0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela) (Default: 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simType</span>
 
-    @simulationType.setter
-    def simulationType(self, value):
-        try:
-            value = int(value)
-        except:
-            value = 0
+    <span class="nd">@simulation_type.setter</span>
+    <span class="k">def</span> <span class="nf">simulation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
 
-        assert 0 <= value <= 2, \
-            "Simulation type should be between 0-2. Current value: {}".format(value)
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">,</span> \
+            <span class="s2">&quot;Simulation type should be between 0-2. Current value: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-        # If this is a radiation analysis make sure the sky is climate-based
-        if value == 1:
-            assert self.sky.isClimateBased, \
-                "The sky for radition analysis should be climate-based."
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simType</span> <span class="o">=</span> <span class="n">value</span>
 
-        self.__simType = value
+        <span class="c1"># trun on/off I paramter</span>
+        <span class="c1"># -I &gt; Boolean switch to compute irradiance rather than radiance, with</span>
+        <span class="c1"># the input origin and direction interpreted instead as measurement point</span>
+        <span class="c1"># and orientation.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simType</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">irradiance_calc</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># luminance</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">irradiance_calc</span> <span class="o">=</span> <span class="bp">False</span>
 
-        # trun on/off I paramter
-        # -I > Boolean switch to compute irradiance rather than radiance, with
-        # the input origin and direction interpreted instead as measurement point
-        # and orientation.
-        if self.__simType in (0, 1):
-            self.radianceParameters.irradianceCalc = True
-        else:
-            # luminance
-            self.radianceParameters.irradianceCalc = False
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">radiance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and set Radiance parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rad_parameters</span>
 
-    @property
-    def radianceParameters(self):
-        """Get and set Radiance parameters."""
-        return self.__radParameters
+    <span class="nd">@radiance_parameters.setter</span>
+    <span class="k">def</span> <span class="nf">radiance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rad_parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rad_parameters</span><span class="p">:</span>
+            <span class="n">rad_parameters</span> <span class="o">=</span> <span class="n">LowQuality</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rad_parameters</span><span class="p">,</span> <span class="s1">&#39;isGridBasedRadianceParameters&#39;</span><span class="p">),</span> \
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a radiance parameters.&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">rad_parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rad_parameters</span> <span class="o">=</span> <span class="n">rad_parameters</span>
 
-    @radianceParameters.setter
-    def radianceParameters(self, radParameters):
-        if not radParameters:
-            radParameters = LowQuality()
-        assert hasattr(radParameters, 'isGridBasedRadianceParameters'), \
-            "%s is not a radiance parameters." % type(radParameters)
-        self.__radParameters = radParameters
+    <span class="c1"># TODO: Implement relative path</span>
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+        <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rtrace&quot;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+        <span class="p">)</span>
 
-    # TODO: Implement relative path
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        radString = "%s %s %s < %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, "rtrace")),
-            self.radianceParameters.toRadString(),
-            self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputFile.toRadString())
-        )
+        <span class="c1"># make sure input files are set by user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rad_string</span>
 
-        # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Input files for this command.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span>
+</pre></div>
 
-    @property
-    def inputFiles(self):
-        """Input files for this command."""
-        return self.octreeFile, self.pointsFile
-</code></pre>
   </div>
 </div>
 
@@ -1312,7 +1364,7 @@ class Rtrace(RadianceCommand):
           </ul>
           <h3>Class variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.octreeFile" class="name">var <span class="ident">octreeFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.octree_file" class="name">var <span class="ident">octree_file</span></p>
             
 
             
@@ -1322,7 +1374,7 @@ class Rtrace(RadianceCommand):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.outputFile" class="name">var <span class="ident">outputFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.output_file" class="name">var <span class="ident">output_file</span></p>
             
 
             
@@ -1332,7 +1384,7 @@ class Rtrace(RadianceCommand):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.points_file" class="name">var <span class="ident">points_file</span></p>
             
 
             
@@ -1356,16 +1408,17 @@ class Rtrace(RadianceCommand):
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.normspace', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace.normspace" class="source">
-    <pre><code>@staticmethod
-def normspace(path):
-    """Norm white spaces in path.
-    Return path with quotation marks if there is whitespace in path.
-    """
-    if str(path).strip().find(" ") != -1:
-        return "{0}{1}{0}".format(config.wrapper, path)
-    else:
-        return path
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">normspace</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Norm white spaces in path.</span>
+<span class="sd">    Return path with quotation marks if there is whitespace in path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;{0}{1}{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1373,7 +1426,7 @@ def normspace(path):
   
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.input_files" class="name">var <span class="ident">input_files</span></p>
             
 
             
@@ -1384,7 +1437,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.octreeFile" class="name">var <span class="ident">octreeFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.octree_file" class="name">var <span class="ident">octree_file</span></p>
             
 
             
@@ -1395,18 +1448,19 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.outputFile" class="name">var <span class="ident">outputFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.output_file" class="name">var <span class="ident">output_file</span></p>
             
 
             
   
-    <div class="desc"><p>oct file name which is usually the same as the project name (Default: untitled)</p></div>
+    <div class="desc"><p>oct file name which is usually the same as the project name
+(Default: untitled)</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.perlExePath" class="name">var <span class="ident">perlExePath</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.perl_exe_path" class="name">var <span class="ident">perl_exe_path</span></p>
             
 
             
@@ -1418,7 +1472,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.points_file" class="name">var <span class="ident">points_file</span></p>
             
 
             
@@ -1429,7 +1483,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.pythonExePath" class="name">var <span class="ident">pythonExePath</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.python_exe_path" class="name">var <span class="ident">python_exe_path</span></p>
             
 
             
@@ -1439,7 +1493,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.radbin_path" class="name">var <span class="ident">radbin_path</span></p>
             
 
             
@@ -1451,18 +1505,19 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.radianceParameters" class="name">var <span class="ident">radianceParameters</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.radiance_parameters" class="name">var <span class="ident">radiance_parameters</span></p>
             
 
             
   
-    <div class="desc"><p>Radiance parameters for this analysis (Default: RadianceParameters.LowQuality).</p></div>
+    <div class="desc"><p>Radiance parameters for this analysis
+(Default: RadianceParameters.LowQuality).</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.radlibPath" class="name">var <span class="ident">radlibPath</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.radlib_path" class="name">var <span class="ident">radlib_path</span></p>
             
 
             
@@ -1474,7 +1529,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rtrace.Rtrace.simulationType" class="name">var <span class="ident">simulationType</span></p>
+            <p id="honeybee.radiance.command.rtrace.Rtrace.simulation_type" class="name">var <span class="ident">simulation_type</span></p>
             
 
             
@@ -1489,7 +1544,7 @@ def normspace(path):
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=&#39;untitled&#39;, octreeFile=None, pointsFile=None, simulationType=0, radianceParameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, output_name=&#39;untitled&#39;, octree_file=None, points_file=None, simulation_type=0, radiance_parameters=None)</p>
     </div>
     
 
@@ -1499,33 +1554,36 @@ def normspace(path):
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace.__init__" class="source">
-    <pre><code>def __init__(self, outputName='untitled', octreeFile=None, pointsFile=None,
-             simulationType=0, radianceParameters=None):
-    """Initialize the class."""
-    # Initialize base class to make sure path to radiance is set correctly
-    RadianceCommand.__init__(self)
-    self.outputFile = outputName if outputName.lower().endswith(".res") \
-        else outputName + ".res"
-    """oct file name which is usually the same as the project name (Default: untitled)"""
-    self.octreeFile = octreeFile
-    """Full path to input oct file."""
-    self.pointsFile = pointsFile
-    """Full path to input points file."""
-    self.radianceParameters = radianceParameters
-    """Radiance parameters for this analysis (Default: RadianceParameters.LowQuality)."""
-    # add -h to parameters to get no header, True is no header
-    self.radianceParameters.addRadianceBoolFlag("h", "output header switch")
-    self.radianceParameters.h = True
-    # add error file as an extra parameter for rtrace.
-    # this can be added under default radiance parameters later.
-    self.radianceParameters.addRadianceValue("e", "error output file")
-    self.radianceParameters.e = "error.txt"
-    """Error log file."""
-    self.simulationType = simulationType
-    """Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
-        (Default: 0)
-    """
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="s1">&#39;untitled&#39;</span><span class="p">,</span> <span class="n">octree_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">simulation_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">radiance_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;</span>
+    <span class="c1"># Initialize base class to make sure path to radiance is set correctly</span>
+    <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.res&quot;</span><span class="p">)</span> \
+        <span class="k">else</span> <span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.res&quot;</span>
+    <span class="sd">&quot;&quot;&quot;oct file name which is usually the same as the project name</span>
+<span class="sd">    (Default: untitled)&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span> <span class="o">=</span> <span class="n">octree_file</span>
+    <span class="sd">&quot;&quot;&quot;Full path to input oct file.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span> <span class="o">=</span> <span class="n">points_file</span>
+    <span class="sd">&quot;&quot;&quot;Full path to input points file.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span> <span class="o">=</span> <span class="n">radiance_parameters</span>
+    <span class="sd">&quot;&quot;&quot;Radiance parameters for this analysis</span>
+<span class="sd">    (Default: RadianceParameters.LowQuality).&quot;&quot;&quot;</span>
+    <span class="c1"># add -h to parameters to get no header, True is no header</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">add_radiance_bool_flag</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;output header switch&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="c1"># add error file as an extra parameter for rtrace.</span>
+    <span class="c1"># this can be added under default radiance parameters later.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">add_radiance_value</span><span class="p">(</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;error output file&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="s2">&quot;error.txt&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Error log file.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">simulation_type</span> <span class="o">=</span> <span class="n">simulation_type</span>
+    <span class="sd">&quot;&quot;&quot;Simulation type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)</span>
+<span class="sd">        (Default: 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1533,8 +1591,8 @@ def normspace(path):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.checkInputFiles">
-    <p>def <span class="ident">checkInputFiles</span>(</p><p>self, radString=&#39;&#39;)</p>
+    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.check_input_files">
+    <p>def <span class="ident">check_input_files</span>(</p><p>self, rad_string=&#39;&#39;)</p>
     </div>
     
 
@@ -1544,34 +1602,35 @@ def normspace(path):
 <p>This method doesn't check if the file exists since it might be created
 later during the process.</p>
 <p>Args:
-    radString: Current radString to help user better understand the
+    rad_string: Current rad_string to help user better understand the
         erorr (Default: "")</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.checkInputFiles', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rtrace.Rtrace.checkInputFiles" class="source">
-    <pre><code>def checkInputFiles(self, radString=""):
-    """Make sure input files are set to a path.
-    This method doesn't check if the file exists since it might be created
-    later during the process.
-    Args:
-        radString: Current radString to help user better understand the
-            erorr (Default: "")
-    """
-    # make sure wea file is provided
-    _msg = "To generate a valid %s command you need to specify the path" \
-        " to input files:" \
-        "\nCurrent command won't work:\n%s" \
-        % (self.__class__.__name__, radString)
-    if self.inputFiles is None:
-        return
-    for f in self.inputFiles:
-        # this is for oconv where it has list of files which are not
-        # RadiancePath
-        if isinstance(f, str):
-            continue
-        assert hasattr(f, 'normpath'), "%s is missing!\n" % f + _msg
-        assert f.normpath is not None, _msg
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.check_input_files', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rtrace.Rtrace.check_input_files" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rad_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make sure input files are set to a path.</span>
+<span class="sd">    This method doesn&#39;t check if the file exists since it might be created</span>
+<span class="sd">    later during the process.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        rad_string: Current rad_string to help user better understand the</span>
+<span class="sd">            erorr (Default: &quot;&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># make sure wea file is provided</span>
+    <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;To generate a valid </span><span class="si">%s</span><span class="s2"> command you need to specify the path&quot;</span> \
+        <span class="s2">&quot; to input files:&quot;</span> \
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Current command won&#39;t work:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> \
+        <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">rad_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">:</span>
+        <span class="c1"># this is for oconv where it has list of files which are not</span>
+        <span class="c1"># RadiancePath</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;normpath&#39;</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is missing!</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">f</span> <span class="o">+</span> <span class="n">_msg</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="o">.</span><span class="n">normpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">_msg</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1592,33 +1651,34 @@ later during the process.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.execute', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rtrace.Rtrace.execute" class="source">
-    <pre><code>def execute(self):
-    """Execute the command.
-    Returns:
-        Return fullpath to the result file if any as a string.
-    """
-    # check if the files exist on the computer
-    self.__checkFiles()
-    self.onExecution()
-    if os.name == 'nt':
-        os.environ['PATH'] += ';%s' % self.normspace(config.radbinPath)
-        os.environ['RAYPATH'] += ';%s' % self.normspace(config.radlibPath)
-    p = subprocess.Popen(self.toRadString(), shell=True,
-                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    for line in p.stdout.readlines():
-        print line,
-    p.wait()
-    try:
-        if os.path.split(self.outputFile.normpath)[0] == "":
-            # add directory to file if it's not a full path
-            return os.path.join(os.getcwd(),
-                                self.outputFile.normpath)
-        # return output file
-        return self.outputFile
-    except AttributeError:
-        # this command doesn't have an output file
-        pass
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Execute the command.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Return fullpath to the result file if any as a string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check if the files exist on the computer</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__check_files</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">on_execution</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;RAYPATH&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">radlib_path</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                         <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+        <span class="k">print</span> <span class="n">line</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">normpath</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="c1"># add directory to file if it&#39;s not a full path</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">normpath</span><span class="p">)</span>
+        <span class="c1"># return output file</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># this command doesn&#39;t have an output file</span>
+        <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1626,8 +1686,8 @@ later during the process.</p>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.onExecution">
-    <p>def <span class="ident">onExecution</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.on_execution">
+    <p>def <span class="ident">on_execution</span>(</p><p>self)</p>
     </div>
     
 
@@ -1638,16 +1698,17 @@ later during the process.</p>
 modifier set in the command. This method will be executed right before
 running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.onExecution', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rtrace.Rtrace.onExecution" class="source">
-    <pre><code>def onExecution(self):
-    """Overwrite this method to add extra specific checks for the command.
-    For instance for rcontrib you want to make sure there is at least one
-    modifier set in the command. This method will be executed right before
-    running the command.
-    """
-    pass
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.on_execution', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rtrace.Rtrace.on_execution" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">on_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite this method to add extra specific checks for the command.</span>
+<span class="sd">    For instance for rcontrib you want to make sure there is at least one</span>
+<span class="sd">    modifier set in the command. This method will be executed right before</span>
+<span class="sd">    running the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1655,8 +1716,8 @@ running the command.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.onToRadString">
-    <p>def <span class="ident">onToRadString</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.on_to_rad_string">
+    <p>def <span class="ident">on_to_rad_string</span>(</p><p>self)</p>
     </div>
     
 
@@ -1667,16 +1728,17 @@ running the command.</p></div>
 modifier set in the command. This method will be executed right before
 running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.onToRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rtrace.Rtrace.onToRadString" class="source">
-    <pre><code>def onToRadString(self):
-    """Overwrite this method to add extra specific checks while generating rad string.
-    For instance for rcontrib you want to make sure there is at least one
-    modifier set in the command. This method will be executed right before
-    running the command.
-    """
-    pass
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.on_to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rtrace.Rtrace.on_to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">on_to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite this method to add extra specific checks while generating rad string.</span>
+<span class="sd">    For instance for rcontrib you want to make sure there is at least one</span>
+<span class="sd">    modifier set in the command. This method will be executed right before</span>
+<span class="sd">    running the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1684,8 +1746,8 @@ running the command.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.toRadString">
-    <p>def <span class="ident">toRadString</span>(</p><p>self, relativePath=False)</p>
+    <div class="name def" id="honeybee.radiance.command.rtrace.Rtrace.to_rad_string">
+    <p>def <span class="ident">to_rad_string</span>(</p><p>self, relative_path=False)</p>
     </div>
     
 
@@ -1693,21 +1755,22 @@ running the command.</p></div>
   
     <div class="desc"><p>Return full command as a string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rtrace.Rtrace.toRadString" class="source">
-    <pre><code>def toRadString(self, relativePath=False):
-    """Return full command as a string."""
-    radString = "%s %s %s < %s > %s" % (
-        self.normspace(os.path.join(self.radbinPath, "rtrace")),
-        self.radianceParameters.toRadString(),
-        self.normspace(self.octreeFile.toRadString()),
-        self.normspace(self.pointsFile.toRadString()),
-        self.normspace(self.outputFile.toRadString())
-    )
-    # make sure input files are set by user
-    self.checkInputFiles(radString)
-    return radString
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rtrace.Rtrace.to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rtrace.Rtrace.to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+    <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rtrace&quot;</span><span class="p">)),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radiance_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+    <span class="p">)</span>
+    <span class="c1"># make sure input files are set by user</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rad_string</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1723,14 +1786,14 @@ running the command.</p></div>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a>
-    </p>
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
-<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

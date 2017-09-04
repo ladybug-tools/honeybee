@@ -7,11 +7,6 @@
     <meta name="description" content="RADIANCE rcontrib command." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
-
-  <!-- highlight.js for highlighting source code. -->
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-
   
   <style type="text/css">
   
@@ -247,7 +242,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 /**
@@ -570,20 +565,16 @@ table {
   }
   #content {
     width: 70%;
-    margin-left: 25%;
-    max-width: 90%;
+    max-width: 850px;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
-    position: fixed;
-    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
   #nav {
     font-size: 130%;
@@ -658,6 +649,10 @@ table {
     color: #900;
   }
 
+  code {
+    background: #f9f9f9;
+  } 
+
   pre {
     background: #fefefe;
     border: 1px solid #ddd;
@@ -673,7 +668,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
 
   table#module-list {
     font-size: 110%;
@@ -784,7 +779,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-
+      
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -798,7 +793,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: auto;
+      overflow-y: scroll;
       margin-bottom: 15px;
     }
 
@@ -809,26 +804,16 @@ table {
   .desc h1, .desc h2, .desc h3 {
     font-size: 100% !important;
   }
-
-  .desc {
-    white-space: pre-wrap;
-  }
-
   .clear {
     clear: both;
   }
 
   @media all and (max-width: 950px) {
     #sidebar {
-        position: inherit;
-        float: none;
-        width: auto;
+      width: 35%;
     }
     #content {
-      width: 95%;
-      margin-left: auto;
-      border-left: none;
-      padding: 30px;
+      width: 65%;
     }
   }
   @media all and (max-width: 650px) {
@@ -866,6 +851,77 @@ table {
 
   </style>
 
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
   <style type="text/css">
   
@@ -995,11 +1051,11 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.normspace">normspace</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles">checkInputFiles</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.check_input_files">check_input_files</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.execute">execute</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.onExecution">onExecution</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.onToRadString">onToRadString</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.on_execution">on_execution</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.on_to_rad_string">on_to_rad_string</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.rcontrib.Rcontrib.to_rad_string">to_rad_string</a></li>
   </ul>
 
         </li>
@@ -1022,106 +1078,137 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rcontrib" class="source">
-    <pre><code># coding=utf-8
-"""RADIANCE rcontrib command."""
-from _commandbase import RadianceCommand
-from ..datatype import RadiancePath
-from ..parameters.rcontrib import RcontribParameters
+    <div class="codehilite"><pre><span></span><span class="c1"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;RADIANCE rcontrib command.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">._commandbase</span> <span class="kn">import</span> <span class="n">RadianceCommand</span>
+<span class="kn">from</span> <span class="nn">..datatype</span> <span class="kn">import</span> <span class="n">RadiancePath</span>
+<span class="kn">from</span> <span class="nn">..parameters.rcontrib</span> <span class="kn">import</span> <span class="n">RcontribParameters</span>
 
-import os
+<span class="kn">import</span> <span class="nn">os</span>
 
 
-class Rcontrib(RadianceCommand):
-    u"""
-    rcontrib - Compute contribution coefficients in a RADIANCE scene.
+<span class="c1"># TODO(mostapha): points_file should change to input file. It can also be used for</span>
+<span class="c1"># vwrays output</span>
+<span class="k">class</span> <span class="nc">Rcontrib</span><span class="p">(</span><span class="n">RadianceCommand</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    rcontrib - Compute contribution coefficients in a RADIANCE scene.</span>
 
-    Read more at:
-    https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf
+<span class="sd">    Read more at:</span>
+<span class="sd">    https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf</span>
 
-    Attributes:
-        outputName: An optional name for output file name. If None the name of
-            .epw file will be used.
-        rcontribParameters: Radiance parameters for rcontrib. If None Default
-            parameters will be set. You can use self.rcontribParameters to view,
-            add or remove the parameters before executing the command.
+<span class="sd">    Attributes:</span>
+<span class="sd">        output_name: An optional name for output file name. If None the name of</span>
+<span class="sd">            .epw file will be used.</span>
+<span class="sd">        rcontrib_parameters: Radiance parameters for rcontrib. If None Default</span>
+<span class="sd">            parameters will be set. You can use self.rcontrib_parameters to view,</span>
+<span class="sd">            add or remove the parameters before executing the command.</span>
 
-    Usage:
+<span class="sd">    Usage:</span>
 
-        from honeybee.radiance.command.rcontrib import Rcontrib
+<span class="sd">        from honeybee.radiance.command.rcontrib import Rcontrib</span>
 
-        rcontrib = Rcontrib(outputName="test3",
-                            octreeFile=r"C:/ladybug/test3/gridbased/test3.oct",
-                            pointsFile=r"C:/ladybug/test3/gridbased/test3.pts")
+<span class="sd">        rcontrib = Rcontrib(output_name=&quot;test3&quot;,</span>
+<span class="sd">                            octree_file=r&quot;C:/ladybug/test3/gridbased/test3.oct&quot;,</span>
+<span class="sd">                            points_file=r&quot;C:/ladybug/test3/gridbased/test3.pts&quot;)</span>
 
-        # set up parameters
-        rcontrib.rcontribParameters.modFile = r"C:/ladybug/test3/sunlist.txt"
-        rcontrib.rcontribParameters.I = True
-        rcontrib.rcontribParameters.ab = 0
-        rcontrib.rcontribParameters.ad = 10000
+<span class="sd">        # set up parameters</span>
+<span class="sd">        rcontrib.rcontrib_parameters.mod_file = r&quot;C:/ladybug/test3/sunlist.txt&quot;</span>
+<span class="sd">        rcontrib.rcontrib_parameters.I = True</span>
+<span class="sd">        rcontrib.rcontrib_parameters.ab = 0</span>
+<span class="sd">        rcontrib.rcontrib_parameters.ad = 10000</span>
 
-        print rcontrib.toRadString()
-        > c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M C:/ladybug/test3/gridbased/sunlist.txt -I C:/ladybug/test3/gridbased/test3.oct < C:/ladybug/test3/gridbased/test3.pts > test3.dc
+<span class="sd">        print rcontrib.to_rad_string()</span>
+<span class="sd">        &gt; c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M</span>
+<span class="sd">            C:/ladybug/test3/gridbased/sunlist.txt -I</span>
+<span class="sd">            C:/ladybug/test3/gridbased/test3.oct &lt;</span>
+<span class="sd">            C:/ladybug/test3/gridbased/test3.pts &gt; test3.dc</span>
 
-        # run rcontrib
-        rcontrib.execute()
-    """
+<span class="sd">        # run rcontrib</span>
+<span class="sd">        rcontrib.execute()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    outputFile = RadiancePath("dc", "results file", extension=".dc")
-    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;dc&quot;</span><span class="p">,</span> <span class="s2">&quot;results file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.dc&quot;</span><span class="p">)</span>
+    <span class="n">octree_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;oct&quot;</span><span class="p">,</span> <span class="s2">&quot;octree file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.oct&quot;</span><span class="p">)</span>
+    <span class="n">points_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;test point file&quot;</span><span class="p">)</span>
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
-                 rcontribParameters=None):
-        """Init command."""
-        RadianceCommand.__init__(self)
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">octree_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">rcontrib_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init command.&quot;&quot;&quot;</span>
+        <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        self.outputFile = outputName if outputName.lower().endswith(".dc") \
-            else outputName + ".dc"
-        """results file for coefficients (Default: untitled)"""
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="sd">&quot;&quot;&quot;results file for coefficients (Default: untitled)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">output_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.dc&quot;</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.hdr&quot;</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.dc&quot;</span>
 
-        self.octreeFile = octreeFile
-        """Full path to input oct file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span> <span class="o">=</span> <span class="n">octree_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input oct file.&quot;&quot;&quot;</span>
 
-        self.pointsFile = pointsFile
-        """Full path to input points file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span> <span class="o">=</span> <span class="n">points_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input points file.&quot;&quot;&quot;</span>
 
-        self.rcontribParameters = rcontribParameters
-        """Radiance parameters for rcontrib. If None Default parameters will be
-        set. You can use self.rcontribParameters to view, add or remove the
-        parameters before executing the command."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span> <span class="o">=</span> <span class="n">rcontrib_parameters</span>
+        <span class="sd">&quot;&quot;&quot;Radiance parameters for rcontrib. If None Default parameters will be</span>
+<span class="sd">        set. You can use self.rcontrib_parameters to view, add or remove the</span>
+<span class="sd">        parameters before executing the command.&quot;&quot;&quot;</span>
 
-    @property
-    def rcontribParameters(self):
-        """Get and set gendaymtxParameters."""
-        return self.__rcontribParameters
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rcontrib_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and set gendaymtx_parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rcontrib_parameters</span>
 
-    @rcontribParameters.setter
-    def rcontribParameters(self, parameters):
-        self.__rcontribParameters = parameters if parameters is not None \
-            else RcontribParameters()
+    <span class="nd">@rcontrib_parameters.setter</span>
+    <span class="k">def</span> <span class="nf">rcontrib_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__rcontrib_parameters</span> <span class="o">=</span> <span class="n">parameters</span> <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="k">else</span> <span class="n">RcontribParameters</span><span class="p">()</span>
 
-        assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
-            "input rcontribParamters is not a valid parameters type."
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="p">,</span> <span class="s2">&quot;isRadianceParameters&quot;</span><span class="p">),</span> \
+            <span class="s2">&quot;input rcontribParamters is not a valid parameters type.&quot;</span>
 
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        radString = "%s %s %s < %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, "rcontrib")),
-            self.rcontribParameters.toRadString(),
-            self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputFile.toRadString())
-        )
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+            <span class="c1"># image-based daylight coefficient - order matters</span>
+            <span class="n">mod</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">mod_file</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">mod_file</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span> <span class="o">=</span> <span class="bp">None</span>
 
-        # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+            <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> -o </span><span class="si">%s</span><span class="s2"> -M </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="n">out</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+            <span class="p">)</span>
 
-    @property
-    def inputFiles(self):
-        """Input files for this command."""
-        return self.octreeFile, self.pointsFile
-</code></pre>
+        <span class="c1"># make sure input files are set by user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rad_string</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Input files for this command.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span>
+</pre></div>
+
   </div>
 
   </header>
@@ -1139,124 +1226,156 @@ class Rcontrib(RadianceCommand):
 <p>Read more at:
 https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf</p>
 <p>Attributes:
-    outputName: An optional name for output file name. If None the name of
+    output_name: An optional name for output file name. If None the name of
         .epw file will be used.
-    rcontribParameters: Radiance parameters for rcontrib. If None Default
-        parameters will be set. You can use self.rcontribParameters to view,
+    rcontrib_parameters: Radiance parameters for rcontrib. If None Default
+        parameters will be set. You can use self.rcontrib_parameters to view,
         add or remove the parameters before executing the command.</p>
 <p>Usage:</p>
-<pre><code>from honeybee.radiance.command.rcontrib import Rcontrib
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">honeybee.radiance.command.rcontrib</span> <span class="kn">import</span> <span class="n">Rcontrib</span>
 
-rcontrib = Rcontrib(outputName="test3",
-                    octreeFile=r"C:/ladybug/test3/gridbased/test3.oct",
-                    pointsFile=r"C:/ladybug/test3/gridbased/test3.pts")
+<span class="n">rcontrib</span> <span class="o">=</span> <span class="n">Rcontrib</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="s2">&quot;test3&quot;</span><span class="p">,</span>
+                    <span class="n">octree_file</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;C:/ladybug/test3/gridbased/test3.oct&quot;</span><span class="p">,</span>
+                    <span class="n">points_file</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;C:/ladybug/test3/gridbased/test3.pts&quot;</span><span class="p">)</span>
 
-# set up parameters
-rcontrib.rcontribParameters.modFile = r"C:/ladybug/test3/sunlist.txt"
-rcontrib.rcontribParameters.I = True
-rcontrib.rcontribParameters.ab = 0
-rcontrib.rcontribParameters.ad = 10000
+<span class="c1"># set up parameters</span>
+<span class="n">rcontrib</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">mod_file</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;C:/ladybug/test3/sunlist.txt&quot;</span>
+<span class="n">rcontrib</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">I</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">rcontrib</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">ab</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">rcontrib</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">ad</span> <span class="o">=</span> <span class="mi">10000</span>
 
-print rcontrib.toRadString()
-&gt; c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M C:/ladybug/test3/gridbased/sunlist.txt -I C:/ladybug/test3/gridbased/test3.oct &lt; C:/ladybug/test3/gridbased/test3.pts &gt; test3.dc
+<span class="k">print</span> <span class="n">rcontrib</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">rcontrib</span> <span class="o">-</span><span class="n">ab</span> <span class="mi">0</span> <span class="o">-</span><span class="n">ad</span> <span class="mi">10000</span> <span class="o">-</span><span class="n">M</span>
+    <span class="n">C</span><span class="p">:</span><span class="o">/</span><span class="n">ladybug</span><span class="o">/</span><span class="n">test3</span><span class="o">/</span><span class="n">gridbased</span><span class="o">/</span><span class="n">sunlist</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">I</span>
+    <span class="n">C</span><span class="p">:</span><span class="o">/</span><span class="n">ladybug</span><span class="o">/</span><span class="n">test3</span><span class="o">/</span><span class="n">gridbased</span><span class="o">/</span><span class="n">test3</span><span class="o">.</span><span class="n">oct</span> <span class="o">&lt;</span>
+    <span class="n">C</span><span class="p">:</span><span class="o">/</span><span class="n">ladybug</span><span class="o">/</span><span class="n">test3</span><span class="o">/</span><span class="n">gridbased</span><span class="o">/</span><span class="n">test3</span><span class="o">.</span><span class="n">pts</span> <span class="o">&gt;</span> <span class="n">test3</span><span class="o">.</span><span class="n">dc</span>
 
-# run rcontrib
-rcontrib.execute()
-</code></pre></div>
+<span class="c1"># run rcontrib</span>
+<span class="n">rcontrib</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rcontrib.Rcontrib" class="source">
-    <pre><code>class Rcontrib(RadianceCommand):
-    u"""
-    rcontrib - Compute contribution coefficients in a RADIANCE scene.
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Rcontrib</span><span class="p">(</span><span class="n">RadianceCommand</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    rcontrib - Compute contribution coefficients in a RADIANCE scene.</span>
 
-    Read more at:
-    https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf
+<span class="sd">    Read more at:</span>
+<span class="sd">    https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf</span>
 
-    Attributes:
-        outputName: An optional name for output file name. If None the name of
-            .epw file will be used.
-        rcontribParameters: Radiance parameters for rcontrib. If None Default
-            parameters will be set. You can use self.rcontribParameters to view,
-            add or remove the parameters before executing the command.
+<span class="sd">    Attributes:</span>
+<span class="sd">        output_name: An optional name for output file name. If None the name of</span>
+<span class="sd">            .epw file will be used.</span>
+<span class="sd">        rcontrib_parameters: Radiance parameters for rcontrib. If None Default</span>
+<span class="sd">            parameters will be set. You can use self.rcontrib_parameters to view,</span>
+<span class="sd">            add or remove the parameters before executing the command.</span>
 
-    Usage:
+<span class="sd">    Usage:</span>
 
-        from honeybee.radiance.command.rcontrib import Rcontrib
+<span class="sd">        from honeybee.radiance.command.rcontrib import Rcontrib</span>
 
-        rcontrib = Rcontrib(outputName="test3",
-                            octreeFile=r"C:/ladybug/test3/gridbased/test3.oct",
-                            pointsFile=r"C:/ladybug/test3/gridbased/test3.pts")
+<span class="sd">        rcontrib = Rcontrib(output_name=&quot;test3&quot;,</span>
+<span class="sd">                            octree_file=r&quot;C:/ladybug/test3/gridbased/test3.oct&quot;,</span>
+<span class="sd">                            points_file=r&quot;C:/ladybug/test3/gridbased/test3.pts&quot;)</span>
 
-        # set up parameters
-        rcontrib.rcontribParameters.modFile = r"C:/ladybug/test3/sunlist.txt"
-        rcontrib.rcontribParameters.I = True
-        rcontrib.rcontribParameters.ab = 0
-        rcontrib.rcontribParameters.ad = 10000
+<span class="sd">        # set up parameters</span>
+<span class="sd">        rcontrib.rcontrib_parameters.mod_file = r&quot;C:/ladybug/test3/sunlist.txt&quot;</span>
+<span class="sd">        rcontrib.rcontrib_parameters.I = True</span>
+<span class="sd">        rcontrib.rcontrib_parameters.ab = 0</span>
+<span class="sd">        rcontrib.rcontrib_parameters.ad = 10000</span>
 
-        print rcontrib.toRadString()
-        > c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M C:/ladybug/test3/gridbased/sunlist.txt -I C:/ladybug/test3/gridbased/test3.oct < C:/ladybug/test3/gridbased/test3.pts > test3.dc
+<span class="sd">        print rcontrib.to_rad_string()</span>
+<span class="sd">        &gt; c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M</span>
+<span class="sd">            C:/ladybug/test3/gridbased/sunlist.txt -I</span>
+<span class="sd">            C:/ladybug/test3/gridbased/test3.oct &lt;</span>
+<span class="sd">            C:/ladybug/test3/gridbased/test3.pts &gt; test3.dc</span>
 
-        # run rcontrib
-        rcontrib.execute()
-    """
+<span class="sd">        # run rcontrib</span>
+<span class="sd">        rcontrib.execute()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    outputFile = RadiancePath("dc", "results file", extension=".dc")
-    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file", extension=".pts")
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;dc&quot;</span><span class="p">,</span> <span class="s2">&quot;results file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.dc&quot;</span><span class="p">)</span>
+    <span class="n">octree_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;oct&quot;</span><span class="p">,</span> <span class="s2">&quot;octree file&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.oct&quot;</span><span class="p">)</span>
+    <span class="n">points_file</span> <span class="o">=</span> <span class="n">RadiancePath</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;test point file&quot;</span><span class="p">)</span>
 
-    def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
-                 rcontribParameters=None):
-        """Init command."""
-        RadianceCommand.__init__(self)
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">octree_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">rcontrib_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init command.&quot;&quot;&quot;</span>
+        <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        self.outputFile = outputName if outputName.lower().endswith(".dc") \
-            else outputName + ".dc"
-        """results file for coefficients (Default: untitled)"""
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="sd">&quot;&quot;&quot;results file for coefficients (Default: untitled)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">output_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.dc&quot;</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.hdr&quot;</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.dc&quot;</span>
 
-        self.octreeFile = octreeFile
-        """Full path to input oct file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span> <span class="o">=</span> <span class="n">octree_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input oct file.&quot;&quot;&quot;</span>
 
-        self.pointsFile = pointsFile
-        """Full path to input points file."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span> <span class="o">=</span> <span class="n">points_file</span>
+        <span class="sd">&quot;&quot;&quot;Full path to input points file.&quot;&quot;&quot;</span>
 
-        self.rcontribParameters = rcontribParameters
-        """Radiance parameters for rcontrib. If None Default parameters will be
-        set. You can use self.rcontribParameters to view, add or remove the
-        parameters before executing the command."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span> <span class="o">=</span> <span class="n">rcontrib_parameters</span>
+        <span class="sd">&quot;&quot;&quot;Radiance parameters for rcontrib. If None Default parameters will be</span>
+<span class="sd">        set. You can use self.rcontrib_parameters to view, add or remove the</span>
+<span class="sd">        parameters before executing the command.&quot;&quot;&quot;</span>
 
-    @property
-    def rcontribParameters(self):
-        """Get and set gendaymtxParameters."""
-        return self.__rcontribParameters
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rcontrib_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and set gendaymtx_parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rcontrib_parameters</span>
 
-    @rcontribParameters.setter
-    def rcontribParameters(self, parameters):
-        self.__rcontribParameters = parameters if parameters is not None \
-            else RcontribParameters()
+    <span class="nd">@rcontrib_parameters.setter</span>
+    <span class="k">def</span> <span class="nf">rcontrib_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__rcontrib_parameters</span> <span class="o">=</span> <span class="n">parameters</span> <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="k">else</span> <span class="n">RcontribParameters</span><span class="p">()</span>
 
-        assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
-            "input rcontribParamters is not a valid parameters type."
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="p">,</span> <span class="s2">&quot;isRadianceParameters&quot;</span><span class="p">),</span> \
+            <span class="s2">&quot;input rcontribParamters is not a valid parameters type.&quot;</span>
 
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        radString = "%s %s %s < %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, "rcontrib")),
-            self.rcontribParameters.toRadString(),
-            self.normspace(self.octreeFile.toRadString()),
-            self.normspace(self.pointsFile.toRadString()),
-            self.normspace(self.outputFile.toRadString())
-        )
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+            <span class="c1"># image-based daylight coefficient - order matters</span>
+            <span class="n">mod</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">mod_file</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">mod_file</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span> <span class="o">=</span> <span class="bp">None</span>
 
-        # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+            <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> -o </span><span class="si">%s</span><span class="s2"> -M </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="n">out</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+            <span class="p">)</span>
 
-    @property
-    def inputFiles(self):
-        """Input files for this command."""
-        return self.octreeFile, self.pointsFile
-</code></pre>
+        <span class="c1"># make sure input files are set by user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rad_string</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Input files for this command.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1270,7 +1389,7 @@ rcontrib.execute()
           </ul>
           <h3>Class variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.octreeFile" class="name">var <span class="ident">octreeFile</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.octree_file" class="name">var <span class="ident">octree_file</span></p>
             
 
             
@@ -1280,7 +1399,7 @@ rcontrib.execute()
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.outputFile" class="name">var <span class="ident">outputFile</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.output_file" class="name">var <span class="ident">output_file</span></p>
             
 
             
@@ -1290,7 +1409,7 @@ rcontrib.execute()
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.points_file" class="name">var <span class="ident">points_file</span></p>
             
 
             
@@ -1314,16 +1433,17 @@ rcontrib.execute()
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.normspace', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.normspace" class="source">
-    <pre><code>@staticmethod
-def normspace(path):
-    """Norm white spaces in path.
-    Return path with quotation marks if there is whitespace in path.
-    """
-    if str(path).strip().find(" ") != -1:
-        return "{0}{1}{0}".format(config.wrapper, path)
-    else:
-        return path
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">normspace</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Norm white spaces in path.</span>
+<span class="sd">    Return path with quotation marks if there is whitespace in path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;{0}{1}{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1331,7 +1451,7 @@ def normspace(path):
   
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.input_files" class="name">var <span class="ident">input_files</span></p>
             
 
             
@@ -1342,7 +1462,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.octreeFile" class="name">var <span class="ident">octreeFile</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.octree_file" class="name">var <span class="ident">octree_file</span></p>
             
 
             
@@ -1353,7 +1473,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.outputFile" class="name">var <span class="ident">outputFile</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.output_file" class="name">var <span class="ident">output_file</span></p>
             
 
             
@@ -1364,7 +1484,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.perlExePath" class="name">var <span class="ident">perlExePath</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.perl_exe_path" class="name">var <span class="ident">perl_exe_path</span></p>
             
 
             
@@ -1376,7 +1496,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.pointsFile" class="name">var <span class="ident">pointsFile</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.points_file" class="name">var <span class="ident">points_file</span></p>
             
 
             
@@ -1387,7 +1507,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.pythonExePath" class="name">var <span class="ident">pythonExePath</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.python_exe_path" class="name">var <span class="ident">python_exe_path</span></p>
             
 
             
@@ -1397,7 +1517,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.radbin_path" class="name">var <span class="ident">radbin_path</span></p>
             
 
             
@@ -1409,7 +1529,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.radlibPath" class="name">var <span class="ident">radlibPath</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.radlib_path" class="name">var <span class="ident">radlib_path</span></p>
             
 
             
@@ -1421,13 +1541,13 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.rcontrib.Rcontrib.rcontribParameters" class="name">var <span class="ident">rcontribParameters</span></p>
+            <p id="honeybee.radiance.command.rcontrib.Rcontrib.rcontrib_parameters" class="name">var <span class="ident">rcontrib_parameters</span></p>
             
 
             
   
     <div class="desc"><p>Radiance parameters for rcontrib. If None Default parameters will be
-set. You can use self.rcontribParameters to view, add or remove the
+set. You can use self.rcontrib_parameters to view, add or remove the
 parameters before executing the command.</p></div>
   <div class="source_cont">
 </div>
@@ -1437,7 +1557,7 @@ parameters before executing the command.</p></div>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=&#39;untitled&#39;, octreeFile=None, pointsFile=None, rcontribParameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, output_name=None, octree_file=None, points_file=None, rcontrib_parameters=None)</p>
     </div>
     
 
@@ -1447,22 +1567,26 @@ parameters before executing the command.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.__init__" class="source">
-    <pre><code>def __init__(self, outputName="untitled", octreeFile=None, pointsFile=None,
-             rcontribParameters=None):
-    """Init command."""
-    RadianceCommand.__init__(self)
-    self.outputFile = outputName if outputName.lower().endswith(".dc") \
-        else outputName + ".dc"
-    """results file for coefficients (Default: untitled)"""
-    self.octreeFile = octreeFile
-    """Full path to input oct file."""
-    self.pointsFile = pointsFile
-    """Full path to input points file."""
-    self.rcontribParameters = rcontribParameters
-    """Radiance parameters for rcontrib. If None Default parameters will be
-    set. You can use self.rcontribParameters to view, add or remove the
-    parameters before executing the command."""
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">octree_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">rcontrib_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Init command.&quot;&quot;&quot;</span>
+    <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="sd">&quot;&quot;&quot;results file for coefficients (Default: untitled)&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_name</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.dc&quot;</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="n">output_name</span> <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.hdr&quot;</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.dc&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span> <span class="o">=</span> <span class="n">octree_file</span>
+    <span class="sd">&quot;&quot;&quot;Full path to input oct file.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">points_file</span> <span class="o">=</span> <span class="n">points_file</span>
+    <span class="sd">&quot;&quot;&quot;Full path to input points file.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span> <span class="o">=</span> <span class="n">rcontrib_parameters</span>
+    <span class="sd">&quot;&quot;&quot;Radiance parameters for rcontrib. If None Default parameters will be</span>
+<span class="sd">    set. You can use self.rcontrib_parameters to view, add or remove the</span>
+<span class="sd">    parameters before executing the command.&quot;&quot;&quot;</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1470,8 +1594,8 @@ parameters before executing the command.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles">
-    <p>def <span class="ident">checkInputFiles</span>(</p><p>self, radString=&#39;&#39;)</p>
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.check_input_files">
+    <p>def <span class="ident">check_input_files</span>(</p><p>self, rad_string=&#39;&#39;)</p>
     </div>
     
 
@@ -1481,34 +1605,35 @@ parameters before executing the command.</p></div>
 <p>This method doesn't check if the file exists since it might be created
 later during the process.</p>
 <p>Args:
-    radString: Current radString to help user better understand the
+    rad_string: Current rad_string to help user better understand the
         erorr (Default: "")</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.checkInputFiles" class="source">
-    <pre><code>def checkInputFiles(self, radString=""):
-    """Make sure input files are set to a path.
-    This method doesn't check if the file exists since it might be created
-    later during the process.
-    Args:
-        radString: Current radString to help user better understand the
-            erorr (Default: "")
-    """
-    # make sure wea file is provided
-    _msg = "To generate a valid %s command you need to specify the path" \
-        " to input files:" \
-        "\nCurrent command won't work:\n%s" \
-        % (self.__class__.__name__, radString)
-    if self.inputFiles is None:
-        return
-    for f in self.inputFiles:
-        # this is for oconv where it has list of files which are not
-        # RadiancePath
-        if isinstance(f, str):
-            continue
-        assert hasattr(f, 'normpath'), "%s is missing!\n" % f + _msg
-        assert f.normpath is not None, _msg
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.check_input_files', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.check_input_files" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rad_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make sure input files are set to a path.</span>
+<span class="sd">    This method doesn&#39;t check if the file exists since it might be created</span>
+<span class="sd">    later during the process.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        rad_string: Current rad_string to help user better understand the</span>
+<span class="sd">            erorr (Default: &quot;&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># make sure wea file is provided</span>
+    <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;To generate a valid </span><span class="si">%s</span><span class="s2"> command you need to specify the path&quot;</span> \
+        <span class="s2">&quot; to input files:&quot;</span> \
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Current command won&#39;t work:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> \
+        <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">rad_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">:</span>
+        <span class="c1"># this is for oconv where it has list of files which are not</span>
+        <span class="c1"># RadiancePath</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;normpath&#39;</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is missing!</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">f</span> <span class="o">+</span> <span class="n">_msg</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="o">.</span><span class="n">normpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">_msg</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1529,33 +1654,34 @@ later during the process.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.execute', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.execute" class="source">
-    <pre><code>def execute(self):
-    """Execute the command.
-    Returns:
-        Return fullpath to the result file if any as a string.
-    """
-    # check if the files exist on the computer
-    self.__checkFiles()
-    self.onExecution()
-    if os.name == 'nt':
-        os.environ['PATH'] += ';%s' % self.normspace(config.radbinPath)
-        os.environ['RAYPATH'] += ';%s' % self.normspace(config.radlibPath)
-    p = subprocess.Popen(self.toRadString(), shell=True,
-                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    for line in p.stdout.readlines():
-        print line,
-    p.wait()
-    try:
-        if os.path.split(self.outputFile.normpath)[0] == "":
-            # add directory to file if it's not a full path
-            return os.path.join(os.getcwd(),
-                                self.outputFile.normpath)
-        # return output file
-        return self.outputFile
-    except AttributeError:
-        # this command doesn't have an output file
-        pass
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Execute the command.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Return fullpath to the result file if any as a string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check if the files exist on the computer</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__check_files</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">on_execution</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;RAYPATH&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">radlib_path</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                         <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+        <span class="k">print</span> <span class="n">line</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">normpath</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="c1"># add directory to file if it&#39;s not a full path</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">normpath</span><span class="p">)</span>
+        <span class="c1"># return output file</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># this command doesn&#39;t have an output file</span>
+        <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1563,8 +1689,8 @@ later during the process.</p>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.onExecution">
-    <p>def <span class="ident">onExecution</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.on_execution">
+    <p>def <span class="ident">on_execution</span>(</p><p>self)</p>
     </div>
     
 
@@ -1575,16 +1701,17 @@ later during the process.</p>
 modifier set in the command. This method will be executed right before
 running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.onExecution', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.onExecution" class="source">
-    <pre><code>def onExecution(self):
-    """Overwrite this method to add extra specific checks for the command.
-    For instance for rcontrib you want to make sure there is at least one
-    modifier set in the command. This method will be executed right before
-    running the command.
-    """
-    pass
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.on_execution', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.on_execution" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">on_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite this method to add extra specific checks for the command.</span>
+<span class="sd">    For instance for rcontrib you want to make sure there is at least one</span>
+<span class="sd">    modifier set in the command. This method will be executed right before</span>
+<span class="sd">    running the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1592,8 +1719,8 @@ running the command.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.onToRadString">
-    <p>def <span class="ident">onToRadString</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.on_to_rad_string">
+    <p>def <span class="ident">on_to_rad_string</span>(</p><p>self)</p>
     </div>
     
 
@@ -1604,16 +1731,17 @@ running the command.</p></div>
 modifier set in the command. This method will be executed right before
 running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.onToRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.onToRadString" class="source">
-    <pre><code>def onToRadString(self):
-    """Overwrite this method to add extra specific checks while generating rad string.
-    For instance for rcontrib you want to make sure there is at least one
-    modifier set in the command. This method will be executed right before
-    running the command.
-    """
-    pass
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.on_to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.on_to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">on_to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite this method to add extra specific checks while generating rad string.</span>
+<span class="sd">    For instance for rcontrib you want to make sure there is at least one</span>
+<span class="sd">    modifier set in the command. This method will be executed right before</span>
+<span class="sd">    running the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1621,8 +1749,8 @@ running the command.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.toRadString">
-    <p>def <span class="ident">toRadString</span>(</p><p>self, relativePath=False)</p>
+    <div class="name def" id="honeybee.radiance.command.rcontrib.Rcontrib.to_rad_string">
+    <p>def <span class="ident">to_rad_string</span>(</p><p>self, relative_path=False)</p>
     </div>
     
 
@@ -1630,21 +1758,43 @@ running the command.</p></div>
   
     <div class="desc"><p>Return full command as a string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.toRadString" class="source">
-    <pre><code>def toRadString(self, relativePath=False):
-    """Return full command as a string."""
-    radString = "%s %s %s < %s > %s" % (
-        self.normspace(os.path.join(self.radbinPath, "rcontrib")),
-        self.rcontribParameters.toRadString(),
-        self.normspace(self.octreeFile.toRadString()),
-        self.normspace(self.pointsFile.toRadString()),
-        self.normspace(self.outputFile.toRadString())
-    )
-    # make sure input files are set by user
-    self.checkInputFiles(radString)
-    return radString
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.rcontrib.Rcontrib.to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.rcontrib.Rcontrib.to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+        <span class="c1"># image-based daylight coefficient - order matters</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">mod_file</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">mod_file</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">output_filename_format</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2"> -o </span><span class="si">%s</span><span class="s2"> -M </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &lt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s2">&quot;rcontrib&quot;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rcontrib_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">octree_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points_file</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">())</span>
+        <span class="p">)</span>
+    <span class="c1"># make sure input files are set by user</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rad_string</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1660,14 +1810,14 @@ running the command.</p></div>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a>
-    </p>
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
-<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

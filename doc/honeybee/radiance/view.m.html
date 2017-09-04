@@ -7,11 +7,6 @@
     <meta name="description" content="Create a radiance view." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
-
-  <!-- highlight.js for highlighting source code. -->
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-
   
   <style type="text/css">
   
@@ -247,7 +242,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 /**
@@ -570,20 +565,16 @@ table {
   }
   #content {
     width: 70%;
-    margin-left: 25%;
-    max-width: 90%;
+    max-width: 850px;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
-    position: fixed;
-    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
   #nav {
     font-size: 130%;
@@ -658,6 +649,10 @@ table {
     color: #900;
   }
 
+  code {
+    background: #f9f9f9;
+  } 
+
   pre {
     background: #fefefe;
     border: 1px solid #ddd;
@@ -673,7 +668,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
 
   table#module-list {
     font-size: 110%;
@@ -784,7 +779,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-
+      
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -798,7 +793,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: auto;
+      overflow-y: scroll;
       margin-bottom: 15px;
     }
 
@@ -809,26 +804,16 @@ table {
   .desc h1, .desc h2, .desc h3 {
     font-size: 100% !important;
   }
-
-  .desc {
-    white-space: pre-wrap;
-  }
-
   .clear {
     clear: both;
   }
 
   @media all and (max-width: 950px) {
     #sidebar {
-        position: inherit;
-        float: none;
-        width: auto;
+      width: 35%;
     }
     #content {
-      width: 95%;
-      margin-left: auto;
-      border-left: none;
-      padding: 30px;
+      width: 65%;
     }
   }
   @media all and (max-width: 650px) {
@@ -866,6 +851,77 @@ table {
 
   </style>
 
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
   <style type="text/css">
   
@@ -994,11 +1050,12 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.view.View.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.radiance.view.View.ToString">ToString</a></li>
-    <li class="mono"><a href="#honeybee.radiance.view.View.addForeClip">addForeClip</a></li>
-    <li class="mono"><a href="#honeybee.radiance.view.View.calculateViewGrid">calculateViewGrid</a></li>
-    <li class="mono"><a href="#honeybee.radiance.view.View.saveToFile">saveToFile</a></li>
-    <li class="mono"><a href="#honeybee.radiance.view.View.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.add_fore_clip">add_fore_clip</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.calculate_view_grid">calculate_view_grid</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.get_view_dimension">get_view_dimension</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.save_to_file">save_to_file</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.to_rad_string">to_rad_string</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1021,331 +1078,376 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.view" class="source">
-    <pre><code># coding=utf-8
-u"""Create a radiance view."""
-from datatype import RadianceTuple, RadianceNumber
-import math
-from copy import deepcopy
+    <div class="codehilite"><pre><span></span><span class="c1"># coding=utf-8</span>
+<span class="sa">u</span><span class="sd">&quot;&quot;&quot;Create a radiance view.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">datatype</span> <span class="kn">import</span> <span class="n">RadianceTuple</span><span class="p">,</span> <span class="n">RadianceNumber</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 
-# TODO: Add a method to add paramters from string.
-# I want to make sure that this won't be duplicated by parameters class
-class View(object):
-    u"""A radiance view.
+<span class="c1"># TODO: Add a method to add paramters from string.</span>
+<span class="c1"># I want to make sure that this won&#39;t be duplicated by parameters class</span>
+<span class="k">class</span> <span class="nc">View</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;A radiance view.</span>
 
-    Attributes:
-        viewPoint: Set the view point (-vp) to (x, y, z). This is the focal
-            point of a perspective view or the center of a parallel projection.
-            Default: (0, 0, 0)
-        viewDirection: Set the view direction (-vd) vector to (x, y, z). The
-            length of this vector indicates the focal distance as needed by
-            the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
-        upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).
-            Default: (0, 1, 0)
-        viewType: Set view type (-vt) to one of the choices below.
-                0: Perspective (v)
-                1: Hemispherical fisheye (h)
-                2: Parallel (l)
-                3: Cylindrical panorma (c)
-                4: Angular fisheye (a)
-                5: Planisphere [stereographic] projection (s)
-            For more detailed description about view types check rpict manual
-            page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-        viewHSize: Set the view horizontal size (-vh). For a perspective
-            projection (including fisheye views), val is the horizontal field
-            of view (in degrees). For a parallel projection, val is the view
-            width in world coordinates.
-        viewVSize: Set the view vertical size (-vv). For a perspective
-            projection (including fisheye views), val is the horizontal field
-            of view (in degrees). For a parallel projection, val is the view
-            width in world coordinates.
-        xRes: Set the maximum x resolution (-x) to an integer.
-        yRes: Set the maximum y resolution (-y) to an integer.
-        viewShift: Set the view shift (-vs). This is the amount the actual
-            image will be shifted to the right of the specified view. This
-            option is useful for generating skewed perspectives or rendering
-            an image a piece at a time. A value of 1 means that the rendered
-            image starts just to the right of the normal view. A value of −1
-            would be to the left. Larger or fractional values are permitted
-            as well.
-        viewLift: Set the view lift (-vl) to a value. This is the amount the
-            actual image will be lifted up from the specified view.
+<span class="sd">    Attributes:</span>
+<span class="sd">        view_point: Set the view point (-vp) to (x, y, z). This is the focal</span>
+<span class="sd">            point of a perspective view or the center of a parallel projection.</span>
+<span class="sd">            Default: (0, 0, 0)</span>
+<span class="sd">        view_direction: Set the view direction (-vd) vector to (x, y, z). The</span>
+<span class="sd">            length of this vector indicates the focal distance as needed by</span>
+<span class="sd">            the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)</span>
+<span class="sd">        upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).</span>
+<span class="sd">            Default: (0, 1, 0)</span>
+<span class="sd">        view_type: Set view type (-vt) to one of the choices below.</span>
+<span class="sd">                0: Perspective (v)</span>
+<span class="sd">                1: Hemispherical fisheye (h)</span>
+<span class="sd">                2: Parallel (l)</span>
+<span class="sd">                3: Cylindrical panorma (c)</span>
+<span class="sd">                4: Angular fisheye (a)</span>
+<span class="sd">                5: Planisphere [stereographic] projection (s)</span>
+<span class="sd">            For more detailed description about view types check rpict manual</span>
+<span class="sd">            page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)</span>
+<span class="sd">        view_h_size: Set the view horizontal size (-vh). For a perspective</span>
+<span class="sd">            projection (including fisheye views), val is the horizontal field</span>
+<span class="sd">            of view (in degrees). For a parallel projection, val is the view</span>
+<span class="sd">            width in world coordinates.</span>
+<span class="sd">        view_v_size: Set the view vertical size (-vv). For a perspective</span>
+<span class="sd">            projection (including fisheye views), val is the horizontal field</span>
+<span class="sd">            of view (in degrees). For a parallel projection, val is the view</span>
+<span class="sd">            width in world coordinates.</span>
+<span class="sd">        x_res: Set the maximum x resolution (-x) to an integer.</span>
+<span class="sd">        y_res: Set the maximum y resolution (-y) to an integer.</span>
+<span class="sd">        view_shift: Set the view shift (-vs). This is the amount the actual</span>
+<span class="sd">            image will be shifted to the right of the specified view. This</span>
+<span class="sd">            option is useful for generating skewed perspectives or rendering</span>
+<span class="sd">            an image a piece at a time. A value of 1 means that the rendered</span>
+<span class="sd">            image starts just to the right of the normal view. A value of −1</span>
+<span class="sd">            would be to the left. Larger or fractional values are permitted</span>
+<span class="sd">            as well.</span>
+<span class="sd">        view_lift: Set the view lift (-vl) to a value. This is the amount the</span>
+<span class="sd">            actual image will be lifted up from the specified view.</span>
 
-    Usage:
+<span class="sd">    Usage:</span>
 
-        v = View()
-        # set x and y resolution
-        v.xRes = v.yRes = 600
-        # add a fore clip
-        v.addForeClip(distance=100)
-        print v
+<span class="sd">        v = View()</span>
+<span class="sd">        # set x and y resolution</span>
+<span class="sd">        v.x_res = v.y_res = 600</span>
+<span class="sd">        # add a fore clip</span>
+<span class="sd">        v.add_fore_clip(distance=100)</span>
+<span class="sd">        print v</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000</span>
 
-        # split the view into a view grid
-        gridViews = v.calculateViewGrid(2, 2)
-        for g in gridViews:
-            print g
+<span class="sd">        # split the view into a view grid</span>
+<span class="sd">        gridViews = v.calculate_view_grid(2, 2)</span>
+<span class="sd">        for g in gridViews:</span>
+<span class="sd">            print g</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500
-           -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500</span>
+<span class="sd">           -vo 100.000</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500
-           -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500</span>
+<span class="sd">           -vo 100.000</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500
-           -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500</span>
+<span class="sd">           -vo 100.000</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-          0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500
-          -vo 100.000
-    """
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">          0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500</span>
+<span class="sd">          -vo 100.000</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    # init radiance types
-    viewPoint = RadianceTuple('vp', 'view point', tupleSize=3, numType=float,
-                              defaultValue=(0, 0, 0))
+    <span class="c1"># init radiance types</span>
+    <span class="n">view_point</span> <span class="o">=</span> <span class="n">RadianceTuple</span><span class="p">(</span><span class="s1">&#39;vp&#39;</span><span class="p">,</span> <span class="s1">&#39;view point&#39;</span><span class="p">,</span> <span class="n">tuple_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                               <span class="n">default_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
-    viewDirection = RadianceTuple('vd', 'view direction', tupleSize=3,
-                                  numType=float, defaultValue=(0, 0, 1))
+    <span class="n">view_direction</span> <span class="o">=</span> <span class="n">RadianceTuple</span><span class="p">(</span><span class="s1">&#39;vd&#39;</span><span class="p">,</span> <span class="s1">&#39;view direction&#39;</span><span class="p">,</span> <span class="n">tuple_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                   <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
-    viewUpVector = RadianceTuple('vu', 'view up vector', tupleSize=3,
-                                 numType=float, defaultValue=(0, 1, 0))
+    <span class="n">view_up_vector</span> <span class="o">=</span> <span class="n">RadianceTuple</span><span class="p">(</span><span class="s1">&#39;vu&#39;</span><span class="p">,</span> <span class="s1">&#39;view up vector&#39;</span><span class="p">,</span> <span class="n">tuple_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                   <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
-    viewHSize = RadianceNumber('vh', 'view horizontal size', numType=float)
-    viewVSize = RadianceNumber('vv', 'view vertical size', numType=float)
+    <span class="n">view_h_size</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vh&#39;</span><span class="p">,</span> <span class="s1">&#39;view horizontal size&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">view_v_size</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vv&#39;</span><span class="p">,</span> <span class="s1">&#39;view vertical size&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-    xRes = RadianceNumber('x', 'x resolution', numType=int)
-    yRes = RadianceNumber('y', 'y resolution', numType=int)
-    viewShift = RadianceNumber('vs', 'view shift', numType=float)
-    viewLift = RadianceNumber('vl', 'view lift', numType=float)
+    <span class="n">x_res</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;x resolution&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">y_res</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;y resolution&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">view_shift</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vs&#39;</span><span class="p">,</span> <span class="s1">&#39;view shift&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">view_lift</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vl&#39;</span><span class="p">,</span> <span class="s1">&#39;view lift&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-    __viewForeClip = RadianceNumber('vo', 'view fore clip distance', numType=float)
+    <span class="n">__viewForeClip</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vo&#39;</span><span class="p">,</span> <span class="s1">&#39;view fore clip distance&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-    _viewTypes = {0: 'vtv', 1: 'vth', 2: 'vtl', 3: 'vtc', 4: 'vta', 5: 'vts'}
-    __viewType = RadianceNumber('vt', 'view type', numType=int, validRange=[0, 5],
-                                defaultValue=0)
+    <span class="n">_view_types</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;vtv&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;vth&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;vtl&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;vtc&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;vta&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s1">&#39;vts&#39;</span><span class="p">}</span>
+    <span class="n">__view_type</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vt&#39;</span><span class="p">,</span> <span class="s1">&#39;view type&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">valid_range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+                                 <span class="n">default_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    def __init__(self, name, viewPoint=None, viewDirection=None, viewUpVector=None,
-                 viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
-                 viewShift=0, viewLift=0):
-        u"""Init view."""
-        self.name = name
-        """View name."""
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">view_point</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">view_direction</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">view_up_vector</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">view_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">view_h_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">view_v_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">x_res</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">y_res</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+                 <span class="n">view_shift</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">view_lift</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sa">u</span><span class="sd">&quot;&quot;&quot;Init view.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="sd">&quot;&quot;&quot;View name.&quot;&quot;&quot;</span>
 
-        self.viewPoint = viewPoint
-        """Set the view point (-vp) to (x, y, z)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span> <span class="o">=</span> <span class="n">view_point</span>
+        <span class="sd">&quot;&quot;&quot;Set the view point (-vp) to (x, y, z).&quot;&quot;&quot;</span>
 
-        self.viewDirection = viewDirection
-        """Set the view direction (-vd) vector to (x, y, z)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span> <span class="o">=</span> <span class="n">view_direction</span>
+        <span class="sd">&quot;&quot;&quot;Set the view direction (-vd) vector to (x, y, z).&quot;&quot;&quot;</span>
 
-        self.viewUpVector = viewUpVector
-        """Set the view up (-vu) vector (vertical direction) to (x, y, z)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span> <span class="o">=</span> <span class="n">view_up_vector</span>
+        <span class="sd">&quot;&quot;&quot;Set the view up (-vu) vector (vertical direction) to (x, y, z).&quot;&quot;&quot;</span>
 
-        self.viewHSize = viewHSize
-        """Set the view horizontal size (-vs). For a perspective projection
-        (including fisheye views), val is the horizontal field of view (in
-        degrees). For a parallel projection, val is the view width in world
-        coordinates."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="n">view_h_size</span>
+        <span class="sd">&quot;&quot;&quot;Set the view horizontal size (-vs). For a perspective projection</span>
+<span class="sd">        (including fisheye views), val is the horizontal field of view (in</span>
+<span class="sd">        degrees). For a parallel projection, val is the view width in world</span>
+<span class="sd">        coordinates.&quot;&quot;&quot;</span>
 
-        self.viewVSize = viewVSize
-        """Set the view vertical size (-vv). For a perspective projection
-        (including fisheye views), val is the horizontal field of view (in
-        degrees). For a parallel projection, val is the view width in world
-        coordinates."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="n">view_v_size</span>
+        <span class="sd">&quot;&quot;&quot;Set the view vertical size (-vv). For a perspective projection</span>
+<span class="sd">        (including fisheye views), val is the horizontal field of view (in</span>
+<span class="sd">        degrees). For a parallel projection, val is the view width in world</span>
+<span class="sd">        coordinates.&quot;&quot;&quot;</span>
 
-        self.xRes = xRes
-        """Set the maximum x resolution (-x)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">x_res</span>
+        <span class="sd">&quot;&quot;&quot;Set the maximum x resolution (-x).&quot;&quot;&quot;</span>
 
-        self.yRes = yRes
-        """Set the maximum y resolution (-y)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">y_res</span>
+        <span class="sd">&quot;&quot;&quot;Set the maximum y resolution (-y).&quot;&quot;&quot;</span>
 
-        self.viewShift = viewShift
-        """Set the view shift (-vs). This is the amount the actual
-            image will be shifted to the right of the specified view.
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">=</span> <span class="n">view_shift</span>
+        <span class="sd">&quot;&quot;&quot;Set the view shift (-vs). This is the amount the actual</span>
+<span class="sd">            image will be shifted to the right of the specified view.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        self.viewLift = viewLift
-        """Set the view lift (-vl) to a value. This is the amount the
-            actual image will be lifted up from the specified view.
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">=</span> <span class="n">view_lift</span>
+        <span class="sd">&quot;&quot;&quot;Set the view lift (-vl) to a value. This is the amount the</span>
+<span class="sd">            actual image will be lifted up from the specified view.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        self.viewType = viewType
-        """Set and get view type (-vt) to one of the choices below (0-5).
-        0: Perspective (v), 1: Hemispherical fisheye (h),
-        2: Parallel (l),    3: Cylindrical panorma (c),
-        4: Angular fisheye (a),
-        5: Planisphere [stereographic] projection (s)
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">=</span> <span class="n">view_type</span>
+        <span class="sd">&quot;&quot;&quot;Set and get view type (-vt) to one of the choices below (0-5).</span>
+<span class="sd">        0: Perspective (v), 1: Hemispherical fisheye (h),</span>
+<span class="sd">        2: Parallel (l),    3: Cylindrical panorma (c),</span>
+<span class="sd">        4: Angular fisheye (a),</span>
+<span class="sd">        5: Planisphere [stereographic] projection (s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    @property
-    def isView(self):
-        """Return True for view."""
-        return True
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True for view.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">True</span>
 
-    @property
-    def viewType(self):
-        """Set and get view type (-vt) to one of the choices below (0-5).
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">view_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set and get view type (-vt) to one of the choices below (0-5).</span>
 
-        0: Perspective (v), 1: Hemispherical fisheye (h),
-        2: Parallel (l),    3: Cylindrical panorma (c),
-        4: Angular fisheye (a),
-        5: Planisphere [stereographic] projection (s)
-        """
-        return self.__viewType
+<span class="sd">        0: Perspective (v), 1: Hemispherical fisheye (h),</span>
+<span class="sd">        2: Parallel (l),    3: Cylindrical panorma (c),</span>
+<span class="sd">        4: Angular fisheye (a),</span>
+<span class="sd">        5: Planisphere [stereographic] projection (s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__view_type</span>
 
-    @viewType.setter
-    def viewType(self, value):
-        self.__viewType = value
+    <span class="nd">@view_type.setter</span>
+    <span class="k">def</span> <span class="nf">view_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__view_type</span> <span class="o">=</span> <span class="n">value</span>
 
-        # set view size to 180 degrees for fisheye views
-        if self.viewType in [1, 4, 5]:
-            self.viewHSize = 180
-            self.viewVSize = 180
-            print "Changed viewHSize and viewVSize to 180 for fisheye view type."
+        <span class="c1"># set view size to 180 degrees for fisheye views</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="mi">180</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="mi">180</span>
+            <span class="k">print</span> <span class="s2">&quot;Changed view_h_size and view_v_size to 180 for fisheye view type.&quot;</span>
 
-        elif self.viewType == 0:
-            assert self.viewHSize < 180, ValueError(
-                '\n{} is an invalid horizontal view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.viewHSize))
-            assert self.viewVSize < 180, ValueError(
-                '\n{} is an invalid vertical view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.viewVSize))
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">{} is an invalid horizontal view size for Perspective view.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;The size should be smaller than 180.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">{} is an invalid vertical view size for Perspective view.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;The size should be smaller than 180.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">))</span>
 
-    def calculateViewGrid(self, xDivCount=1, yDivCount=1):
-        """Return a list of views for grid of views.
+    <span class="k">def</span> <span class="nf">get_view_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_y</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get dimensions for this view as x, y.</span>
 
-        Views will be returned row by row from right to left.
-        Args:
-            xDivCount: Set number of divisions in x direction (Default: 1).
-            yDivCount: Set number of divisions in y direction (Default: 1).
-        Returns:
-            A tuple of views. Views are sorted row by row from right to left.
-        """
-        PI = math.pi
-        try:
-            xDivCount = abs(xDivCount)
-            yDivCount = abs(yDivCount)
-        except TypeError as e:
-            raise ValueError("Division count should be a number.\n%s" % str(e))
+<span class="sd">        This method is same as vwrays -d</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_x</span> <span class="o">=</span> <span class="n">max_x</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span>
+        <span class="n">max_y</span> <span class="o">=</span> <span class="n">max_y</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span>
 
-        assert xDivCount * yDivCount != 0, "Division count should be larger than 0."
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">)</span>
 
-        if xDivCount == yDivCount == 1:
-            return [self]
+        <span class="n">vh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span>
+        <span class="n">vv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span>
 
-        _views = range(xDivCount * yDivCount)
-        _x = int(self.xRes / xDivCount)
-        _y = int(self.yRes / yDivCount)
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hv_ratio</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vh</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hv_ratio</span> <span class="o">=</span> <span class="n">vh</span> <span class="o">/</span> <span class="n">vv</span>
 
-        if self.viewType == 2:
-            # parallel view (vtl)
-            _vh = self.viewHSize / xDivCount
-            _vv = self.viewVSize / yDivCount
+        <span class="c1"># radiance keeps the larges max size and tries to scale the other size</span>
+        <span class="c1"># to fit the aspect ratio. In case the size doesn&#39;t match it reverses</span>
+        <span class="c1"># the process.</span>
+        <span class="k">if</span> <span class="n">max_y</span> <span class="o">&lt;=</span> <span class="n">max_x</span><span class="p">:</span>
+            <span class="n">newx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">hv_ratio</span> <span class="o">*</span> <span class="n">max_y</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">newx</span> <span class="o">&lt;=</span> <span class="n">max_x</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">newx</span><span class="p">,</span> <span class="n">max_y</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">max_x</span> <span class="o">/</span> <span class="n">hv_ratio</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">newy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">max_x</span> <span class="o">/</span> <span class="n">hv_ratio</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">newy</span> <span class="o">&lt;=</span> <span class="n">max_y</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">newy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">hv_ratio</span> <span class="o">*</span> <span class="n">max_y</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">newx</span><span class="p">,</span> <span class="n">max_y</span>
 
-        elif self.viewType == 0:
-            # perspective (vtv)
-            _vh = (2. * 180. / PI) * math.atan(((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-            _vv = (2. * 180. / PI) * math.atan(math.tan((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+    <span class="k">def</span> <span class="nf">calculate_view_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_div_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y_div_count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of views for grid of views.</span>
 
-        elif self.viewType in [1, 4, 5]:
-            # fish eye
-            _vh = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-            _vv = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+<span class="sd">        Views will be returned row by row from right to left.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x_div_count: Set number of divisions in x direction (Default: 1).</span>
+<span class="sd">            y_div_count: Set number of divisions in y direction (Default: 1).</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple of views. Views are sorted row by row from right to left.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PI</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x_div_count</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_div_count</span><span class="p">)</span>
+            <span class="n">y_div_count</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_div_count</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Division count should be a number.</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
-        else:
-            print "Grid views are not supported for %s." % self.viewType
-            return [self]
+        <span class="k">assert</span> <span class="n">x_div_count</span> <span class="o">*</span> <span class="n">y_div_count</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Division count should be larger than 0.&quot;</span>
 
-        # create a set of new views
-        for viewCount in range(len(_views)):
-            # calculate view shift and view lift
-            if xDivCount == 1:
-                _vs = 0
-            else:
-                _vs = (((viewCount % xDivCount) / (xDivCount - 1)) - 0.5) * (xDivCount - 1)
+        <span class="k">if</span> <span class="n">x_div_count</span> <span class="o">==</span> <span class="n">y_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
 
-            if yDivCount == 1:
-                _vl = 0
-            else:
-                _vl = ((int(viewCount / yDivCount) / (yDivCount - 1)) - 0.5) * (yDivCount - 1)
+        <span class="n">_views</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_div_count</span> <span class="o">*</span> <span class="n">y_div_count</span><span class="p">)</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
 
-            # create a copy from the current copy
-            _nView = deepcopy(self)
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># parallel view (vtl)</span>
+            <span class="n">_vh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">/</span> <span class="n">x_div_count</span>
+            <span class="n">_vv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">/</span> <span class="n">y_div_count</span>
 
-            # update parameters
-            _nView.viewHSize = _vh
-            _nView.viewVSize = _vv
-            _nView.xRes = _x
-            _nView.yRes = _y
-            _nView.viewShift = _vs
-            _nView.viewLift = _vl
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># perspective (vtv)</span>
+            <span class="n">_vh</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+            <span class="n">_vv</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
 
-            # add the new view to views list
-            _views[viewCount] = _nView
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
+            <span class="c1"># fish eye</span>
+            <span class="n">_vh</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+            <span class="n">_vv</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
 
-        return _views
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;Grid views are not supported for </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
 
-    def addForeClip(self, distance):
-        """Set view fore clip (-vo) at a distance from the view point.
+        <span class="c1"># create a set of new views</span>
+        <span class="k">for</span> <span class="n">viewCount</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_views</span><span class="p">)):</span>
+            <span class="c1"># calculate view shift and view lift</span>
+            <span class="k">if</span> <span class="n">x_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">_vs</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_vs</span> <span class="o">=</span> <span class="p">(((</span><span class="n">viewCount</span> <span class="o">%</span> <span class="n">x_div_count</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> \
+                    <span class="o">*</span> <span class="p">(</span><span class="n">x_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
-        The plane will be perpendicular to the view direction for perspective
-        and parallel view types. For fisheye view types, the clipping plane is
-        actually a clipping sphere, centered on the view point with radius val.
-        Objects in front of this imaginary surface will not be visible. This may
-        be useful for seeing through walls (to get a longer perspective from an
-        exterior view point) or for incremental rendering. A value of zero implies
-        no foreground clipping. A negative value produces some interesting effects,
-        since it creates an inverted image for objects behind the viewpoint.
-        """
-        self.__viewForeClip = distance
+            <span class="k">if</span> <span class="n">y_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">_vl</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_vl</span> <span class="o">=</span> <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">viewCount</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> \
+                    <span class="o">*</span> <span class="p">(</span><span class="n">y_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
-    def toRadString(self):
-        """Return full Radiance definition."""
-        # create base information of view
-        _view = "-%s -vp %.3f %.3f %.3f -vd %.3f %.3f %.3f -vu %.3f %.3f %.3f" % (
-            self._viewTypes[int(self.viewType)],
-            self.viewPoint[0], self.viewPoint[1], self.viewPoint[2],
-            self.viewDirection[0], self.viewDirection[1], self.viewDirection[2],
-            self.viewUpVector[0], self.viewUpVector[1], self.viewUpVector[2]
-        )
+            <span class="c1"># create a copy from the current copy</span>
+            <span class="n">_nView</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        # view size properties
-        _viewSize = "-vh %.3f -vv %.3f -x %d -y %d" % (
-            self.viewHSize, self.viewVSize, self.xRes, self.yRes
-        )
+            <span class="c1"># update parameters</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="n">_vh</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="n">_vv</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">_x</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">_y</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">=</span> <span class="n">_vs</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">=</span> <span class="n">_vl</span>
 
-        __viewComponents = [_view, _viewSize]
+            <span class="c1"># add the new view to views list</span>
+            <span class="n">_views</span><span class="p">[</span><span class="n">viewCount</span><span class="p">]</span> <span class="o">=</span> <span class="n">_nView</span>
 
-        # add lift and shift if not 0
-        if self.viewLift != 0 and self.viewShift != 0:
-            __viewComponents.append(
-                "-vs %.3f -vl %.3f" % (self.viewShift, self.viewLift)
-            )
+        <span class="k">return</span> <span class="n">_views</span>
 
-        if self.__viewForeClip:
-            try:
-                __viewComponents.append("-vo %.3f" % self.__viewForeClip)
-            except TypeError:
-                pass
+    <span class="k">def</span> <span class="nf">add_fore_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set view fore clip (-vo) at a distance from the view point.</span>
 
-        return " ".join(__viewComponents)
+<span class="sd">        The plane will be perpendicular to the view direction for perspective</span>
+<span class="sd">        and parallel view types. For fisheye view types, the clipping plane is</span>
+<span class="sd">        actually a clipping sphere, centered on the view point with radius val.</span>
+<span class="sd">        Objects in front of this imaginary surface will not be visible. This may</span>
+<span class="sd">        be useful for seeing through walls (to get a longer perspective from an</span>
+<span class="sd">        exterior view point) or for incremental rendering. A value of zero implies</span>
+<span class="sd">        no foreground clipping. A negative value produces some interesting effects,</span>
+<span class="sd">        since it creates an inverted image for objects behind the viewpoint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span> <span class="o">=</span> <span class="n">distance</span>
 
-    def saveToFile(self, working):
-        """Save view to a file."""
-        pass
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full Radiance definition.&quot;&quot;&quot;</span>
+        <span class="c1"># create base information of view</span>
+        <span class="n">_view</span> <span class="o">=</span> <span class="s2">&quot;-</span><span class="si">%s</span><span class="s2"> -vp </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> -vd </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> -vu </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_view_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_type</span><span class="p">)],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
 
-    def ToString(self):
-        """Overwrite .NET ToString."""
-        return self.__repr__()
+        <span class="c1"># view size properties</span>
+        <span class="n">_viewSize</span> <span class="o">=</span> <span class="s2">&quot;-vh </span><span class="si">%.3f</span><span class="s2"> -vv </span><span class="si">%.3f</span><span class="s2"> -x </span><span class="si">%d</span><span class="s2"> -y </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span>
+        <span class="p">)</span>
 
-    def __repr__(self):
-        """View representation."""
-        return self.toRadString()
-</code></pre>
+        <span class="n">__viewComponents</span> <span class="o">=</span> <span class="p">[</span><span class="n">_view</span><span class="p">,</span> <span class="n">_viewSize</span><span class="p">]</span>
+
+        <span class="c1"># add lift and shift if not 0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">__viewComponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">&quot;-vs </span><span class="si">%.3f</span><span class="s2"> -vl </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">__viewComponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-vo </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__viewComponents</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save view to a file.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;View representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span>
+</pre></div>
+
   </div>
 
   </header>
@@ -1361,15 +1463,15 @@ class View(object):
   
     <div class="desc"><p>A radiance view.</p>
 <p>Attributes:
-    viewPoint: Set the view point (-vp) to (x, y, z). This is the focal
+    view_point: Set the view point (-vp) to (x, y, z). This is the focal
         point of a perspective view or the center of a parallel projection.
         Default: (0, 0, 0)
-    viewDirection: Set the view direction (-vd) vector to (x, y, z). The
+    view_direction: Set the view direction (-vd) vector to (x, y, z). The
         length of this vector indicates the focal distance as needed by
         the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
     upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).
         Default: (0, 1, 0)
-    viewType: Set view type (-vt) to one of the choices below.
+    view_type: Set view type (-vt) to one of the choices below.
             0: Perspective (v)
             1: Hemispherical fisheye (h)
             2: Parallel (l)
@@ -1378,38 +1480,38 @@ class View(object):
             5: Planisphere [stereographic] projection (s)
         For more detailed description about view types check rpict manual
         page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-    viewHSize: Set the view horizontal size (-vh). For a perspective
+    view_h_size: Set the view horizontal size (-vh). For a perspective
         projection (including fisheye views), val is the horizontal field
         of view (in degrees). For a parallel projection, val is the view
         width in world coordinates.
-    viewVSize: Set the view vertical size (-vv). For a perspective
+    view_v_size: Set the view vertical size (-vv). For a perspective
         projection (including fisheye views), val is the horizontal field
         of view (in degrees). For a parallel projection, val is the view
         width in world coordinates.
-    xRes: Set the maximum x resolution (-x) to an integer.
-    yRes: Set the maximum y resolution (-y) to an integer.
-    viewShift: Set the view shift (-vs). This is the amount the actual
+    x_res: Set the maximum x resolution (-x) to an integer.
+    y_res: Set the maximum y resolution (-y) to an integer.
+    view_shift: Set the view shift (-vs). This is the amount the actual
         image will be shifted to the right of the specified view. This
         option is useful for generating skewed perspectives or rendering
         an image a piece at a time. A value of 1 means that the rendered
         image starts just to the right of the normal view. A value of −1
         would be to the left. Larger or fractional values are permitted
         as well.
-    viewLift: Set the view lift (-vl) to a value. This is the amount the
+    view_lift: Set the view lift (-vl) to a value. This is the amount the
         actual image will be lifted up from the specified view.</p>
 <p>Usage:</p>
-<pre><code>v = View()
+<div class="codehilite"><pre><span></span>v = View()
 # set x and y resolution
-v.xRes = v.yRes = 600
+v.x_res = v.y_res = 600
 # add a fore clip
-v.addForeClip(distance=100)
+v.add_fore_clip(distance=100)
 print v
 
 &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
    0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
 
 # split the view into a view grid
-gridViews = v.calculateViewGrid(2, 2)
+gridViews = v.calculate_view_grid(2, 2)
 for g in gridViews:
     print g
 
@@ -1428,326 +1530,371 @@ for g in gridViews:
 &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
   0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500
   -vo 100.000
-</code></pre></div>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.view.View" class="source">
-    <pre><code>class View(object):
-    u"""A radiance view.
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">View</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;A radiance view.</span>
 
-    Attributes:
-        viewPoint: Set the view point (-vp) to (x, y, z). This is the focal
-            point of a perspective view or the center of a parallel projection.
-            Default: (0, 0, 0)
-        viewDirection: Set the view direction (-vd) vector to (x, y, z). The
-            length of this vector indicates the focal distance as needed by
-            the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
-        upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).
-            Default: (0, 1, 0)
-        viewType: Set view type (-vt) to one of the choices below.
-                0: Perspective (v)
-                1: Hemispherical fisheye (h)
-                2: Parallel (l)
-                3: Cylindrical panorma (c)
-                4: Angular fisheye (a)
-                5: Planisphere [stereographic] projection (s)
-            For more detailed description about view types check rpict manual
-            page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-        viewHSize: Set the view horizontal size (-vh). For a perspective
-            projection (including fisheye views), val is the horizontal field
-            of view (in degrees). For a parallel projection, val is the view
-            width in world coordinates.
-        viewVSize: Set the view vertical size (-vv). For a perspective
-            projection (including fisheye views), val is the horizontal field
-            of view (in degrees). For a parallel projection, val is the view
-            width in world coordinates.
-        xRes: Set the maximum x resolution (-x) to an integer.
-        yRes: Set the maximum y resolution (-y) to an integer.
-        viewShift: Set the view shift (-vs). This is the amount the actual
-            image will be shifted to the right of the specified view. This
-            option is useful for generating skewed perspectives or rendering
-            an image a piece at a time. A value of 1 means that the rendered
-            image starts just to the right of the normal view. A value of −1
-            would be to the left. Larger or fractional values are permitted
-            as well.
-        viewLift: Set the view lift (-vl) to a value. This is the amount the
-            actual image will be lifted up from the specified view.
+<span class="sd">    Attributes:</span>
+<span class="sd">        view_point: Set the view point (-vp) to (x, y, z). This is the focal</span>
+<span class="sd">            point of a perspective view or the center of a parallel projection.</span>
+<span class="sd">            Default: (0, 0, 0)</span>
+<span class="sd">        view_direction: Set the view direction (-vd) vector to (x, y, z). The</span>
+<span class="sd">            length of this vector indicates the focal distance as needed by</span>
+<span class="sd">            the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)</span>
+<span class="sd">        upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).</span>
+<span class="sd">            Default: (0, 1, 0)</span>
+<span class="sd">        view_type: Set view type (-vt) to one of the choices below.</span>
+<span class="sd">                0: Perspective (v)</span>
+<span class="sd">                1: Hemispherical fisheye (h)</span>
+<span class="sd">                2: Parallel (l)</span>
+<span class="sd">                3: Cylindrical panorma (c)</span>
+<span class="sd">                4: Angular fisheye (a)</span>
+<span class="sd">                5: Planisphere [stereographic] projection (s)</span>
+<span class="sd">            For more detailed description about view types check rpict manual</span>
+<span class="sd">            page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)</span>
+<span class="sd">        view_h_size: Set the view horizontal size (-vh). For a perspective</span>
+<span class="sd">            projection (including fisheye views), val is the horizontal field</span>
+<span class="sd">            of view (in degrees). For a parallel projection, val is the view</span>
+<span class="sd">            width in world coordinates.</span>
+<span class="sd">        view_v_size: Set the view vertical size (-vv). For a perspective</span>
+<span class="sd">            projection (including fisheye views), val is the horizontal field</span>
+<span class="sd">            of view (in degrees). For a parallel projection, val is the view</span>
+<span class="sd">            width in world coordinates.</span>
+<span class="sd">        x_res: Set the maximum x resolution (-x) to an integer.</span>
+<span class="sd">        y_res: Set the maximum y resolution (-y) to an integer.</span>
+<span class="sd">        view_shift: Set the view shift (-vs). This is the amount the actual</span>
+<span class="sd">            image will be shifted to the right of the specified view. This</span>
+<span class="sd">            option is useful for generating skewed perspectives or rendering</span>
+<span class="sd">            an image a piece at a time. A value of 1 means that the rendered</span>
+<span class="sd">            image starts just to the right of the normal view. A value of −1</span>
+<span class="sd">            would be to the left. Larger or fractional values are permitted</span>
+<span class="sd">            as well.</span>
+<span class="sd">        view_lift: Set the view lift (-vl) to a value. This is the amount the</span>
+<span class="sd">            actual image will be lifted up from the specified view.</span>
 
-    Usage:
+<span class="sd">    Usage:</span>
 
-        v = View()
-        # set x and y resolution
-        v.xRes = v.yRes = 600
-        # add a fore clip
-        v.addForeClip(distance=100)
-        print v
+<span class="sd">        v = View()</span>
+<span class="sd">        # set x and y resolution</span>
+<span class="sd">        v.x_res = v.y_res = 600</span>
+<span class="sd">        # add a fore clip</span>
+<span class="sd">        v.add_fore_clip(distance=100)</span>
+<span class="sd">        print v</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000</span>
 
-        # split the view into a view grid
-        gridViews = v.calculateViewGrid(2, 2)
-        for g in gridViews:
-            print g
+<span class="sd">        # split the view into a view grid</span>
+<span class="sd">        gridViews = v.calculate_view_grid(2, 2)</span>
+<span class="sd">        for g in gridViews:</span>
+<span class="sd">            print g</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500
-           -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500</span>
+<span class="sd">           -vo 100.000</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500
-           -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500</span>
+<span class="sd">           -vo 100.000</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500
-           -vo 100.000
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500</span>
+<span class="sd">           -vo 100.000</span>
 
-        > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-          0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500
-          -vo 100.000
-    """
+<span class="sd">        &gt; -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000</span>
+<span class="sd">          0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500</span>
+<span class="sd">          -vo 100.000</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    # init radiance types
-    viewPoint = RadianceTuple('vp', 'view point', tupleSize=3, numType=float,
-                              defaultValue=(0, 0, 0))
+    <span class="c1"># init radiance types</span>
+    <span class="n">view_point</span> <span class="o">=</span> <span class="n">RadianceTuple</span><span class="p">(</span><span class="s1">&#39;vp&#39;</span><span class="p">,</span> <span class="s1">&#39;view point&#39;</span><span class="p">,</span> <span class="n">tuple_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                               <span class="n">default_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
-    viewDirection = RadianceTuple('vd', 'view direction', tupleSize=3,
-                                  numType=float, defaultValue=(0, 0, 1))
+    <span class="n">view_direction</span> <span class="o">=</span> <span class="n">RadianceTuple</span><span class="p">(</span><span class="s1">&#39;vd&#39;</span><span class="p">,</span> <span class="s1">&#39;view direction&#39;</span><span class="p">,</span> <span class="n">tuple_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                   <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
-    viewUpVector = RadianceTuple('vu', 'view up vector', tupleSize=3,
-                                 numType=float, defaultValue=(0, 1, 0))
+    <span class="n">view_up_vector</span> <span class="o">=</span> <span class="n">RadianceTuple</span><span class="p">(</span><span class="s1">&#39;vu&#39;</span><span class="p">,</span> <span class="s1">&#39;view up vector&#39;</span><span class="p">,</span> <span class="n">tuple_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                   <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
-    viewHSize = RadianceNumber('vh', 'view horizontal size', numType=float)
-    viewVSize = RadianceNumber('vv', 'view vertical size', numType=float)
+    <span class="n">view_h_size</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vh&#39;</span><span class="p">,</span> <span class="s1">&#39;view horizontal size&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">view_v_size</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vv&#39;</span><span class="p">,</span> <span class="s1">&#39;view vertical size&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-    xRes = RadianceNumber('x', 'x resolution', numType=int)
-    yRes = RadianceNumber('y', 'y resolution', numType=int)
-    viewShift = RadianceNumber('vs', 'view shift', numType=float)
-    viewLift = RadianceNumber('vl', 'view lift', numType=float)
+    <span class="n">x_res</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;x resolution&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">y_res</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;y resolution&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">view_shift</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vs&#39;</span><span class="p">,</span> <span class="s1">&#39;view shift&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">view_lift</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vl&#39;</span><span class="p">,</span> <span class="s1">&#39;view lift&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-    __viewForeClip = RadianceNumber('vo', 'view fore clip distance', numType=float)
+    <span class="n">__viewForeClip</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vo&#39;</span><span class="p">,</span> <span class="s1">&#39;view fore clip distance&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-    _viewTypes = {0: 'vtv', 1: 'vth', 2: 'vtl', 3: 'vtc', 4: 'vta', 5: 'vts'}
-    __viewType = RadianceNumber('vt', 'view type', numType=int, validRange=[0, 5],
-                                defaultValue=0)
+    <span class="n">_view_types</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;vtv&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;vth&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;vtl&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;vtc&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;vta&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s1">&#39;vts&#39;</span><span class="p">}</span>
+    <span class="n">__view_type</span> <span class="o">=</span> <span class="n">RadianceNumber</span><span class="p">(</span><span class="s1">&#39;vt&#39;</span><span class="p">,</span> <span class="s1">&#39;view type&#39;</span><span class="p">,</span> <span class="n">num_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">valid_range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+                                 <span class="n">default_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    def __init__(self, name, viewPoint=None, viewDirection=None, viewUpVector=None,
-                 viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
-                 viewShift=0, viewLift=0):
-        u"""Init view."""
-        self.name = name
-        """View name."""
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">view_point</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">view_direction</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">view_up_vector</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">view_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">view_h_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">view_v_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">x_res</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">y_res</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+                 <span class="n">view_shift</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">view_lift</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sa">u</span><span class="sd">&quot;&quot;&quot;Init view.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="sd">&quot;&quot;&quot;View name.&quot;&quot;&quot;</span>
 
-        self.viewPoint = viewPoint
-        """Set the view point (-vp) to (x, y, z)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span> <span class="o">=</span> <span class="n">view_point</span>
+        <span class="sd">&quot;&quot;&quot;Set the view point (-vp) to (x, y, z).&quot;&quot;&quot;</span>
 
-        self.viewDirection = viewDirection
-        """Set the view direction (-vd) vector to (x, y, z)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span> <span class="o">=</span> <span class="n">view_direction</span>
+        <span class="sd">&quot;&quot;&quot;Set the view direction (-vd) vector to (x, y, z).&quot;&quot;&quot;</span>
 
-        self.viewUpVector = viewUpVector
-        """Set the view up (-vu) vector (vertical direction) to (x, y, z)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span> <span class="o">=</span> <span class="n">view_up_vector</span>
+        <span class="sd">&quot;&quot;&quot;Set the view up (-vu) vector (vertical direction) to (x, y, z).&quot;&quot;&quot;</span>
 
-        self.viewHSize = viewHSize
-        """Set the view horizontal size (-vs). For a perspective projection
-        (including fisheye views), val is the horizontal field of view (in
-        degrees). For a parallel projection, val is the view width in world
-        coordinates."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="n">view_h_size</span>
+        <span class="sd">&quot;&quot;&quot;Set the view horizontal size (-vs). For a perspective projection</span>
+<span class="sd">        (including fisheye views), val is the horizontal field of view (in</span>
+<span class="sd">        degrees). For a parallel projection, val is the view width in world</span>
+<span class="sd">        coordinates.&quot;&quot;&quot;</span>
 
-        self.viewVSize = viewVSize
-        """Set the view vertical size (-vv). For a perspective projection
-        (including fisheye views), val is the horizontal field of view (in
-        degrees). For a parallel projection, val is the view width in world
-        coordinates."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="n">view_v_size</span>
+        <span class="sd">&quot;&quot;&quot;Set the view vertical size (-vv). For a perspective projection</span>
+<span class="sd">        (including fisheye views), val is the horizontal field of view (in</span>
+<span class="sd">        degrees). For a parallel projection, val is the view width in world</span>
+<span class="sd">        coordinates.&quot;&quot;&quot;</span>
 
-        self.xRes = xRes
-        """Set the maximum x resolution (-x)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">x_res</span>
+        <span class="sd">&quot;&quot;&quot;Set the maximum x resolution (-x).&quot;&quot;&quot;</span>
 
-        self.yRes = yRes
-        """Set the maximum y resolution (-y)."""
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">y_res</span>
+        <span class="sd">&quot;&quot;&quot;Set the maximum y resolution (-y).&quot;&quot;&quot;</span>
 
-        self.viewShift = viewShift
-        """Set the view shift (-vs). This is the amount the actual
-            image will be shifted to the right of the specified view.
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">=</span> <span class="n">view_shift</span>
+        <span class="sd">&quot;&quot;&quot;Set the view shift (-vs). This is the amount the actual</span>
+<span class="sd">            image will be shifted to the right of the specified view.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        self.viewLift = viewLift
-        """Set the view lift (-vl) to a value. This is the amount the
-            actual image will be lifted up from the specified view.
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">=</span> <span class="n">view_lift</span>
+        <span class="sd">&quot;&quot;&quot;Set the view lift (-vl) to a value. This is the amount the</span>
+<span class="sd">            actual image will be lifted up from the specified view.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        self.viewType = viewType
-        """Set and get view type (-vt) to one of the choices below (0-5).
-        0: Perspective (v), 1: Hemispherical fisheye (h),
-        2: Parallel (l),    3: Cylindrical panorma (c),
-        4: Angular fisheye (a),
-        5: Planisphere [stereographic] projection (s)
-        """
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">=</span> <span class="n">view_type</span>
+        <span class="sd">&quot;&quot;&quot;Set and get view type (-vt) to one of the choices below (0-5).</span>
+<span class="sd">        0: Perspective (v), 1: Hemispherical fisheye (h),</span>
+<span class="sd">        2: Parallel (l),    3: Cylindrical panorma (c),</span>
+<span class="sd">        4: Angular fisheye (a),</span>
+<span class="sd">        5: Planisphere [stereographic] projection (s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    @property
-    def isView(self):
-        """Return True for view."""
-        return True
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True for view.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">True</span>
 
-    @property
-    def viewType(self):
-        """Set and get view type (-vt) to one of the choices below (0-5).
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">view_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set and get view type (-vt) to one of the choices below (0-5).</span>
 
-        0: Perspective (v), 1: Hemispherical fisheye (h),
-        2: Parallel (l),    3: Cylindrical panorma (c),
-        4: Angular fisheye (a),
-        5: Planisphere [stereographic] projection (s)
-        """
-        return self.__viewType
+<span class="sd">        0: Perspective (v), 1: Hemispherical fisheye (h),</span>
+<span class="sd">        2: Parallel (l),    3: Cylindrical panorma (c),</span>
+<span class="sd">        4: Angular fisheye (a),</span>
+<span class="sd">        5: Planisphere [stereographic] projection (s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__view_type</span>
 
-    @viewType.setter
-    def viewType(self, value):
-        self.__viewType = value
+    <span class="nd">@view_type.setter</span>
+    <span class="k">def</span> <span class="nf">view_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__view_type</span> <span class="o">=</span> <span class="n">value</span>
 
-        # set view size to 180 degrees for fisheye views
-        if self.viewType in [1, 4, 5]:
-            self.viewHSize = 180
-            self.viewVSize = 180
-            print "Changed viewHSize and viewVSize to 180 for fisheye view type."
+        <span class="c1"># set view size to 180 degrees for fisheye views</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="mi">180</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="mi">180</span>
+            <span class="k">print</span> <span class="s2">&quot;Changed view_h_size and view_v_size to 180 for fisheye view type.&quot;</span>
 
-        elif self.viewType == 0:
-            assert self.viewHSize < 180, ValueError(
-                '\n{} is an invalid horizontal view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.viewHSize))
-            assert self.viewVSize < 180, ValueError(
-                '\n{} is an invalid vertical view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.viewVSize))
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">{} is an invalid horizontal view size for Perspective view.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;The size should be smaller than 180.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">{} is an invalid vertical view size for Perspective view.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;The size should be smaller than 180.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">))</span>
 
-    def calculateViewGrid(self, xDivCount=1, yDivCount=1):
-        """Return a list of views for grid of views.
+    <span class="k">def</span> <span class="nf">get_view_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_y</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get dimensions for this view as x, y.</span>
 
-        Views will be returned row by row from right to left.
-        Args:
-            xDivCount: Set number of divisions in x direction (Default: 1).
-            yDivCount: Set number of divisions in y direction (Default: 1).
-        Returns:
-            A tuple of views. Views are sorted row by row from right to left.
-        """
-        PI = math.pi
-        try:
-            xDivCount = abs(xDivCount)
-            yDivCount = abs(yDivCount)
-        except TypeError as e:
-            raise ValueError("Division count should be a number.\n%s" % str(e))
+<span class="sd">        This method is same as vwrays -d</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_x</span> <span class="o">=</span> <span class="n">max_x</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span>
+        <span class="n">max_y</span> <span class="o">=</span> <span class="n">max_y</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span>
 
-        assert xDivCount * yDivCount != 0, "Division count should be larger than 0."
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">)</span>
 
-        if xDivCount == yDivCount == 1:
-            return [self]
+        <span class="n">vh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span>
+        <span class="n">vv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span>
 
-        _views = range(xDivCount * yDivCount)
-        _x = int(self.xRes / xDivCount)
-        _y = int(self.yRes / yDivCount)
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hv_ratio</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vh</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hv_ratio</span> <span class="o">=</span> <span class="n">vh</span> <span class="o">/</span> <span class="n">vv</span>
 
-        if self.viewType == 2:
-            # parallel view (vtl)
-            _vh = self.viewHSize / xDivCount
-            _vv = self.viewVSize / yDivCount
+        <span class="c1"># radiance keeps the larges max size and tries to scale the other size</span>
+        <span class="c1"># to fit the aspect ratio. In case the size doesn&#39;t match it reverses</span>
+        <span class="c1"># the process.</span>
+        <span class="k">if</span> <span class="n">max_y</span> <span class="o">&lt;=</span> <span class="n">max_x</span><span class="p">:</span>
+            <span class="n">newx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">hv_ratio</span> <span class="o">*</span> <span class="n">max_y</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">newx</span> <span class="o">&lt;=</span> <span class="n">max_x</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">newx</span><span class="p">,</span> <span class="n">max_y</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">max_x</span> <span class="o">/</span> <span class="n">hv_ratio</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">newy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">max_x</span> <span class="o">/</span> <span class="n">hv_ratio</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">newy</span> <span class="o">&lt;=</span> <span class="n">max_y</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">newy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">hv_ratio</span> <span class="o">*</span> <span class="n">max_y</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">newx</span><span class="p">,</span> <span class="n">max_y</span>
 
-        elif self.viewType == 0:
-            # perspective (vtv)
-            _vh = (2. * 180. / PI) * math.atan(((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-            _vv = (2. * 180. / PI) * math.atan(math.tan((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+    <span class="k">def</span> <span class="nf">calculate_view_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_div_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y_div_count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of views for grid of views.</span>
 
-        elif self.viewType in [1, 4, 5]:
-            # fish eye
-            _vh = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-            _vv = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewVSize) / yDivCount)
+<span class="sd">        Views will be returned row by row from right to left.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x_div_count: Set number of divisions in x direction (Default: 1).</span>
+<span class="sd">            y_div_count: Set number of divisions in y direction (Default: 1).</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple of views. Views are sorted row by row from right to left.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PI</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x_div_count</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_div_count</span><span class="p">)</span>
+            <span class="n">y_div_count</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_div_count</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Division count should be a number.</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
-        else:
-            print "Grid views are not supported for %s." % self.viewType
-            return [self]
+        <span class="k">assert</span> <span class="n">x_div_count</span> <span class="o">*</span> <span class="n">y_div_count</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Division count should be larger than 0.&quot;</span>
 
-        # create a set of new views
-        for viewCount in range(len(_views)):
-            # calculate view shift and view lift
-            if xDivCount == 1:
-                _vs = 0
-            else:
-                _vs = (((viewCount % xDivCount) / (xDivCount - 1)) - 0.5) * (xDivCount - 1)
+        <span class="k">if</span> <span class="n">x_div_count</span> <span class="o">==</span> <span class="n">y_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
 
-            if yDivCount == 1:
-                _vl = 0
-            else:
-                _vl = ((int(viewCount / yDivCount) / (yDivCount - 1)) - 0.5) * (yDivCount - 1)
+        <span class="n">_views</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_div_count</span> <span class="o">*</span> <span class="n">y_div_count</span><span class="p">)</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
 
-            # create a copy from the current copy
-            _nView = deepcopy(self)
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># parallel view (vtl)</span>
+            <span class="n">_vh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">/</span> <span class="n">x_div_count</span>
+            <span class="n">_vv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">/</span> <span class="n">y_div_count</span>
 
-            # update parameters
-            _nView.viewHSize = _vh
-            _nView.viewVSize = _vv
-            _nView.xRes = _x
-            _nView.yRes = _y
-            _nView.viewShift = _vs
-            _nView.viewLift = _vl
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># perspective (vtv)</span>
+            <span class="n">_vh</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+            <span class="n">_vv</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
 
-            # add the new view to views list
-            _views[viewCount] = _nView
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
+            <span class="c1"># fish eye</span>
+            <span class="n">_vh</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+            <span class="n">_vv</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
 
-        return _views
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;Grid views are not supported for </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
 
-    def addForeClip(self, distance):
-        """Set view fore clip (-vo) at a distance from the view point.
+        <span class="c1"># create a set of new views</span>
+        <span class="k">for</span> <span class="n">viewCount</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_views</span><span class="p">)):</span>
+            <span class="c1"># calculate view shift and view lift</span>
+            <span class="k">if</span> <span class="n">x_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">_vs</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_vs</span> <span class="o">=</span> <span class="p">(((</span><span class="n">viewCount</span> <span class="o">%</span> <span class="n">x_div_count</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> \
+                    <span class="o">*</span> <span class="p">(</span><span class="n">x_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
-        The plane will be perpendicular to the view direction for perspective
-        and parallel view types. For fisheye view types, the clipping plane is
-        actually a clipping sphere, centered on the view point with radius val.
-        Objects in front of this imaginary surface will not be visible. This may
-        be useful for seeing through walls (to get a longer perspective from an
-        exterior view point) or for incremental rendering. A value of zero implies
-        no foreground clipping. A negative value produces some interesting effects,
-        since it creates an inverted image for objects behind the viewpoint.
-        """
-        self.__viewForeClip = distance
+            <span class="k">if</span> <span class="n">y_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">_vl</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_vl</span> <span class="o">=</span> <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">viewCount</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> \
+                    <span class="o">*</span> <span class="p">(</span><span class="n">y_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
-    def toRadString(self):
-        """Return full Radiance definition."""
-        # create base information of view
-        _view = "-%s -vp %.3f %.3f %.3f -vd %.3f %.3f %.3f -vu %.3f %.3f %.3f" % (
-            self._viewTypes[int(self.viewType)],
-            self.viewPoint[0], self.viewPoint[1], self.viewPoint[2],
-            self.viewDirection[0], self.viewDirection[1], self.viewDirection[2],
-            self.viewUpVector[0], self.viewUpVector[1], self.viewUpVector[2]
-        )
+            <span class="c1"># create a copy from the current copy</span>
+            <span class="n">_nView</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        # view size properties
-        _viewSize = "-vh %.3f -vv %.3f -x %d -y %d" % (
-            self.viewHSize, self.viewVSize, self.xRes, self.yRes
-        )
+            <span class="c1"># update parameters</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="n">_vh</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="n">_vv</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">_x</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">_y</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">=</span> <span class="n">_vs</span>
+            <span class="n">_nView</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">=</span> <span class="n">_vl</span>
 
-        __viewComponents = [_view, _viewSize]
+            <span class="c1"># add the new view to views list</span>
+            <span class="n">_views</span><span class="p">[</span><span class="n">viewCount</span><span class="p">]</span> <span class="o">=</span> <span class="n">_nView</span>
 
-        # add lift and shift if not 0
-        if self.viewLift != 0 and self.viewShift != 0:
-            __viewComponents.append(
-                "-vs %.3f -vl %.3f" % (self.viewShift, self.viewLift)
-            )
+        <span class="k">return</span> <span class="n">_views</span>
 
-        if self.__viewForeClip:
-            try:
-                __viewComponents.append("-vo %.3f" % self.__viewForeClip)
-            except TypeError:
-                pass
+    <span class="k">def</span> <span class="nf">add_fore_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set view fore clip (-vo) at a distance from the view point.</span>
 
-        return " ".join(__viewComponents)
+<span class="sd">        The plane will be perpendicular to the view direction for perspective</span>
+<span class="sd">        and parallel view types. For fisheye view types, the clipping plane is</span>
+<span class="sd">        actually a clipping sphere, centered on the view point with radius val.</span>
+<span class="sd">        Objects in front of this imaginary surface will not be visible. This may</span>
+<span class="sd">        be useful for seeing through walls (to get a longer perspective from an</span>
+<span class="sd">        exterior view point) or for incremental rendering. A value of zero implies</span>
+<span class="sd">        no foreground clipping. A negative value produces some interesting effects,</span>
+<span class="sd">        since it creates an inverted image for objects behind the viewpoint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span> <span class="o">=</span> <span class="n">distance</span>
 
-    def saveToFile(self, working):
-        """Save view to a file."""
-        pass
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full Radiance definition.&quot;&quot;&quot;</span>
+        <span class="c1"># create base information of view</span>
+        <span class="n">_view</span> <span class="o">=</span> <span class="s2">&quot;-</span><span class="si">%s</span><span class="s2"> -vp </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> -vd </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> -vu </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_view_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_type</span><span class="p">)],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
 
-    def ToString(self):
-        """Overwrite .NET ToString."""
-        return self.__repr__()
+        <span class="c1"># view size properties</span>
+        <span class="n">_viewSize</span> <span class="o">=</span> <span class="s2">&quot;-vh </span><span class="si">%.3f</span><span class="s2"> -vv </span><span class="si">%.3f</span><span class="s2"> -x </span><span class="si">%d</span><span class="s2"> -y </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span>
+        <span class="p">)</span>
 
-    def __repr__(self):
-        """View representation."""
-        return self.toRadString()
-</code></pre>
+        <span class="n">__viewComponents</span> <span class="o">=</span> <span class="p">[</span><span class="n">_view</span><span class="p">,</span> <span class="n">_viewSize</span><span class="p">]</span>
+
+        <span class="c1"># add lift and shift if not 0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">__viewComponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">&quot;-vs </span><span class="si">%.3f</span><span class="s2"> -vl </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">__viewComponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-vo </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__viewComponents</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save view to a file.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;View representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1760,7 +1907,7 @@ for g in gridViews:
           </ul>
           <h3>Class variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewDirection" class="name">var <span class="ident">viewDirection</span></p>
+            <p id="honeybee.radiance.view.View.view_direction" class="name">var <span class="ident">view_direction</span></p>
             
 
             
@@ -1770,7 +1917,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewHSize" class="name">var <span class="ident">viewHSize</span></p>
+            <p id="honeybee.radiance.view.View.view_h_size" class="name">var <span class="ident">view_h_size</span></p>
             
 
             
@@ -1780,7 +1927,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewLift" class="name">var <span class="ident">viewLift</span></p>
+            <p id="honeybee.radiance.view.View.view_lift" class="name">var <span class="ident">view_lift</span></p>
             
 
             
@@ -1790,7 +1937,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewPoint" class="name">var <span class="ident">viewPoint</span></p>
+            <p id="honeybee.radiance.view.View.view_point" class="name">var <span class="ident">view_point</span></p>
             
 
             
@@ -1800,7 +1947,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewShift" class="name">var <span class="ident">viewShift</span></p>
+            <p id="honeybee.radiance.view.View.view_shift" class="name">var <span class="ident">view_shift</span></p>
             
 
             
@@ -1810,7 +1957,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewUpVector" class="name">var <span class="ident">viewUpVector</span></p>
+            <p id="honeybee.radiance.view.View.view_up_vector" class="name">var <span class="ident">view_up_vector</span></p>
             
 
             
@@ -1820,7 +1967,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewVSize" class="name">var <span class="ident">viewVSize</span></p>
+            <p id="honeybee.radiance.view.View.view_v_size" class="name">var <span class="ident">view_v_size</span></p>
             
 
             
@@ -1830,7 +1977,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.xRes" class="name">var <span class="ident">xRes</span></p>
+            <p id="honeybee.radiance.view.View.x_res" class="name">var <span class="ident">x_res</span></p>
             
 
             
@@ -1840,7 +1987,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.yRes" class="name">var <span class="ident">yRes</span></p>
+            <p id="honeybee.radiance.view.View.y_res" class="name">var <span class="ident">y_res</span></p>
             
 
             
@@ -1851,7 +1998,7 @@ for g in gridViews:
             </div>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.view.View.isView" class="name">var <span class="ident">isView</span></p>
+            <p id="honeybee.radiance.view.View.is_view" class="name">var <span class="ident">is_view</span></p>
             
 
             
@@ -1873,7 +2020,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewDirection" class="name">var <span class="ident">viewDirection</span></p>
+            <p id="honeybee.radiance.view.View.view_direction" class="name">var <span class="ident">view_direction</span></p>
             
 
             
@@ -1884,7 +2031,7 @@ for g in gridViews:
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewHSize" class="name">var <span class="ident">viewHSize</span></p>
+            <p id="honeybee.radiance.view.View.view_h_size" class="name">var <span class="ident">view_h_size</span></p>
             
 
             
@@ -1898,7 +2045,7 @@ coordinates.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewLift" class="name">var <span class="ident">viewLift</span></p>
+            <p id="honeybee.radiance.view.View.view_lift" class="name">var <span class="ident">view_lift</span></p>
             
 
             
@@ -1910,7 +2057,7 @@ actual image will be lifted up from the specified view.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewPoint" class="name">var <span class="ident">viewPoint</span></p>
+            <p id="honeybee.radiance.view.View.view_point" class="name">var <span class="ident">view_point</span></p>
             
 
             
@@ -1921,7 +2068,7 @@ actual image will be lifted up from the specified view.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewShift" class="name">var <span class="ident">viewShift</span></p>
+            <p id="honeybee.radiance.view.View.view_shift" class="name">var <span class="ident">view_shift</span></p>
             
 
             
@@ -1933,7 +2080,7 @@ image will be shifted to the right of the specified view.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewType" class="name">var <span class="ident">viewType</span></p>
+            <p id="honeybee.radiance.view.View.view_type" class="name">var <span class="ident">view_type</span></p>
             
 
             
@@ -1948,7 +2095,7 @@ image will be shifted to the right of the specified view.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewUpVector" class="name">var <span class="ident">viewUpVector</span></p>
+            <p id="honeybee.radiance.view.View.view_up_vector" class="name">var <span class="ident">view_up_vector</span></p>
             
 
             
@@ -1959,7 +2106,7 @@ image will be shifted to the right of the specified view.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.viewVSize" class="name">var <span class="ident">viewVSize</span></p>
+            <p id="honeybee.radiance.view.View.view_v_size" class="name">var <span class="ident">view_v_size</span></p>
             
 
             
@@ -1973,7 +2120,7 @@ coordinates.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.xRes" class="name">var <span class="ident">xRes</span></p>
+            <p id="honeybee.radiance.view.View.x_res" class="name">var <span class="ident">x_res</span></p>
             
 
             
@@ -1984,7 +2131,7 @@ coordinates.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.view.View.yRes" class="name">var <span class="ident">yRes</span></p>
+            <p id="honeybee.radiance.view.View.y_res" class="name">var <span class="ident">y_res</span></p>
             
 
             
@@ -1998,7 +2145,7 @@ coordinates.</p></div>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.view.View.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, viewPoint=None, viewDirection=None, viewUpVector=None, viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64, viewShift=0, viewLift=0)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, view_point=None, view_direction=None, view_up_vector=None, view_type=0, view_h_size=60, view_v_size=60, x_res=64, y_res=64, view_shift=0, view_lift=0)</p>
     </div>
     
 
@@ -2008,48 +2155,49 @@ coordinates.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.view.View.__init__" class="source">
-    <pre><code>def __init__(self, name, viewPoint=None, viewDirection=None, viewUpVector=None,
-             viewType=0, viewHSize=60, viewVSize=60, xRes=64, yRes=64,
-             viewShift=0, viewLift=0):
-    u"""Init view."""
-    self.name = name
-    """View name."""
-    self.viewPoint = viewPoint
-    """Set the view point (-vp) to (x, y, z)."""
-    self.viewDirection = viewDirection
-    """Set the view direction (-vd) vector to (x, y, z)."""
-    self.viewUpVector = viewUpVector
-    """Set the view up (-vu) vector (vertical direction) to (x, y, z)."""
-    self.viewHSize = viewHSize
-    """Set the view horizontal size (-vs). For a perspective projection
-    (including fisheye views), val is the horizontal field of view (in
-    degrees). For a parallel projection, val is the view width in world
-    coordinates."""
-    self.viewVSize = viewVSize
-    """Set the view vertical size (-vv). For a perspective projection
-    (including fisheye views), val is the horizontal field of view (in
-    degrees). For a parallel projection, val is the view width in world
-    coordinates."""
-    self.xRes = xRes
-    """Set the maximum x resolution (-x)."""
-    self.yRes = yRes
-    """Set the maximum y resolution (-y)."""
-    self.viewShift = viewShift
-    """Set the view shift (-vs). This is the amount the actual
-        image will be shifted to the right of the specified view.
-    """
-    self.viewLift = viewLift
-    """Set the view lift (-vl) to a value. This is the amount the
-        actual image will be lifted up from the specified view.
-    """
-    self.viewType = viewType
-    """Set and get view type (-vt) to one of the choices below (0-5).
-    0: Perspective (v), 1: Hemispherical fisheye (h),
-    2: Parallel (l),    3: Cylindrical panorma (c),
-    4: Angular fisheye (a),
-    5: Planisphere [stereographic] projection (s)
-    """
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">view_point</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">view_direction</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">view_up_vector</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">view_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">view_h_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">view_v_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">x_res</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">y_res</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+             <span class="n">view_shift</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">view_lift</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;Init view.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="sd">&quot;&quot;&quot;View name.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span> <span class="o">=</span> <span class="n">view_point</span>
+    <span class="sd">&quot;&quot;&quot;Set the view point (-vp) to (x, y, z).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span> <span class="o">=</span> <span class="n">view_direction</span>
+    <span class="sd">&quot;&quot;&quot;Set the view direction (-vd) vector to (x, y, z).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span> <span class="o">=</span> <span class="n">view_up_vector</span>
+    <span class="sd">&quot;&quot;&quot;Set the view up (-vu) vector (vertical direction) to (x, y, z).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="n">view_h_size</span>
+    <span class="sd">&quot;&quot;&quot;Set the view horizontal size (-vs). For a perspective projection</span>
+<span class="sd">    (including fisheye views), val is the horizontal field of view (in</span>
+<span class="sd">    degrees). For a parallel projection, val is the view width in world</span>
+<span class="sd">    coordinates.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="n">view_v_size</span>
+    <span class="sd">&quot;&quot;&quot;Set the view vertical size (-vv). For a perspective projection</span>
+<span class="sd">    (including fisheye views), val is the horizontal field of view (in</span>
+<span class="sd">    degrees). For a parallel projection, val is the view width in world</span>
+<span class="sd">    coordinates.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">x_res</span>
+    <span class="sd">&quot;&quot;&quot;Set the maximum x resolution (-x).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">y_res</span>
+    <span class="sd">&quot;&quot;&quot;Set the maximum y resolution (-y).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">=</span> <span class="n">view_shift</span>
+    <span class="sd">&quot;&quot;&quot;Set the view shift (-vs). This is the amount the actual</span>
+<span class="sd">        image will be shifted to the right of the specified view.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">=</span> <span class="n">view_lift</span>
+    <span class="sd">&quot;&quot;&quot;Set the view lift (-vl) to a value. This is the amount the</span>
+<span class="sd">        actual image will be lifted up from the specified view.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">=</span> <span class="n">view_type</span>
+    <span class="sd">&quot;&quot;&quot;Set and get view type (-vt) to one of the choices below (0-5).</span>
+<span class="sd">    0: Perspective (v), 1: Hemispherical fisheye (h),</span>
+<span class="sd">    2: Parallel (l),    3: Cylindrical panorma (c),</span>
+<span class="sd">    4: Angular fisheye (a),</span>
+<span class="sd">    5: Planisphere [stereographic] projection (s)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -2057,30 +2205,8 @@ coordinates.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.view.View.ToString">
-    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.ToString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.view.View.ToString" class="source">
-    <pre><code>def ToString(self):
-    """Overwrite .NET ToString."""
-    return self.__repr__()
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.view.View.addForeClip">
-    <p>def <span class="ident">addForeClip</span>(</p><p>self, distance)</p>
+    <div class="name def" id="honeybee.radiance.view.View.add_fore_clip">
+    <p>def <span class="ident">add_fore_clip</span>(</p><p>self, distance)</p>
     </div>
     
 
@@ -2096,21 +2222,22 @@ exterior view point) or for incremental rendering. A value of zero implies
 no foreground clipping. A negative value produces some interesting effects,
 since it creates an inverted image for objects behind the viewpoint.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.addForeClip', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.view.View.addForeClip" class="source">
-    <pre><code>def addForeClip(self, distance):
-    """Set view fore clip (-vo) at a distance from the view point.
-    The plane will be perpendicular to the view direction for perspective
-    and parallel view types. For fisheye view types, the clipping plane is
-    actually a clipping sphere, centered on the view point with radius val.
-    Objects in front of this imaginary surface will not be visible. This may
-    be useful for seeing through walls (to get a longer perspective from an
-    exterior view point) or for incremental rendering. A value of zero implies
-    no foreground clipping. A negative value produces some interesting effects,
-    since it creates an inverted image for objects behind the viewpoint.
-    """
-    self.__viewForeClip = distance
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.add_fore_clip', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.add_fore_clip" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_fore_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set view fore clip (-vo) at a distance from the view point.</span>
+<span class="sd">    The plane will be perpendicular to the view direction for perspective</span>
+<span class="sd">    and parallel view types. For fisheye view types, the clipping plane is</span>
+<span class="sd">    actually a clipping sphere, centered on the view point with radius val.</span>
+<span class="sd">    Objects in front of this imaginary surface will not be visible. This may</span>
+<span class="sd">    be useful for seeing through walls (to get a longer perspective from an</span>
+<span class="sd">    exterior view point) or for incremental rendering. A value of zero implies</span>
+<span class="sd">    no foreground clipping. A negative value produces some interesting effects,</span>
+<span class="sd">    since it creates an inverted image for objects behind the viewpoint.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span> <span class="o">=</span> <span class="n">distance</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -2118,8 +2245,8 @@ since it creates an inverted image for objects behind the viewpoint.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.view.View.calculateViewGrid">
-    <p>def <span class="ident">calculateViewGrid</span>(</p><p>self, xDivCount=1, yDivCount=1)</p>
+    <div class="name def" id="honeybee.radiance.view.View.calculate_view_grid">
+    <p>def <span class="ident">calculate_view_grid</span>(</p><p>self, x_div_count=1, y_div_count=1)</p>
     </div>
     
 
@@ -2128,73 +2255,80 @@ since it creates an inverted image for objects behind the viewpoint.</p></div>
     <div class="desc"><p>Return a list of views for grid of views.</p>
 <p>Views will be returned row by row from right to left.
 Args:
-    xDivCount: Set number of divisions in x direction (Default: 1).
-    yDivCount: Set number of divisions in y direction (Default: 1).
+    x_div_count: Set number of divisions in x direction (Default: 1).
+    y_div_count: Set number of divisions in y direction (Default: 1).
 Returns:
     A tuple of views. Views are sorted row by row from right to left.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.calculateViewGrid', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.view.View.calculateViewGrid" class="source">
-    <pre><code>def calculateViewGrid(self, xDivCount=1, yDivCount=1):
-    """Return a list of views for grid of views.
-    Views will be returned row by row from right to left.
-    Args:
-        xDivCount: Set number of divisions in x direction (Default: 1).
-        yDivCount: Set number of divisions in y direction (Default: 1).
-    Returns:
-        A tuple of views. Views are sorted row by row from right to left.
-    """
-    PI = math.pi
-    try:
-        xDivCount = abs(xDivCount)
-        yDivCount = abs(yDivCount)
-    except TypeError as e:
-        raise ValueError("Division count should be a number.\n%s" % str(e))
-    assert xDivCount * yDivCount != 0, "Division count should be larger than 0."
-    if xDivCount == yDivCount == 1:
-        return [self]
-    _views = range(xDivCount * yDivCount)
-    _x = int(self.xRes / xDivCount)
-    _y = int(self.yRes / yDivCount)
-    if self.viewType == 2:
-        # parallel view (vtl)
-        _vh = self.viewHSize / xDivCount
-        _vv = self.viewVSize / yDivCount
-    elif self.viewType == 0:
-        # perspective (vtv)
-        _vh = (2. * 180. / PI) * math.atan(((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-        _vv = (2. * 180. / PI) * math.atan(math.tan((PI / 180. / 2.) * self.viewVSize) / yDivCount)
-    elif self.viewType in [1, 4, 5]:
-        # fish eye
-        _vh = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewHSize) / xDivCount)
-        _vv = (2. * 180. / PI) * math.asin(math.sin((PI / 180. / 2.) * self.viewVSize) / yDivCount)
-    else:
-        print "Grid views are not supported for %s." % self.viewType
-        return [self]
-    # create a set of new views
-    for viewCount in range(len(_views)):
-        # calculate view shift and view lift
-        if xDivCount == 1:
-            _vs = 0
-        else:
-            _vs = (((viewCount % xDivCount) / (xDivCount - 1)) - 0.5) * (xDivCount - 1)
-        if yDivCount == 1:
-            _vl = 0
-        else:
-            _vl = ((int(viewCount / yDivCount) / (yDivCount - 1)) - 0.5) * (yDivCount - 1)
-        # create a copy from the current copy
-        _nView = deepcopy(self)
-        # update parameters
-        _nView.viewHSize = _vh
-        _nView.viewVSize = _vv
-        _nView.xRes = _x
-        _nView.yRes = _y
-        _nView.viewShift = _vs
-        _nView.viewLift = _vl
-        # add the new view to views list
-        _views[viewCount] = _nView
-    return _views
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.calculate_view_grid', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.calculate_view_grid" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">calculate_view_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_div_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y_div_count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a list of views for grid of views.</span>
+<span class="sd">    Views will be returned row by row from right to left.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x_div_count: Set number of divisions in x direction (Default: 1).</span>
+<span class="sd">        y_div_count: Set number of divisions in y direction (Default: 1).</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple of views. Views are sorted row by row from right to left.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PI</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">x_div_count</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_div_count</span><span class="p">)</span>
+        <span class="n">y_div_count</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_div_count</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Division count should be a number.</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">x_div_count</span> <span class="o">*</span> <span class="n">y_div_count</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Division count should be larger than 0.&quot;</span>
+    <span class="k">if</span> <span class="n">x_div_count</span> <span class="o">==</span> <span class="n">y_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+    <span class="n">_views</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_div_count</span> <span class="o">*</span> <span class="n">y_div_count</span><span class="p">)</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># parallel view (vtl)</span>
+        <span class="n">_vh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">/</span> <span class="n">x_div_count</span>
+        <span class="n">_vv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">/</span> <span class="n">y_div_count</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># perspective (vtv)</span>
+        <span class="n">_vh</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+        <span class="n">_vv</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
+        <span class="c1"># fish eye</span>
+        <span class="n">_vh</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_div_count</span><span class="p">)</span>
+        <span class="n">_vv</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="mf">180.</span> <span class="o">/</span> <span class="n">PI</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;Grid views are not supported for </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+    <span class="c1"># create a set of new views</span>
+    <span class="k">for</span> <span class="n">viewCount</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_views</span><span class="p">)):</span>
+        <span class="c1"># calculate view shift and view lift</span>
+        <span class="k">if</span> <span class="n">x_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">_vs</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_vs</span> <span class="o">=</span> <span class="p">(((</span><span class="n">viewCount</span> <span class="o">%</span> <span class="n">x_div_count</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> \
+                <span class="o">*</span> <span class="p">(</span><span class="n">x_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y_div_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">_vl</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_vl</span> <span class="o">=</span> <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">viewCount</span> <span class="o">/</span> <span class="n">y_div_count</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> \
+                <span class="o">*</span> <span class="p">(</span><span class="n">y_div_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># create a copy from the current copy</span>
+        <span class="n">_nView</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># update parameters</span>
+        <span class="n">_nView</span><span class="o">.</span><span class="n">view_h_size</span> <span class="o">=</span> <span class="n">_vh</span>
+        <span class="n">_nView</span><span class="o">.</span><span class="n">view_v_size</span> <span class="o">=</span> <span class="n">_vv</span>
+        <span class="n">_nView</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">_x</span>
+        <span class="n">_nView</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">_y</span>
+        <span class="n">_nView</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">=</span> <span class="n">_vs</span>
+        <span class="n">_nView</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">=</span> <span class="n">_vl</span>
+        <span class="c1"># add the new view to views list</span>
+        <span class="n">_views</span><span class="p">[</span><span class="n">viewCount</span><span class="p">]</span> <span class="o">=</span> <span class="n">_nView</span>
+    <span class="k">return</span> <span class="n">_views</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -2202,8 +2336,61 @@ Returns:
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.view.View.saveToFile">
-    <p>def <span class="ident">saveToFile</span>(</p><p>self, working)</p>
+    <div class="name def" id="honeybee.radiance.view.View.get_view_dimension">
+    <p>def <span class="ident">get_view_dimension</span>(</p><p>self, max_x=None, max_y=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get dimensions for this view as x, y.</p>
+<p>This method is same as vwrays -d</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.get_view_dimension', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.get_view_dimension" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_view_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_y</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get dimensions for this view as x, y.</span>
+<span class="sd">    This method is same as vwrays -d</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_x</span> <span class="o">=</span> <span class="n">max_x</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span>
+    <span class="n">max_y</span> <span class="o">=</span> <span class="n">max_y</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">)</span>
+    <span class="n">vh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span>
+    <span class="n">vv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">hv_ratio</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vh</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> \
+            <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hv_ratio</span> <span class="o">=</span> <span class="n">vh</span> <span class="o">/</span> <span class="n">vv</span>
+    <span class="c1"># radiance keeps the larges max size and tries to scale the other size</span>
+    <span class="c1"># to fit the aspect ratio. In case the size doesn&#39;t match it reverses</span>
+    <span class="c1"># the process.</span>
+    <span class="k">if</span> <span class="n">max_y</span> <span class="o">&lt;=</span> <span class="n">max_x</span><span class="p">:</span>
+        <span class="n">newx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">hv_ratio</span> <span class="o">*</span> <span class="n">max_y</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">newx</span> <span class="o">&lt;=</span> <span class="n">max_x</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">newx</span><span class="p">,</span> <span class="n">max_y</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">max_x</span> <span class="o">/</span> <span class="n">hv_ratio</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">newy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">newy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">max_x</span> <span class="o">/</span> <span class="n">hv_ratio</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">newy</span> <span class="o">&lt;=</span> <span class="n">max_y</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">newy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">hv_ratio</span> <span class="o">*</span> <span class="n">max_y</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">newx</span><span class="p">,</span> <span class="n">max_y</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.view.View.save_to_file">
+    <p>def <span class="ident">save_to_file</span>(</p><p>self, working)</p>
     </div>
     
 
@@ -2211,12 +2398,13 @@ Returns:
   
     <div class="desc"><p>Save view to a file.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.saveToFile', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.view.View.saveToFile" class="source">
-    <pre><code>def saveToFile(self, working):
-    """Save view to a file."""
-    pass
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.save_to_file', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.save_to_file" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save view to a file.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -2224,8 +2412,8 @@ Returns:
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.view.View.toRadString">
-    <p>def <span class="ident">toRadString</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.view.View.to_rad_string">
+    <p>def <span class="ident">to_rad_string</span>(</p><p>self)</p>
     </div>
     
 
@@ -2233,34 +2421,58 @@ Returns:
   
     <div class="desc"><p>Return full Radiance definition.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.view.View.toRadString" class="source">
-    <pre><code>def toRadString(self):
-    """Return full Radiance definition."""
-    # create base information of view
-    _view = "-%s -vp %.3f %.3f %.3f -vd %.3f %.3f %.3f -vu %.3f %.3f %.3f" % (
-        self._viewTypes[int(self.viewType)],
-        self.viewPoint[0], self.viewPoint[1], self.viewPoint[2],
-        self.viewDirection[0], self.viewDirection[1], self.viewDirection[2],
-        self.viewUpVector[0], self.viewUpVector[1], self.viewUpVector[2]
-    )
-    # view size properties
-    _viewSize = "-vh %.3f -vv %.3f -x %d -y %d" % (
-        self.viewHSize, self.viewVSize, self.xRes, self.yRes
-    )
-    __viewComponents = [_view, _viewSize]
-    # add lift and shift if not 0
-    if self.viewLift != 0 and self.viewShift != 0:
-        __viewComponents.append(
-            "-vs %.3f -vl %.3f" % (self.viewShift, self.viewLift)
-        )
-    if self.__viewForeClip:
-        try:
-            __viewComponents.append("-vo %.3f" % self.__viewForeClip)
-        except TypeError:
-            pass
-    return " ".join(__viewComponents)
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return full Radiance definition.&quot;&quot;&quot;</span>
+    <span class="c1"># create base information of view</span>
+    <span class="n">_view</span> <span class="o">=</span> <span class="s2">&quot;-</span><span class="si">%s</span><span class="s2"> -vp </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> -vd </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> -vu </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_view_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_type</span><span class="p">)],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_point</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_direction</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_up_vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="c1"># view size properties</span>
+    <span class="n">_viewSize</span> <span class="o">=</span> <span class="s2">&quot;-vh </span><span class="si">%.3f</span><span class="s2"> -vv </span><span class="si">%.3f</span><span class="s2"> -x </span><span class="si">%d</span><span class="s2"> -y </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_h_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_v_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span>
+    <span class="p">)</span>
+    <span class="n">__viewComponents</span> <span class="o">=</span> <span class="p">[</span><span class="n">_view</span><span class="p">,</span> <span class="n">_viewSize</span><span class="p">]</span>
+    <span class="c1"># add lift and shift if not 0</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">__viewComponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="s2">&quot;-vs </span><span class="si">%.3f</span><span class="s2"> -vl </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view_shift</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_lift</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">__viewComponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-vo </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__viewForeClip</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__viewComponents</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.view.View.to_string">
+    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.to_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.to_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -2276,14 +2488,14 @@ Returns:
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a>
-    </p>
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
-<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

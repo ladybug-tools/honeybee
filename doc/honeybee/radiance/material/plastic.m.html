@@ -9,11 +9,6 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Plastic" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
-
-  <!-- highlight.js for highlighting source code. -->
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-
   
   <style type="text/css">
   
@@ -249,7 +244,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 /**
@@ -572,20 +567,16 @@ table {
   }
   #content {
     width: 70%;
-    margin-left: 25%;
-    max-width: 90%;
+    max-width: 850px;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
-    position: fixed;
-    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
   #nav {
     font-size: 130%;
@@ -660,6 +651,10 @@ table {
     color: #900;
   }
 
+  code {
+    background: #f9f9f9;
+  } 
+
   pre {
     background: #fefefe;
     border: 1px solid #ddd;
@@ -675,7 +670,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
 
   table#module-list {
     font-size: 110%;
@@ -786,7 +781,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-
+      
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -800,7 +795,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: auto;
+      overflow-y: scroll;
       margin-bottom: 15px;
     }
 
@@ -811,26 +806,16 @@ table {
   .desc h1, .desc h2, .desc h3 {
     font-size: 100% !important;
   }
-
-  .desc {
-    white-space: pre-wrap;
-  }
-
   .clear {
     clear: both;
   }
 
   @media all and (max-width: 950px) {
     #sidebar {
-        position: inherit;
-        float: none;
-        width: auto;
+      width: 35%;
     }
     #content {
-      width: 95%;
-      margin-left: auto;
-      border-left: none;
-      padding: 30px;
+      width: 65%;
     }
   }
   @media all and (max-width: 650px) {
@@ -868,6 +853,77 @@ table {
 
   </style>
 
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
   <style type="text/css">
   
@@ -991,14 +1047,26 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
+        <span class="class_name"><a href="#honeybee.radiance.material.plastic.BlackMaterial">BlackMaterial</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.BlackMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.BlackMaterial.by_single_reflect_value">by_single_reflect_value</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.BlackMaterial.to_rad_string">to_rad_string</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.BlackMaterial.to_string">to_string</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></span>
         
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.ToString">ToString</a></li>
-    <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue">bySingleReflectValue</a></li>
-    <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.by_single_reflect_value">by_single_reflect_value</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.to_rad_string">to_rad_string</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.plastic.PlasticMaterial.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1022,155 +1090,172 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.material.plastic" class="source">
-    <pre><code>"""Radiance Plastic Material.
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Radiance Plastic Material.</span>
 
-http://radsite.lbl.gov/radiance/refer/ray.html#Plastic
-"""
-from _materialbase import RadianceMaterial
-
-
-class PlasticMaterial(RadianceMaterial):
-    """Radiance plastic material."""
-
-    def __init__(self, name, rReflectance=0, gReflectance=0, bReflectance=0,
-                 specularity=0, roughness=0, modifier="void"):
-        """Create plastic material.
-
-        Attributes:
-            name: Material name as a string. Do not use white space and special character.
-            rReflectance: Reflectance for red. The value should be between 0 and 1 (Default: 0).
-            gReflectance: Reflectance for green. The value should be between 0 and 1 (Default: 0).
-            bReflectance: Reflectance for blue. The value should be between 0 and 1 (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-                not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-                corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-                surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
-            modifier: Material modifier (Default: "void").
-
-        Usage:
-            wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
-            print wallMaterial
-        """
-        RadianceMaterial.__init__(self, name, materialType="plastic", modifier="void")
-        self.rReflectance = rReflectance
-        """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
-        self.gReflectance = gReflectance
-        """Reflectance for green. The value should be between 0 and 1 (Default: 0)."""
-        self.bReflectance = bReflectance
-        """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
-        self.specularity = specularity
-        """Fraction of specularity. Specularity fractions greater than 0.1 are not
-           realistic (Default: 0)."""
-        self.roughness = roughness
-        """Roughness is specified as the rms slope of surface facets. A value of 0
-           corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-           surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
-
-    @classmethod
-    def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
-                             roughness=0, modifier="void"):
-        """Create plastic material with single reflectance value.
-
-        Attributes:
-            name: Material name as a string. Do not use white space and special character.
-            rgbReflectance: Reflectance for red, green and blue. The value should be
-                between 0 and 1 (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-                not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-                corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-                surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
-            modifier: Material modifier (Default: "void").
-
-        Usage:
-            wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
-            print wallMaterial
-        """
-        return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-                   bReflectance=rgbReflectance, specularity=specularity,
-                   roughness=roughness, modifier="void")
-
-    @property
-    def rReflectance(self):
-        """Red reflectance."""
-        return self.__r
-
-    @rReflectance.setter
-    def rReflectance(self, value):
-        assert 0 <= value <= 1, "Red reflectance should be between 0 and 1"
-        self.__r = value
-
-    @property
-    def gReflectance(self):
-        """Green reflectance."""
-        return self.__g
-
-    @gReflectance.setter
-    def gReflectance(self, value):
-        assert 0 <= value <= 1, "Green reflectance should be between 0 and 1"
-        self.__g = value
-
-    @property
-    def bReflectance(self):
-        """Blue reflectance."""
-        return self.__b
-
-    @bReflectance.setter
-    def bReflectance(self, value):
-        assert 0 <= value <= 1, "Blue reflectance should be between 0 and 1"
-        self.__b = value
-
-    @property
-    def specularity(self):
-        """Specularity fraction."""
-        return self.__spec
-
-    @specularity.setter
-    def specularity(self, value):
-        assert 0 <= value <= 1, "Specularity should be between 0 and 1"
-        if value > 0.1:
-            print "Warning: Specularity values above .1 is uncommon."
-        self.__spec = value
-
-    @property
-    def roughness(self):
-        """Roughness."""
-        return self.__rough
-
-    @roughness.setter
-    def roughness(self, value):
-        assert 0 <= value <= 1, "Roughness should be between 0 and 1"
-        if value > 0.2:
-            print "Warning: Roughness values above .2 is uncommon."
-        self.__rough = value
-
-    @property
-    def averageReflectance(self):
-        """Calculate average reflectance of plastic material."""
-        return (0.265 * self.rReflectance + 0.670 * self.gReflectance +
-                0.065 * self.bReflectance) * (1 - self.specularity) + self.specularity
-
-    def toRadString(self, minimal=False):
-        """Return full radiance definition."""
-        __baseString = self.headLine + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
-
-        plasticDefinition = __baseString % (
-            self.rReflectance, self.gReflectance, self.bReflectance,
-            self.specularity, self.roughness
-        )
-
-        return plasticDefinition.replace("\n", " ") if minimal else plasticDefinition
+<span class="sd">http://radsite.lbl.gov/radiance/refer/ray.html#Plastic</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">_materialbase</span> <span class="kn">import</span> <span class="n">RadianceMaterial</span>
 
 
-if __name__ == "__main__":
-    # some test code
-    wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
-    print wallMaterial
+<span class="k">class</span> <span class="nc">PlasticMaterial</span><span class="p">(</span><span class="n">RadianceMaterial</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Radiance plastic material.&quot;&quot;&quot;</span>
 
-    wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
-    print wallMaterial
-</code></pre>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">r_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">g_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">specularity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">roughness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create plastic material.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            name: Material name as a string. Do not use white space and special</span>
+<span class="sd">                character.</span>
+<span class="sd">            r_reflectance: Reflectance for red. The value should be between 0 and 1</span>
+<span class="sd">                (Default: 0).</span>
+<span class="sd">            g_reflectance: Reflectance for green. The value should be between 0 and 1</span>
+<span class="sd">                (Default: 0).</span>
+<span class="sd">            b_reflectance: Reflectance for blue. The value should be between 0 and 1</span>
+<span class="sd">                (Default: 0).</span>
+<span class="sd">            specularity: Fraction of specularity. Specularity fractions greater than 0.1</span>
+<span class="sd">                are not realistic (Default: 0).</span>
+<span class="sd">            roughness: Roughness is specified as the rms slope of surface facets. A</span>
+<span class="sd">                value of 0 corresponds to a perfectly smooth surface, and a value of 1</span>
+<span class="sd">                would be a very rough surface. Roughness values greater than 0.2 are not</span>
+<span class="sd">                very realistic. (Default: 0).</span>
+<span class="sd">            modifier: Material modifier (Default: &quot;void&quot;).</span>
+
+<span class="sd">        Usage:</span>
+<span class="sd">            wallMaterial = PlasticMaterial(&quot;generic wall&quot;, .55, .65, .75)</span>
+<span class="sd">            print wallMaterial</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">RadianceMaterial</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">material_type</span><span class="o">=</span><span class="s2">&quot;plastic&quot;</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span> <span class="o">=</span> <span class="n">r_reflectance</span>
+        <span class="sd">&quot;&quot;&quot;Reflectance for red. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span> <span class="o">=</span> <span class="n">g_reflectance</span>
+        <span class="sd">&quot;&quot;&quot;Reflectance for green. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span> <span class="o">=</span> <span class="n">b_reflectance</span>
+        <span class="sd">&quot;&quot;&quot;Reflectance for blue. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span> <span class="o">=</span> <span class="n">specularity</span>
+        <span class="sd">&quot;&quot;&quot;Fraction of specularity. Specularity fractions greater than 0.1 are not</span>
+<span class="sd">           realistic (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roughness</span> <span class="o">=</span> <span class="n">roughness</span>
+        <span class="sd">&quot;&quot;&quot;Roughness is specified as the rms slope of surface facets. A value of 0</span>
+<span class="sd">           corresponds to a perfectly smooth surface, and a value of 1 would be a</span>
+<span class="sd">           very rough surface. Roughness values greater than 0.2 are not very realistic.</span>
+<span class="sd">           (Default: 0).&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">by_single_reflect_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rgb_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">roughness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create plastic material with single reflectance value.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            name: Material name as a string. Do not use white space and special character</span>
+<span class="sd">            rgb_reflectance: Reflectance for red, green and blue. The value should be</span>
+<span class="sd">                between 0 and 1 (Default: 0).</span>
+<span class="sd">            specularity: Fraction of specularity. Specularity fractions greater than 0.1</span>
+<span class="sd">                are not realistic (Default: 0).</span>
+<span class="sd">            roughness: Roughness is specified as the rms slope of surface facets. A value</span>
+<span class="sd">                of 0 corresponds to a perfectly smooth surface, and a value of 1 would be</span>
+<span class="sd">                a very rough surface. Roughness values greater than 0.2 are not very</span>
+<span class="sd">                realistic. (Default: 0).</span>
+<span class="sd">            modifier: Material modifier (Default: &quot;void&quot;).</span>
+
+<span class="sd">        Usage:</span>
+<span class="sd">            wallMaterial = PlasticMaterial.by_single_reflect_value(&quot;generic wall&quot;, .55)</span>
+<span class="sd">            print wallMaterial</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">r_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">g_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span>
+                   <span class="n">b_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="n">specularity</span><span class="p">,</span>
+                   <span class="n">roughness</span><span class="o">=</span><span class="n">roughness</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">r_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Red reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r</span>
+
+    <span class="nd">@r_reflectance.setter</span>
+    <span class="k">def</span> <span class="nf">r_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Red reflectance should be between 0 and 1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">g_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Green reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g</span>
+
+    <span class="nd">@g_reflectance.setter</span>
+    <span class="k">def</span> <span class="nf">g_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Green reflectance should be between 0 and 1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_g</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">b_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Blue reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span>
+
+    <span class="nd">@b_reflectance.setter</span>
+    <span class="k">def</span> <span class="nf">b_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Blue reflectance should be between 0 and 1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_b</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">specularity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Specularity fraction.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span>
+
+    <span class="nd">@specularity.setter</span>
+    <span class="k">def</span> <span class="nf">specularity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Specularity should be between 0 and 1&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;Warning: Specularity values above .1 is uncommon.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">roughness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Roughness.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rough</span>
+
+    <span class="nd">@roughness.setter</span>
+    <span class="k">def</span> <span class="nf">roughness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Roughness should be between 0 and 1&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mf">0.2</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;Warning: Roughness values above .2 is uncommon.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rough</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">average_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate average reflectance of plastic material.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">0.265</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span> <span class="o">+</span> <span class="mf">0.670</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span> <span class="o">+</span>
+                <span class="mf">0.065</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span>
+
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimal</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full radiance definition.&quot;&quot;&quot;</span>
+        <span class="n">base_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_line</span> <span class="o">+</span> <span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">0</span><span class="se">\n</span><span class="s2">5 </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2">&quot;</span>
+
+        <span class="n">plastic_definition</span> <span class="o">=</span> <span class="n">base_string</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">roughness</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">plastic_definition</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="n">plastic_definition</span>
+
+
+<span class="k">class</span> <span class="nc">BlackMaterial</span><span class="p">(</span><span class="n">PlasticMaterial</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Radiance black plastic material.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">):</span>
+        <span class="n">PlasticMaterial</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># some test code</span>
+    <span class="n">wallMaterial</span> <span class="o">=</span> <span class="n">PlasticMaterial</span><span class="o">.</span><span class="n">by_single_reflect_value</span><span class="p">(</span><span class="s2">&quot;generic wall&quot;</span><span class="p">,</span> <span class="o">.</span><span class="mi">55</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">wallMaterial</span><span class="p">)</span>
+
+    <span class="n">wallMaterial</span> <span class="o">=</span> <span class="n">PlasticMaterial</span><span class="p">(</span><span class="s2">&quot;generic wall&quot;</span><span class="p">,</span> <span class="o">.</span><span class="mi">55</span><span class="p">,</span> <span class="o">.</span><span class="mi">65</span><span class="p">,</span> <span class="o">.</span><span class="mi">75</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">wallMaterial</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="n">BlackMaterial</span><span class="p">())</span>
+</pre></div>
+
   </div>
 
   </header>
@@ -1181,6 +1266,399 @@ if __name__ == "__main__":
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
+      <p id="honeybee.radiance.material.plastic.BlackMaterial" class="name">class <span class="ident">BlackMaterial</span></p>
+      
+  
+    <div class="desc"><p>Radiance black plastic material.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.BlackMaterial', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.BlackMaterial" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">BlackMaterial</span><span class="p">(</span><span class="n">PlasticMaterial</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Radiance black plastic material.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">):</span>
+        <span class="n">PlasticMaterial</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#honeybee.radiance.material.plastic.BlackMaterial">BlackMaterial</a></li>
+          <li><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></li>
+          <li>honeybee.radiance.material._materialbase.RadianceMaterial</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.TYPES" class="name">var <span class="ident">TYPES</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.TYPES">TYPES</a></code>
+    </p>
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.average_reflectance" class="name">var <span class="ident">average_reflectance</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.average_reflectance">average_reflectance</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Calculate average reflectance of plastic material.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.b_reflectance" class="name">var <span class="ident">b_reflectance</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.b_reflectance">b_reflectance</a></code>
+    </p>
+
+            
+  
+    <div class="desc"><p>Blue reflectance.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.g_reflectance" class="name">var <span class="ident">g_reflectance</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.g_reflectance">g_reflectance</a></code>
+    </p>
+
+            
+  
+    <div class="desc"><p>Green reflectance.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.head_line" class="name">var <span class="ident">head_line</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.head_line">head_line</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Return first line of Material definition.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.is_glass_material" class="name">var <span class="ident">is_glass_material</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.is_glass_material">is_glass_material</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Indicate if this object has glass Material.</p>
+<p>This property will be used to separate the glass surfaces in a separate
+file than the opaque surfaces.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.is_radiance_material" class="name">var <span class="ident">is_radiance_material</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.is_radiance_material">is_radiance_material</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Indicate that this object is a Radiance Material.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.modifier" class="name">var <span class="ident">modifier</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.modifier">modifier</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Get/set material modifier.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.name" class="name">var <span class="ident">name</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.name">name</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Get/set material name.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.r_reflectance" class="name">var <span class="ident">r_reflectance</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.r_reflectance">r_reflectance</a></code>
+    </p>
+
+            
+  
+    <div class="desc"><p>Red reflectance.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.roughness" class="name">var <span class="ident">roughness</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.roughness">roughness</a></code>
+    </p>
+
+            
+  
+    <div class="desc"><p>Roughness.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.specularity" class="name">var <span class="ident">specularity</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.specularity">specularity</a></code>
+    </p>
+
+            
+  
+    <div class="desc"><p>Specularity fraction.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.BlackMaterial.type" class="name">var <span class="ident">type</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.type">type</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Get/set material type.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.plastic.BlackMaterial.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, name=&#39;black&#39;)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.__init__">__init__</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Create plastic material.</p>
+<p>Attributes:
+    name: Material name as a string. Do not use white space and special
+        character.
+    r_reflectance: Reflectance for red. The value should be between 0 and 1
+        (Default: 0).
+    g_reflectance: Reflectance for green. The value should be between 0 and 1
+        (Default: 0).
+    b_reflectance: Reflectance for blue. The value should be between 0 and 1
+        (Default: 0).
+    specularity: Fraction of specularity. Specularity fractions greater than 0.1
+        are not realistic (Default: 0).
+    roughness: Roughness is specified as the rms slope of surface facets. A
+        value of 0 corresponds to a perfectly smooth surface, and a value of 1
+        would be a very rough surface. Roughness values greater than 0.2 are not
+        very realistic. (Default: 0).
+    modifier: Material modifier (Default: "void").</p>
+<p>Usage:
+    wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
+    print wallMaterial</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.BlackMaterial.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.BlackMaterial.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">):</span>
+    <span class="n">PlasticMaterial</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.plastic.BlackMaterial.by_single_reflect_value">
+    <p>def <span class="ident">by_single_reflect_value</span>(</p><p>cls, name, rgb_reflectance=0, specularity=0, roughness=0, modifier=&#39;void&#39;)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.by_single_reflect_value">by_single_reflect_value</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Create plastic material with single reflectance value.</p>
+<p>Attributes:
+    name: Material name as a string. Do not use white space and special character
+    rgb_reflectance: Reflectance for red, green and blue. The value should be
+        between 0 and 1 (Default: 0).
+    specularity: Fraction of specularity. Specularity fractions greater than 0.1
+        are not realistic (Default: 0).
+    roughness: Roughness is specified as the rms slope of surface facets. A value
+        of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
+        a very rough surface. Roughness values greater than 0.2 are not very
+        realistic. (Default: 0).
+    modifier: Material modifier (Default: "void").</p>
+<p>Usage:
+    wallMaterial = PlasticMaterial.by_single_reflect_value("generic wall", .55)
+    print wallMaterial</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.BlackMaterial.by_single_reflect_value', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.BlackMaterial.by_single_reflect_value" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">by_single_reflect_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rgb_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">roughness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create plastic material with single reflectance value.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        name: Material name as a string. Do not use white space and special character</span>
+<span class="sd">        rgb_reflectance: Reflectance for red, green and blue. The value should be</span>
+<span class="sd">            between 0 and 1 (Default: 0).</span>
+<span class="sd">        specularity: Fraction of specularity. Specularity fractions greater than 0.1</span>
+<span class="sd">            are not realistic (Default: 0).</span>
+<span class="sd">        roughness: Roughness is specified as the rms slope of surface facets. A value</span>
+<span class="sd">            of 0 corresponds to a perfectly smooth surface, and a value of 1 would be</span>
+<span class="sd">            a very rough surface. Roughness values greater than 0.2 are not very</span>
+<span class="sd">            realistic. (Default: 0).</span>
+<span class="sd">        modifier: Material modifier (Default: &quot;void&quot;).</span>
+<span class="sd">    Usage:</span>
+<span class="sd">        wallMaterial = PlasticMaterial.by_single_reflect_value(&quot;generic wall&quot;, .55)</span>
+<span class="sd">        print wallMaterial</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">r_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">g_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span>
+               <span class="n">b_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="n">specularity</span><span class="p">,</span>
+               <span class="n">roughness</span><span class="o">=</span><span class="n">roughness</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.plastic.BlackMaterial.to_rad_string">
+    <p>def <span class="ident">to_rad_string</span>(</p><p>self, minimal=False)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.to_rad_string">to_rad_string</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Return full radiance definition.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.BlackMaterial.to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.BlackMaterial.to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimal</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return full radiance definition.&quot;&quot;&quot;</span>
+    <span class="n">base_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_line</span> <span class="o">+</span> <span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">0</span><span class="se">\n</span><span class="s2">5 </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2">&quot;</span>
+    <span class="n">plastic_definition</span> <span class="o">=</span> <span class="n">base_string</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">roughness</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">plastic_definition</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="n">plastic_definition</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.plastic.BlackMaterial.to_string">
+    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.plastic.PlasticMaterial">PlasticMaterial</a></code>.<code><a href="#honeybee.radiance.material.plastic.PlasticMaterial.to_string">to_string</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.BlackMaterial.to_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.BlackMaterial.to_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
       <p id="honeybee.radiance.material.plastic.PlasticMaterial" class="name">class <span class="ident">PlasticMaterial</span></p>
       
   
@@ -1188,139 +1666,147 @@ if __name__ == "__main__":
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.material.plastic.PlasticMaterial" class="source">
-    <pre><code>class PlasticMaterial(RadianceMaterial):
-    """Radiance plastic material."""
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">PlasticMaterial</span><span class="p">(</span><span class="n">RadianceMaterial</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Radiance plastic material.&quot;&quot;&quot;</span>
 
-    def __init__(self, name, rReflectance=0, gReflectance=0, bReflectance=0,
-                 specularity=0, roughness=0, modifier="void"):
-        """Create plastic material.
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">r_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">g_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">specularity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">roughness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create plastic material.</span>
 
-        Attributes:
-            name: Material name as a string. Do not use white space and special character.
-            rReflectance: Reflectance for red. The value should be between 0 and 1 (Default: 0).
-            gReflectance: Reflectance for green. The value should be between 0 and 1 (Default: 0).
-            bReflectance: Reflectance for blue. The value should be between 0 and 1 (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-                not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-                corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-                surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
-            modifier: Material modifier (Default: "void").
+<span class="sd">        Attributes:</span>
+<span class="sd">            name: Material name as a string. Do not use white space and special</span>
+<span class="sd">                character.</span>
+<span class="sd">            r_reflectance: Reflectance for red. The value should be between 0 and 1</span>
+<span class="sd">                (Default: 0).</span>
+<span class="sd">            g_reflectance: Reflectance for green. The value should be between 0 and 1</span>
+<span class="sd">                (Default: 0).</span>
+<span class="sd">            b_reflectance: Reflectance for blue. The value should be between 0 and 1</span>
+<span class="sd">                (Default: 0).</span>
+<span class="sd">            specularity: Fraction of specularity. Specularity fractions greater than 0.1</span>
+<span class="sd">                are not realistic (Default: 0).</span>
+<span class="sd">            roughness: Roughness is specified as the rms slope of surface facets. A</span>
+<span class="sd">                value of 0 corresponds to a perfectly smooth surface, and a value of 1</span>
+<span class="sd">                would be a very rough surface. Roughness values greater than 0.2 are not</span>
+<span class="sd">                very realistic. (Default: 0).</span>
+<span class="sd">            modifier: Material modifier (Default: &quot;void&quot;).</span>
 
-        Usage:
-            wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
-            print wallMaterial
-        """
-        RadianceMaterial.__init__(self, name, materialType="plastic", modifier="void")
-        self.rReflectance = rReflectance
-        """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
-        self.gReflectance = gReflectance
-        """Reflectance for green. The value should be between 0 and 1 (Default: 0)."""
-        self.bReflectance = bReflectance
-        """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
-        self.specularity = specularity
-        """Fraction of specularity. Specularity fractions greater than 0.1 are not
-           realistic (Default: 0)."""
-        self.roughness = roughness
-        """Roughness is specified as the rms slope of surface facets. A value of 0
-           corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-           surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
+<span class="sd">        Usage:</span>
+<span class="sd">            wallMaterial = PlasticMaterial(&quot;generic wall&quot;, .55, .65, .75)</span>
+<span class="sd">            print wallMaterial</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">RadianceMaterial</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">material_type</span><span class="o">=</span><span class="s2">&quot;plastic&quot;</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span> <span class="o">=</span> <span class="n">r_reflectance</span>
+        <span class="sd">&quot;&quot;&quot;Reflectance for red. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span> <span class="o">=</span> <span class="n">g_reflectance</span>
+        <span class="sd">&quot;&quot;&quot;Reflectance for green. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span> <span class="o">=</span> <span class="n">b_reflectance</span>
+        <span class="sd">&quot;&quot;&quot;Reflectance for blue. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span> <span class="o">=</span> <span class="n">specularity</span>
+        <span class="sd">&quot;&quot;&quot;Fraction of specularity. Specularity fractions greater than 0.1 are not</span>
+<span class="sd">           realistic (Default: 0).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roughness</span> <span class="o">=</span> <span class="n">roughness</span>
+        <span class="sd">&quot;&quot;&quot;Roughness is specified as the rms slope of surface facets. A value of 0</span>
+<span class="sd">           corresponds to a perfectly smooth surface, and a value of 1 would be a</span>
+<span class="sd">           very rough surface. Roughness values greater than 0.2 are not very realistic.</span>
+<span class="sd">           (Default: 0).&quot;&quot;&quot;</span>
 
-    @classmethod
-    def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
-                             roughness=0, modifier="void"):
-        """Create plastic material with single reflectance value.
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">by_single_reflect_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rgb_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">roughness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create plastic material with single reflectance value.</span>
 
-        Attributes:
-            name: Material name as a string. Do not use white space and special character.
-            rgbReflectance: Reflectance for red, green and blue. The value should be
-                between 0 and 1 (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-                not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-                corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-                surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
-            modifier: Material modifier (Default: "void").
+<span class="sd">        Attributes:</span>
+<span class="sd">            name: Material name as a string. Do not use white space and special character</span>
+<span class="sd">            rgb_reflectance: Reflectance for red, green and blue. The value should be</span>
+<span class="sd">                between 0 and 1 (Default: 0).</span>
+<span class="sd">            specularity: Fraction of specularity. Specularity fractions greater than 0.1</span>
+<span class="sd">                are not realistic (Default: 0).</span>
+<span class="sd">            roughness: Roughness is specified as the rms slope of surface facets. A value</span>
+<span class="sd">                of 0 corresponds to a perfectly smooth surface, and a value of 1 would be</span>
+<span class="sd">                a very rough surface. Roughness values greater than 0.2 are not very</span>
+<span class="sd">                realistic. (Default: 0).</span>
+<span class="sd">            modifier: Material modifier (Default: &quot;void&quot;).</span>
 
-        Usage:
-            wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
-            print wallMaterial
-        """
-        return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-                   bReflectance=rgbReflectance, specularity=specularity,
-                   roughness=roughness, modifier="void")
+<span class="sd">        Usage:</span>
+<span class="sd">            wallMaterial = PlasticMaterial.by_single_reflect_value(&quot;generic wall&quot;, .55)</span>
+<span class="sd">            print wallMaterial</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">r_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">g_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span>
+                   <span class="n">b_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="n">specularity</span><span class="p">,</span>
+                   <span class="n">roughness</span><span class="o">=</span><span class="n">roughness</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">)</span>
 
-    @property
-    def rReflectance(self):
-        """Red reflectance."""
-        return self.__r
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">r_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Red reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r</span>
 
-    @rReflectance.setter
-    def rReflectance(self, value):
-        assert 0 <= value <= 1, "Red reflectance should be between 0 and 1"
-        self.__r = value
+    <span class="nd">@r_reflectance.setter</span>
+    <span class="k">def</span> <span class="nf">r_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Red reflectance should be between 0 and 1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r</span> <span class="o">=</span> <span class="n">value</span>
 
-    @property
-    def gReflectance(self):
-        """Green reflectance."""
-        return self.__g
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">g_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Green reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g</span>
 
-    @gReflectance.setter
-    def gReflectance(self, value):
-        assert 0 <= value <= 1, "Green reflectance should be between 0 and 1"
-        self.__g = value
+    <span class="nd">@g_reflectance.setter</span>
+    <span class="k">def</span> <span class="nf">g_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Green reflectance should be between 0 and 1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_g</span> <span class="o">=</span> <span class="n">value</span>
 
-    @property
-    def bReflectance(self):
-        """Blue reflectance."""
-        return self.__b
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">b_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Blue reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span>
 
-    @bReflectance.setter
-    def bReflectance(self, value):
-        assert 0 <= value <= 1, "Blue reflectance should be between 0 and 1"
-        self.__b = value
+    <span class="nd">@b_reflectance.setter</span>
+    <span class="k">def</span> <span class="nf">b_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Blue reflectance should be between 0 and 1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_b</span> <span class="o">=</span> <span class="n">value</span>
 
-    @property
-    def specularity(self):
-        """Specularity fraction."""
-        return self.__spec
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">specularity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Specularity fraction.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span>
 
-    @specularity.setter
-    def specularity(self, value):
-        assert 0 <= value <= 1, "Specularity should be between 0 and 1"
-        if value > 0.1:
-            print "Warning: Specularity values above .1 is uncommon."
-        self.__spec = value
+    <span class="nd">@specularity.setter</span>
+    <span class="k">def</span> <span class="nf">specularity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Specularity should be between 0 and 1&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;Warning: Specularity values above .1 is uncommon.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">value</span>
 
-    @property
-    def roughness(self):
-        """Roughness."""
-        return self.__rough
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">roughness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Roughness.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rough</span>
 
-    @roughness.setter
-    def roughness(self, value):
-        assert 0 <= value <= 1, "Roughness should be between 0 and 1"
-        if value > 0.2:
-            print "Warning: Roughness values above .2 is uncommon."
-        self.__rough = value
+    <span class="nd">@roughness.setter</span>
+    <span class="k">def</span> <span class="nf">roughness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Roughness should be between 0 and 1&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mf">0.2</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;Warning: Roughness values above .2 is uncommon.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rough</span> <span class="o">=</span> <span class="n">value</span>
 
-    @property
-    def averageReflectance(self):
-        """Calculate average reflectance of plastic material."""
-        return (0.265 * self.rReflectance + 0.670 * self.gReflectance +
-                0.065 * self.bReflectance) * (1 - self.specularity) + self.specularity
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">average_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate average reflectance of plastic material.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">0.265</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span> <span class="o">+</span> <span class="mf">0.670</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span> <span class="o">+</span>
+                <span class="mf">0.065</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span>
 
-    def toRadString(self, minimal=False):
-        """Return full radiance definition."""
-        __baseString = self.headLine + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimal</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full radiance definition.&quot;&quot;&quot;</span>
+        <span class="n">base_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_line</span> <span class="o">+</span> <span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">0</span><span class="se">\n</span><span class="s2">5 </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2">&quot;</span>
 
-        plasticDefinition = __baseString % (
-            self.rReflectance, self.gReflectance, self.bReflectance,
-            self.specularity, self.roughness
-        )
+        <span class="n">plastic_definition</span> <span class="o">=</span> <span class="n">base_string</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">roughness</span>
+        <span class="p">)</span>
 
-        return plasticDefinition.replace("\n", " ") if minimal else plasticDefinition
-</code></pre>
+        <span class="k">return</span> <span class="n">plastic_definition</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="n">plastic_definition</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1332,9 +1818,20 @@ if __name__ == "__main__":
           <li>honeybee.radiance.material._materialbase.RadianceMaterial</li>
           <li>__builtin__.object</li>
           </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.TYPES" class="name">var <span class="ident">TYPES</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.material.plastic.PlasticMaterial.averageReflectance" class="name">var <span class="ident">averageReflectance</span></p>
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.average_reflectance" class="name">var <span class="ident">average_reflectance</span></p>
             
 
             
@@ -1345,7 +1842,7 @@ if __name__ == "__main__":
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.material.plastic.PlasticMaterial.bReflectance" class="name">var <span class="ident">bReflectance</span></p>
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.b_reflectance" class="name">var <span class="ident">b_reflectance</span></p>
             
 
             
@@ -1356,7 +1853,7 @@ if __name__ == "__main__":
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.material.plastic.PlasticMaterial.gReflectance" class="name">var <span class="ident">gReflectance</span></p>
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.g_reflectance" class="name">var <span class="ident">g_reflectance</span></p>
             
 
             
@@ -1367,7 +1864,7 @@ if __name__ == "__main__":
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.material.plastic.PlasticMaterial.headLine" class="name">var <span class="ident">headLine</span></p>
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.head_line" class="name">var <span class="ident">head_line</span></p>
             
 
             
@@ -1378,7 +1875,7 @@ if __name__ == "__main__":
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.material.plastic.PlasticMaterial.isGlassMaterial" class="name">var <span class="ident">isGlassMaterial</span></p>
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.is_glass_material" class="name">var <span class="ident">is_glass_material</span></p>
             
 
             
@@ -1391,7 +1888,7 @@ file than the opaque surfaces.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.material.plastic.PlasticMaterial.isRadianceMaterial" class="name">var <span class="ident">isRadianceMaterial</span></p>
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.is_radiance_material" class="name">var <span class="ident">is_radiance_material</span></p>
             
 
             
@@ -1424,7 +1921,7 @@ file than the opaque surfaces.</p></div>
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.material.plastic.PlasticMaterial.rReflectance" class="name">var <span class="ident">rReflectance</span></p>
+            <p id="honeybee.radiance.material.plastic.PlasticMaterial.r_reflectance" class="name">var <span class="ident">r_reflectance</span></p>
             
 
             
@@ -1441,8 +1938,9 @@ file than the opaque surfaces.</p></div>
             
   
     <div class="desc"><p>Roughness is specified as the rms slope of surface facets. A value of 0
-corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).</p></div>
+corresponds to a perfectly smooth surface, and a value of 1 would be a
+very rough surface. Roughness values greater than 0.2 are not very realistic.
+(Default: 0).</p></div>
   <div class="source_cont">
 </div>
 
@@ -1474,7 +1972,7 @@ realistic (Default: 0).</p></div>
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, rReflectance=0, gReflectance=0, bReflectance=0, specularity=0, roughness=0, modifier=&#39;void&#39;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, r_reflectance=0, g_reflectance=0, b_reflectance=0, specularity=0, roughness=0, modifier=&#39;void&#39;)</p>
     </div>
     
 
@@ -1482,15 +1980,20 @@ realistic (Default: 0).</p></div>
   
     <div class="desc"><p>Create plastic material.</p>
 <p>Attributes:
-    name: Material name as a string. Do not use white space and special character.
-    rReflectance: Reflectance for red. The value should be between 0 and 1 (Default: 0).
-    gReflectance: Reflectance for green. The value should be between 0 and 1 (Default: 0).
-    bReflectance: Reflectance for blue. The value should be between 0 and 1 (Default: 0).
-    specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-        not realistic (Default: 0).
-    roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-        corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-        surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
+    name: Material name as a string. Do not use white space and special
+        character.
+    r_reflectance: Reflectance for red. The value should be between 0 and 1
+        (Default: 0).
+    g_reflectance: Reflectance for green. The value should be between 0 and 1
+        (Default: 0).
+    b_reflectance: Reflectance for blue. The value should be between 0 and 1
+        (Default: 0).
+    specularity: Fraction of specularity. Specularity fractions greater than 0.1
+        are not realistic (Default: 0).
+    roughness: Roughness is specified as the rms slope of surface facets. A
+        value of 0 corresponds to a perfectly smooth surface, and a value of 1
+        would be a very rough surface. Roughness values greater than 0.2 are not
+        very realistic. (Default: 0).
     modifier: Material modifier (Default: "void").</p>
 <p>Usage:
     wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
@@ -1498,39 +2001,46 @@ realistic (Default: 0).</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.__init__" class="source">
-    <pre><code>def __init__(self, name, rReflectance=0, gReflectance=0, bReflectance=0,
-             specularity=0, roughness=0, modifier="void"):
-    """Create plastic material.
-    Attributes:
-        name: Material name as a string. Do not use white space and special character.
-        rReflectance: Reflectance for red. The value should be between 0 and 1 (Default: 0).
-        gReflectance: Reflectance for green. The value should be between 0 and 1 (Default: 0).
-        bReflectance: Reflectance for blue. The value should be between 0 and 1 (Default: 0).
-        specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-            not realistic (Default: 0).
-        roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-            corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-            surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
-        modifier: Material modifier (Default: "void").
-    Usage:
-        wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
-        print wallMaterial
-    """
-    RadianceMaterial.__init__(self, name, materialType="plastic", modifier="void")
-    self.rReflectance = rReflectance
-    """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
-    self.gReflectance = gReflectance
-    """Reflectance for green. The value should be between 0 and 1 (Default: 0)."""
-    self.bReflectance = bReflectance
-    """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
-    self.specularity = specularity
-    """Fraction of specularity. Specularity fractions greater than 0.1 are not
-       realistic (Default: 0)."""
-    self.roughness = roughness
-    """Roughness is specified as the rms slope of surface facets. A value of 0
-       corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-       surface. Roughness values greater than 0.2 are not very realistic. (Default: 0)."""
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">r_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">g_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+             <span class="n">specularity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">roughness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create plastic material.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        name: Material name as a string. Do not use white space and special</span>
+<span class="sd">            character.</span>
+<span class="sd">        r_reflectance: Reflectance for red. The value should be between 0 and 1</span>
+<span class="sd">            (Default: 0).</span>
+<span class="sd">        g_reflectance: Reflectance for green. The value should be between 0 and 1</span>
+<span class="sd">            (Default: 0).</span>
+<span class="sd">        b_reflectance: Reflectance for blue. The value should be between 0 and 1</span>
+<span class="sd">            (Default: 0).</span>
+<span class="sd">        specularity: Fraction of specularity. Specularity fractions greater than 0.1</span>
+<span class="sd">            are not realistic (Default: 0).</span>
+<span class="sd">        roughness: Roughness is specified as the rms slope of surface facets. A</span>
+<span class="sd">            value of 0 corresponds to a perfectly smooth surface, and a value of 1</span>
+<span class="sd">            would be a very rough surface. Roughness values greater than 0.2 are not</span>
+<span class="sd">            very realistic. (Default: 0).</span>
+<span class="sd">        modifier: Material modifier (Default: &quot;void&quot;).</span>
+<span class="sd">    Usage:</span>
+<span class="sd">        wallMaterial = PlasticMaterial(&quot;generic wall&quot;, .55, .65, .75)</span>
+<span class="sd">        print wallMaterial</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">RadianceMaterial</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">material_type</span><span class="o">=</span><span class="s2">&quot;plastic&quot;</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span> <span class="o">=</span> <span class="n">r_reflectance</span>
+    <span class="sd">&quot;&quot;&quot;Reflectance for red. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span> <span class="o">=</span> <span class="n">g_reflectance</span>
+    <span class="sd">&quot;&quot;&quot;Reflectance for green. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span> <span class="o">=</span> <span class="n">b_reflectance</span>
+    <span class="sd">&quot;&quot;&quot;Reflectance for blue. The value should be between 0 and 1 (Default: 0).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span> <span class="o">=</span> <span class="n">specularity</span>
+    <span class="sd">&quot;&quot;&quot;Fraction of specularity. Specularity fractions greater than 0.1 are not</span>
+<span class="sd">       realistic (Default: 0).&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">roughness</span> <span class="o">=</span> <span class="n">roughness</span>
+    <span class="sd">&quot;&quot;&quot;Roughness is specified as the rms slope of surface facets. A value of 0</span>
+<span class="sd">       corresponds to a perfectly smooth surface, and a value of 1 would be a</span>
+<span class="sd">       very rough surface. Roughness values greater than 0.2 are not very realistic.</span>
+<span class="sd">       (Default: 0).&quot;&quot;&quot;</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1538,30 +2048,8 @@ realistic (Default: 0).</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.ToString">
-    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.ToString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.ToString" class="source">
-    <pre><code>def ToString(self):
-    """Overwrite .NET ToString."""
-    return self.__repr__()
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue">
-    <p>def <span class="ident">bySingleReflectValue</span>(</p><p>cls, name, rgbReflectance=0, specularity=0, roughness=0, modifier=&#39;void&#39;)</p>
+    <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.by_single_reflect_value">
+    <p>def <span class="ident">by_single_reflect_value</span>(</p><p>cls, name, rgb_reflectance=0, specularity=0, roughness=0, modifier=&#39;void&#39;)</p>
     </div>
     
 
@@ -1569,43 +2057,46 @@ realistic (Default: 0).</p></div>
   
     <div class="desc"><p>Create plastic material with single reflectance value.</p>
 <p>Attributes:
-    name: Material name as a string. Do not use white space and special character.
-    rgbReflectance: Reflectance for red, green and blue. The value should be
+    name: Material name as a string. Do not use white space and special character
+    rgb_reflectance: Reflectance for red, green and blue. The value should be
         between 0 and 1 (Default: 0).
-    specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-        not realistic (Default: 0).
-    roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-        corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-        surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
+    specularity: Fraction of specularity. Specularity fractions greater than 0.1
+        are not realistic (Default: 0).
+    roughness: Roughness is specified as the rms slope of surface facets. A value
+        of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
+        a very rough surface. Roughness values greater than 0.2 are not very
+        realistic. (Default: 0).
     modifier: Material modifier (Default: "void").</p>
 <p>Usage:
-    wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
+    wallMaterial = PlasticMaterial.by_single_reflect_value("generic wall", .55)
     print wallMaterial</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.bySingleReflectValue" class="source">
-    <pre><code>@classmethod
-def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
-                         roughness=0, modifier="void"):
-    """Create plastic material with single reflectance value.
-    Attributes:
-        name: Material name as a string. Do not use white space and special character.
-        rgbReflectance: Reflectance for red, green and blue. The value should be
-            between 0 and 1 (Default: 0).
-        specularity: Fraction of specularity. Specularity fractions greater than 0.1 are
-            not realistic (Default: 0).
-        roughness: Roughness is specified as the rms slope of surface facets. A value of 0
-            corresponds to a perfectly smooth surface, and a value of 1 would be a very rough
-            surface. Roughness values greater than 0.2 are not very realistic. (Default: 0).
-        modifier: Material modifier (Default: "void").
-    Usage:
-        wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
-        print wallMaterial
-    """
-    return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-               bReflectance=rgbReflectance, specularity=specularity,
-               roughness=roughness, modifier="void")
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.by_single_reflect_value', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.by_single_reflect_value" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">by_single_reflect_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rgb_reflectance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">roughness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create plastic material with single reflectance value.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        name: Material name as a string. Do not use white space and special character</span>
+<span class="sd">        rgb_reflectance: Reflectance for red, green and blue. The value should be</span>
+<span class="sd">            between 0 and 1 (Default: 0).</span>
+<span class="sd">        specularity: Fraction of specularity. Specularity fractions greater than 0.1</span>
+<span class="sd">            are not realistic (Default: 0).</span>
+<span class="sd">        roughness: Roughness is specified as the rms slope of surface facets. A value</span>
+<span class="sd">            of 0 corresponds to a perfectly smooth surface, and a value of 1 would be</span>
+<span class="sd">            a very rough surface. Roughness values greater than 0.2 are not very</span>
+<span class="sd">            realistic. (Default: 0).</span>
+<span class="sd">        modifier: Material modifier (Default: &quot;void&quot;).</span>
+<span class="sd">    Usage:</span>
+<span class="sd">        wallMaterial = PlasticMaterial.by_single_reflect_value(&quot;generic wall&quot;, .55)</span>
+<span class="sd">        print wallMaterial</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">r_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">g_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span>
+               <span class="n">b_reflectance</span><span class="o">=</span><span class="n">rgb_reflectance</span><span class="p">,</span> <span class="n">specularity</span><span class="o">=</span><span class="n">specularity</span><span class="p">,</span>
+               <span class="n">roughness</span><span class="o">=</span><span class="n">roughness</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s2">&quot;void&quot;</span><span class="p">)</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1613,8 +2104,8 @@ def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.toRadString">
-    <p>def <span class="ident">toRadString</span>(</p><p>self, minimal=False)</p>
+    <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.to_rad_string">
+    <p>def <span class="ident">to_rad_string</span>(</p><p>self, minimal=False)</p>
     </div>
     
 
@@ -1622,17 +2113,41 @@ def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
   
     <div class="desc"><p>Return full radiance definition.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.toRadString" class="source">
-    <pre><code>def toRadString(self, minimal=False):
-    """Return full radiance definition."""
-    __baseString = self.headLine + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
-    plasticDefinition = __baseString % (
-        self.rReflectance, self.gReflectance, self.bReflectance,
-        self.specularity, self.roughness
-    )
-    return plasticDefinition.replace("\n", " ") if minimal else plasticDefinition
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimal</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return full radiance definition.&quot;&quot;&quot;</span>
+    <span class="n">base_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_line</span> <span class="o">+</span> <span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">0</span><span class="se">\n</span><span class="s2">5 </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2"> </span><span class="si">%.3f</span><span class="s2">&quot;</span>
+    <span class="n">plastic_definition</span> <span class="o">=</span> <span class="n">base_string</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_reflectance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_reflectance</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specularity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">roughness</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">plastic_definition</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="n">plastic_definition</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.material.plastic.PlasticMaterial.to_string">
+    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.plastic.PlasticMaterial.to_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.plastic.PlasticMaterial.to_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1648,14 +2163,14 @@ def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a>
-    </p>
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
-<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

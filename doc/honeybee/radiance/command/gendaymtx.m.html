@@ -7,11 +7,6 @@
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
-
-  <!-- highlight.js for highlighting source code. -->
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-
   
   <style type="text/css">
   
@@ -247,7 +242,7 @@ pre,
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 /**
@@ -570,20 +565,16 @@ table {
   }
   #content {
     width: 70%;
-    margin-left: 25%;
-    max-width: 90%;
+    max-width: 850px;
     float: left;
     padding: 30px 60px;
     border-left: 1px solid #ddd;
   }
   #sidebar {
-    position: fixed;
-    height: 100%;
     width: 25%;
     float: left;
     padding: 30px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
   #nav {
     font-size: 130%;
@@ -658,6 +649,10 @@ table {
     color: #900;
   }
 
+  code {
+    background: #f9f9f9;
+  } 
+
   pre {
     background: #fefefe;
     border: 1px solid #ddd;
@@ -673,7 +668,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
 
   table#module-list {
     font-size: 110%;
@@ -784,7 +779,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-
+      
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -798,7 +793,7 @@ table {
     .source {
       display: none;
       max-height: 600px;
-      overflow-y: auto;
+      overflow-y: scroll;
       margin-bottom: 15px;
     }
 
@@ -809,26 +804,16 @@ table {
   .desc h1, .desc h2, .desc h3 {
     font-size: 100% !important;
   }
-
-  .desc {
-    white-space: pre-wrap;
-  }
-
   .clear {
     clear: both;
   }
 
   @media all and (max-width: 950px) {
     #sidebar {
-        position: inherit;
-        float: none;
-        width: auto;
+      width: 35%;
     }
     #content {
-      width: 95%;
-      margin-left: auto;
-      border-left: none;
-      padding: 30px;
+      width: 65%;
     }
   }
   @media all and (max-width: 650px) {
@@ -866,6 +851,77 @@ table {
 
   </style>
 
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
   <style type="text/css">
   
@@ -995,11 +1051,11 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.normspace">normspace</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.__init__">__init__</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.checkInputFiles">checkInputFiles</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.check_input_files">check_input_files</a></li>
     <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.execute">execute</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.onExecution">onExecution</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.onToRadString">onToRadString</a></li>
-    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.toRadString">toRadString</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.on_execution">on_execution</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.on_to_rad_string">on_to_rad_string</a></li>
+    <li class="mono"><a href="#honeybee.radiance.command.gendaymtx.Gendaymtx.to_rad_string">to_rad_string</a></li>
   </ul>
 
         </li>
@@ -1022,117 +1078,117 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.gendaymtx" class="source">
-    <pre><code># coding=utf-8
-from _commandbase import RadianceCommand
-from ..parameters.gendaymtx import GendaymtxParameters
+    <div class="codehilite"><pre><span></span><span class="c1"># coding=utf-8</span>
+<span class="kn">from</span> <span class="nn">_commandbase</span> <span class="kn">import</span> <span class="n">RadianceCommand</span>
+<span class="kn">from</span> <span class="nn">..parameters.gendaymtx</span> <span class="kn">import</span> <span class="n">GendaymtxParameters</span>
 
-import os
+<span class="kn">import</span> <span class="nn">os</span>
 
 
-class Gendaymtx(RadianceCommand):
-    u"""
-    gendaymtx - Generate an annual Perez sky matrix from a weather tape.
+<span class="k">class</span> <span class="nc">Gendaymtx</span><span class="p">(</span><span class="n">RadianceCommand</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    gendaymtx - Generate an annual Perez sky matrix from a weather tape.</span>
 
-    Attributes:
-        outputName: An optional name for output file name. If None the name of
-            .epw file will be used.
-        weaFile: Full path to input wea file (Default: None).
-        gendaymtxParameters: Radiance parameters for gendaymtx. If None Default
-            parameters will be set. You can use self.gendaymtxParameters to view,
-            add or remove the parameters before executing the command.
+<span class="sd">    Attributes:</span>
+<span class="sd">        output_name: An optional name for output file name. If None the name of</span>
+<span class="sd">            .epw file will be used.</span>
+<span class="sd">        wea_file: Full path to input wea file (Default: None).</span>
+<span class="sd">        gendaymtx_parameters: Radiance parameters for gendaymtx. If None Default</span>
+<span class="sd">            parameters will be set. You can use self.gendaymtx_parameters to view,</span>
+<span class="sd">            add or remove the parameters before executing the command.</span>
 
-    Usage:
+<span class="sd">    Usage:</span>
 
-        from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters
-        from honeybee.radiance.command.gendaymtx import Gendaymtx
+<span class="sd">        from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters</span>
+<span class="sd">        from honeybee.radiance.command.gendaymtx import Gendaymtx</span>
 
-        # create and modify gendaymtxParameters
-        # generate sky matrix with default values
-        gmtx = GendaymtxParameters()
+<span class="sd">        # create and modify gendaymtx_parameters</span>
+<span class="sd">        # generate sky matrix with default values</span>
+<span class="sd">        gmtx = GendaymtxParameters()</span>
 
-        # ask only for direct sun
-        gmtx.onlyDirect = True
+<span class="sd">        # ask only for direct sun</span>
+<span class="sd">        gmtx.only_direct = True</span>
 
-        # create gendaymtx
-        dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                         gendaymtxParameters=gmtx)
+<span class="sd">        # create gendaymtx</span>
+<span class="sd">        dmtx = Gendaymtx(wea_file=&quot;C:/IZMIR_TUR.wea&quot;, gendaymtx_parameters=gmtx)</span>
 
-        # run gendaymtx
-        dmtx.execute()
-        > c:/radiance/bin/gendaymtx: reading weather tape 'C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea'
-        > c:/radiance/bin/gendaymtx: location 'IZMIR_TUR'
-        > c:/radiance/bin/gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west
-        > c:/radiance/bin/gendaymtx: 146 sky patches per time step
-        > c:/radiance/bin/gendaymtx: stepping through month 1...
-        > c:/radiance/bin/gendaymtx: stepping through month 2...
-        > c:/radiance/bin/gendaymtx: stepping through month 3...
-        > c:/radiance/bin/gendaymtx: stepping through month 4...
-        > c:/radiance/bin/gendaymtx: stepping through month 5...
-        > c:/radiance/bin/gendaymtx: stepping through month 6...
-        > c:/radiance/bin/gendaymtx: stepping through month 7...
-        > c:/radiance/bin/gendaymtx: stepping through month 8...
-        > c:/radiance/bin/gendaymtx: stepping through month 9...
-        > c:/radiance/bin/gendaymtx: stepping through month 10...
-        > c:/radiance/bin/gendaymtx: stepping through month 11...
-        > c:/radiance/bin/gendaymtx: stepping through month 12...
-        > c:/radiance/bin/gendaymtx: writing matrix with 8760 time steps...
-        > c:/radiance/bin/gendaymtx: done.
+<span class="sd">        # run gendaymtx</span>
+<span class="sd">        dmtx.execute()</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: reading weather tape &#39;C:/ladybug/IZMIR_TUR.wea&#39;</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: location &#39;IZMIR_TUR&#39;</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: 146 sky patches per time step</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 1...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 2...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 3...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 4...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 5...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 6...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 7...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 8...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 9...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 10...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 11...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 12...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: writing matrix with 8760 time steps...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: done.</span>
 
-        # change it not to be verbose
-        dmtx.gendaymtxParameters.verboseReport = False
+<span class="sd">        # change it not to be verbose</span>
+<span class="sd">        dmtx.gendaymtx_parameters.verbose_report = False</span>
 
-        # run it again
-        dmtx.execute()
-        >
-    """
+<span class="sd">        # run it again</span>
+<span class="sd">        dmtx.execute()</span>
+<span class="sd">        &gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    def __init__(self, outputName=None, weaFile=None, gendaymtxParameters=None):
-        """Init command."""
-        RadianceCommand.__init__(self)
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wea_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gendaymtx_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init command.&quot;&quot;&quot;</span>
+        <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        self.outputName = outputName
-        self.weaFile = weaFile
-        self.gendaymtxParameters = gendaymtxParameters
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span> <span class="o">=</span> <span class="n">output_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span> <span class="o">=</span> <span class="n">wea_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span> <span class="o">=</span> <span class="n">gendaymtx_parameters</span>
 
-    @property
-    def gendaymtxParameters(self):
-        """Get and set gendaymtxParameters."""
-        return self.__gendaymtxParameters
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gendaymtx_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and set gendaymtx_parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gendaymtx_parameters</span>
 
-    @gendaymtxParameters.setter
-    def gendaymtxParameters(self, mtx):
-        self.__gendaymtxParameters = mtx if mtx is not None \
-            else GendaymtxParameters()
+    <span class="nd">@gendaymtx_parameters.setter</span>
+    <span class="k">def</span> <span class="nf">gendaymtx_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mtx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__gendaymtx_parameters</span> <span class="o">=</span> <span class="n">mtx</span> <span class="k">if</span> <span class="n">mtx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="k">else</span> <span class="n">GendaymtxParameters</span><span class="p">()</span>
 
-        assert hasattr(self.gendaymtxParameters, "isRadianceParameters"), \
-            "input gendaymtxParameters is not a valid parameters type."
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span><span class="p">,</span> <span class="s2">&quot;isRadianceParameters&quot;</span><span class="p">),</span> \
+            <span class="s2">&quot;input gendaymtx_parameters is not a valid parameters type.&quot;</span>
 
-    @property
-    def outputFile(self):
-        """Output file address."""
-        return os.path.splitext(str(self.weaFile))[0] + ".mtx" \
-            if self.outputName is None and self.weaFile.normpath is not None \
-            else self.outputName
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Output file address.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.mtx&quot;</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="o">.</span><span class="n">normpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span>
 
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        # generate the name from self.weaFile
-        radString = "%s %s %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, 'gendaymtx')),
-            self.gendaymtxParameters.toRadString(),
-            self.normspace(self.weaFile),
-            self.normspace(self.outputFile)
-        )
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+        <span class="c1"># generate the name from self.wea_file</span>
+        <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s1">&#39;gendaymtx&#39;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="p">)</span>
 
-        # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+        <span class="c1"># make sure input files are set by user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rad_string</span>
 
-    @property
-    def inputFiles(self):
-        """Input files for this command."""
-        return self.weaFile,
-</code></pre>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Input files for this command.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="p">,</span>
+</pre></div>
+
   </div>
 
   </header>
@@ -1148,162 +1204,161 @@ class Gendaymtx(RadianceCommand):
   
     <div class="desc"><p>gendaymtx - Generate an annual Perez sky matrix from a weather tape.</p>
 <p>Attributes:
-    outputName: An optional name for output file name. If None the name of
+    output_name: An optional name for output file name. If None the name of
         .epw file will be used.
-    weaFile: Full path to input wea file (Default: None).
-    gendaymtxParameters: Radiance parameters for gendaymtx. If None Default
-        parameters will be set. You can use self.gendaymtxParameters to view,
+    wea_file: Full path to input wea file (Default: None).
+    gendaymtx_parameters: Radiance parameters for gendaymtx. If None Default
+        parameters will be set. You can use self.gendaymtx_parameters to view,
         add or remove the parameters before executing the command.</p>
 <p>Usage:</p>
-<pre><code>from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters
-from honeybee.radiance.command.gendaymtx import Gendaymtx
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">honeybee.radiance.parameters.gendaymtx</span> <span class="kn">import</span> <span class="n">GendaymtxParameters</span>
+<span class="kn">from</span> <span class="nn">honeybee.radiance.command.gendaymtx</span> <span class="kn">import</span> <span class="n">Gendaymtx</span>
 
-# create and modify gendaymtxParameters
-# generate sky matrix with default values
-gmtx = GendaymtxParameters()
+<span class="c1"># create and modify gendaymtx_parameters</span>
+<span class="c1"># generate sky matrix with default values</span>
+<span class="n">gmtx</span> <span class="o">=</span> <span class="n">GendaymtxParameters</span><span class="p">()</span>
 
-# ask only for direct sun
-gmtx.onlyDirect = True
+<span class="c1"># ask only for direct sun</span>
+<span class="n">gmtx</span><span class="o">.</span><span class="n">only_direct</span> <span class="o">=</span> <span class="bp">True</span>
 
-# create gendaymtx
-dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                 gendaymtxParameters=gmtx)
+<span class="c1"># create gendaymtx</span>
+<span class="n">dmtx</span> <span class="o">=</span> <span class="n">Gendaymtx</span><span class="p">(</span><span class="n">wea_file</span><span class="o">=</span><span class="s2">&quot;C:/IZMIR_TUR.wea&quot;</span><span class="p">,</span> <span class="n">gendaymtx_parameters</span><span class="o">=</span><span class="n">gmtx</span><span class="p">)</span>
 
-# run gendaymtx
-dmtx.execute()
-&gt; c:/radiance/bin/gendaymtx: reading weather tape 'C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea'
-&gt; c:/radiance/bin/gendaymtx: location 'IZMIR_TUR'
-&gt; c:/radiance/bin/gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west
-&gt; c:/radiance/bin/gendaymtx: 146 sky patches per time step
-&gt; c:/radiance/bin/gendaymtx: stepping through month 1...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 2...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 3...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 4...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 5...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 6...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 7...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 8...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 9...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 10...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 11...
-&gt; c:/radiance/bin/gendaymtx: stepping through month 12...
-&gt; c:/radiance/bin/gendaymtx: writing matrix with 8760 time steps...
-&gt; c:/radiance/bin/gendaymtx: done.
+<span class="c1"># run gendaymtx</span>
+<span class="n">dmtx</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">reading</span> <span class="n">weather</span> <span class="n">tape</span> <span class="s1">&#39;C:/ladybug/IZMIR_TUR.wea&#39;</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">location</span> <span class="s1">&#39;IZMIR_TUR&#39;</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="nb">long</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="mf">38.5</span><span class="p">,</span><span class="o">-</span><span class="mf">27.0</span><span class="p">)</span> <span class="n">degrees</span> <span class="n">north</span><span class="p">,</span> <span class="n">west</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="mi">146</span> <span class="n">sky</span> <span class="n">patches</span> <span class="n">per</span> <span class="n">time</span> <span class="n">step</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">1.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">2.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">3.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">4.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">5.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">6.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">7.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">8.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">9.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">10.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">11.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">stepping</span> <span class="n">through</span> <span class="n">month</span> <span class="mf">12.</span><span class="o">..</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">writing</span> <span class="n">matrix</span> <span class="k">with</span> <span class="mi">8760</span> <span class="n">time</span> <span class="n">steps</span><span class="o">...</span>
+<span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span><span class="o">/</span><span class="n">radiance</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">gendaymtx</span><span class="p">:</span> <span class="n">done</span><span class="o">.</span>
 
-# change it not to be verbose
-dmtx.gendaymtxParameters.verboseReport = False
+<span class="c1"># change it not to be verbose</span>
+<span class="n">dmtx</span><span class="o">.</span><span class="n">gendaymtx_parameters</span><span class="o">.</span><span class="n">verbose_report</span> <span class="o">=</span> <span class="bp">False</span>
 
-# run it again
-dmtx.execute()
-&gt;
-</code></pre></div>
+<span class="c1"># run it again</span>
+<span class="n">dmtx</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="o">&gt;</span>
+</pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx" class="source">
-    <pre><code>class Gendaymtx(RadianceCommand):
-    u"""
-    gendaymtx - Generate an annual Perez sky matrix from a weather tape.
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Gendaymtx</span><span class="p">(</span><span class="n">RadianceCommand</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    gendaymtx - Generate an annual Perez sky matrix from a weather tape.</span>
 
-    Attributes:
-        outputName: An optional name for output file name. If None the name of
-            .epw file will be used.
-        weaFile: Full path to input wea file (Default: None).
-        gendaymtxParameters: Radiance parameters for gendaymtx. If None Default
-            parameters will be set. You can use self.gendaymtxParameters to view,
-            add or remove the parameters before executing the command.
+<span class="sd">    Attributes:</span>
+<span class="sd">        output_name: An optional name for output file name. If None the name of</span>
+<span class="sd">            .epw file will be used.</span>
+<span class="sd">        wea_file: Full path to input wea file (Default: None).</span>
+<span class="sd">        gendaymtx_parameters: Radiance parameters for gendaymtx. If None Default</span>
+<span class="sd">            parameters will be set. You can use self.gendaymtx_parameters to view,</span>
+<span class="sd">            add or remove the parameters before executing the command.</span>
 
-    Usage:
+<span class="sd">    Usage:</span>
 
-        from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters
-        from honeybee.radiance.command.gendaymtx import Gendaymtx
+<span class="sd">        from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters</span>
+<span class="sd">        from honeybee.radiance.command.gendaymtx import Gendaymtx</span>
 
-        # create and modify gendaymtxParameters
-        # generate sky matrix with default values
-        gmtx = GendaymtxParameters()
+<span class="sd">        # create and modify gendaymtx_parameters</span>
+<span class="sd">        # generate sky matrix with default values</span>
+<span class="sd">        gmtx = GendaymtxParameters()</span>
 
-        # ask only for direct sun
-        gmtx.onlyDirect = True
+<span class="sd">        # ask only for direct sun</span>
+<span class="sd">        gmtx.only_direct = True</span>
 
-        # create gendaymtx
-        dmtx = Gendaymtx(weaFile="C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea",
-                         gendaymtxParameters=gmtx)
+<span class="sd">        # create gendaymtx</span>
+<span class="sd">        dmtx = Gendaymtx(wea_file=&quot;C:/IZMIR_TUR.wea&quot;, gendaymtx_parameters=gmtx)</span>
 
-        # run gendaymtx
-        dmtx.execute()
-        > c:/radiance/bin/gendaymtx: reading weather tape 'C:/ladybug/IZMIR_TUR/IZMIR_TUR.wea'
-        > c:/radiance/bin/gendaymtx: location 'IZMIR_TUR'
-        > c:/radiance/bin/gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west
-        > c:/radiance/bin/gendaymtx: 146 sky patches per time step
-        > c:/radiance/bin/gendaymtx: stepping through month 1...
-        > c:/radiance/bin/gendaymtx: stepping through month 2...
-        > c:/radiance/bin/gendaymtx: stepping through month 3...
-        > c:/radiance/bin/gendaymtx: stepping through month 4...
-        > c:/radiance/bin/gendaymtx: stepping through month 5...
-        > c:/radiance/bin/gendaymtx: stepping through month 6...
-        > c:/radiance/bin/gendaymtx: stepping through month 7...
-        > c:/radiance/bin/gendaymtx: stepping through month 8...
-        > c:/radiance/bin/gendaymtx: stepping through month 9...
-        > c:/radiance/bin/gendaymtx: stepping through month 10...
-        > c:/radiance/bin/gendaymtx: stepping through month 11...
-        > c:/radiance/bin/gendaymtx: stepping through month 12...
-        > c:/radiance/bin/gendaymtx: writing matrix with 8760 time steps...
-        > c:/radiance/bin/gendaymtx: done.
+<span class="sd">        # run gendaymtx</span>
+<span class="sd">        dmtx.execute()</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: reading weather tape &#39;C:/ladybug/IZMIR_TUR.wea&#39;</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: location &#39;IZMIR_TUR&#39;</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: (lat,long)=(38.5,-27.0) degrees north, west</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: 146 sky patches per time step</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 1...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 2...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 3...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 4...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 5...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 6...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 7...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 8...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 9...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 10...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 11...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: stepping through month 12...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: writing matrix with 8760 time steps...</span>
+<span class="sd">        &gt; c:/radiance/bin/gendaymtx: done.</span>
 
-        # change it not to be verbose
-        dmtx.gendaymtxParameters.verboseReport = False
+<span class="sd">        # change it not to be verbose</span>
+<span class="sd">        dmtx.gendaymtx_parameters.verbose_report = False</span>
 
-        # run it again
-        dmtx.execute()
-        >
-    """
+<span class="sd">        # run it again</span>
+<span class="sd">        dmtx.execute()</span>
+<span class="sd">        &gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    def __init__(self, outputName=None, weaFile=None, gendaymtxParameters=None):
-        """Init command."""
-        RadianceCommand.__init__(self)
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wea_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gendaymtx_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init command.&quot;&quot;&quot;</span>
+        <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        self.outputName = outputName
-        self.weaFile = weaFile
-        self.gendaymtxParameters = gendaymtxParameters
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span> <span class="o">=</span> <span class="n">output_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span> <span class="o">=</span> <span class="n">wea_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span> <span class="o">=</span> <span class="n">gendaymtx_parameters</span>
 
-    @property
-    def gendaymtxParameters(self):
-        """Get and set gendaymtxParameters."""
-        return self.__gendaymtxParameters
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gendaymtx_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and set gendaymtx_parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gendaymtx_parameters</span>
 
-    @gendaymtxParameters.setter
-    def gendaymtxParameters(self, mtx):
-        self.__gendaymtxParameters = mtx if mtx is not None \
-            else GendaymtxParameters()
+    <span class="nd">@gendaymtx_parameters.setter</span>
+    <span class="k">def</span> <span class="nf">gendaymtx_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mtx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__gendaymtx_parameters</span> <span class="o">=</span> <span class="n">mtx</span> <span class="k">if</span> <span class="n">mtx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="k">else</span> <span class="n">GendaymtxParameters</span><span class="p">()</span>
 
-        assert hasattr(self.gendaymtxParameters, "isRadianceParameters"), \
-            "input gendaymtxParameters is not a valid parameters type."
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span><span class="p">,</span> <span class="s2">&quot;isRadianceParameters&quot;</span><span class="p">),</span> \
+            <span class="s2">&quot;input gendaymtx_parameters is not a valid parameters type.&quot;</span>
 
-    @property
-    def outputFile(self):
-        """Output file address."""
-        return os.path.splitext(str(self.weaFile))[0] + ".mtx" \
-            if self.outputName is None and self.weaFile.normpath is not None \
-            else self.outputName
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Output file address.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.mtx&quot;</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="o">.</span><span class="n">normpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span>
 
-    def toRadString(self, relativePath=False):
-        """Return full command as a string."""
-        # generate the name from self.weaFile
-        radString = "%s %s %s > %s" % (
-            self.normspace(os.path.join(self.radbinPath, 'gendaymtx')),
-            self.gendaymtxParameters.toRadString(),
-            self.normspace(self.weaFile),
-            self.normspace(self.outputFile)
-        )
+    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+        <span class="c1"># generate the name from self.wea_file</span>
+        <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s1">&#39;gendaymtx&#39;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="p">)</span>
 
-        # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+        <span class="c1"># make sure input files are set by user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rad_string</span>
 
-    @property
-    def inputFiles(self):
-        """Input files for this command."""
-        return self.weaFile,
-</code></pre>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Input files for this command.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="p">,</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1330,16 +1385,17 @@ dmtx.execute()
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.normspace', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.normspace" class="source">
-    <pre><code>@staticmethod
-def normspace(path):
-    """Norm white spaces in path.
-    Return path with quotation marks if there is whitespace in path.
-    """
-    if str(path).strip().find(" ") != -1:
-        return "{0}{1}{0}".format(config.wrapper, path)
-    else:
-        return path
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">normspace</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Norm white spaces in path.</span>
+<span class="sd">    Return path with quotation marks if there is whitespace in path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;{0}{1}{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1347,7 +1403,7 @@ def normspace(path):
   
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.gendaymtxParameters" class="name">var <span class="ident">gendaymtxParameters</span></p>
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.gendaymtx_parameters" class="name">var <span class="ident">gendaymtx_parameters</span></p>
             
 
             
@@ -1357,7 +1413,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.inputFiles" class="name">var <span class="ident">inputFiles</span></p>
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.input_files" class="name">var <span class="ident">input_files</span></p>
             
 
             
@@ -1368,7 +1424,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.outputFile" class="name">var <span class="ident">outputFile</span></p>
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.output_file" class="name">var <span class="ident">output_file</span></p>
             
 
             
@@ -1379,7 +1435,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.outputName" class="name">var <span class="ident">outputName</span></p>
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.output_name" class="name">var <span class="ident">output_name</span></p>
             
 
             
@@ -1389,29 +1445,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.perlExePath" class="name">var <span class="ident">perlExePath</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Get and set path to radiance binaries.</p>
-<p>If you set a new value the value will be changed globally.</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.pythonExePath" class="name">var <span class="ident">pythonExePath</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.radbinPath" class="name">var <span class="ident">radbinPath</span></p>
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.perl_exe_path" class="name">var <span class="ident">perl_exe_path</span></p>
             
 
             
@@ -1423,7 +1457,29 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.radlibPath" class="name">var <span class="ident">radlibPath</span></p>
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.python_exe_path" class="name">var <span class="ident">python_exe_path</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.radbin_path" class="name">var <span class="ident">radbin_path</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get and set path to radiance binaries.</p>
+<p>If you set a new value the value will be changed globally.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.radlib_path" class="name">var <span class="ident">radlib_path</span></p>
             
 
             
@@ -1435,7 +1491,7 @@ def normspace(path):
 
             </div>
             <div class="item">
-            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.weaFile" class="name">var <span class="ident">weaFile</span></p>
+            <p id="honeybee.radiance.command.gendaymtx.Gendaymtx.wea_file" class="name">var <span class="ident">wea_file</span></p>
             
 
             
@@ -1448,7 +1504,7 @@ def normspace(path):
             
   <div class="item">
     <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, outputName=None, weaFile=None, gendaymtxParameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, output_name=None, wea_file=None, gendaymtx_parameters=None)</p>
     </div>
     
 
@@ -1458,13 +1514,14 @@ def normspace(path):
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.__init__', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.__init__" class="source">
-    <pre><code>def __init__(self, outputName=None, weaFile=None, gendaymtxParameters=None):
-    """Init command."""
-    RadianceCommand.__init__(self)
-    self.outputName = outputName
-    self.weaFile = weaFile
-    self.gendaymtxParameters = gendaymtxParameters
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wea_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gendaymtx_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Init command.&quot;&quot;&quot;</span>
+    <span class="n">RadianceCommand</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span> <span class="o">=</span> <span class="n">output_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span> <span class="o">=</span> <span class="n">wea_file</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span> <span class="o">=</span> <span class="n">gendaymtx_parameters</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1472,8 +1529,8 @@ def normspace(path):
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.checkInputFiles">
-    <p>def <span class="ident">checkInputFiles</span>(</p><p>self, radString=&#39;&#39;)</p>
+    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.check_input_files">
+    <p>def <span class="ident">check_input_files</span>(</p><p>self, rad_string=&#39;&#39;)</p>
     </div>
     
 
@@ -1483,34 +1540,35 @@ def normspace(path):
 <p>This method doesn't check if the file exists since it might be created
 later during the process.</p>
 <p>Args:
-    radString: Current radString to help user better understand the
+    rad_string: Current rad_string to help user better understand the
         erorr (Default: "")</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.checkInputFiles', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.checkInputFiles" class="source">
-    <pre><code>def checkInputFiles(self, radString=""):
-    """Make sure input files are set to a path.
-    This method doesn't check if the file exists since it might be created
-    later during the process.
-    Args:
-        radString: Current radString to help user better understand the
-            erorr (Default: "")
-    """
-    # make sure wea file is provided
-    _msg = "To generate a valid %s command you need to specify the path" \
-        " to input files:" \
-        "\nCurrent command won't work:\n%s" \
-        % (self.__class__.__name__, radString)
-    if self.inputFiles is None:
-        return
-    for f in self.inputFiles:
-        # this is for oconv where it has list of files which are not
-        # RadiancePath
-        if isinstance(f, str):
-            continue
-        assert hasattr(f, 'normpath'), "%s is missing!\n" % f + _msg
-        assert f.normpath is not None, _msg
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.check_input_files', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.check_input_files" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rad_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make sure input files are set to a path.</span>
+<span class="sd">    This method doesn&#39;t check if the file exists since it might be created</span>
+<span class="sd">    later during the process.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        rad_string: Current rad_string to help user better understand the</span>
+<span class="sd">            erorr (Default: &quot;&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># make sure wea file is provided</span>
+    <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;To generate a valid </span><span class="si">%s</span><span class="s2"> command you need to specify the path&quot;</span> \
+        <span class="s2">&quot; to input files:&quot;</span> \
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Current command won&#39;t work:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> \
+        <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">rad_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">:</span>
+        <span class="c1"># this is for oconv where it has list of files which are not</span>
+        <span class="c1"># RadiancePath</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;normpath&#39;</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is missing!</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">f</span> <span class="o">+</span> <span class="n">_msg</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="o">.</span><span class="n">normpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">_msg</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1531,33 +1589,34 @@ later during the process.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.execute', this);">Show source &equiv;</a></p>
   <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.execute" class="source">
-    <pre><code>def execute(self):
-    """Execute the command.
-    Returns:
-        Return fullpath to the result file if any as a string.
-    """
-    # check if the files exist on the computer
-    self.__checkFiles()
-    self.onExecution()
-    if os.name == 'nt':
-        os.environ['PATH'] += ';%s' % self.normspace(config.radbinPath)
-        os.environ['RAYPATH'] += ';%s' % self.normspace(config.radlibPath)
-    p = subprocess.Popen(self.toRadString(), shell=True,
-                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    for line in p.stdout.readlines():
-        print line,
-    p.wait()
-    try:
-        if os.path.split(self.outputFile.normpath)[0] == "":
-            # add directory to file if it's not a full path
-            return os.path.join(os.getcwd(),
-                                self.outputFile.normpath)
-        # return output file
-        return self.outputFile
-    except AttributeError:
-        # this command doesn't have an output file
-        pass
-</code></pre>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Execute the command.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Return fullpath to the result file if any as a string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check if the files exist on the computer</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__check_files</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">on_execution</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;RAYPATH&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">radlib_path</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                         <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+        <span class="k">print</span> <span class="n">line</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">normpath</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="c1"># add directory to file if it&#39;s not a full path</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">normpath</span><span class="p">)</span>
+        <span class="c1"># return output file</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># this command doesn&#39;t have an output file</span>
+        <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1565,8 +1624,8 @@ later during the process.</p>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.onExecution">
-    <p>def <span class="ident">onExecution</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.on_execution">
+    <p>def <span class="ident">on_execution</span>(</p><p>self)</p>
     </div>
     
 
@@ -1577,16 +1636,17 @@ later during the process.</p>
 modifier set in the command. This method will be executed right before
 running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.onExecution', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.onExecution" class="source">
-    <pre><code>def onExecution(self):
-    """Overwrite this method to add extra specific checks for the command.
-    For instance for rcontrib you want to make sure there is at least one
-    modifier set in the command. This method will be executed right before
-    running the command.
-    """
-    pass
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.on_execution', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.on_execution" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">on_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite this method to add extra specific checks for the command.</span>
+<span class="sd">    For instance for rcontrib you want to make sure there is at least one</span>
+<span class="sd">    modifier set in the command. This method will be executed right before</span>
+<span class="sd">    running the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1594,8 +1654,8 @@ running the command.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.onToRadString">
-    <p>def <span class="ident">onToRadString</span>(</p><p>self)</p>
+    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.on_to_rad_string">
+    <p>def <span class="ident">on_to_rad_string</span>(</p><p>self)</p>
     </div>
     
 
@@ -1606,16 +1666,17 @@ running the command.</p></div>
 modifier set in the command. This method will be executed right before
 running the command.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.onToRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.onToRadString" class="source">
-    <pre><code>def onToRadString(self):
-    """Overwrite this method to add extra specific checks while generating rad string.
-    For instance for rcontrib you want to make sure there is at least one
-    modifier set in the command. This method will be executed right before
-    running the command.
-    """
-    pass
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.on_to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.on_to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">on_to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite this method to add extra specific checks while generating rad string.</span>
+<span class="sd">    For instance for rcontrib you want to make sure there is at least one</span>
+<span class="sd">    modifier set in the command. This method will be executed right before</span>
+<span class="sd">    running the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1623,8 +1684,8 @@ running the command.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.toRadString">
-    <p>def <span class="ident">toRadString</span>(</p><p>self, relativePath=False)</p>
+    <div class="name def" id="honeybee.radiance.command.gendaymtx.Gendaymtx.to_rad_string">
+    <p>def <span class="ident">to_rad_string</span>(</p><p>self, relative_path=False)</p>
     </div>
     
 
@@ -1632,21 +1693,22 @@ running the command.</p></div>
   
     <div class="desc"><p>Return full command as a string.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.toRadString', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.toRadString" class="source">
-    <pre><code>def toRadString(self, relativePath=False):
-    """Return full command as a string."""
-    # generate the name from self.weaFile
-    radString = "%s %s %s > %s" % (
-        self.normspace(os.path.join(self.radbinPath, 'gendaymtx')),
-        self.gendaymtxParameters.toRadString(),
-        self.normspace(self.weaFile),
-        self.normspace(self.outputFile)
-    )
-    # make sure input files are set by user
-    self.checkInputFiles(radString)
-    return radString
-</code></pre>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.command.gendaymtx.Gendaymtx.to_rad_string', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.command.gendaymtx.Gendaymtx.to_rad_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return full command as a string.&quot;&quot;&quot;</span>
+    <span class="c1"># generate the name from self.wea_file</span>
+    <span class="n">rad_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radbin_path</span><span class="p">,</span> <span class="s1">&#39;gendaymtx&#39;</span><span class="p">)),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gendaymtx_parameters</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wea_file</span><span class="p">),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># make sure input files are set by user</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">check_input_files</span><span class="p">(</span><span class="n">rad_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rad_string</span>
+</pre></div>
+
   </div>
 </div>
 
@@ -1662,14 +1724,14 @@ running the command.</p></div>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a>
-    </p>
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
   </footer>
 </div>
-<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
