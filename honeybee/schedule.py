@@ -133,7 +133,7 @@ class Schedule(object):
     def __contains__(self, hour):
         return hour in self._occupiedHours
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
 

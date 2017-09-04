@@ -1064,11 +1064,11 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.relpath">relpath</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.header">header</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.results">results</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.run">run</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.write">write</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.write_content">write_content</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe._imagebasedbase.GenericImageBased.write_views">write_views</a></li>
@@ -1571,7 +1571,7 @@ table {
         <span class="sd">&quot;&quot;&quot;Return results for this analysis.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1665,7 +1665,7 @@ sunlighthours recipe and annual analysis recipe.</p>
         <span class="sd">&quot;&quot;&quot;Return results for this analysis.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1914,6 +1914,29 @@ sunlighthours recipe and annual analysis recipe.</p>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe._imagebasedbase.GenericImageBased.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwriet .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe._imagebasedbase.GenericImageBased.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe._imagebasedbase.GenericImageBased.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.recipe._imagebasedbase.GenericImageBased.header">
     <p>def <span class="ident">header</span>(</p><p>self, target_folder, includ_rad_path=True)</p>
     </div>
@@ -2028,29 +2051,6 @@ PATHRAY for Radiance.</p>
         <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;You must write the recipe to get the list of commands&#39;</span>
                   <span class="s1">&#39; as rad_string.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe._imagebasedbase.GenericImageBased.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwriet .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe._imagebasedbase.GenericImageBased.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe._imagebasedbase.GenericImageBased.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

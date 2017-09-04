@@ -1062,6 +1062,7 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.relpath">relpath</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.header">header</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.is_daylight_mtx_created">is_daylight_mtx_created</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.is_hdr_mtx_created">is_hdr_mtx_created</a></li>
@@ -1069,7 +1070,6 @@ table {
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.results">results</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.run">run</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.write">write</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.write_content">write_content</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.write_views">write_views</a></li>
@@ -2061,7 +2061,7 @@ table {
         <span class="n">imgc</span><span class="o">.</span><span class="n">output_folder</span> <span class="o">=</span> <span class="n">fpt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;result</span><span class="se">\\</span><span class="s1">hdr&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;result</span><span class="se">\\</span><span class="s1">hdr</span><span class="se">\\</span><span class="s1">combined&#39;</span>
         <span class="k">yield</span> <span class="n">imgc</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2646,7 +2646,7 @@ table {
         <span class="n">imgc</span><span class="o">.</span><span class="n">output_folder</span> <span class="o">=</span> <span class="n">fpt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;result</span><span class="se">\\</span><span class="s1">hdr&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;result</span><span class="se">\\</span><span class="s1">hdr</span><span class="se">\\</span><span class="s1">combined&#39;</span>
         <span class="k">yield</span> <span class="n">imgc</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2985,6 +2985,29 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.header">
     <p>def <span class="ident">header</span>(</p><p>self, target_folder, includ_rad_path=True)</p>
     </div>
@@ -3206,29 +3229,6 @@ PATHRAY for Radiance.</p>
         <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;You must write the recipe to get the list of commands&#39;</span>
                   <span class="s1">&#39; as rad_string.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.daylightcoeff.imagebased.DaylightCoeffImageBased.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

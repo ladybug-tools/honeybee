@@ -1061,12 +1061,12 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.execute">execute</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.from_cie_sky">from_cie_sky</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.from_epw_file">from_epw_file</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.from_radiation_values">from_radiation_values</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.sky.skyvector.SkyVector.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1682,7 +1682,7 @@ table {
         <span class="n">genskv</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">outfilepath</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1893,7 +1893,7 @@ table {
         <span class="n">genskv</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">outfilepath</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2045,6 +2045,29 @@ table {
     <span class="bp">self</span><span class="o">.</span><span class="n">__hour</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky</span><span class="o">.</span><span class="n">month_day_hour</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sky_density</span> <span class="o">=</span> <span class="n">sky_density</span> <span class="ow">or</span> <span class="mi">1</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__is_climate_based</span> <span class="o">=</span> <span class="n">is_climate_based</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.sky.skyvector.SkyVector.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.skyvector.SkyVector.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.sky.skyvector.SkyVector.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -2273,29 +2296,6 @@ sky_density: A positive intger for sky density. [1] Tregenza Sky,
     <span class="n">genskv</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">outfilepath</span>
     <span class="n">genskv</span><span class="o">.</span><span class="n">sky_subdivision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky_density</span>
     <span class="k">return</span> <span class="n">genskv</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.sky.skyvector.SkyVector.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.skyvector.SkyVector.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.sky.skyvector.SkyVector.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

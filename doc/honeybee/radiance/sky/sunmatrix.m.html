@@ -1061,12 +1061,12 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.duplicate">duplicate</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.execute">execute</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.from_epw_file">from_epw_file</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.hours_match">hours_match</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.sky.sunmatrix.SunMatrix.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1736,7 +1736,7 @@ table {
             <span class="s1">&#39;sun_matrix does not have a single line command. Try execute method.&#39;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2012,7 +2012,7 @@ Usage:</p>
             <span class="s1">&#39;sun_matrix does not have a single line command. Try execute method.&#39;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2204,6 +2204,29 @@ Usage:</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span> <span class="o">=</span> <span class="n">hoys</span> <span class="ow">or</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8760</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span> <span class="o">=</span> <span class="n">sky_type</span>  <span class="c1"># set default to 0 for visible radiation</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">=</span> <span class="n">suffix</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.sky.sunmatrix.SunMatrix.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.sunmatrix.SunMatrix.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.sky.sunmatrix.SunMatrix.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -2417,29 +2440,6 @@ Usage:</p>
     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
         <span class="s1">&#39;sun_matrix does not have a single line command. Try execute method.&#39;</span>
     <span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.sky.sunmatrix.SunMatrix.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.sunmatrix.SunMatrix.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.sky.sunmatrix.SunMatrix.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

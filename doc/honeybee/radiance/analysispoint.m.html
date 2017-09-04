@@ -1062,6 +1062,7 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.parse_blind_states">parse_blind_states</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.annual_metrics">annual_metrics</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.annual_solar_exposure">annual_solar_exposure</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.blind_state_id">blind_state_id</a></li>
@@ -1085,7 +1086,6 @@ table {
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.source_id">source_id</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.sum_values_by_id">sum_values_by_id</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.unload">unload</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.useful_daylight_illuminance">useful_daylight_illuminance</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysispoint.AnalysisPoint.value">value</a></li>
@@ -2418,7 +2418,7 @@ table {
         <span class="n">ap</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ap</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -3357,7 +3357,7 @@ under <strong>init</strong> to know how the data is stored.</p>
         <span class="n">ap</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ap</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -3566,6 +3566,29 @@ to parse the input from plugins.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_is_directLoaded</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysispoint.AnalysisPoint.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysispoint.AnalysisPoint.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysispoint.AnalysisPoint.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -4570,29 +4593,6 @@ less than 250 hours per year.</p>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return Radiance string for a test point.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.analysispoint.AnalysisPoint.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysispoint.AnalysisPoint.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.analysispoint.AnalysisPoint.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

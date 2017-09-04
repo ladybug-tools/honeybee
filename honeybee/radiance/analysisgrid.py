@@ -778,7 +778,7 @@ class AnalysisGrid(object):
         """Return analysis points group as a Radiance string."""
         return "\n".join((ap.to_rad_string() for ap in self._analysis_points))
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite ToString .NET method."""
         return self.__repr__()
 

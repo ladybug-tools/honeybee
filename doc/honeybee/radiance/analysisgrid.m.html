@@ -1061,6 +1061,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.add_result_files">add_result_files</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.annual_metrics">annual_metrics</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.annual_solar_exposure">annual_solar_exposure</a></li>
@@ -1079,7 +1080,6 @@ table {
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.spatial_daylight_autonomy">spatial_daylight_autonomy</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.sum_values_by_id">sum_values_by_id</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.analysisgrid.AnalysisGrid.unload">unload</a></li>
   </ul>
 
@@ -2294,7 +2294,7 @@ table {
         <span class="sd">&quot;&quot;&quot;Return analysis points group as a Radiance string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">ap</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -3154,7 +3154,7 @@ table {
         <span class="sd">&quot;&quot;&quot;Return analysis points group as a Radiance string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">ap</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -3436,6 +3436,29 @@ window_groups: A collection of window_groups which contribute to this grid.
     <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span> <span class="o">=</span> <span class="n">analysis_points</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_directFiles</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of results files</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_totalFiles</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of results files</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.analysisgrid.AnalysisGrid.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite ToString .NET method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisgrid.AnalysisGrid.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.analysisgrid.AnalysisGrid.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -4417,29 +4440,6 @@ to parse the input from plugins.</p>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return analysis points group as a Radiance string.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">ap</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">))</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.analysisgrid.AnalysisGrid.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite ToString .NET method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.analysisgrid.AnalysisGrid.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.analysisgrid.AnalysisGrid.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

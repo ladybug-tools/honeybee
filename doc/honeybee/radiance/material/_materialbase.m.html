@@ -1063,8 +1063,8 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.material._materialbase.RadianceMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material._materialbase.RadianceMaterial.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.material._materialbase.RadianceMaterial.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.material._materialbase.RadianceMaterial.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1581,7 +1581,7 @@ table {
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1695,7 +1695,7 @@ table {
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1825,6 +1825,29 @@ file than the opaque surfaces.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.material._materialbase.RadianceMaterial.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material._materialbase.RadianceMaterial.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material._materialbase.RadianceMaterial.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.material._materialbase.RadianceMaterial.to_rad_string">
     <p>def <span class="ident">to_rad_string</span>(</p><p>self, minimal=False)</p>
     </div>
@@ -1844,29 +1867,6 @@ file than the opaque surfaces.</p></div>
 <span class="sd">        minimal: Set to True to get the definition in as single line.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.material._materialbase.RadianceMaterial.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material._materialbase.RadianceMaterial.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material._materialbase.RadianceMaterial.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

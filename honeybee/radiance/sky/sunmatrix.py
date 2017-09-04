@@ -243,7 +243,7 @@ class SunMatrix(RadianceSky):
             'sun_matrix does not have a single line command. Try execute method.'
         )
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

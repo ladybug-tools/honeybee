@@ -19,7 +19,7 @@ class SurfaceTypeBase(object):
         """Return True for surface types."""
         return True
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

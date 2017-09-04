@@ -1064,6 +1064,7 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.parse_blind_states">parse_blind_states</a></li>
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.add_coupled_image_files">add_coupled_image_files</a></li>
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.add_image_file">add_image_file</a></li>
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.add_image_files">add_image_files</a></li>
@@ -1080,7 +1081,6 @@ table {
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.get_images_by_id">get_images_by_id</a></li>
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.source_id">source_id</a></li>
     <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.source_state_name">source_state_name</a></li>
-    <li class="mono"><a href="#honeybee.radiance.imagecollection.ImageCollection.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -2056,7 +2056,7 @@ combinations using pcomb.</p>
 
         <span class="k">return</span> <span class="n">combs</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2620,7 +2620,7 @@ combinations using pcomb.</p></div>
 
         <span class="k">return</span> <span class="n">combs</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2794,6 +2794,29 @@ to parse the input from plugins.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="s1">&#39;untitled&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">output_folder</span> <span class="o">=</span> <span class="n">output_folder</span> <span class="ow">or</span> <span class="s1">&#39;.&#39;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.imagecollection.ImageCollection.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite ToString .NET method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.imagecollection.ImageCollection.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.imagecollection.ImageCollection.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -3481,29 +3504,6 @@ to parse the input from plugins.</p>
         <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
             <span class="s1">&#39;State id [{}] is not valid. {} has {} states.&#39;</span>
             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stateid</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">[</span><span class="n">source_name</span><span class="p">][</span><span class="s1">&#39;state&#39;</span><span class="p">])))</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.imagecollection.ImageCollection.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite ToString .NET method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.imagecollection.ImageCollection.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.imagecollection.ImageCollection.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

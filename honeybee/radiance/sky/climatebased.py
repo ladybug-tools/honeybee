@@ -124,7 +124,7 @@ class ClimateBased(PointInTimeSky):
             self.location, self.month, self.day, self.hour,
             self.direct_radiation, self.diffuse_radiation, self.north, self.suffix)
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

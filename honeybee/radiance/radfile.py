@@ -400,7 +400,7 @@ class RadFile(object):
 
         return '\n'.join(place_holder)
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET's ToString."""
         return self.__repr__()
 

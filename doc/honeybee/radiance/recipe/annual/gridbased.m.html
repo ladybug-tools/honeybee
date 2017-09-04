@@ -1065,6 +1065,7 @@ table {
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.analysis_grids_from_points_and_vectors">analysis_grids_from_points_and_vectors</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.relpath">relpath</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.from_points_and_vectors">from_points_and_vectors</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.from_points_file">from_points_file</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.from_weather_file_points_and_vectors">from_weather_file_points_and_vectors</a></li>
@@ -1073,7 +1074,6 @@ table {
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.results">results</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.run">run</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.write">write</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.write_analysis_grids">write_analysis_grids</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.annual.gridbased.GridBased.write_content">write_content</a></li>
@@ -2124,6 +2124,29 @@ however it can only be used for models with no window groups.</p>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.annual.gridbased.GridBased.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwriet .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.annual.gridbased.GridBased.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.annual.gridbased.GridBased.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.recipe.annual.gridbased.GridBased.from_points_and_vectors">
     <p>def <span class="ident">from_points_and_vectors</span>(</p><p>cls, point_groups, vector_groups=None, hb_objects=None, sub_folder=&#39;gridbased&#39;)</p>
     </div>
@@ -2443,29 +2466,6 @@ PATHRAY for Radiance.</p>
         <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;You must write the recipe to get the list of commands&#39;</span>
                   <span class="s1">&#39; as rad_string.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.annual.gridbased.GridBased.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwriet .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.annual.gridbased.GridBased.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.annual.gridbased.GridBased.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

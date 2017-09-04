@@ -189,7 +189,7 @@ class SkyVector(RadianceSky):
         genskv.execute()
         return outfilepath
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

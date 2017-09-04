@@ -240,7 +240,7 @@ class HBZone(HBObject):
 
         return _profile
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
 

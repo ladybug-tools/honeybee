@@ -1063,6 +1063,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.room.Room.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.room.Room.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.room.Room.add_fenestration_surface">add_fenestration_surface</a></li>
     <li class="mono"><a href="#honeybee.room.Room.add_surface">add_surface</a></li>
     <li class="mono"><a href="#honeybee.room.Room.from_ep_string">from_ep_string</a></li>
@@ -1072,7 +1073,6 @@ table {
     <li class="mono"><a href="#honeybee.room.Room.rad_string_to_file">rad_string_to_file</a></li>
     <li class="mono"><a href="#honeybee.room.Room.to_rad_file">to_rad_file</a></li>
     <li class="mono"><a href="#honeybee.room.Room.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.room.Room.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -2189,6 +2189,29 @@ add surface coordinates to zone origin.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.room.Room.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.room.Room.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.room.Room.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.room.Room.add_fenestration_surface">
     <p>def <span class="ident">add_fenestration_surface</span>(</p><p>self, wall_name, width, height, sill_height, radiance_material=None)</p>
     </div>
@@ -2610,29 +2633,6 @@ zone. For a full definition as a string use to_rad_string method.</p></div>
     <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span> <span class="ow">or</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_rad_file</span><span class="p">()</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">include_materials</span><span class="p">,</span> <span class="n">flipped</span><span class="p">,</span>
                                             <span class="n">blacked</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.room.Room.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.room.Room.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.room.Room.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

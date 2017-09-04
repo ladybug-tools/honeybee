@@ -1063,8 +1063,8 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.material.bsdf.BSDFMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.bsdf.BSDFMaterial.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.material.bsdf.BSDFMaterial.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.material.bsdf.BSDFMaterial.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1823,6 +1823,29 @@ file than the opaque surfaces.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.material.bsdf.BSDFMaterial.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.bsdf.BSDFMaterial.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.bsdf.BSDFMaterial.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.material.bsdf.BSDFMaterial.to_rad_string">
     <p>def <span class="ident">to_rad_string</span>(</p><p>self, minimal=False)</p>
     </div>
@@ -1843,29 +1866,6 @@ file than the opaque surfaces.</p></div>
                              <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                              <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">mat_def</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="n">mat_def</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.material.bsdf.BSDFMaterial.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.bsdf.BSDFMaterial.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material.bsdf.BSDFMaterial.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

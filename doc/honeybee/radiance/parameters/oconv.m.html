@@ -1062,6 +1062,7 @@ table {
   <ul>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.check_incompatible_inputs">check_incompatible_inputs</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.add_additional_parameter_by_name_and_value">add_additional_parameter_by_name_and_value</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.add_default_parameter_name">add_default_parameter_name</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.add_radiance_bool_flag">add_radiance_bool_flag</a></li>
@@ -1074,7 +1075,6 @@ table {
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.remove_parameter">remove_parameter</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.remove_parameters">remove_parameters</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.try_to_unfreeze">try_to_unfreeze</a></li>
     <li class="mono"><a href="#honeybee.radiance.parameters.oconv.OconvParameters.unfreeze">unfreeze</a></li>
   </ul>
@@ -1947,6 +1947,29 @@ surfaces)" (default:16384)</p></div>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.parameters.oconv.OconvParameters.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.oconv.OconvParameters.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.parameters.oconv.OconvParameters.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.parameters.oconv.OconvParameters.add_additional_parameter_by_name_and_value">
     <p>def <span class="ident">add_additional_parameter_by_name_and_value</span>(</p><p>self, name, value=&#39;&#39;)</p>
     </div>
@@ -2638,29 +2661,6 @@ used otherwise.</p>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_parameters</span>
     <span class="p">]</span>
     <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_defaultParameters</span> <span class="o">+</span> <span class="n">_additional_parameters</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.parameters.oconv.OconvParameters.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.parameters.oconv.OconvParameters.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.parameters.oconv.OconvParameters.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

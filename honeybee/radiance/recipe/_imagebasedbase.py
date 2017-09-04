@@ -72,7 +72,7 @@ class GenericImageBased(AnalysisRecipe):
         """Return results for this analysis."""
         pass
 
-    def to_string(self):
+    def ToString(self):
         """Overwriet .NET ToString method."""
         return self.__repr__()
 

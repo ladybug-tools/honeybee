@@ -90,7 +90,7 @@ class CIE(PointInTimeSky):
         return CIE(self.location, self.month, self.day, self.hour, self.north,
                    self.sky_type, self.suffix)
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

@@ -264,7 +264,7 @@ class GridBased(GenericGridBased):
 
         return self.analysis_grids
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

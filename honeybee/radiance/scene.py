@@ -49,7 +49,7 @@ class Scene(object):
         """Return list of files as single string."""
         return ''.join(fp for f in self.files for fp in f)
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite ToString .NET method."""
         return self.__repr__()
 

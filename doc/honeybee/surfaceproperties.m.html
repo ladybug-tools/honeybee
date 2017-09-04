@@ -1063,9 +1063,9 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceProperties.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceProperties.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceProperties.is_surface_properties">is_surface_properties</a></li>
     <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceProperties.rad_material_from_type">rad_material_from_type</a></li>
-    <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceProperties.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1075,9 +1075,9 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceState.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceState.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceState.radiance_materials">radiance_materials</a></li>
     <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceState.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.surfaceproperties.SurfaceState.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1583,7 +1583,7 @@ surface or a list of honeybee surfaces.</p>
         <span class="sd">&quot;&quot;&quot;Get default radiance material for the surface type.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface_type</span><span class="o">.</span><span class="n">radiance_material</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1711,7 +1711,7 @@ surface or a list of honeybee surfaces.</p>
         <span class="k">return</span> <span class="n">RadFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surfaces</span><span class="p">)</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">include_materials</span><span class="p">,</span>
                                                     <span class="n">flipped</span><span class="p">,</span> <span class="n">blacked</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1822,7 +1822,7 @@ add the states to each HBSurface using HBSurface.addState.</p>
         <span class="sd">&quot;&quot;&quot;Get default radiance material for the surface type.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface_type</span><span class="o">.</span><span class="n">radiance_material</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1900,6 +1900,29 @@ add the states to each HBSurface using HBSurface.addState.</p>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.surfaceproperties.SurfaceProperties.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfaceproperties.SurfaceProperties.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfaceproperties.SurfaceProperties.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.surfaceproperties.SurfaceProperties.is_surface_properties">
     <p>def <span class="ident">is_surface_properties</span>(</p><p>self)</p>
     </div>
@@ -1937,29 +1960,6 @@ add the states to each HBSurface using HBSurface.addState.</p>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">rad_material_from_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get default radiance material for the surface type.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface_type</span><span class="o">.</span><span class="n">radiance_material</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.surfaceproperties.SurfaceProperties.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfaceproperties.SurfaceProperties.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.surfaceproperties.SurfaceProperties.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -2110,7 +2110,7 @@ state meaningful.</p>
         <span class="k">return</span> <span class="n">RadFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surfaces</span><span class="p">)</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">include_materials</span><span class="p">,</span>
                                                     <span class="n">flipped</span><span class="p">,</span> <span class="n">blacked</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2224,6 +2224,29 @@ state meaningful.</p>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.surfaceproperties.SurfaceState.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfaceproperties.SurfaceState.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.surfaceproperties.SurfaceState.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.surfaceproperties.SurfaceState.radiance_materials">
     <p>def <span class="ident">radiance_materials</span>(</p><p>self, blacked=False, to_rad_string=False)</p>
     </div>
@@ -2291,29 +2314,6 @@ state meaningful.</p>
     <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span> <span class="ow">or</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">RadFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surfaces</span><span class="p">)</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">include_materials</span><span class="p">,</span>
                                                 <span class="n">flipped</span><span class="p">,</span> <span class="n">blacked</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.surfaceproperties.SurfaceState.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.surfaceproperties.SurfaceState.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.surfaceproperties.SurfaceState.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

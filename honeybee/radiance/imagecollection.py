@@ -546,7 +546,7 @@ class ImageCollection(object):
 
         return combs
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite ToString .NET method."""
         return self.__repr__()
 

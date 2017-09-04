@@ -1066,13 +1066,13 @@ table {
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.get_surface_rad_string">get_surface_rad_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.header">header</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.find_bsdf_materials">find_bsdf_materials</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.from_file">from_file</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.geometries">geometries</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.materials">materials</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.radiance_material_names">radiance_material_names</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.write">write</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.write_black_material">write_black_material</a></li>
     <li class="mono"><a href="#honeybee.radiance.radfile.RadFile.write_geometries">write_geometries</a></li>
@@ -1907,7 +1907,7 @@ table {
 
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">place_holder</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET&#39;s ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2332,7 +2332,7 @@ You can also use this class for a single HBSurface or HBZone to get to_rad_strin
 
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">place_holder</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET&#39;s ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2515,6 +2515,29 @@ this will make this mathod fairly inflexible.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">hb_surfaces</span> <span class="o">=</span> <span class="n">hb_surfaces</span>
     <span class="k">if</span> <span class="n">additional_matrials</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;additional_matrials is not implemented!&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="honeybee.radiance.radfile.RadFile.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET's ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.radfile.RadFile.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.radfile.RadFile.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET&#39;s ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -2833,29 +2856,6 @@ this will make this mathod fairly inflexible.</p>
                           <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">flipped</span><span class="p">)))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">flipped</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.radfile.RadFile.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET's ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.radfile.RadFile.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.radfile.RadFile.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET&#39;s ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

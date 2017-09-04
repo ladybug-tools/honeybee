@@ -902,7 +902,7 @@ class AnalysisPoint(object):
         ap.logic = copy.copy(self.logic)
         return ap
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
 

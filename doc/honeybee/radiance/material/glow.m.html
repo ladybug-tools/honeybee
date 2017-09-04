@@ -1063,8 +1063,8 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.material.glow.GlowMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.glow.GlowMaterial.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.material.glow.GlowMaterial.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.material.glow.GlowMaterial.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1074,8 +1074,8 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.material.glow.WhiteGlowMaterial.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.material.glow.WhiteGlowMaterial.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.material.glow.WhiteGlowMaterial.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.material.glow.WhiteGlowMaterial.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1837,6 +1837,29 @@ file than the opaque surfaces.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.material.glow.GlowMaterial.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.glow.GlowMaterial.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.glow.GlowMaterial.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.material.glow.GlowMaterial.to_rad_string">
     <p>def <span class="ident">to_rad_string</span>(</p><p>self, minimal=False)</p>
     </div>
@@ -1855,29 +1878,6 @@ file than the opaque surfaces.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">red</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">green</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_radius</span><span class="o">.</span><span class="n">_value</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">glow_definition</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="n">glow_definition</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.material.glow.GlowMaterial.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.glow.GlowMaterial.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material.glow.GlowMaterial.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -2174,6 +2174,33 @@ file than the opaque surfaces.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.material.glow.WhiteGlowMaterial.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#honeybee.radiance.material.glow.GlowMaterial">GlowMaterial</a></code>.<code><a href="#honeybee.radiance.material.glow.GlowMaterial.ToString">ToString</a></code>
+    </p>
+
+    
+  
+    <div class="desc inherited"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.glow.WhiteGlowMaterial.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.material.glow.WhiteGlowMaterial.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.material.glow.WhiteGlowMaterial.to_rad_string">
     <p>def <span class="ident">to_rad_string</span>(</p><p>self, minimal=False)</p>
     </div>
@@ -2196,33 +2223,6 @@ file than the opaque surfaces.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">red</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">green</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_radius</span><span class="o">.</span><span class="n">_value</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">glow_definition</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="n">glow_definition</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.material.glow.WhiteGlowMaterial.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#honeybee.radiance.material.glow.GlowMaterial">GlowMaterial</a></code>.<code><a href="#honeybee.radiance.material.glow.GlowMaterial.to_string">to_string</a></code>
-    </p>
-
-    
-  
-    <div class="desc inherited"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.material.glow.WhiteGlowMaterial.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.material.glow.WhiteGlowMaterial.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

@@ -1068,6 +1068,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.add_fenestration_surface">add_fenestration_surface</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.add_fenestration_surface_by_size">add_fenestration_surface_by_size</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.add_point">add_point</a></li>
@@ -1081,7 +1082,6 @@ table {
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.rad_string_to_file">rad_string_to_file</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.radiance_materials">radiance_materials</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.hbsurface.HBSurface.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.hbsurface.HBSurface.toep_string">toep_string</a></li>
   </ul>
 
@@ -2646,6 +2646,29 @@ HBSrf.radiance_material = radMat
   
             
   <div class="item">
+    <div class="name def" id="honeybee.hbsurface.HBSurface.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.hbsurface.HBSurface.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.hbsurface.HBSurface.add_fenestration_surface">
     <p>def <span class="ident">add_fenestration_surface</span>(</p><p>self, fenestration_surface)</p>
     </div>
@@ -3209,29 +3232,6 @@ HBSrf.radiance_material = radMat
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span> <span class="ow">or</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">RadFile</span><span class="p">((</span><span class="bp">self</span><span class="p">,))</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">include_materials</span><span class="p">,</span> <span class="n">flipped</span><span class="p">,</span> <span class="n">blacked</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.hbsurface.HBSurface.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.hbsurface.HBSurface.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.hbsurface.HBSurface.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

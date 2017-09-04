@@ -83,7 +83,7 @@ class RadianceProperties(object):
         """Get radianace definition for honeybee surfaces if any."""
         raise NotImplementedError()
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

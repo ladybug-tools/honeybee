@@ -562,7 +562,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         imgc.output_folder = fpt.split('result\\hdr')[0] + 'result\\hdr\\combined'
         yield imgc
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

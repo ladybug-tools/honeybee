@@ -591,7 +591,7 @@ class HBAnalysisSurface(HBObject):
         """Copy honeybee surface."""
         return copy.deepcopy(self)
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

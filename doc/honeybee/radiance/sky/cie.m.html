@@ -1061,12 +1061,12 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.command">command</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.duplicate">duplicate</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.execute">execute</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.from_lat_long">from_lat_long</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.sky.cie.CIE.write_sky_ground">write_sky_ground</a></li>
   </ul>
 
@@ -1584,7 +1584,7 @@ table {
         <span class="k">return</span> <span class="n">CIE</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">north</span><span class="p">,</span>
                    <span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1710,7 +1710,7 @@ table {
         <span class="k">return</span> <span class="n">CIE</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">north</span><span class="p">,</span>
                    <span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -1924,6 +1924,29 @@ table {
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.sky.cie.CIE.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.cie.CIE.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.sky.cie.CIE.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.sky.cie.CIE.command">
     <p>def <span class="ident">command</span>(</p><p>self, folder=None)</p>
     </div>
@@ -2048,29 +2071,6 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get sky radiance command.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.sky.cie.CIE.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.sky.cie.CIE.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.sky.cie.CIE.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

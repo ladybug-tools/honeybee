@@ -1063,6 +1063,7 @@ table {
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.analysis_grids_from_points_and_vectors">analysis_grids_from_points_and_vectors</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.relpath">relpath</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.from_location_and_analysis_period">from_location_and_analysis_period</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.from_location_and_hoys">from_location_and_hoys</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.from_points_and_vectors">from_points_and_vectors</a></li>
@@ -1071,7 +1072,6 @@ table {
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.results">results</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.run">run</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.to_string">to_string</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.write">write</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.write_analysis_grids">write_analysis_grids</a></li>
     <li class="mono"><a href="#honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.write_content">write_content</a></li>
@@ -2612,6 +2612,29 @@ print analysis_recipe.results()
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwriet .NET ToString method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.from_location_and_analysis_period">
     <p>def <span class="ident">from_location_and_analysis_period</span>(</p><p>cls, location, analysis_period, point_groups, vector_groups=None, hb_objects=None, sub_folder=&#39;sunlighthour&#39;)</p>
     </div>
@@ -2927,29 +2950,6 @@ PATHRAY for Radiance.</p>
         <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;You must write the recipe to get the list of commands&#39;</span>
                   <span class="s1">&#39; as rad_string.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwriet .NET ToString method.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.recipe.solaraccess.gridbased.SolarAccessGridBased.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwriet .NET ToString method.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

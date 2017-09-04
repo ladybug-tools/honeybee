@@ -359,7 +359,7 @@ class View(object):
         """Save view to a file."""
         pass
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
 

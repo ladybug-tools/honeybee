@@ -1061,12 +1061,12 @@ table {
           
   <ul>
     <li class="mono"><a href="#honeybee.radiance.view.View.__init__">__init__</a></li>
+    <li class="mono"><a href="#honeybee.radiance.view.View.ToString">ToString</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.add_fore_clip">add_fore_clip</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.calculate_view_grid">calculate_view_grid</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.get_view_dimension">get_view_dimension</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.save_to_file">save_to_file</a></li>
     <li class="mono"><a href="#honeybee.radiance.view.View.to_rad_string">to_rad_string</a></li>
-    <li class="mono"><a href="#honeybee.radiance.view.View.to_string">to_string</a></li>
   </ul>
 
         </li>
@@ -1852,7 +1852,7 @@ table {
         <span class="sd">&quot;&quot;&quot;Save view to a file.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2299,7 +2299,7 @@ for g in gridViews:
         <span class="sd">&quot;&quot;&quot;Save view to a file.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
@@ -2618,6 +2618,29 @@ coordinates.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="honeybee.radiance.view.View.ToString">
+    <p>def <span class="ident">ToString</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overwrite .NET ToString.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.ToString', this);">Show source &equiv;</a></p>
+  <div id="source-honeybee.radiance.view.View.ToString" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="honeybee.radiance.view.View.add_fore_clip">
     <p>def <span class="ident">add_fore_clip</span>(</p><p>self, distance)</p>
     </div>
@@ -2861,29 +2884,6 @@ Returns:
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">pass</span>
     <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__viewComponents</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="honeybee.radiance.view.View.to_string">
-    <p>def <span class="ident">to_string</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Overwrite .NET ToString.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-honeybee.radiance.view.View.to_string', this);">Show source &equiv;</a></p>
-  <div id="source-honeybee.radiance.view.View.to_string" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </pre></div>
 
   </div>

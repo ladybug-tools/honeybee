@@ -197,7 +197,7 @@ class SkyMatrix(RadianceSky):
         skymtx.sky_type = self.sky_type
         return skymtx
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 

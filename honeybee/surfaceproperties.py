@@ -77,7 +77,7 @@ class SurfaceProperties(object):
         """Get default radiance material for the surface type."""
         return self.surface_type.radiance_material
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 
@@ -205,7 +205,7 @@ class SurfaceState(object):
         return RadFile(self.surfaces).to_rad_string(mode, include_materials,
                                                     flipped, blacked)
 
-    def to_string(self):
+    def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 
