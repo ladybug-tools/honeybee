@@ -62,7 +62,18 @@ class AnalysisPoint(object):
         """
         _cls = cls(apJson['location'], apJson['direction'])
         if 'values' in apJson:
-            _cls._values = apJson['values']
+            sid, stateid = _cls._createDataStructure(None, None)
+            # Note to self! This is a hack!
+            # assume it's only a single source
+            values = []
+            hoys = []
+            stateRes = apJson['values'][0]
+            for item in stateRes:
+                for k, v in item.iteritems():
+                    values.append(v)
+                    hoys.append(float(k))
+            # set the values
+            _cls.setCoupledValues(values, hoys, source=None, state=None)
         return _cls
 
     @classmethod
