@@ -33,6 +33,13 @@ class AnalysisRecipe(object):
         self._isCalculated = False
         self.isChanged = True
 
+    @classmethod
+    def fromJson(cls):
+        """Create analysis grid from json object."""
+        raise NotImplementedError(
+            "fromJson is not implemented for {}.".format(cls.__class__.__name__)
+        )
+
     @property
     def isAnalysisRecipe(self):
         """Return true to indicate it is an analysis recipe."""

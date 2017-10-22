@@ -56,8 +56,15 @@ class AnalysisPoint(object):
         self.logic = self._logic
 
     @classmethod
+    def fromJson(cls, apJson):
+        """Create an analysis point from json object.
+            {"location": [x, y, z], "direction": [x, y, z]}
+        """
+        return cls(apJson['location'], apJson['direction'])
+
+    @classmethod
     def fromrawValues(cls, x, y, z, x1, y1, z1):
-        """Create an analysi point from 6 values.
+        """Create an analysis point from 6 values.
 
         x, y, z are the location of the point and x1, y1 and z1 is the direction.
         """

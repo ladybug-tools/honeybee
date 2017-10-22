@@ -6,6 +6,9 @@ from ...command.oconv import Oconv
 from ...command.rtrace import Rtrace
 from ...command.rcalc import Rcalc
 from ....futil import writeToFile
+from ...analysisgrid import AnalysisGrid
+from ....hbsurface import HBSurface
+from ...sky.cie import CIE
 
 from ladybug.dt import DateTime
 
@@ -66,6 +69,23 @@ class GridBased(GenericGridBased):
         """Simulation type: 0: Illuminance(lux), 1: Radiation (wh),
            2: Luminance (Candela) (Default: 0)
         """
+
+    @classmethod
+    def fromJson(cls, recJson):
+        """Create the solar access recipe from json.
+        {
+          "id": 1, // do NOT overwrite this id
+          "sky": null, // a honeybee sky
+          "surfaces": [], // list of honeybee surfaces
+          "analysis_grids": [] // list of analysis grids
+          "analysis_type": 0 // [0] illuminance(lux), [1] radiation (kwh), [2] luminance (Candela).
+        }
+        """
+        sky = CIE.fromJson(recJson['sky'])
+        analysisGrids = \
+            tuple(AnalysisGrid.fromJson(ag) for ag in recJson['analysis_grids'])
+        hbObjects = tuple(HBSurface.fromJson(srf) for srf in recJson['surfaces'])
+        return cls(sky, analysisGrids, recJson['analysis_type'], None, hbObjects)
 
     @classmethod
     def fromPointsAndVectors(cls, sky, pointGroups, vectorGroups=None,

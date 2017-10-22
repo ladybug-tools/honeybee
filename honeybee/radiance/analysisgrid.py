@@ -62,6 +62,13 @@ class AnalysisGrid(object):
         self._totalFiles = []  # list of results files
 
     @classmethod
+    def fromJson(cls, agJson):
+        """Create an analysis grid from json objects."""
+        analysisPoints = tuple(AnalysisPoint.fromJson(pt)
+                               for pt in agJson["analysis_points"])
+        return cls(analysisPoints)
+
+    @classmethod
     def fromPointsAndVectors(cls, points, vectors=None, name=None, windowGroups=None):
         """Create an analysis grid from points and vectors.
 

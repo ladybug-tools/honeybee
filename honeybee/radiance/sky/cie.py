@@ -53,6 +53,33 @@ class CIE(PointInTimeSky):
         self.humanReadableSkyType = self.SKYTYPES[self.skyType][1]
 
     @classmethod
+    def fromJson(cls, locJson):
+        """Create sky form json.
+        {
+          "location": {}, // honeybee (or actually ladybug location schema)
+          "day": 1, // an integer between 1-31
+          "month": 1, // an integer between 1-12
+          "hour": 12.0, // a float number between 0-23
+          "north": 0, // degree for north if not Y axis
+          "sky_type": 0 // A number between 0-5 --  0: sunny sky
+        }
+
+        location schema
+        {
+          "city": "",
+          "latitude": 0,
+          "longitude": 0,
+          "time_zone": 0,
+          "elevation": 0
+        }
+        """
+        data = locJson
+        location = Location.fromJson(data["location"])
+        return cls(location, month=data["month"],
+                   day=data["day"], hour=data["hour"], north=data["north"],
+                   skyType=data["sky_type"])
+
+    @classmethod
     def fromLatLong(cls, city, latitude, longitude, timezone, elevation,
                     month=6, day=21, hour=9, north=0, skyType=0, suffix=None):
         """Create sky from latitude and longitude."""

@@ -74,6 +74,22 @@ class HBAnalysisSurface(HBObject):
             self.addSurfaceState(state)
 
     @classmethod
+    def fromJson(cls, srfJson):
+        """Create a surface from json object.
+
+        The minimum schema is:
+        {"name": "",
+        "vertices": [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
+        "surface_type": null  // 0: wall, 5: window
+        }
+        """
+        name = srfJson["name"]
+        vertices = srfJson["vertices"]
+        typeId = srfJson["surface_type"]
+        srfType = surfacetype.SurfaceTypes.getTypeByKey(typeId)
+        return cls(name, vertices, srfType)
+
+    @classmethod
     def fromRadEPProperties(
         cls, name, sortedPoints, surfaceType=None, isNameSetByUser=False,
             isTypeSetByUser=False, radProperties=None, epProperties=None,

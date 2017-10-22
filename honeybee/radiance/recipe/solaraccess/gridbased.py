@@ -5,10 +5,13 @@ from ..recipedcutil import RGBMatrixFileToIll
 from ...parameters.rcontrib import RcontribParameters
 from ...command.oconv import Oconv
 from ...command.rcontrib import Rcontrib
+from ...analysisgrid import AnalysisGrid
 from ....futil import writeToFile
 from ....vectormath.euclid import Vector3
+from ....hbsurface import HBSurface
 
 from ladybug.sunpath import Sunpath
+from ladybug.location import Location
 from ladybug.legendparameters import LegendParameters
 from ladybug.color import Colorset
 
@@ -70,6 +73,27 @@ class SolarAccessGridBased(GenericGridBased):
         self._radianceParameters.directCertainty = 1
         self._radianceParameters.directThreshold = 0
         self._radianceParameters.directJitter = 0
+
+    @classmethod
+    def fromJson(cls, recJson):
+        """Create the solar access recipe from json.
+            {
+              "id": 0, // do NOT overwrite this id
+              "location": null, // a honeybee location - see below
+              "hoys": [], // list of hours of the year
+              "surfaces": [], // list of honeybee surfaces
+              "analysis_grids": [] // list of analysis grids
+            }
+        """
+        loc = Location.fromJson(recJson['location'])
+        hoys = recJson["hoys"]
+        sp = Sunpath.fromLocation(loc)
+        suns = (sp.calculateSunFromHOY(HOY) for HOY in hoys)
+        sunVectors = tuple(s.sunVector for s in suns if s.isDuringDay)
+        analysisGrids = \
+            tuple(AnalysisGrid.fromJson(ag) for ag in recJson["analysis_grids"])
+        hbObjects = tuple(HBSurface.fromJson(srf) for srf in recJson["surfaces"])
+        return cls(sunVectors, hoys, analysisGrids, 1, hbObjects)
 
     def fromPointsAndVectors(cls, sunVectors, hoys, pointGroups, vectorGroups=[],
                              timestep=1, hbObjects=None, subFolder='sunlighthour'):
