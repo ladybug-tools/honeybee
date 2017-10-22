@@ -21,7 +21,7 @@ class Client():
         request = urllib2.Request(self.url)
         body = str(form)
         request.add_header('Content-type', form.getContentType())
-        request.add_header('Content-length', len(body))
+        request.add_header('Content-length', str(len(body)))
         request.add_data(body)
         request.get_data()
         data = urllib2.urlopen(request).read()
