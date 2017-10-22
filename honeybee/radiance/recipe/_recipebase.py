@@ -231,7 +231,19 @@ class AnalysisRecipe(object):
             with open(commandFile, "a") as bf:
                 bf.write("\npause\n")
 
-        subprocess.call(commandFile)
+        # FIX: Heroku Permission Patch
+        print('Command RUN: {}'.format(commandFile))
+        # subprocess.call(commandFile)
+        # subprocess.Popen(commandFile, shell=False)
+        process = subprocess.Popen(commandFile,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   shell=True)
+
+        proc_stdout, errmsg = process.communicate()
+        print('Subprocess Log Results:')
+        print(proc_stdout)
+        print(errmsg)
 
         self._isCalculated = True
         # self.isChanged = False

@@ -60,7 +60,10 @@ class AnalysisPoint(object):
         """Create an analysis point from json object.
             {"location": [x, y, z], "direction": [x, y, z]}
         """
-        return cls(apJson['location'], apJson['direction'])
+        _cls = cls(apJson['location'], apJson['direction'])
+        if 'values' in apJson:
+            _cls._values = apJson['values']
+        return _cls
 
     @classmethod
     def fromrawValues(cls, x, y, z, x1, y1, z1):
@@ -921,7 +924,9 @@ class AnalysisPoint(object):
         """Create an analysis point from json object.
             {"location": [x, y, z], "direction": [x, y, z]}
         """
-        return {"location": tuple(self.location), "direction": tuple(self.direction)}
+        return {"location": tuple(self.location),
+                "direction": tuple(self.direction),
+                "values": self._values}
 
     def __repr__(self):
         """Print and analysis point."""

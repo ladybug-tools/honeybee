@@ -3,6 +3,7 @@ from ... import config
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 import os
+import stat
 import subprocess
 
 
@@ -142,7 +143,21 @@ class RadianceCommand(object):
                 __executable = os.path.normpath(
                     os.path.join(str(radbinPath), self.__class__.__name__.lower()))
 
-        if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
+        # FIX: Heroku Permission Patch
+        print('Executable: {}'.format(__executable))
+        try:
+            st = os.stat(__executable)
+            os.chmod(__executable, st.st_mode | 0o111)
+            # st = os.stat(__executable)
+            # os.chmod(__executable, st.st_mode | stat.S_IEXEC)
+        except Exception as errmsg:
+            print('Could not CHMOD executable: {}'.format(errmsg))
+            pass
+        else:
+            print('Added CHMOD to executable')
+
+        if not os.path.isfile(__executable):
+        # if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
             __err = "Can't find %s.\n" % __executable + \
                 "Use radbinPath method to set the path to " + \
                 "Radiance binaries before executing the command."

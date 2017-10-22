@@ -178,5 +178,8 @@ def bat_to_sh(file_path):
             modified_line = line.replace('c:\\radiance\\bin\\', '').replace('\\', '/')
             outf.write(modified_line)
 
-    # print('bash file is created at:\n\t%s' % sh_file)
+    # Heroku - Make command.sh executable
+    st = os.stat(sh_file)
+    os.chmod(sh_file, st.st_mode | 0o111)
+
     return sh_file
