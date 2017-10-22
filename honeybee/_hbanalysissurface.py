@@ -89,6 +89,18 @@ class HBAnalysisSurface(HBObject):
         srfType = surfacetype.SurfaceTypes.getTypeByKey(typeId)
         return cls(name, vertices, srfType)
 
+    def toJson(self):
+        """Get HBSurface as a dictionary.
+            {"name": "",
+            "vertices": [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
+            "surface_type": null  // 0: wall, 5: window
+            }
+        """
+        return {"name": self.name,
+                "vertices": [[tuple(pt) for pt in ptgroup] for ptgroup in self.points],
+                "surface_type": self.surfaceType.typeId
+                }
+
     @classmethod
     def fromRadEPProperties(
         cls, name, sortedPoints, surfaceType=None, isNameSetByUser=False,

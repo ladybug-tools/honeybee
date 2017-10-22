@@ -125,7 +125,7 @@ def getCommandsViewDaylightMatrices(
         for f in fl)
 
     # 3.2.Generate view matrix
-    vMatrix = 'result\\matrix\\{}.vmx'.format(windowGroup.name)
+    vMatrix = 'result/matrix\\{}.vmx'.format(windowGroup.name)
     if not os.path.isfile(os.path.join(projectFolder, vMatrix)) \
             or not reuseViewMtx:
         commands.append(':: :: [1/{}] calculating view matrix'.format(phasesCount))
@@ -145,7 +145,7 @@ def getCommandsViewDaylightMatrices(
         commands.append(vmtx.toRadString())
 
     # 3.3 daylight matrix
-    dMatrix = 'result\\matrix\\{}_{}.dmx'.format(windowGroup.name, skyDensity)
+    dMatrix = 'result/matrix\\{}_{}.dmx'.format(windowGroup.name, skyDensity)
 
     if not os.path.isfile(os.path.join(projectFolder, dMatrix)) \
             or not reuseDaylightMtx:
@@ -209,7 +209,7 @@ def getCommandsDirectViewDaylightMatrices(
         for f in fl)
 
     # 3.2.Generate view matrix
-    vMatrix = 'result\\matrix\\{}_dir.vmx'.format(windowGroup.name)
+    vMatrix = 'result/matrix\\{}_dir.vmx'.format(windowGroup.name)
     if not os.path.isfile(os.path.join(projectFolder, vMatrix)) \
             or not reuseViewMtx:
         commands.append(':: :: [4-1/5] calculating direct view matrix')
@@ -231,7 +231,7 @@ def getCommandsDirectViewDaylightMatrices(
         commands.append(vmtx.toRadString())
 
     # 3.3 daylight matrix
-    dMatrix = 'result\\matrix\\{}_{}_dir.dmx'.format(windowGroup.name, skyDensity)
+    dMatrix = 'result/matrix\\{}_{}_dir.dmx'.format(windowGroup.name, skyDensity)
 
     if not os.path.isfile(os.path.join(projectFolder, dMatrix)) \
             or not reuseDaylightMtx:
@@ -294,7 +294,7 @@ def matrixCalculationThreePhase(
         commands.append(dct.toRadString())
 
         # 5. convert r, g ,b values to illuminance
-        finalOutput = r'result\\{}..{}.ill'.format(windowGroup.name, state.name)
+        finalOutput = r'result/{}..{}.ill'.format(windowGroup.name, state.name)
         finalmtx = RGBMatrixFileToIll((dct.outputFile,), finalOutput)
         commands.append(
             ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [results.ill]')
@@ -357,7 +357,7 @@ def matrixCalculationFivePhase(
         commands.append(dct.toRadString())
 
         # 5. convert r, g ,b values to illuminance
-        finalOutput = r'result\\3phase..{}..{}.ill'.format(windowGroup.name, state.name)
+        finalOutput = r'result/3phase..{}..{}.ill'.format(windowGroup.name, state.name)
         finalmtx = RGBMatrixFileToIll((dct.outputFile,), finalOutput)
         commands.append(finalmtx.toRadString())
 
@@ -373,7 +373,7 @@ def matrixCalculationFivePhase(
         commands.append(dct.toRadString())
 
         # 5. convert r, g ,b values to illuminance
-        finalOutput = r'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name)
+        finalOutput = r'result/direct..{}..{}.ill'.format(windowGroup.name, state.name)
         finalmtx = RGBMatrixFileToIll((dct.outputFile,), finalOutput)
         commands.append(finalmtx.toRadString())
 
@@ -390,7 +390,7 @@ def matrixCalculationFivePhase(
              blkmaterial, wgsblacked)
             for f in fl)
 
-        sunMatrix = 'result\\matrix\\sun_{}..{}..{}.dc'.format(
+        sunMatrix = 'result/matrix\\sun_{}..{}..{}.dc'.format(
             projectName, windowGroup.name, state.name)
 
         if not os.path.isfile(os.path.join(projectFolder, sunMatrix)) \
@@ -435,7 +435,7 @@ def matrixCalculationFivePhase(
         commands.append('::')
         finalmtx = RGBMatrixFileToIll(
             (dctSun.outputFile,),
-            'result\\sun..{}..{}.ill'.format(windowGroup.name, state.name)
+            'result/sun..{}..{}.ill'.format(windowGroup.name, state.name)
         )
         commands.append(finalmtx.toRadString())
 
@@ -447,10 +447,10 @@ def matrixCalculationFivePhase(
         commands.append('::')
 
         fmtx = finalMatrixAddition(
-            'result\\3phase..{}..{}.ill'.format(windowGroup.name, state.name),
-            'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name),
-            'result\\sun..{}..{}.ill'.format(windowGroup.name, state.name),
-            'result\\{}..{}.ill'.format(windowGroup.name, state.name)
+            'result/3phase..{}..{}.ill'.format(windowGroup.name, state.name),
+            'result/direct..{}..{}.ill'.format(windowGroup.name, state.name),
+            'result/sun..{}..{}.ill'.format(windowGroup.name, state.name),
+            'result/{}..{}.ill'.format(windowGroup.name, state.name)
         )
 
         commands.append(fmtx.toRadString())

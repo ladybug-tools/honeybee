@@ -188,7 +188,7 @@ class ImageBased(GenericImageBased):
         # # 4.2.prepare rpict
         # TODO: Add overtrue
         for view, f in zip(self.views, viewFiles):
-            rp = Rpict('result\\' + view.name,
+            rp = Rpict('result/' + view.name,
                        simulationType=self.simulationType,
                        rpictParameters=self.radianceParameters)
             rp.octreeFile = str(oc.outputFile)

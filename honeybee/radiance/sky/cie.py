@@ -121,6 +121,35 @@ class CIE(PointInTimeSky):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 
+    def toJson(self):
+        """Return sky as a json.
+        {
+          "location": {}, // honeybee (or actually ladybug location schema)
+          "day": 1, // an integer between 1-31
+          "month": 1, // an integer between 1-12
+          "hour": 12.0, // a float number between 0-23
+          "north": 0, // degree for north if not Y axis
+          "sky_type": 0 // A number between 0-5 --  0: sunny sky
+        }
+
+        location schema
+        {
+          "city": "",
+          "latitude": 0,
+          "longitude": 0,
+          "time_zone": 0,
+          "elevation": 0
+        }
+        """
+        return {
+            "location": self.location.toJson(),
+            "day": self.day,
+            "month": self.month,
+            "hour": self.hour,
+            "north": self.north,
+            "sky_type": self.skyType
+        }
+
     def __repr__(self):
         """Sky representation."""
         return self.toRadString()

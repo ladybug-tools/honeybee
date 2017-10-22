@@ -228,7 +228,7 @@ class GridBased(GenericGridBased):
         oc.sceneFiles = tuple(self.relpath(f, projectFolder) for f in octSceneFiles)
 
         # # 4.2.prepare rtrace
-        rt = Rtrace('result\\' + projectName,
+        rt = Rtrace('result/' + projectName,
                     simulationType=self.simulationType,
                     radianceParameters=self.radianceParameters)
         rt.radianceParameters.h = True
@@ -236,7 +236,7 @@ class GridBased(GenericGridBased):
         rt.pointsFile = self.relpath(pointsFile, projectFolder)
 
         # # 4.3. add rcalc to convert rgb values to irradiance
-        rc = Rcalc('result\\{}.ill'.format(projectName), str(rt.outputFile))
+        rc = Rcalc('result/{}.ill'.format(projectName), str(rt.outputFile))
 
         if os.name == 'nt':
             rc.rcalcParameters.expression = '"$1=(0.265*$1+0.67*$2+0.065*$3)*179"'
@@ -298,3 +298,21 @@ class GridBased(GenericGridBased):
              _analysisType[self.simulationType],
              self.AnalysisGridCount,
              self.totalPointCount)
+
+    def toJson(self):
+        """Create point-in-time recipe from json.
+            {
+              "id": 1, // do NOT overwrite this id
+              "sky": null, // a honeybee sky
+              "surfaces": [], // list of honeybee surfaces
+              "analysis_grids": [] // list of analysis grids
+              "analysis_type": 0 // [0] illuminance(lux), [1] radiation (kwh), [2] luminance (Candela).
+            }
+        """
+        return {
+            "id": 1,
+            "sky": self.sky.toJson(),
+            "surfaces": [srf.toJson() for srf in self.hbObjects],
+            "analysis_grids": [ag.toJson() for ag in self.analysisGrids],
+            "analysis_type": self.simulationType
+        }

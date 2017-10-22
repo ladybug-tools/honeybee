@@ -331,13 +331,13 @@ def _getCommandsDaylightCoeff(
              blkmaterial, wgsblacked)
             for f in fl)
 
-        dMatrix = 'result\\matrix\\normal_{}..{}..{}.dc'.format(
+        dMatrix = 'result/matrix\\normal_{}..{}..{}.dc'.format(
             projectName, windowGroup.name, state.name)
 
-        dMatrixDirect = 'result\\matrix\\black_{}..{}..{}.dc'.format(
+        dMatrixDirect = 'result/matrix\\black_{}..{}..{}.dc'.format(
             projectName, windowGroup.name, state.name)
 
-        sunMatrix = 'result\\matrix\\sun_{}..{}..{}.dc'.format(
+        sunMatrix = 'result/matrix\\sun_{}..{}..{}.dc'.format(
             projectName, windowGroup.name, state.name)
 
         if not os.path.isfile(os.path.join(projectFolder, dMatrix)) \
@@ -432,7 +432,7 @@ def _getCommandsDaylightCoeff(
             )
             finalmtx = RGBMatrixFileToIll(
                 (dctTotal.outputFile,),
-                'result\\diffuse..{}..{}.ill'.format(windowGroup.name, state.name)
+                'result/diffuse..{}..{}.ill'.format(windowGroup.name, state.name)
             )
         else:
             commands.append(
@@ -440,7 +440,7 @@ def _getCommandsDaylightCoeff(
             )
             finalmtx = RGBMatrixFileToIll(
                 (dctTotal.outputFile,),
-                'result\\total..{}..{}.ill'.format(windowGroup.name, state.name)
+                'result/total..{}..{}.ill'.format(windowGroup.name, state.name)
             )
 
         commands.append('::')
@@ -465,7 +465,7 @@ def _getCommandsDaylightCoeff(
             commands.append('::')
             finalmtx = RGBMatrixFileToIll(
                 (dctDirect.outputFile,),
-                'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name)
+                'result/direct..{}..{}.ill'.format(windowGroup.name, state.name)
             )
             commands.append(finalmtx.toRadString())
 
@@ -490,7 +490,7 @@ def _getCommandsDaylightCoeff(
         commands.append('::')
         finalmtx = RGBMatrixFileToIll(
             (dctSun.outputFile,),
-            'result\\sun..{}..{}.ill'.format(windowGroup.name, state.name)
+            'result/sun..{}..{}.ill'.format(windowGroup.name, state.name)
         )
         commands.append(finalmtx.toRadString())
 
@@ -502,9 +502,9 @@ def _getCommandsDaylightCoeff(
             )
             commands.append('::')
             fmtx = finalMatrixAdditionRadiation(
-                'result\\diffuse..{}..{}.ill'.format(windowGroup.name, state.name),
-                'result\\sun..{}..{}.ill'.format(windowGroup.name, state.name),
-                'result\\{}..{}.ill'.format(windowGroup.name, state.name)
+                'result/diffuse..{}..{}.ill'.format(windowGroup.name, state.name),
+                'result/sun..{}..{}.ill'.format(windowGroup.name, state.name),
+                'result/{}..{}.ill'.format(windowGroup.name, state.name)
             )
             commands.append(fmtx.toRadString())
         else:
@@ -514,10 +514,10 @@ def _getCommandsDaylightCoeff(
             )
             commands.append('::')
             fmtx = finalMatrixAddition(
-                'result\\total..{}..{}.ill'.format(windowGroup.name, state.name),
-                'result\\direct..{}..{}.ill'.format(windowGroup.name, state.name),
-                'result\\sun..{}..{}.ill'.format(windowGroup.name, state.name),
-                'result\\{}..{}.ill'.format(windowGroup.name, state.name)
+                'result/total..{}..{}.ill'.format(windowGroup.name, state.name),
+                'result/direct..{}..{}.ill'.format(windowGroup.name, state.name),
+                'result/sun..{}..{}.ill'.format(windowGroup.name, state.name),
+                'result/{}..{}.ill'.format(windowGroup.name, state.name)
             )
             commands.append(fmtx.toRadString())
 
@@ -726,11 +726,11 @@ def imageBasedViewMatrixCalculation(view, wg, state, skyMatrix, extention='',
     dct = Dctimestep()
     if os.name == 'nt':
         dct.daylightCoeffSpec = \
-            'result\\dc\\{}\\%%0{}d_{}..{}..{}.hdr'.format(
+            'result/dc\\{}\\%%0{}d_{}..{}..{}.hdr'.format(
                 extention, digits, view.name, wg.name, state.name)
     else:
         dct.daylightCoeffSpec = \
-            'result\\dc\\{}\\%0{}d_{}..{}..{}.hdr'.format(
+            'result/dc\\{}\\%0{}d_{}..{}..{}.hdr'.format(
                 extention, digits, view.name, wg.name, state.name)
 
     dct.skyVectorFile = skyMatrix
@@ -738,11 +738,11 @@ def imageBasedViewMatrixCalculation(view, wg, state, skyMatrix, extention='',
     # sky matrix is annual
     if os.name == 'nt':
         dct.dctimestepParameters.outputDataFormat = \
-            ' result\\hdr\\{}\\%%04d_{}..{}..{}.hdr'.format(
+            ' result/hdr\\{}\\%%04d_{}..{}..{}.hdr'.format(
                 extention, view.name, wg.name, state.name)
     else:
         dct.dctimestepParameters.outputDataFormat = \
-            ' result\\hdr\\{}\\%04d_{}..{}..{}.hdr'.format(
+            ' result/hdr\\{}\\%04d_{}..{}..{}.hdr'.format(
                 extention, view.name, wg.name, state.name)
 
     return dct

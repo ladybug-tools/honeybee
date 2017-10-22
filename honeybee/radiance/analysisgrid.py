@@ -788,6 +788,11 @@ class AnalysisGrid(object):
         """Overwrite ToString .NET method."""
         return self.__repr__()
 
+    def toJson(self):
+        """Create an analysis grid from json objects."""
+        analysisPoints = [ap.toJson() for ap in self.analysisPoints]
+        return {"analysis_points": analysisPoints}
+
     def __add__(self, other):
         """Add two analysis grids and create a new one.
 

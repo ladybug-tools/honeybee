@@ -917,6 +917,12 @@ class AnalysisPoint(object):
         """Return Radiance string for a test point."""
         return "%s %s" % (self.location, self.direction)
 
+    def toJson(self):
+        """Create an analysis point from json object.
+            {"location": [x, y, z], "direction": [x, y, z]}
+        """
+        return {"location": tuple(self.location), "direction": tuple(self.direction)}
+
     def __repr__(self):
         """Print and analysis point."""
         return 'AnalysisPoint::(%s)::(%s)' % (self.location, self.direction)
