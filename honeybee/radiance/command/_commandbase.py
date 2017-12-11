@@ -3,6 +3,7 @@ from ... import config
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 import os
+import stat
 import subprocess
 
 
@@ -142,14 +143,18 @@ class RadianceCommand(object):
                 __executable = os.path.normpath(
                     os.path.join(str(radbin_path), self.__class__.__name__.lower()))
 
-        if not (os.path.isfile(__executable) and os.access(__executable, os.X_OK)):
-            __err = "Can't find %s.\n" % __executable + \
-                "Use radbin_path method to set the path to " + \
-                "Radiance binaries before executing the command."
-            if raise_exception:
-                raise ValueError(__err)
+        if not os.path.isfile(__executable):
+            # FIX: Heroku Permission Patch
+            print('Executable: {}'.format(__executable))
+            try:
+                st = os.stat(__executable)
+                os.chmod(__executable, st.st_mode | 0o111)
+            except Exception as errmsg:
+                print('Could not CHMOD executable: {}'.format(errmsg))
+                if raise_exception:
+                    raise ValueError('Could not CHMOD executable: {}'.format(errmsg))
             else:
-                print __err
+                print('Added CHMOD to executable')
 
     def __check_libs(self, radlib_path=None, raise_exception=False):
         """Check if path to libraries is set correctly."""

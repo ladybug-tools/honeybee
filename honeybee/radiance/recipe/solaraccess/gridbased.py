@@ -5,10 +5,13 @@ from ..recipedcutil import rgb_matrix_file_to_ill
 from ...parameters.rcontrib import RcontribParameters
 from ...command.oconv import Oconv
 from ...command.rcontrib import Rcontrib
+from ...analysisgrid import AnalysisGrid
 from ....futil import write_to_file
 from ....vectormath.euclid import Vector3
+from ....hbsurface import HBSurface
 
 from ladybug.sunpath import Sunpath
+from ladybug.location import Location
 from ladybug.legendparameters import LegendParameters
 from ladybug.color import Colorset
 
@@ -70,6 +73,33 @@ class SolarAccessGridBased(GenericGridBased):
         self._radiance_parameters.direct_certainty = 1
         self._radiance_parameters.direct_threshold = 0
         self._radiance_parameters.direct_jitter = 0
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create the solar access recipe from json.
+            {
+              "id": 0, // do NOT overwrite this id
+              "location": null, // a honeybee location - see below
+              "hoys": [], // list of hours of the year
+              "surfaces": [], // list of honeybee surfaces
+              "analysis_grids": [] // list of analysis grids
+              "sun_vectors": [] // list of sun vectors if location is not provided
+            }
+        """
+        hoys = rec_json["hoys"]
+        if 'sun_vectors' not in rec_json or not rec_json['sun_vectors']:
+            # create sun vectors from location inputs
+            loc = Location.from_json(rec_json['location'])
+            sp = Sunpath.from_location(loc)
+            suns = (sp.calculate_sun_from_hoy(hoy) for hoy in hoys)
+            sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
+        else:
+            sun_vectors = rec_json['sun_vectors']
+
+        analysis_grids = \
+            tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+        return cls(sun_vectors, hoys, analysis_grids, 1, hb_objects)
 
     @classmethod
     def from_points_and_vectors(cls, sun_vectors, hoys, point_groups, vector_groups=[],
@@ -354,3 +384,23 @@ class SolarAccessGridBased(GenericGridBased):
             )
 
         return self.analysis_grids
+
+    def to_json(self):
+        """Create the solar access recipe from json.
+            {
+              "id": 0, // do NOT overwrite this id
+              "location": null, // a honeybee location - see below
+              "hoys": [], // list of hours of the year
+              "surfaces": [], // list of honeybee surfaces
+              "analysis_grids": [], // list of analysis grids
+              "sun_vectors": []
+            }
+        """
+        return {
+            "id": 0,
+            "location": None,
+            "hoys": self.hoys,
+            "surfaces": [srf.to_json() for srf in self.hb_objects],
+            "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+            "sun_vectors": [tuple(-1 * c for c in v) for v in self.sun_vectors]
+        }

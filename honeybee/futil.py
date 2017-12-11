@@ -154,3 +154,32 @@ def copy_files_to_folder(files, target_folder, overwrite=True):
             shutil.copy(f, target_folder)
 
     return [os.path.join(target_folder, os.path.split(f)[-1]) for f in files]
+
+
+def bat_to_sh(file_path):
+    """Convert honeybee .bat file to .sh file.
+
+    WARNING: This is a very simple function and doesn't handle any edge cases.
+    """
+    sh_file = file_path[:-4] + '.sh'
+    with open(file_path, 'rb') as inf, open(sh_file, 'wb') as outf:
+        outf.write('#!/usr/bin/env bash\n\n')
+        for line in inf:
+            # pass the path lines, etc to get to the commands
+            if line.strip():
+                continue
+            else:
+                break
+
+        for line in inf:
+            if line.startswith('echo'):
+                continue
+            # replace c:\radiance\bin and also chanege \\ to /
+            modified_line = line.replace('c:\\radiance\\bin\\', '').replace('\\', '/')
+            outf.write(modified_line)
+
+    print('bash file is created at:\n\t%s' % sh_file)
+    # Heroku - Make command.sh executable
+    st = os.stat(sh_file)
+    os.chmod(sh_file, st.st_mode | 0o111)
+    return sh_file

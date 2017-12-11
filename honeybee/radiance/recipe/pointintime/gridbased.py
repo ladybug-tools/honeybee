@@ -6,6 +6,9 @@ from ...command.oconv import Oconv
 from ...command.rtrace import Rtrace
 from ...command.rcalc import Rcalc
 from ....futil import write_to_file
+from ...analysisgrid import AnalysisGrid
+from ....hbsurface import HBSurface
+from ...sky.cie import CIE
 
 from ladybug.dt import DateTime
 
@@ -66,6 +69,24 @@ class GridBased(GenericGridBased):
         """Simulation type: 0: Illuminance(lux), 1: Radiation (wh),
            2: Luminance (Candela) (Default: 0)
         """
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create the solar access recipe from json.
+        {
+          "id": 1, // do NOT overwrite this id
+          "sky": null, // a honeybee sky
+          "surfaces": [], // list of honeybee surfaces
+          "analysis_grids": [] // list of analysis grids
+          // [0] illuminance(lux), [1] radiation (kwh), [2] luminance (Candela).
+          "analysis_type": 0
+        }
+        """
+        sky = CIE.fromJson(rec_json['sky'])
+        analysis_grids = \
+            tuple(AnalysisGrid.fromJson(ag) for ag in rec_json['analysis_grids'])
+        hb_objects = tuple(HBSurface.fromJson(srf) for srf in rec_json['surfaces'])
+        return cls(sky, analysis_grids, rec_json['analysis_type'], None, hb_objects)
 
     @classmethod
     def from_points_and_vectors(cls, sky, point_groups, vector_groups=None,
@@ -267,6 +288,25 @@ class GridBased(GenericGridBased):
     def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
+
+    def to_json(self):
+        """Create point-in-time recipe from json.
+            {
+              "id": 1, // do NOT overwrite this id
+              "sky": null, // a honeybee sky
+              "surfaces": [], // list of honeybee surfaces
+              "analysis_grids": [] // list of analysis grids
+              // [0] illuminance(lux), [1] radiation (kwh), [2] luminance (Candela).
+              "analysis_type": 0
+            }
+        """
+        return {
+            "id": 1,
+            "sky": self.sky.to_json(),
+            "surfaces": [srf.to_json() for srf in self.hb_objects],
+            "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+            "analysis_type": self.simulation_type
+        }
 
     def __repr__(self):
         """Represent grid based recipe."""

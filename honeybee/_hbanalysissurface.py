@@ -74,6 +74,22 @@ class HBAnalysisSurface(HBObject):
             self.add_surface_state(state)
 
     @classmethod
+    def from_json(cls, srf_json):
+        """Create a surface from json object.
+
+        The minimum schema is:
+        {"name": "",
+        "vertices": [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
+        "surface_type": null  // 0: wall, 5: window
+        }
+        """
+        name = srf_json["name"]
+        vertices = srf_json["vertices"]
+        type_id = srf_json["surface_type"]
+        srf_type = surfacetype.SurfaceTypes.getTypeByKey(type_id)
+        return cls(name, vertices, srf_type)
+
+    @classmethod
     def from_rad_ep_properties(
         cls, name, sorted_points, surface_type=None, is_name_set_by_user=False,
             is_type_set_by_user=False, rad_properties=None, ep_properties=None,
@@ -594,6 +610,18 @@ class HBAnalysisSurface(HBObject):
     def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
+
+    def to_json(self):
+        """Get HBSurface as a dictionary.
+            {"name": "",
+            "vertices": [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
+            "surface_type": null  // 0: wall, 5: window
+            }
+        """
+        return {"name": self.name,
+                "vertices": [[tuple(pt) for pt in ptgroup] for ptgroup in self.points],
+                "surface_type": self.surface_type.type_id
+                }
 
     def __repr__(self):
         """Represnt Honeybee surface."""

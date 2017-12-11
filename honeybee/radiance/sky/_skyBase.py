@@ -6,6 +6,12 @@ class RadianceSky(object):
     __metaclass__ = ABCMeta
     __slots__ = ()
 
+    @classmethod
+    def from_json(cls):
+        raise NotImplementedError(
+            "fromJson is not implemented for {}.".format(cls.__class__.__name__)
+        )
+
     @property
     def is_radiance_sky(self):
         """Return True for skies."""

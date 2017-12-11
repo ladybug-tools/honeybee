@@ -43,7 +43,7 @@ class AnalysisPoint(object):
 
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
-        # It is set inside _createDataStructure method on setting values.
+        # It is set inside _create_data_structure method on setting values.
         self._sources = OrderedDict()
 
         # an empty list for values
@@ -55,9 +55,32 @@ class AnalysisPoint(object):
         self._is_directLoaded = False
         self.logic = self._logic
 
+    # TODO(mostapha): Restructure analysis points and write a class to keep track of
+    # results.
+    # Note to self! This is a hack!
+    # assume it's only a single source
     @classmethod
-    def fromraw_values(cls, x, y, z, x1, y1, z1):
-        """Create an analysi point from 6 values.
+    def from_json(cls, ap_json):
+        """Create an analysis point from json object.
+            {"location": [x, y, z], "direction": [x, y, z]}
+        """
+        _cls = cls(ap_json['location'], ap_json['direction'])
+        if 'values' in ap_json:
+            sid, stateid = _cls._create_data_structure(None, None)
+            values = []
+            hoys = []
+            state_res = ap_json['values'][0]
+            for item in state_res:
+                for k, v in item.iteritems():
+                    values.append(v)
+                    hoys.append(float(k))
+            # set the values
+            _cls.setCoupledValues(values, hoys, source=None, state=None)
+        return _cls
+
+    @classmethod
+    def from_raw_values(cls, x, y, z, x1, y1, z1):
+        """Create an analysis point from 6 values.
 
         x, y, z are the location of the point and x1, y1 and z1 is the direction.
         """
@@ -909,6 +932,14 @@ class AnalysisPoint(object):
     def to_rad_string(self):
         """Return Radiance string for a test point."""
         return "%s %s" % (self.location, self.direction)
+
+    def to_json(self):
+        """Create an analysis point from json object.
+            {"location": [x, y, z], "direction": [x, y, z]}
+        """
+        return {"location": tuple(self.location),
+                "direction": tuple(self.direction),
+                "values": self._values}
 
     def __repr__(self):
         """Print and analysis point."""

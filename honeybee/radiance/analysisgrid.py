@@ -62,6 +62,13 @@ class AnalysisGrid(object):
         self._totalFiles = []  # list of results files
 
     @classmethod
+    def from_json(cls, ag_json):
+        """Create an analysis grid from json objects."""
+        analysis_points = tuple(AnalysisPoint.from_json(pt)
+                                for pt in ag_json["analysis_points"])
+        return cls(analysis_points)
+
+    @classmethod
     def from_points_and_vectors(cls, points, vectors=None,
                                 name=None, window_groups=None):
         """Create an analysis grid from points and vectors.
@@ -86,7 +93,7 @@ class AnalysisGrid(object):
         assert os.path.isfile(file_path), IOError("Can't find {}.".format(file_path))
         ap = AnalysisPoint  # load analysis point locally for better performance
         with open(file_path, 'rb') as inf:
-            points = tuple(ap.fromraw_values(*l.split()) for l in inf)
+            points = tuple(ap.from_raw_values(*l.split()) for l in inf)
 
         return cls(points)
 
@@ -781,6 +788,11 @@ class AnalysisGrid(object):
     def ToString(self):
         """Overwrite ToString .NET method."""
         return self.__repr__()
+
+    def to_json(self):
+        """Create an analysis grid from json objects."""
+        analysis_points = [ap.to_json() for ap in self.analysis_points]
+        return {"analysis_points": analysis_points}
 
     def __add__(self, other):
         """Add two analysis grids and create a new one.

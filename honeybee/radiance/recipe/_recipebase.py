@@ -33,6 +33,13 @@ class AnalysisRecipe(object):
         self._isCalculated = False
         self.isChanged = True
 
+    @classmethod
+    def from_json(cls):
+        """Create analysis grid from json object."""
+        raise NotImplementedError(
+            "fromJson is not implemented for {}.".format(cls.__class__.__name__)
+        )
+
     @property
     def is_analysis_recipe(self):
         """Return true to indicate it is an analysis recipe."""
@@ -224,7 +231,17 @@ class AnalysisRecipe(object):
             with open(command_file, "a") as bf:
                 bf.write("\npause\n")
 
-        subprocess.call(command_file)
+        # FIX: Heroku Permission Patch
+        print('Command RUN: {}'.format(command_file))
+        process = subprocess.Popen(command_file,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   shell=True)
+
+        proc_stdout, errmsg = process.communicate()
+        print('Subprocess Log Results:')
+        print(proc_stdout)
+        print('ERRORS:\n{}'.format(errmsg))
 
         self._isCalculated = True
         # self.isChanged = False
