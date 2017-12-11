@@ -8,7 +8,7 @@ class RmtxopParameters(AdvancedRadianceParameters):
     """Radiance parameters for the command rmtxop.
 
     Read more:
-    http://www.radiance-online.org/learning/documentation/
+    http://www.radiance-online.org/learning/documentation\
     manual-pages/pdfs/rmtxop.pdf
 
     Attributes:

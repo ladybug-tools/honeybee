@@ -64,7 +64,7 @@ class DataTypeTestCase(unittest.TestCase):
                               accepted_inputs=('f', 'd'), isJoined=True)
 
             def __init__(self):
-                self.wea_file = "c:\ladybug\\test.wea"
+                self.wea_file = "c:/ladybug/test.wea"
 
         self.rad = RadTest()
         self.rad_with_def = RadTestWithDefaults()
@@ -79,11 +79,11 @@ class DataTypeTestCase(unittest.TestCase):
         """Make sure default values are set correctly."""
         self.assertEqual(self.rad_with_def.to_rad_string(),
                          "-ab 2 -ad 5  -I -C 250 250 250 -of > "
-                         "c:\\ladybug\\test.wea")
+                         "c:/ladybug/test.wea")
         self.assertEqual(self.rad_with_def.ab, 2)
         self.assertEqual(self.rad_with_def.ad, 5)
         self.assertEqual(self.rad_with_def.c, (250, 250, 250))
-        self.assertEqual(self.rad_with_def.wea_file, "c:\ladybug\\test.wea")
+        self.assertEqual(self.rad_with_def.wea_file, "c:/ladybug/test.wea")
         self.assertEqual(self.rad_with_def.i, False)
         self.assertEqual(self.rad_with_def.d, False)
         self.assertEqual(self.rad_with_def.o, 'f')
@@ -120,8 +120,8 @@ class DataTypeTestCase(unittest.TestCase):
         self.rad.c = (0, 0, 0)
         self.assertEqual(self.rad.c, (0, 0, 0))
 
-        self.rad.wea_file = "c:\ladybug\\test.wea"
-        self.assertEqual(self.rad.wea_file, "c:\ladybug\\test.wea")
+        self.rad.wea_file = "c:/ladybug/test.wea"
+        self.assertEqual(self.rad.wea_file, "c:/ladybug/test.wea")
 
         self.rad.d = True
         self.assertEqual(self.rad.d, True)
@@ -143,8 +143,8 @@ class DataTypeTestCase(unittest.TestCase):
         self.rad_with_def.c = (10, 10, 10)
         self.assertEqual(self.rad_with_def.c, (10, 10, 10))
 
-        self.rad_with_def.wea_file = "c:\ladybug\\test2.wea"
-        self.assertEqual(self.rad_with_def.wea_file, "c:\ladybug\\test2.wea")
+        self.rad_with_def.wea_file = "c:/ladybug/test2.wea"
+        self.assertEqual(self.rad_with_def.wea_file, "c:/ladybug/test2.wea")
 
         self.rad_with_def.d = False
         self.assertEqual(self.rad_with_def.d, False)
@@ -161,7 +161,7 @@ class DataTypeTestCase(unittest.TestCase):
         self.assertEqual(self.rad_with_def.ad.to_rad_string(), '-ad 5')
         self.assertEqual(self.rad_with_def.c.to_rad_string(), '-C 250 250 250')
         self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
-                         "c:\ladybug\\test.wea")
+                         "c:/ladybug/test.wea")
         self.assertEqual(self.rad_with_def.i.to_rad_string(), '-I')
         self.assertEqual(self.rad_with_def.d.to_rad_string(), '')
         self.assertEqual(self.rad_with_def.o.to_rad_string(), '-of')
@@ -177,10 +177,10 @@ class DataTypeTestCase(unittest.TestCase):
     def test_relative_path(self):
         """Check relative path."""
         self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
-                         "c:\ladybug\\test.wea")
-        self.rad_with_def.wea_file.relPath = "c:\\ladybug\\test\\gridbased"
+                         "c:/ladybug/test.wea")
+        self.rad_with_def.wea_file.relPath = "c:/ladybug/test/gridbased"
         self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
-                         r"..\..\test.wea")
+                         r"../../test.wea")
 
 
 if __name__ == '__main__':

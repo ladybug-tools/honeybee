@@ -23,7 +23,7 @@ class SunMatrix(RadianceSky):
     Usage:
 
         from honeybee.radiance.sky.sunmatrix import SunMatrix
-        epwfile = r".\USA_CA_San.Francisco.Intl.AP.724940_TMY3.epw"
+        epwfile = r"./USA_CA_San.Francisco.Intl.AP.724940_TMY3.epw"
         sunmtx = sun_matrix.from_epw_file(epwfile, north=20)
         analemma, sunlist, sunmtxfile = sunmtx.execute('c:/ladybug')
     """

@@ -97,9 +97,9 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
 
     # # 2.1.Create sky matrix.
     sky_matrix.mode = 0
-    sky_mtx_total = 'sky\\{}.smx'.format(sky_matrix.name)
+    sky_mtx_total = 'sky/{}.smx'.format(sky_matrix.name)
     sky_matrix.mode = 1
-    sky_mtx_direct = 'sky\\{}.smx'.format(sky_matrix.name)
+    sky_mtx_direct = 'sky/{}.smx'.format(sky_matrix.name)
     sky_matrix.mode = 0
 
     # add commands for total and direct sky matrix.
@@ -152,7 +152,7 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
 
     # # 2.1.Create sky matrix.
     sky_matrix.mode = 2
-    sky_mtx_diff = 'sky\\{}.smx'.format(sky_matrix.name)
+    sky_mtx_diff = 'sky/{}.smx'.format(sky_matrix.name)
     gdm = skymtx_to_gendaymtx(sky_matrix, project_folder)
     if gdm:
         note = ':: diffuse sky matrix'
@@ -334,13 +334,13 @@ def _get_commands_daylight_coeff(
              blkmaterial, wgsblacked)
             for f in fl)
 
-        d_matrix = 'result\\matrix\\normal_{}..{}..{}.dc'.format(
+        d_matrix = 'result/matrix\normal_{}..{}..{}.dc'.format(
             project_name, window_group.name, state.name)
 
-        d_matrix_direct = 'result\\matrix\\black_{}..{}..{}.dc'.format(
+        d_matrix_direct = 'result/matrix/black_{}..{}..{}.dc'.format(
             project_name, window_group.name, state.name)
 
-        sun_matrix = 'result\\matrix\\sun_{}..{}..{}.dc'.format(
+        sun_matrix = 'result/matrix/sun_{}..{}..{}.dc'.format(
             project_name, window_group.name, state.name)
 
         if not os.path.isfile(os.path.join(project_folder, d_matrix)) \
@@ -348,7 +348,7 @@ def _get_commands_daylight_coeff(
             rad_files = tuple(os.path.relpath(f, project_folder) for f in rflux_scene)
             sender = '-'
             receiver = sky_receiver(
-                os.path.join(project_folder, 'sky\\rfluxSky.rad'), sky_density
+                os.path.join(project_folder, 'sky/rfluxSky.rad'), sky_density
             )
 
             commands.append(':: :: 1. calculating daylight matrices')
@@ -414,7 +414,7 @@ def _get_commands_daylight_coeff(
             commands.append(
                 ':: :: dctimestep [dc.mtx] [diffuse sky] ^> [diffuse results.rgb]')
             dct_total = matrix_calculation(
-                'tmp\\diffuse..{}..{}.rgb'.format(window_group.name, state.name),
+                'tmp/diffuse..{}..{}.rgb'.format(window_group.name, state.name),
                 d_matrix=d_matrix, sky_matrix=sky_mtxDiff
             )
         else:
@@ -423,7 +423,7 @@ def _get_commands_daylight_coeff(
                 ':: :: dctimestep [dc.mtx] [total sky] ^> [total results.rgb]')
 
             dct_total = matrix_calculation(
-                'tmp\\total..{}..{}.rgb'.format(window_group.name, state.name),
+                'tmp/total..{}..{}.rgb'.format(window_group.name, state.name),
                 d_matrix=d_matrix, sky_matrix=sky_mtx_total
             )
 
@@ -435,7 +435,7 @@ def _get_commands_daylight_coeff(
             )
             finalmtx = rgb_matrix_file_to_ill(
                 (dct_total.output_file,),
-                'result\\diffuse..{}..{}.ill'.format(window_group.name, state.name)
+                'result/diffuse..{}..{}.ill'.format(window_group.name, state.name)
             )
         else:
             commands.append(
@@ -443,7 +443,7 @@ def _get_commands_daylight_coeff(
             )
             finalmtx = rgb_matrix_file_to_ill(
                 (dct_total.output_file,),
-                'result\\total..{}..{}.ill'.format(window_group.name, state.name)
+                'result/total..{}..{}.ill'.format(window_group.name, state.name)
             )
 
         commands.append('::')
@@ -457,7 +457,7 @@ def _get_commands_daylight_coeff(
                 '[direct results.rgb]')
 
             dct_direct = matrix_calculation(
-                'tmp\\direct..{}..{}.rgb'.format(window_group.name, state.name),
+                'tmp/direct..{}..{}.rgb'.format(window_group.name, state.name),
                 d_matrix=d_matrix_direct, sky_matrix=sky_mtx_direct
             )
             commands.append(dct_direct.to_rad_string())
@@ -468,7 +468,7 @@ def _get_commands_daylight_coeff(
             commands.append('::')
             finalmtx = rgb_matrix_file_to_ill(
                 (dct_direct.output_file,),
-                'result\\direct..{}..{}.ill'.format(window_group.name, state.name)
+                'result/direct..{}..{}.ill'.format(window_group.name, state.name)
             )
             commands.append(finalmtx.to_rad_string())
 
@@ -480,7 +480,7 @@ def _get_commands_daylight_coeff(
         commands.append(
             ':: :: dctimestep [black dc.mtx] [analemma only sky] ^> [sun results.rgb]')
         dct_sun = sun_matrix_calculation(
-            'tmp\\sun..{}..{}.rgb'.format(window_group.name, state.name),
+            'tmp/sun..{}..{}.rgb'.format(window_group.name, state.name),
             dc_matrix=sun_matrix,
             sky_matrix=os.path.relpath(analemmaMtx, project_folder)
         )
@@ -493,7 +493,7 @@ def _get_commands_daylight_coeff(
         commands.append('::')
         finalmtx = rgb_matrix_file_to_ill(
             (dct_sun.output_file,),
-            'result\\sun..{}..{}.ill'.format(window_group.name, state.name)
+            'result/sun..{}..{}.ill'.format(window_group.name, state.name)
         )
         commands.append(finalmtx.to_rad_string())
 
@@ -505,9 +505,9 @@ def _get_commands_daylight_coeff(
             )
             commands.append('::')
             fmtx = final_matrix_addition_radiation(
-                'result\\diffuse..{}..{}.ill'.format(window_group.name, state.name),
-                'result\\sun..{}..{}.ill'.format(window_group.name, state.name),
-                'result\\{}..{}.ill'.format(window_group.name, state.name)
+                'result/diffuse..{}..{}.ill'.format(window_group.name, state.name),
+                'result/sun..{}..{}.ill'.format(window_group.name, state.name),
+                'result/{}..{}.ill'.format(window_group.name, state.name)
             )
             commands.append(fmtx.to_rad_string())
         else:
@@ -517,10 +517,10 @@ def _get_commands_daylight_coeff(
             )
             commands.append('::')
             fmtx = final_matrix_addition(
-                'result\\total..{}..{}.ill'.format(window_group.name, state.name),
-                'result\\direct..{}..{}.ill'.format(window_group.name, state.name),
-                'result\\sun..{}..{}.ill'.format(window_group.name, state.name),
-                'result\\{}..{}.ill'.format(window_group.name, state.name)
+                'result/total..{}..{}.ill'.format(window_group.name, state.name),
+                'result/direct..{}..{}.ill'.format(window_group.name, state.name),
+                'result/sun..{}..{}.ill'.format(window_group.name, state.name),
+                'result/{}..{}.ill'.format(window_group.name, state.name)
             )
             commands.append(fmtx.to_rad_string())
 
@@ -541,7 +541,7 @@ def image_based_view_sampling_commands(
     """Return VWrays command for calculating view coefficient matrix."""
     # calculate view dimensions
     vwr_dim_file = os.path.join(
-        project_folder, r'view\\{}.dim'.format(view.name))
+        project_folder, r'view/{}.dim'.format(view.name))
     x, y = view.get_view_dimension()
     with open(vwr_dim_file, 'wb') as vdfile:
         vdfile.write('-x %d -y %d -ld-\n' % (x, y))
@@ -554,7 +554,7 @@ def image_based_view_sampling_commands(
     vwr_samp = Vwrays()
     vwr_samp.vwrays_parameters = vwrays_parameters
     vwr_samp.view_file = os.path.relpath(view_file, project_folder)
-    vwr_samp.output_file = r'view\\{}.rays'.format(view.name)
+    vwr_samp.output_file = r'view/{}.rays'.format(view.name)
     vwr_samp.output_data_format = 'f'
 
     return vwr_dim_file, vwr_samp
@@ -687,7 +687,7 @@ def coeff_matrix_commands(output_name, receiver, rad_files, sender, points_file=
     # outside the window.
     rfluxmtx.rad_files = rad_files
 
-    # output file address/name
+    # output file address\name
     rfluxmtx.output_matrix = output_name
 
     return rfluxmtx
@@ -732,11 +732,11 @@ def image_based_view_matrix_calculation(view, wg, state, sky_matrix, extention='
     dct = Dctimestep()
     if os.name == 'nt':
         dct.daylight_coeff_spec = \
-            'result\\dc\\{}\\%%0{}d_{}..{}..{}.hdr'.format(
+            'result/dc/{}/%%0{}d_{}..{}..{}.hdr'.format(
                 extention, digits, view.name, wg.name, state.name)
     else:
         dct.daylight_coeff_spec = \
-            'result\\dc\\{}\\%0{}d_{}..{}..{}.hdr'.format(
+            'result/dc/{}/%0{}d_{}..{}..{}.hdr'.format(
                 extention, digits, view.name, wg.name, state.name)
 
     dct.sky_vector_file = sky_matrix
@@ -744,11 +744,11 @@ def image_based_view_matrix_calculation(view, wg, state, sky_matrix, extention='
     # sky matrix is annual
     if os.name == 'nt':
         dct.dctimestep_parameters.output_data_format = \
-            ' result\\hdr\\{}\\%%04d_{}..{}..{}.hdr'.format(
+            ' result/hdr/{}/%%04d_{}..{}..{}.hdr'.format(
                 extention, view.name, wg.name, state.name)
     else:
         dct.dctimestep_parameters.output_data_format = \
-            ' result\\hdr\\{}\\%04d_{}..{}..{}.hdr'.format(
+            ' result/hdr/{}/%04d_{}..{}..{}.hdr'.format(
                 extention, view.name, wg.name, state.name)
 
     return dct
@@ -856,9 +856,9 @@ def rgb_matrix_file_to_ill(input, output):
 
 def skymtx_to_gendaymtx(sky_matrix, target_folder):
     """Return gendaymtx command based on input sky_matrix."""
-    wea_filepath = 'sky\\{}.wea'.format(sky_matrix.name)
-    sky_mtx = 'sky\\{}.smx'.format(sky_matrix.name)
-    hours_file = os.path.join(target_folder, 'sky\\{}.hrs'.format(sky_matrix.name))
+    wea_filepath = 'sky/{}.wea'.format(sky_matrix.name)
+    sky_mtx = 'sky/{}.smx'.format(sky_matrix.name)
+    hours_file = os.path.join(target_folder, 'sky/{}.hrs'.format(sky_matrix.name))
 
     if not os.path.isfile(os.path.join(target_folder, sky_mtx)) \
             or not os.path.isfile(os.path.join(target_folder, wea_filepath)) \

@@ -70,7 +70,7 @@ def get_energy_plus_objects_from_file(ep_file_path):
 
 if __name__ == "__main__":
     objects = get_energy_plus_objects_from_file(
-        r"C:\EnergyPlusV8-3-0\ExampleFiles\5ZoneWaterCooled_GasFiredSteamHumidifier.idf")
+        r"C:/EnergyPlusV8-3-0/ExampleFiles/5ZoneWaterCooled_GasFiredSteamHumidifier.idf")
 
     # if the geometry rules is relative then all the points should be added
     # to X, Y, Z of zone origin

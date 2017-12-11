@@ -147,7 +147,7 @@ class ImageBased(GenericImageBased):
             Full path to command.bat
         """
         # 0.prepare target folder
-        # create main folder target_folder\project_name
+        # create main folder target_folder/project_name
         project_folder = \
             super(ImageBased, self).write_content(
                 target_folder, project_name, subfolders=['view'])
@@ -161,7 +161,7 @@ class ImageBased(GenericImageBased):
         extrafiles = write_extra_files(self.scene, project_folder + '/scene')
 
         # 1.write views
-        view_files = self.write_views(project_folder + '\\view')
+        view_files = self.write_views(project_folder + '/view')
 
         # 2.write batch file
         if header:
@@ -188,7 +188,7 @@ class ImageBased(GenericImageBased):
         # # 4.2.prepare rpict
         # TODO: Add overtrue
         for view, f in zip(self.views, view_files):
-            rp = Rpict('result\\' + view.name,
+            rp = Rpict('result/' + view.name,
                        simulation_type=self.simulation_type,
                        rpict_parameters=self.radiance_parameters)
             rp.octree_file = str(oc.output_file)

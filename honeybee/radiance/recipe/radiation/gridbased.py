@@ -102,7 +102,7 @@ class GridBased(DaylightCoeffGridBased):
             Full path to command.bat
         """
         # 0.prepare target folder
-        # create main folder target_folder\project_name
+        # create main folder target_folder/project_name
         project_folder = \
             super(DaylightCoeffGridBased, self).write_content(
                 target_folder, project_name, False, subfolders=['tmp', 'result/matrix']

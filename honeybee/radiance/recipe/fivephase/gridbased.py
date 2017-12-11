@@ -69,7 +69,7 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             Path yo commands file.
         """
         # 0.prepare target folder
-        # create main folder target_folder\project_name
+        # create main folder target_folder/project_name
         project_folder = \
             super(ThreePhaseGridBased, self).write_content(
                 target_folder, project_name, False, subfolders=['tmp', 'result/matrix']

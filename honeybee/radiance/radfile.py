@@ -117,12 +117,12 @@ class RadFile(object):
         copy_files_to_folder(bsdf_files, target_folder)
         # replace the full path with relative path
         # The root folder in Radiance is the place that commands are executed
-        # which in honeybee is the root so the relative path is scene\glazing\bsdf
+        # which in honeybee is the root so the relative path is scene/glazing/bsdf
         # this will make this mathod fairly inflexible.
         for mat in bsdf_materials:
             path, name = os.path.split(mat.xmlfile)
             material_string = material_string.replace(
-                os.path.normpath(mat.xmlfile), 'scene\\bsdf\\%s' % name
+                os.path.normpath(mat.xmlfile), 'scene/bsdf/%s' % name
             )
         return material_string
 

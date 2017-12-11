@@ -11,7 +11,7 @@ class RcollateParameters(AdvancedRadianceParameters):
     options of rcollate have been added at present.
 
     Read more:
-    http://www.radiance-online.org/learning/documentation/manual-pages/
+    http://www.radiance-online.org/learning/documentation/manual-pages\
     pdfs/rcollate.pdf
 
     Attributes:

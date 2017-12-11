@@ -100,7 +100,7 @@ class Folders(object):
 
         self._open_studio_path = path
         if os.name == 'nt' and self._open_studio_path:
-            assert os.path.isfile(os.path.join(path, 'bin\\openstudio.exe')), \
+            assert os.path.isfile(os.path.join(path, 'bin/openstudio.exe')), \
                 '{} is not a valid path to openstudio installation.'.format(path)
             if not self.mute and self._open_studio_path:
                 print("Path to OpenStudio is set to: %s" % self._open_studio_path)
@@ -114,10 +114,10 @@ class Folders(object):
             return sum(int(i) * d ** 10 for d, i in enumerate(reversed(ver.split('.'))))
 
         if os.name == 'nt':
-            os_folders = ['C:\\Program Files\\' + f for f
-                          in os.listdir('C:\\Program Files')
+            os_folders = ['C:/Program Files/' + f for f
+                          in os.listdir('C:/Program Files')
                           if (f.lower().startswith('openstudio') and
-                              os.path.isdir('C:\\Program Files\\' + f))]
+                              os.path.isdir('C:/Program Files/' + f))]
             if not os_folders:
                 return
             return sorted(os_folders, key=getversion, reverse=True)[0]
@@ -147,15 +147,15 @@ class Folders(object):
                 if __radbin:
                     path = os.path.split(__radbin)[0]
                 # finding by path failed. Let's check typical folders on Windows
-                elif os.path.isfile(r"c:\radiance\bin\rad.exe"):
-                    path = r"c:\radiance"
-                elif os.path.isfile(r"c:\Program Files\radiance\bin\rad.exe"):
-                    path = r"c:\Program Files\radiance"
+                elif os.path.isfile(r"c:/radiance/bin/rad.exe"):
+                    path = r"c:/radiance"
+                elif os.path.isfile(r"c:/Program Files/radiance/bin/rad.exe"):
+                    path = r"c:/Program Files/radiance"
                 elif self.open_studio_path and os.path.isfile(
                         os.path.join(self.open_studio_path,
-                                     r"share\openStudio\Radiance\bin\rad.exe")):
+                                     r"share/openStudio/Radiance/bin/rad.exe")):
                     path = os.path.join(self.open_studio_path,
-                                        r"share\openStudio\Radiance")
+                                        r"share/openStudio/Radiance")
             elif os.name == 'posix':
                 __radbin, __rad_file = self._which("mkillum")
                 if __radbin:
@@ -200,7 +200,7 @@ class Folders(object):
     def perl_path(self, path):
         """Path to the folder containing Perl binary files."""
         self._perl_path = path or ""
-        self._perlExePath = path + "\\perl"
+        self._perlExePath = path + "/perl"
 
         if not self._perl_path:
             if os.name == 'nt':
@@ -212,9 +212,9 @@ class Folders(object):
             # try to find perl under openstudio
             p = os.path.join(self.open_studio_path,
                              'strawberry-perl-5.16.2.1-32bit-portable-reduced')
-            if os.path.isfile(os.path.join(p, 'perl\\bin\\perl.exe')):
+            if os.path.isfile(os.path.join(p, 'perl/bin/perl.exe')):
                 self._perl_path, self._perlExePath = p, \
-                    os.path.join(p, 'perl\\bin\\perl.exe')
+                    os.path.join(p, 'perl/bin/perl.exe')
 
         if not self.mute and self._perl_path:
             print("Path to perl is set to: %s" % self._perl_path)
@@ -237,7 +237,7 @@ class Folders(object):
             ValueError('No such a file as {}'.format(file_path))
 
         with open(file_path, 'rb') as cfg:
-            path = cfg.read().replace('\\\\', '\\').replace('\\', '/')
+            path = cfg.read().replace('\\\\', '/').replace('\\', '/')
             try:
                 paths = json.loads(path)
             except Exception:

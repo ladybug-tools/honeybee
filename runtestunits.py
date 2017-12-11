@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def main(verbose=True, pathToPython="c:\\python27"):
+def main(verbose=True, pathToPython="c:/python27"):
     """Execute all test files inside tests folder."""
     # change directory to the file directory. The file should be in root directory
     _curdir = os.path.split(__file__)[0]
@@ -17,7 +17,7 @@ def main(verbose=True, pathToPython="c:\\python27"):
         initf.write("import " + ",".join(testFiles))
 
     # execute each test file
-    cmdBase = '%s\\python -m unittest -v tests.%s'
+    cmdBase = '%s/python -m unittest -v tests.%s'
     if not verbose:
         cmdBase = cmdBase.replace("-v", "")
 

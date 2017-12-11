@@ -110,17 +110,17 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
     # % (directilluminance, diffuseilluminance)
 
     # calculate sky
-    #  read the angles * /
+    #  read the angles * \
     half_sun_angle = 0.2665
     theta_o = defangle_theta
     phi_o = defangle_phi
     lv_mod = []  # 145 illuminance values
 
-    #  parameters for the perez model * /
+    #  parameters for the perez model * \
     skybrightness = \
         coeff_lum_perez(radians(sunzenith), skyclearness, skybrightness, coeff_perez)
 
-    # calculation of the modelled luminance * /
+    # calculation of the modelled luminance * \
     for j in xrange(145):
         dzeta, gamma = theta_phi_to_dzeta_gamma(
             radians(theta_o[j]), radians(phi_o[j]), radians(sunzenith)
@@ -136,7 +136,7 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
     #   integration of luminance for the normalization factor, diffuse part of the sky
     diffnormalization = integ_lv(lv_mod, theta_o)
 
-    # normalization coefficient in lumen or in watt * /
+    # normalization coefficient in lumen or in watt * \
     if output_type == 0:
         diffnormalization = diffuseilluminance / diffnormalization / WHTEFFICACY
     elif output_type == 1:
@@ -144,7 +144,7 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
     elif output_type == 2:
         diffnormalization = diffuseilluminance / diffnormalization
 
-    #  calculation for the solar source * /
+    #  calculation for the solar source * \
     if output_type == 0:
         solarradiance = directilluminance / \
             (2 * math.pi * (1 - math.cos(half_sun_angle * math.pi / 180))) / WHTEFFICACY
@@ -213,7 +213,7 @@ def theta_phi_to_dzeta_gamma(theta, phi, z):
 
 
 def calc_rel_lum_perez(dzeta, gamma, z, epsilon, delta, coeff_perez):
-    """/* sky luminance perez model * /"""
+    """/* sky luminance perez model * \"""
     x = [[], [], [], [], []]
     c_perez = range(5)
 
@@ -224,7 +224,7 @@ def calc_rel_lum_perez(dzeta, gamma, z, epsilon, delta, coeff_perez):
     if epsilon < skyclearinf or epsilon >= skyclearsup:
         raise ValueError("Error: epsilon out of range in function calc_rel_lum_perez!\n")
 
-    #  correction de modele de Perez solar energy ...* /
+    #  correction de modele de Perez solar energy ...* \
     if epsilon > 1.065 and epsilon < 2.8:
         if (delta < 0.2):
             delta = 0.2
@@ -255,11 +255,11 @@ def calc_rel_lum_perez(dzeta, gamma, z, epsilon, delta, coeff_perez):
 
 
 def sky_clearness(diffuseirradiance, directirradiance, sunzenith):
-    """#  Perez sky's clearness */"""
+    """  # Perez sky's clearness */"""
     try:
         value = (
             (diffuseirradiance + directirradiance) / (diffuseirradiance) +
-            1.041 * sunzenith * math.pi / 180 * sunzenith * math.pi /
+            1.041 * sunzenith * math.pi / 180 * sunzenith * math.pi
             180 * sunzenith * math.pi / 180) / (1 + 1.041 * sunzenith * math.pi / 180 *
                                                 sunzenith * math.pi / 180 * sunzenith *
                                                 math.pi / 180)
@@ -300,7 +300,7 @@ def air_mass(sunzenith):
 
 def check_parametrization(skyclearness, skybrightness):
     """check the range of epsilon and delta indexes of the perez parametrization."""
-    # #  limitations for the variation of the Perez parameters * /
+    # #  limitations for the variation of the Perez parameters * \
     skyclearinf = 1.0
     skyclearsup = 12.01
     skybriginf = 0.01
@@ -344,7 +344,7 @@ def glob_h_diffuse_effi_perez(skyclearness, skybrightness, sunzenith):
     # //XXX:  category_bounds > 0.1 started from 1!
     category_bounds = (1, 1.065, 1.230, 1.500, 1.950, 2.800, 4.500, 6.200, 12.01)
 
-    # #  initialize model coefficients * /
+    # #  initialize model coefficients * \
     a = (97.24, 107.22, 104.97, 102.39, 100.71, 106.42, 141.88, 152.23)
 
     b = (-0.46, 1.15, 2.96, 5.59, 5.94, 3.83, 1.90, 0.35)
@@ -371,12 +371,12 @@ def glob_h_diffuse_effi_perez(skyclearness, skybrightness, sunzenith):
 
 
 def direct_n_effi_perez(skyclearness, skybrightness, sunzenith):
-    """#  direct normal efficacy model, according to PEREZ * /"""
+    """#  direct normal efficacy model, according to PEREZ * \"""
     atm_preci_water = 2
-    # #  initialize category bounds(clearness index bounds) * /
+    # #  initialize category bounds(clearness index bounds) * \
     category_bounds = (1, 1.065, 1.230, 1.500, 1.950, 2.800, 4.500, 6.200, 12.01)
 
-    # #  initialize model coefficients * /
+    # #  initialize model coefficients * \
     a = (57.20, 98.99, 109.83, 110.34, 106.36, 107.19, 105.75, 101.18)
 
     b = (-4.55, -3.46, -4.90, -5.84, -3.97, -1.25, 0.77, 1.58)
@@ -401,7 +401,7 @@ def direct_n_effi_perez(skyclearness, skybrightness, sunzenith):
 
 
 def check_input_values(directilluminance, diffuseilluminance, altitude):
-    """#  validity of the direct and diffuse components * /"""
+    """  # validity of the direct and diffuse components * \"""
     solar_constant_l = 127500   # solar constant lux
     if directilluminance < 0:
         print("Warning: direct illuminance < 0. Using 0.0\n")

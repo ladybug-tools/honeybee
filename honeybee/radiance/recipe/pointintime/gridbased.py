@@ -194,7 +194,7 @@ class GridBased(GenericGridBased):
             Full path to command.bat
         """
         # 0.prepare target folder
-        # create main folder target_folder\project_name
+        # create main folder target_folder/project_name
         project_folder = \
             super(GenericGridBased, self).write_content(target_folder, project_name)
 
@@ -229,7 +229,7 @@ class GridBased(GenericGridBased):
         oc.scene_files = tuple(self.relpath(f, project_folder) for f in oct_scene_files)
 
         # # 4.2.prepare rtrace
-        rt = Rtrace('result\\' + project_name,
+        rt = Rtrace('result/' + project_name,
                     simulation_type=self.simulation_type,
                     radiance_parameters=self.radiance_parameters)
         rt.radiance_parameters.h = True
@@ -237,7 +237,7 @@ class GridBased(GenericGridBased):
         rt.points_file = self.relpath(points_file, project_folder)
 
         # # 4.3. add rcalc to convert rgb values to irradiance
-        rc = Rcalc('result\\{}.ill'.format(project_name), str(rt.output_file))
+        rc = Rcalc('result/{}.ill'.format(project_name), str(rt.output_file))
 
         if os.name == 'nt':
             rc.rcalc_parameters.expression = '"$1=(0.265*$1+0.67*$2+0.065*$3)*179"'

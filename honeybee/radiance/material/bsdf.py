@@ -72,5 +72,5 @@ class BSDFMaterial(RadianceMaterial):
 if __name__ == "__main__":
     # some test code
     material = BSDFMaterial(
-        r"C:\Users\Administrator\Documents\GitHub\honeybee\tests\room\xmls\clear.xml")
+        r"C:/Users/Administrator/Documents/GitHub/honeybee/tests/room/xmls/clear.xml")
     print(material)

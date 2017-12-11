@@ -174,8 +174,8 @@ def bat_to_sh(file_path):
         for line in inf:
             if line.startswith('echo'):
                 continue
-            # replace c:\radiance\bin and also chanege \\ to /
-            modified_line = line.replace('c:\\radiance\\bin\\', '').replace('\\', '/')
+            # replace c:/radiance/bin and also chanege / to \
+            modified_line = line.replace('c:/radiance/bin/', '').replace('\\', '/')
             outf.write(modified_line)
 
     print('bash file is created at:\n\t%s' % sh_file)

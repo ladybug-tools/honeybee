@@ -90,7 +90,7 @@ class Rmtxop(RadianceCommand):
     final_matrix.output_file = res.ill
 
     #Then the to_rad_string will be:
-        c:\radiance\bin\rmtxop     x.ill + -s -1 y.ill + z.ill > res.ill
+        c:/radiance/bin/rmtxop     x.ill + -s -1 y.ill + z.ill > res.ill
 
     """
 

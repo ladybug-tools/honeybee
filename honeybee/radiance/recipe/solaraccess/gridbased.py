@@ -306,7 +306,7 @@ class SolarAccessGridBased(GenericGridBased):
             True in case of success.
         """
         # 0.prepare target folder
-        # create main folder target_folder\project_name
+        # create main folder target_folder/project_name
         project_folder = \
             super(GenericGridBased, self).write_content(target_folder, project_name)
 
@@ -323,7 +323,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         # 2.write sun files
         sunsList, sunsMat, sunsGeo = \
-            self.write_suns(project_folder + '\\sky', project_name)
+            self.write_suns(project_folder + '/sky', project_name)
 
         # 2.1.add sun list to modifiers
         self._radiance_parameters.mod_file = self.relpath(sunsList, project_folder)
@@ -342,14 +342,14 @@ class SolarAccessGridBased(GenericGridBased):
         oc.scene_files = tuple(self.relpath(f, project_folder) for f in oct_scene_files)
 
         # # 4.2.prepare Rcontrib
-        rct = Rcontrib('result\\' + project_name,
+        rct = Rcontrib('result/' + project_name,
                        rcontrib_parameters=self._radiance_parameters)
         rct.octree_file = str(oc.output_file)
         rct.points_file = self.relpath(points_file, project_folder)
 
         batch_file = os.path.join(project_folder, "commands.bat")
         rmtx = rgb_matrix_file_to_ill((str(rct.output_file),),
-                                      'result\\{}.ill'.format(project_name))
+                                      'result/{}.ill'.format(project_name))
 
         # # 4.3 write batch file
         self._commands.append(oc.to_rad_string())

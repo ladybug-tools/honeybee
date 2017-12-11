@@ -128,7 +128,7 @@ class ProcMixin():
           the *.exe suffix), followed by individual arguments.
         - actstr
           A text string of the form "do something".
-          Used in verbose mode as "### do someting\\n### [command line]"
+          Used in verbose mode as "### do someting\n### [command line]"
           Used in error messages as "Scriptname: Unable to do something".
         - _in / out
           What to do with the input and output pipes of the process:

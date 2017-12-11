@@ -152,7 +152,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         for i in range(1 + 144 * (self.sky_matrix.sky_density ** 2)):
             for t in ('total', 'direct'):
                 fp = os.path.join(
-                    study_folder, 'result\\dc\\%s\\%03d_%s..%s..%s.hdr' % (
+                    study_folder, 'result/dc/%s/%03d_%s..%s..%s.hdr' % (
                         t, i, view.name, wg.name, state.name)
                 )
 
@@ -166,7 +166,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         """Check if hdr images for daylight matrix are already created."""
         for count, h in enumerate(self.sky_matrix.hoys):
             fp = os.path.join(
-                study_folder, 'result\\dc\\{}\\{}_{}..{}..{}.hdr'.format(
+                study_folder, 'result/dc/{}/{}_{}..{}..{}.hdr'.format(
                     'isun', '%04d' % count, view.name, wg.name, state.name))
 
             if not os.path.isfile(fp) or os.path.getsize(fp) < 265:
@@ -179,7 +179,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         """Check if hourly hdr images for daylight matrix are already created."""
         for count, h in enumerate(self.sky_matrix.hoys):
             fp = os.path.join(
-                study_folder, 'result\\hdr\\{}\\{}_{}..{}..{}.hdr'.format(
+                study_folder, 'result/hdr/{}/{}_{}..{}..{}.hdr'.format(
                     stype, '%04d' % (count + 1), view.name, wg.name, state.name))
 
             if not os.path.isfile(fp) or os.path.getsize(fp) < 265:
@@ -200,7 +200,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             Full path to command.bat
         """
         # 0.prepare target folder
-        # create main folder target_folder\project_name
+        # create main folder target_folder/project_name
         project_folder = \
             super(GenericImageBased, self).write_content(
                 target_folder, project_name, False,
@@ -212,17 +212,17 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         # write geometry and material files
         opqfiles, glzfiles, wgsfiles = write_rad_files_daylight_coeff(
-            project_folder + '\\scene', project_name, self.opaque_rad_file,
+            project_folder + '/scene', project_name, self.opaque_rad_file,
             self.glazing_rad_file, self.window_groups_rad_files
         )
         # additional radiance files added to the recipe as scene
-        extrafiles = write_extra_files(self.scene, project_folder + '\\scene')
+        extrafiles = write_extra_files(self.scene, project_folder + '/scene')
 
         # reset self.result_files
         self._result_files = [[] for v in xrange(self.view_count)]
 
         # 1.write views
-        view_files = self.write_views(project_folder + '\\view')
+        view_files = self.write_views(project_folder + '/view')
 
         if header:
             self.commands.append(self.header(project_folder))
@@ -277,13 +277,13 @@ class DaylightCoeffImageBased(GenericImageBased):
             self.commands.append(':: 0 reference map')
 
             refmapfilename = '{}_map.hdr'.format(view.name)
-            refmapfilepath = os.path.join('result\\dc\\refmap', refmapfilename)
+            refmapfilepath = os.path.join('result/dc/refmap', refmapfilename)
 
             if not self.reuse_daylight_mtx or not os.path.isfile(
-                    os.path.join(project_name, 'result\\dc\\refmap', refmapfilename)):
+                    os.path.join(project_name, 'result/dc/refmap', refmapfilename)):
                 rfm = create_reference_map_command(
                     view, self.relpath(view_file, project_folder),
-                    'result\\dc\\refmap', oc.output_file)
+                    'result/dc/refmap', oc.output_file)
                 self._commands.append(rfm.to_rad_string())
 
             # Step1: Create the view matrix.
@@ -337,33 +337,33 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                     sender = '-'
 
-                    ground_file_format = 'result\\dc\\total\\%03d_%s..%s..%s.hdr' % (
+                    ground_file_format = 'result/dc/total/%03d_%s..%s..%s.hdr' % (
                         1 + 144 * (self.sky_matrix.sky_density ** 2),
                         view.name, wg.name, state.name
                     )
 
-                    sky_file_format = 'result\\dc\\total\\%03d_{}..{}..{}.hdr'.format(
+                    sky_file_format = 'result/dc/total/%03d_{}..{}..{}.hdr'.format(
                         view.name, wg.name, state.name)
 
                     receiver = sky_receiver(
                         os.path.join(
                             project_folder,
-                            'sky\\rfluxSkyTotal..{}..{}.rad'.format(
+                            'sky/rfluxSkyTotal..{}..{}.rad'.format(
                                 wg.name, state.name)),
                         self.sky_matrix.sky_density, ground_file_format, sky_file_format
                     )
 
-                    ground_file_format = 'result\\dc\\direct\\%03d_%s..%s..%s.hdr' % (
+                    ground_file_format = 'result/dc/direct/%03d_%s..%s..%s.hdr' % (
                         1 + 144 * (self.sky_matrix.sky_density ** 2),
                         view.name, wg.name, state.name
                     )
 
-                    sky_file_format = 'result\\dc\\direct\\%03d_{}..{}..{}.hdr'.format(
+                    sky_file_format = 'result/dc/direct/%03d_{}..{}..{}.hdr'.format(
                         view.name, wg.name, state.name)
 
                     receiver_dir = sky_receiver(
                         os.path.join(project_folder,
-                                     'sky\\rfluxSkyDirect..{}..{}.rad'.format(
+                                     'sky/rfluxSkyDirect..{}..{}.rad'.format(
                                          wg.name, state.name)),
                         self.sky_matrix.sky_density, ground_file_format, sky_file_format
                     )
@@ -420,11 +420,11 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                         if os.name == 'nt':
                             output_filename_format = \
-                                ' result\\dc\\isun\\%%04d_{}..{}..{}.hdr'.format(
+                                ' result/dc/isun/%%04d_{}..{}..{}.hdr'.format(
                                     view.name, wg.name, state.name)
                         else:
                             output_filename_format = \
-                                ' result\\dc\\isun\\%04d_{}..{}..{}.hdr'.format(
+                                ' result/dc/isun/%04d_{}..{}..{}.hdr'.format(
                                     view.name, wg.name, state.name)
 
                         sun_commands = imaged_based_sun_coeff_matrix_commands(
@@ -435,7 +435,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                         # delete the files if they are already created
                         # rcontrib won't overwrite the files if they already exist
                         for hourcount in xrange(len(self.sky_matrix.hoys)):
-                            sf = 'result\\dc\\isun\\{:04d}_{}..{}..{}.hdr'.format(
+                            sf = 'result/dc/isun/{:04d}_{}..{}..{}.hdr'.format(
                                 hourcount, view.name, wg.name, state.name
                             )
                             try:
@@ -504,10 +504,10 @@ class DaylightCoeffImageBased(GenericImageBased):
                             par.expression = "'lo=li(1)*li(2)'"
 
                         for hourcount in xrange(len(self.sky_matrix.hoys)):
-                            inp = 'result\\hdr\\isun\\{:04d}_{}..{}..{}.hdr'.format(
+                            inp = 'result/hdr/isun/{:04d}_{}..{}..{}.hdr'.format(
                                 hourcount + 1, view.name, wg.name, state.name
                             )
-                            out = 'result\\hdr\\sun\\{:04d}_{}..{}..{}.hdr'.format(
+                            out = 'result/hdr/sun/{:04d}_{}..{}..{}.hdr'.format(
                                 hourcount + 1, view.name, wg.name, state.name
                             )
                             images = PcombImage(input_image_file=inp), refmap_image
@@ -522,7 +522,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
                     result_files = tuple(os.path.join(
                         project_folder,
-                        'result\\hdr\\%s\\{}_{}..{}..{}.hdr'.format(
+                        'result/hdr/%s/{}_{}..{}..{}.hdr'.format(
                             '%04d' % (count + 1), view.name, wg.name, state.name))
                         for count, h in enumerate(self.sky_matrix.hoys)
                     )
@@ -559,7 +559,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             imgc.add_coupled_image_files(source_files, hoys, source, state)
 
         # TODO(mostapha): Add properties to the class for output file addresses
-        imgc.output_folder = fpt.split('result\\hdr')[0] + 'result\\hdr\\combined'
+        imgc.output_folder = fpt.split('result/hdr')[0] + 'result/hdr/combined'
         yield imgc
 
     def ToString(self):
