@@ -17,25 +17,25 @@ class ImageBasedParameters(AdvancedRadianceParameters):
     Usage:
 
         rp = ImageBasedParameters(0)
-        print rp.to_rad_string()
+        print(rp.to_rad_string())
 
         > -aa 0.25 -ab 2 -ad 512 -dc 0.25 -st 0.85 -lw 0.05 -as 128 -ar 16 -lr 4 -dt 0.5
           -dr 0 -ds 0.5 -dp 64
 
         rp = ImageBasedParameters(1)
-        print rp.to_rad_string()
+        print(rp.to_rad_string())
 
         > -aa 0.2 -ab 3 -ad 2048 -dc 0.5 -st 0.5 -lw 0.01 -as 2048 -ar 64 -lr 6 -dt 0.25
           -dr 1 -ds 0.25 -dp 256
 
         rp = ImageBasedParameters(2)
-        print rp.to_rad_string()
+        print(rp.to_rad_string())
         > -aa 0.1 -ab 6 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128 -lr 8
           -dt 0.15 -dr 3 -ds 0.05 -dp 512
 
         rp.ab = 5
         rp.u = True
-        print rp.to_rad_string()
+        print(rp.to_rad_string())
 
         > -aa 0.1 -ab 5 -dj 0.7 -ad 4096 -dc 0.75 -st 0.15 -lw 0.005 -as 4096 -ar 128
           -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512 -u
@@ -464,11 +464,11 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         Usage:
 
             rp = low_quality()
-            print rp.getParameterValue("ab")
+            print(rp.getParameterValue("ab"))
             >> 2
         """
         if not self.quality:
-            print "Quality is not set! use self.quality to set the value."
+            print("Quality is not set! use self.quality to set the value.")
             return None
 
         _key = str(parameter)

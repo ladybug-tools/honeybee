@@ -31,7 +31,7 @@ class PlasticMaterial(RadianceMaterial):
 
         Usage:
             wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
-            print wallMaterial
+            print(wallMaterial)
         """
         RadianceMaterial.__init__(self, name, material_type="plastic", modifier="void")
         self.r_reflectance = r_reflectance
@@ -68,7 +68,7 @@ class PlasticMaterial(RadianceMaterial):
 
         Usage:
             wallMaterial = PlasticMaterial.by_single_reflect_value("generic wall", .55)
-            print wallMaterial
+            print(wallMaterial)
         """
         return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
                    b_reflectance=rgb_reflectance, specularity=specularity,
@@ -113,7 +113,7 @@ class PlasticMaterial(RadianceMaterial):
     def specularity(self, value):
         assert 0 <= value <= 1, "Specularity should be between 0 and 1"
         if value > 0.1:
-            print "Warning: Specularity values above .1 is uncommon."
+            print("Warning: Specularity values above .1 is uncommon.")
         self._spec = value
 
     @property
@@ -125,7 +125,7 @@ class PlasticMaterial(RadianceMaterial):
     def roughness(self, value):
         assert 0 <= value <= 1, "Roughness should be between 0 and 1"
         if value > 0.2:
-            print "Warning: Roughness values above .2 is uncommon."
+            print("Warning: Roughness values above .2 is uncommon.")
         self._rough = value
 
     @property

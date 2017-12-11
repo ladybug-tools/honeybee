@@ -22,10 +22,10 @@ def main(verbose=True, pathToPython="c:\\python27"):
         cmdBase = cmdBase.replace("-v", "")
 
     for f in testFiles:
-        print "running test for %s"%f
+        print("running test for %s" % f)
         cmd = cmdBase % (pathToPython, f)
         subprocess.Popen(cmd, shell=True)
 
 if __name__ == "__main__":
-    print "Running tests..."
+    print("Running tests...")
     main(verbose=False)

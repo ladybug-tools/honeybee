@@ -213,7 +213,7 @@ class HBZone(HBObject):
                 outf.write(self.to_rad_string(mode, include_materials, flipped, blacked))
                 return True
             except Exception as e:
-                print "Failed to write %s to file:\n%s" % (self.name, e)
+                print("Failed to write %s to file:\n%s" % (self.name, e))
                 return False
 
     @property

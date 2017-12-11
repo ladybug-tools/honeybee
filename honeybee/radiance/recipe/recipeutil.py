@@ -37,15 +37,15 @@ def input_srfs_to_rad_files(in_srfs):
         ValueError('Found duplicate window-group names: {}\n'
                    'Each window-group must have a uniqe name.'.format(dup))
 
-    print 'Found %d opaque surfaces.' % len(opaque)
-    print 'Found %d fenestration surfaces.' % len(fen)
-    print 'Found %d window-groups.' % len(wgs)
+    print('Found %d opaque surfaces.' % len(opaque))
+    print('Found %d fenestration surfaces.' % len(fen))
+    print('Found %d window-groups.' % len(wgs))
 
     for count, wg in enumerate(wgs):
         if len(wg.states) == 1:
-            print '  [%d] %s, 1 state.' % (count, wg.name)
+            print('  [%d] %s, 1 state.' % (count, wg.name))
         else:
-            print '  [%d] %s, %d states.' % (count, wg.name, len(wg.states))
+            print('  [%d] %s, %d states.' % (count, wg.name, len(wg.states)))
 
     return RadFile(opaque), RadFile(fen), tuple(RadFile((wg,)) for wg in wgs)
 
@@ -82,10 +82,10 @@ def write_extra_files(rad_scene, target_dir, add_blacked=False):
         return Files([], [])
 
     if rad_scene.file_count == 1:
-        print 'One file from the radiance scene is added to the analysis.'
+        print('One file from the radiance scene is added to the analysis.')
     else:
-        print '%d files from the radiance scene are added to the analysis.' % \
-            rad_scene.file_count
+        print('%d files from the radiance scene are added to the analysis.' % \
+            rad_scene.file_count)
 
     target_dir = os.path.join(target_dir, 'extra')
     if rad_scene.copy_local:

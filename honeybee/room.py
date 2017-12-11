@@ -64,8 +64,8 @@ class Room(HBZone):
         Usage:
 
             r = Room()
-            # for pt in r.generate_test_points():
-            #     print pt
+            for pt in r.generate_test_points():
+                print(pt)
             r.add_fenestration_surface('back', 2, 2, .7)
             r.add_fenestration_surface('right', 4, 1.5, .5)
             r.add_fenestration_surface('right', 4, 0.5, 2.2)

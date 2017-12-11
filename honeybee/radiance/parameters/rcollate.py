@@ -40,7 +40,7 @@ class RcollateParameters(AdvancedRadianceParameters):
         rcolparam.output_columns = 5
 
         #Check the values.
-        print rcolparam.to_rad_string()
+        print(rcolparam.to_rad_string())
         > -ic 10 -ir 10 -oc 5 -or 20
     """
 

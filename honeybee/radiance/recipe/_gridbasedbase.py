@@ -116,7 +116,7 @@ class GenericGridBased(AnalysisRecipe):
         vector_groups = tuple(vector_groups[i] if i < len(vector_groups)
                               else vector_groups[-1] for i in range(len(point_groups)))
 
-        print zip(point_groups, vector_groups)
+        # print(zip(point_groups, vector_groups))
         analysis_grids = (AnalysisGrid.from_points_and_vectors(pts, vectors)
                           for pts, vectors in zip(point_groups, vector_groups))
 

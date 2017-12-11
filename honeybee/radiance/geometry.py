@@ -42,5 +42,5 @@ if __name__ == "__main__":
     # test code
     pts = ((10, 0, 0), (20, 0, 0), (20, 10, 0), (10, 10, 0))
     # notice white spaces are replaced by _
-    print polygon("surface 001", "white material", pts, True)
-    print polygon("surface 002", "white material", pts)
+    print(polygon("surface 001", "white material", pts, True))
+    print(polygon("surface 002", "white material", pts))

@@ -23,7 +23,7 @@ def get_radiance_path_lines():
             'under a path with no withspace (e.g. c:/radiance)'.format(
                 config.radbin_path
             )
-        print msg
+        print(msg)
     if os.name == 'nt':
         return "SET RAYPATH=.;{}\nPATH={};$PATH".format(
             normspace(config.radlib_path),
@@ -47,7 +47,7 @@ def preparedir(target_dir, remove_content=True):
             os.makedirs(target_dir)
             return True
         except Exception as e:
-            print "Failed to create folder: %s\n%s" % (target_dir, e)
+            print("Failed to create folder: %s\n%s" % (target_dir, e))
             return False
 
 
@@ -75,13 +75,13 @@ def nukedir(target_dir, rmdir=False):
             try:
                 os.remove(path)
             except Exception:
-                print "Failed to remove %s" % path
+                print("Failed to remove %s" % path)
 
     if rmdir:
         try:
             os.rmdir(d)
         except Exception:
-            print "Failed to remove %s" % d
+            print("Failed to remove %s" % d)
 
 
 def write_to_file_by_name(folder, fname, data, mkdir=False):
@@ -149,8 +149,8 @@ def copy_files_to_folder(files, target_folder, overwrite=True):
             else:
                 continue
         else:
-            print 'Copying %s to %s' % (os.path.split(f)[-1],
-                                        os.path.normpath(target_folder))
+            print('Copying %s to %s' % (os.path.split(f)[-1],
+                                        os.path.normpath(target_folder)))
             shutil.copy(f, target_folder)
 
     return [os.path.join(target_folder, os.path.split(f)[-1]) for f in files]

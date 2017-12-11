@@ -75,5 +75,5 @@ class CertainIlluminanceLevel(CIE):
 if __name__ == "__main__":
     # test code
     sky = CertainIlluminanceLevel(100)
-    print sky
-    print sky.illuminance_value
+    print(sky)
+    print(sky.illuminance_value)

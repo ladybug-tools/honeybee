@@ -74,10 +74,10 @@ if __name__ == "__main__":
 
     # if the geometry rules is relative then all the points should be added
     # to X, Y, Z of zone origin
-    print objects['globalgeometryrules'].values()
+    print(objects['globalgeometryrules'].values())
     for z in objects['zone']:
-        print "zone:", objects['zone'][z]
+        print("zone:", objects['zone'][z])
     for s in objects['buildingsurface:detailed']:
-        print "buildingsurface:", s
+        print("buildingsurface:", s)
     for w in objects['fenestrationsurface:detailed']:
-        print "fenestrationsurface:", w
+        print("fenestrationsurface:", w)

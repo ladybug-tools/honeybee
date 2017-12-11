@@ -47,7 +47,7 @@ class GridBased(GenericGridBased):
         analysis_recipe.run(debaug=False)
 
         # get the results
-        print analysis_recipe.results()
+        print(analysis_recipe.results())
     """
 
     # TODO: implemnt isChanged at AnalysisRecipe level to reload the results

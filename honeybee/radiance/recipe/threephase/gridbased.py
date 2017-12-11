@@ -46,7 +46,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
         analysis_recipe.run(commandsFile)
 
         # get the results
-        print analysis_recipe.results()
+        print(analysis_recipe.results())
     """
 
     def __init__(self, sky_mtx, analysis_grids, simulation_type=0,

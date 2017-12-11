@@ -110,5 +110,5 @@ if __name__ == "__main__":
     pts = ((0, 0, 0), (10, 10, 0), (10, 0, 0))
     srfVector = normal_from_points(pts)
 
-    print vector_angle_to_z_axis(srfVector)
-    print center_point_from_points(pts)
+    print(vector_angle_to_z_axis(srfVector))
+    print(center_point_from_points(pts))

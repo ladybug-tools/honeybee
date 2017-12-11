@@ -48,7 +48,7 @@ class GenskyParameters(AdvancedRadianceParameters):
         gnskyparam = GenskyParameters()
 
         # check the current values
-        print gnskyparam.to_rad_string()
+        print(gnskyparam.to_rad_string())
         > -g 0.5
 
 
@@ -56,7 +56,7 @@ class GenskyParameters(AdvancedRadianceParameters):
         gnsky.altitude_azimuth = (12,31)
 
         #check the new values added.
-        print gnskyparam.to_rad_string()
+        print(gnskyparam.to_rad_string())
         > -g 0.5 -ang 12.0 31.0
 
     """

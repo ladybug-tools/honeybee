@@ -37,7 +37,7 @@ class Rcontrib(RadianceCommand):
         rcontrib.rcontrib_parameters.ab = 0
         rcontrib.rcontrib_parameters.ad = 10000
 
-        print rcontrib.to_rad_string()
+        print(rcontrib.to_rad_string())
         > c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M
             C:/ladybug/test3/gridbased/sunlist.txt -I
             C:/ladybug/test3/gridbased/test3.oct <

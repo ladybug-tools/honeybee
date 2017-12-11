@@ -27,7 +27,7 @@ class GlassMaterial(RadianceMaterial):
 
         Usage:
             glassMaterial = GlassMaterial("generic glass", .65, .65, .65)
-            print glassMaterial
+            print(glassMaterial)
         """
         RadianceMaterial.__init__(self, name, material_type="glass", modifier="void")
         self.r_transmittance = r_transmittance
@@ -55,7 +55,7 @@ class GlassMaterial(RadianceMaterial):
 
         Usage:
             glassMaterial = GlassMaterial.by_single_trans_value("generic glass", .65)
-            print glassMaterial
+            print(glassMaterial)
         """
         return cls(
             name, r_transmittance=rgb_transmittance, g_transmittance=rgb_transmittance,
@@ -136,5 +136,5 @@ class GlassMaterial(RadianceMaterial):
 if __name__ == "__main__":
     # some test code
     glassMaterial = GlassMaterial.by_single_trans_value("generic glass", .65)
-    print glassMaterial
-    print glassMaterial.to_rad_string(minimal=True)
+    print(glassMaterial)
+    print(glassMaterial.to_rad_string(minimal=True))

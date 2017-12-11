@@ -55,7 +55,7 @@ class View(object):
         v.x_res = v.y_res = 600
         # add a fore clip
         v.add_fore_clip(distance=100)
-        print v
+        print(v)
 
         > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
            0.000 -vh 60.000 -vv 60.000 -x 600 -y 600 -vo 100.000
@@ -63,7 +63,7 @@ class View(object):
         # split the view into a view grid
         gridViews = v.calculate_view_grid(2, 2)
         for g in gridViews:
-            print g
+            print(g)
 
         > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
            0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500
@@ -182,7 +182,7 @@ class View(object):
         if self.view_type in (1, 4, 5):
             self.view_h_size = 180
             self.view_v_size = 180
-            print "Changed view_h_size and view_v_size to 180 for fisheye view type."
+            print("Changed view_h_size and view_v_size to 180 for fisheye view type.")
 
         elif self.view_type == 0:
             assert self.view_h_size < 180, ValueError(
@@ -276,7 +276,7 @@ class View(object):
                 math.asin(math.sin((PI / 180. / 2.) * self.view_v_size) / y_div_count)
 
         else:
-            print "Grid views are not supported for %s." % self.view_type
+            print("Grid views are not supported for %s." % self.view_type)
             return [self]
 
         # create a set of new views

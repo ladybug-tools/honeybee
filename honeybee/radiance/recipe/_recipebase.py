@@ -204,7 +204,7 @@ class AnalysisRecipe(object):
         iscreated = preparedir(_basePath, remove_content=False)
         assert iscreated, "Failed to create %s. Try a different path!" % _basePath
 
-        print 'Writing recipe contents to: %s' % _basePath
+        print('Writing recipe contents to: %s' % _basePath)
 
         # create subfolders inside the folder
         subfolders += ['scene', 'sky', 'result']

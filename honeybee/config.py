@@ -5,9 +5,9 @@ Import this module in every module that you need to access Honeybee configuratio
 Usage:
 
     import config
-    print config.radlib_path
-    print config.radbin_path
-    print config.platform
+    print(config.radlib_path)
+    print(config.radbin_path)
+    print(config.platform)
     config.radbin_path = "c:/radiance/bin"
 """
 import os
@@ -25,7 +25,7 @@ class Folders(object):
     Usage:
 
         folders = Folders(mute=False)
-        print folders.radbin_path
+        print(folders.radbin_path)
     """
 
     __defaultPath = {
@@ -103,7 +103,7 @@ class Folders(object):
             assert os.path.isfile(os.path.join(path, 'bin\\openstudio.exe')), \
                 '{} is not a valid path to openstudio installation.'.format(path)
             if not self.mute and self._open_studio_path:
-                print "Path to OpenStudio is set to: %s" % self._open_studio_path
+                print("Path to OpenStudio is set to: %s" % self._open_studio_path)
 
     # TODO(mostapha or chris): Update for OpenStudio 2
     @staticmethod
@@ -167,7 +167,7 @@ class Folders(object):
             if not self.mute:
                 msg = "Warning: Failed to find radiance installation folder.\n" \
                     "You can set it up manually in {}.".format(self.__configFile)
-                print msg
+                print(msg)
             self._radbin = ""
             self._radlib = ""
         else:
@@ -176,7 +176,7 @@ class Folders(object):
             self._radlib = os.path.normpath(os.path.join(path, 'lib'))
 
             if not self.mute and self._radiancePath:
-                print "Path to radiance is set to: %s" % self._radiancePath
+                print("Path to radiance is set to: %s" % self._radiancePath)
 
             if self._radiancePath.find(' ') != -1:
                 msg = 'Radiance path {} has a whitespace. Some of the radiance ' \
@@ -184,7 +184,7 @@ class Folders(object):
                     'under a path with no withspace (e.g. c:/radiance)'.format(
                         self._radiancePath
                     )
-                print msg
+                print(msg)
 
     @property
     def perl_path(self):
@@ -217,7 +217,7 @@ class Folders(object):
                     os.path.join(p, 'perl\\bin\\perl.exe')
 
         if not self.mute and self._perl_path:
-            print "Path to perl is set to: %s" % self._perl_path
+            print("Path to perl is set to: %s" % self._perl_path)
 
     @property
     def ep_folder(self):
@@ -241,7 +241,7 @@ class Folders(object):
             try:
                 paths = json.loads(path)
             except Exception:
-                print 'Failed to load paths from {}.'.format(file_path)
+                print('Failed to load paths from {}.'.format(file_path))
             else:
                 for key, p in paths.iteritems():
                     if not key.startswith('__') and p.strip():

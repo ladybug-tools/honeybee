@@ -31,7 +31,7 @@ class MetalMaterial(RadianceMaterial):
 
         Usage:
             wallMaterial = MetalMaterial("generic wall", .55, .65, .75)
-            print wallMaterial
+            print(wallMaterial)
         """
         RadianceMaterial.__init__(self, name, material_type="metal", modifier="void")
         self.r_reflectance = r_reflectance
@@ -69,7 +69,7 @@ class MetalMaterial(RadianceMaterial):
 
         Usage:
             wallMaterial = MetalMaterial.by_single_reflect_value("generic wall", .55)
-            print wallMaterial
+            print(wallMaterial)
         """
         return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
                    b_reflectance=rgb_reflectance, specularity=specularity,
@@ -114,7 +114,7 @@ class MetalMaterial(RadianceMaterial):
     def specularity(self, value):
         assert 0 <= value <= 1, "Specularity should be between 0 and 1"
         if value > 0.1:
-            print "Warning: Specularity values above .1 is uncommon."
+            print("Warning: Specularity values above .1 is uncommon.")
         self.__spec = value
 
     @property
@@ -126,7 +126,7 @@ class MetalMaterial(RadianceMaterial):
     def roughness(self, value):
         assert 0 <= value <= 1, "Roughness should be between 0 and 1"
         if value > 0.2:
-            print "Warning: Roughness values above .2 is uncommon."
+            print("Warning: Roughness values above .2 is uncommon.")
         self.__rough = value
 
     @property
@@ -150,7 +150,7 @@ class MetalMaterial(RadianceMaterial):
 if __name__ == "__main__":
     # some test code
     panelMaterial = MetalMaterial.by_single_reflect_value("generic wall", .55)
-    print panelMaterial
+    print(panelMaterial)
 
     panelMaterial = MetalMaterial("generic wall", .55, .65, .75)
-    print panelMaterial
+    print(panelMaterial)

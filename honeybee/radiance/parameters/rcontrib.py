@@ -26,7 +26,7 @@ class RcontribParameters(GridBasedParameters):
 
         # paramters returns an empty string which means rcontrib will use
         # default values.
-        print rcp.to_rad_string()
+        print(rcp.to_rad_string())
         >
 
         # add modifiers file
@@ -39,12 +39,12 @@ class RcontribParameters(GridBasedParameters):
         rcp.I = True
 
         # check radiance parameters with the new values
-        print rcp.to_rad_string()
+        print(rcp.to_rad_string())
         > -ab 0 -ad 10000 -M c:/ladybug/suns.txt -I
 
         # or you can set all the parameter for rtrace based on quality
         rcp.quality = 1
-        print rcp.to_rad_string()
+        print(rcp.to_rad_string())
         > -aa 0.2 -ab 0 -ad 10000 -M c:/ladybug/suns.txt -I -dc 0.5 -st 0.5 -lw 0.01
             -as 2048 -ar 64 -lr 6 -dt 0.25 -dr 1 -ds 0.25 -dp 256
     """

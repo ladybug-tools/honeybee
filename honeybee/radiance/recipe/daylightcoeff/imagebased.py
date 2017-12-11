@@ -535,7 +535,7 @@ class DaylightCoeffImageBased(GenericImageBased):
 
         write_to_file(batch_file, "\n".join(self.commands))
 
-        print "Files are written to: %s" % project_folder
+        print("Files are written to: %s" % project_folder)
         return batch_file
 
     def results(self):

@@ -42,14 +42,14 @@ class Oconv(RadianceCommand):
                       )
 
         # print command line to check
-        print oconv.to_rad_string()
+        print(oconv.to_rad_string())
         > c:/radiance/bin/oconv -f C:/ladybug/test3/gridbased/test3.mat
           c:/ladybug/test3/gridbased/test3.rad > test3.oct
 
         # execute the command
         output_file_path = oconv.execute()
 
-        print output_filePath
+        print(output_filePath)
         > C:/ladybug/test3/gridbased/test3.oct
     """
 

@@ -942,5 +942,5 @@ class AnalysisPoint(object):
                 "values": self._values}
 
     def __repr__(self):
-        """Print and analysis point."""
+        """Print an analysis point."""
         return 'AnalysisPoint::(%s)::(%s)' % (self.location, self.direction)

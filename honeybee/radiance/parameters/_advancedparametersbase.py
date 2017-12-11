@@ -22,7 +22,7 @@ class AdvancedRadianceParameters(RadianceParameters):
         rp.add_radiance_bool_flag('I', 'irradiance switch', is_dual_sign=True)
         rp.I = True
 
-        print rp.to_rad_string()
+        print(rp.to_rad_string())
         > -ab 20 -of -c 0 0 254 +I
     """
 

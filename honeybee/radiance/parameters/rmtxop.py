@@ -21,14 +21,14 @@ class RmtxopParameters(AdvancedRadianceParameters):
         rmtx = RmtxopParameters()
 
         #check current values
-        print rmtx.to_rad_string()
+        print(rmtx.to_rad_string())
         >
 
         #add verbose flag.
         rmtx.verbose_reporting = True
 
         #check values again.
-        print rmtx.to_rad_string()
+        print(rmtx.to_rad_string())
         > -v
 
     """

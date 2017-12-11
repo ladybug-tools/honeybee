@@ -42,7 +42,7 @@ class HBFenSurface(HBAnalysisSurface):
         hbsrf.add_fenestration_surface(glzsrf)
 
         # get full definiion of the surface including the fenestration
-        print hbsrf.to_rad_string(include_materials=True)
+        print(hbsrf.to_rad_string(include_materials=True))
 
         # save the definiion to a .rad file
         hbsrf.rad_string_to_file(r"c:/ladybug/triangle.rad", include_materials=True)

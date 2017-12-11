@@ -97,5 +97,5 @@ class RadianceProperties(object):
 
 if __name__ == "__main__":
     rp = RadianceProperties()
-    print rp
-    print rp.is_material_set_by_user
+    print(rp)
+    print(rp.is_material_set_by_user)

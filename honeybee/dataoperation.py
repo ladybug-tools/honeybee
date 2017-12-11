@@ -7,7 +7,7 @@ def flatten_tuple_list(input_list):
 
     Usage:
         input_list = [[(0, 0, 0)], [(10, 0, 0), (10, 10, 0)]]
-        print list(flattenPointList(input_list))
+        print(list(flattenPointList(input_list)))
 
         >> [(0, 0, 0), (10, 0, 0), (10, 10, 0)]
     """

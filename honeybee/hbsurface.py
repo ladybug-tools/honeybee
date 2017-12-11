@@ -44,7 +44,7 @@ class HBSurface(HBAnalysisSurface):
         hbsrf = HBSurface("001", pts, surface_type=None, is_name_set_by_user=True,
                           is_type_set_by_user=True)
 
-        print hbsrf.to_rad_string(include_materials=True)
+        print(hbsrf.to_rad_string(include_materials=True))
 
         > void plastic generic_wall
         > 0

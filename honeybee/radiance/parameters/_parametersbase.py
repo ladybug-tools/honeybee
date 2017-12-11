@@ -20,7 +20,7 @@ class RadianceParameters(object):
 
         rp = CustomRP()
         rp.import_parameter_values_from_string('-dj 20 -fo')
-        print rp.to_rad_string()
+        print(rp.to_rad_string())
 
         > -ab 15 -dj 20 -fo
     """
@@ -109,16 +109,16 @@ class RadianceParameters(object):
         if name in self.default_parameters:
             delattr(self.__class__, name)
             del self._defaultParameters[name]
-            print "Removed %s from default parameters." % str(name)
+            print("Removed %s from default parameters." % str(name))
         elif name in self._defaultParameters.values():
             _i = self._defaultParameters.values().index(name)
             alias_name = self._defaultParameters.keys()[_i]
             del self._defaultParameters[alias_name]
-            print "Removed %s from default parameters." % str(alias_name)
+            print("Removed %s from default parameters." % str(alias_name))
         elif name in self.additional_parameters:
             delattr(self, name)
             self._additional_parameters.remove(name)
-            print "Removed %s from additional parameters." % str(name)
+            print("Removed %s from additional parameters." % str(name))
         else:
             warnings.warn("Couldn't find %s in parameters!" % str(name))
 
@@ -187,11 +187,11 @@ class RadianceParameters(object):
                 _i = self._defaultParameters.values().index(key)
                 alias_name = self._defaultParameters.keys()[_i]
                 setattr(self, alias_name, value)
-                print "Updated value for %s to %s" % (alias_name, value)
+                print("Updated value for %s to %s" % (alias_name, value))
             except Exception:
                 # paramter already exists. just update the value
                 setattr(self, key, value)
-                print "Updated value for %s to %s" % (key, value)
+                print("Updated value for %s to %s" % (key, value))
 
     # TODO: Enhance the parser using regX
     def _parse_rad_parameters(self, parameters_string):

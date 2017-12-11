@@ -48,7 +48,7 @@ class SolarAccessGridBased(GenericGridBased):
         analysis_recipe.run(debaug=False)
 
         # get the results
-        print analysis_recipe.results()
+        print(analysis_recipe.results())
     """
 
     def __init__(self, sun_vectors, hoys, analysis_grids, timestep=1, hb_objects=None,
@@ -213,8 +213,8 @@ class SolarAccessGridBased(GenericGridBased):
             raise ValueError("Failed to create the sun vectors!")
 
         if len(self.sun_vectors) != len(vectors):
-            print '%d vectors with positive z value are found and removed ' \
-                'from sun vectors' % (len(vectors) - len(self.sun_vectors))
+            print('%d vectors with positive z value are found and removed ' \
+                'from sun vectors' % (len(vectors) - len(self.sun_vectors)))
 
     @property
     def timestep(self):

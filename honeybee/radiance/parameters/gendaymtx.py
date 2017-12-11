@@ -42,14 +42,14 @@ class GendaymtxParameters(AdvancedRadianceParameters):
         gmtx = GendaymtxParameters()
 
         # check the current values
-        print gmtx.to_rad_string()
+        print(gmtx.to_rad_string())
         > -v -r 0 -m 1 -of
 
         # ask only for direct sun
         gmtx.only_direct = True
 
         # check the new values. -d is added.
-        print gmtx.to_rad_string()
+        print(gmtx.to_rad_string())
         > -v -d -r 0 -m 1 -of
     """
 

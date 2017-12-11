@@ -105,7 +105,7 @@ class AnalysisBase(object):
                     self.__done = True
 
         except Exception as e:
-            print "Failed to execute batch files: %s" % str(e)
+            print("Failed to execute batch files: %s" % str(e))
 
     def __repr__(self):
         """Represent Analysis class."""

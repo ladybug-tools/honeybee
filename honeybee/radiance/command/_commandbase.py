@@ -167,7 +167,7 @@ class RadianceCommand(object):
             if raise_exception:
                 raise ValueError(__err)
             else:
-                print __err
+                print(__err)
 
     def __check_input_files_exist(self):
 
@@ -231,7 +231,7 @@ class RadianceCommand(object):
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         for line in p.stdout.readlines():
-            print line,
+            print(line)
         p.wait()
 
         try:
