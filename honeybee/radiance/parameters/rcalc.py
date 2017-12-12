@@ -8,41 +8,41 @@ from ._frozen import frozen
 @frozen
 class RcalcParameters(AdvancedRadianceParameters):
 
-    def __init__(self, acceptExactMatches=None, ignoreNewLines=None,
-                 passiveMode=None, singleOuput=None, ignoreWarnings=None,
-                 flushOuputEveryRecord=None, tmpltIpRecFormat=None,
+    def __init__(self, accept_exact_matches=None, ignore_new_lines=None,
+                 passive_mode=None, single_ouput=None, ignore_warnings=None,
+                 flush_ouput_every_record=None, tmplt_ip_rec_format=None,
                  expression=None):
         # Init parameters
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadianceBoolFlag('b', 'accept exact matches',
-                                 attributeName='acceptExactMatches')
-        self.acceptExactMatches = acceptExactMatches
+        self.add_radiance_bool_flag('b', 'accept exact matches',
+                                    attribute_name='accept_exact_matches')
+        self.accept_exact_matches = accept_exact_matches
 
-        self.addRadianceBoolFlag('l', 'ignore new lines',
-                                 attributeName='ignoreNewLines')
-        self.ignoreNewLines = ignoreNewLines
+        self.add_radiance_bool_flag('l', 'ignore new lines',
+                                    attribute_name='ignore_new_lines')
+        self.ignore_new_lines = ignore_new_lines
 
-        self.addRadianceBoolFlag('p', 'passive mode',
-                                 attributeName='passiveMode')
-        self.passiveMode = passiveMode
+        self.add_radiance_bool_flag('p', 'passive mode',
+                                    attribute_name='passive_mode')
+        self.passive_mode = passive_mode
 
-        self.addRadianceBoolFlag('n', 'produce single output record',
-                                 attributeName='singleOuput')
-        self.singleOuput = singleOuput
+        self.add_radiance_bool_flag('n', 'produce single output record',
+                                    attribute_name='single_ouput')
+        self.single_ouput = single_ouput
 
-        self.addRadianceBoolFlag('w', 'ignore non fatal warnings',
-                                 attributeName='ignoreWarnings')
-        self.ignoreWarnings = ignoreWarnings
+        self.add_radiance_bool_flag('w', 'ignore non fatal warnings',
+                                    attribute_name='ignore_warnings')
+        self.ignore_warnings = ignore_warnings
 
-        self.addRadianceBoolFlag('u', 'flush ouput after every record',
-                                 attributeName='flushOuputEveryRecord')
-        self.flushOuputEveryRecord = flushOuputEveryRecord
+        self.add_radiance_bool_flag('u', 'flush ouput after every record',
+                                    attribute_name='flush_ouput_every_record')
+        self.flush_ouput_every_record = flush_ouput_every_record
 
-        self.addRadianceValue(
-            'tmpltIpRecFormat', 'template for alternate input record format',
-            attributeName='tmpltIpRecFormat')
-        self.tmpltIpRecFormat = tmpltIpRecFormat
+        self.add_radiance_value(
+            'tmplt_ip_rec_format', 'template for alternate input record format',
+            attribute_name='tmplt_ip_rec_format')
+        self.tmplt_ip_rec_format = tmplt_ip_rec_format
 
-        self.addRadianceValue('e', 'a valid expression', attributeName='expression')
+        self.add_radiance_value('e', 'a valid expression', attribute_name='expression')
         self.expression = expression

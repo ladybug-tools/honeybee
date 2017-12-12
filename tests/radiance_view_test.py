@@ -18,9 +18,9 @@ class ViewTestCase(unittest.TestCase):
     # test default values
     def test_default_values(self):
         """Make sure default values are set correctly."""
-        self.assertEqual(self.v.viewPoint, (0, 0, 0))
-        self.assertEqual(self.v.viewDirection, (0, 0, 1))
-        self.assertEqual(self.v.viewUpVector, (0, 1, 0))
+        self.assertEqual(self.v.view_point, (0, 0, 0))
+        self.assertEqual(self.v.view_direction, (0, 0, 1))
+        self.assertEqual(self.v.view_up_vector, (0, 1, 0))
         # more tests here
 
     # test for assertion and exceptions
@@ -33,15 +33,15 @@ class ViewTestCase(unittest.TestCase):
     def test_fish_eye_view(self):
         """vh and vv should set to 180 for fisheye view."""
         self.v.viewType = 1
-        self.assertEqual(self.v.viewHSize, 180)
-        self.assertEqual(self.v.viewVSize, 180)
+        self.assertEqual(self.v.view_h_size, 180)
+        self.assertEqual(self.v.view_v_size, 180)
 
     def test_updating_view(self):
         """Change location and direction."""
         self.v.viewPoint = (0, 0, 10)
         self.v.viewDirection = (0, 0, -1)
-        self.assertEqual(self.v.viewPoint, (0, 0, 10))
-        self.assertEqual(self.v.viewDirection, (0, 0, -1))
+        self.assertEqual(self.v.view_point, (0, 0, 10))
+        self.assertEqual(self.v.view_direction, (0, 0, -1))
 
 
 if __name__ == '__main__':

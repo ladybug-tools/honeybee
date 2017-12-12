@@ -11,18 +11,18 @@ class Scene(object):
 
     Args:
         files: List of radiance files. Valid files are *.rad, *.mat and *.oct.
-        copyLocal: Set to True to copy the files to the analysis folder (Default: True).
+        copy_local: Set to True to copy the files to the analysis folder (Default: True).
         overwrite: Set to True to overwrite the files if already exist.
     """
 
-    def __init__(self, files, copyLocal=True, overwrite=False):
+    def __init__(self, files, copy_local=True, overwrite=False):
         """Create scene."""
         self.files = files
-        self.copyLocal = copyLocal
+        self.copy_local = copy_local
         self.overwrite = overwrite
 
     @property
-    def fileCount(self):
+    def file_count(self):
         """Number of total files in the scene."""
         return sum(len(f) for f in self.files)
 
@@ -45,7 +45,7 @@ class Scene(object):
                 tuple(f for f in fs if f.lower().endswith('.rad')),
                 tuple(f for f in fs if f.lower().endswith('.oct')))
 
-    def toRadString(self):
+    def to_rad_string(self):
         """Return list of files as single string."""
         return ''.join(fp for f in self.files for fp in f)
 
@@ -56,7 +56,7 @@ class Scene(object):
     def __repr__(self):
         """Scene."""
         return 'Radiance Scene%s:\n%s' % (
-            ' (Files will be copied locally)' if self.copyLocal else '',
+            ' (Files will be copied locally)' if self.copy_local else '',
 
             '\n'.join(fp for f in self.files for fp in f)
         )

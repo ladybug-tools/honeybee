@@ -7,48 +7,47 @@ import os
 
 
 class Getinfo(RadianceCommand):
-    getDimensions = RadianceBoolFlag('d', 'getDimensions')
-    outputFile = RadiancePath('output', 'getinfo details', checkExists=False)
+    get_dimensions = RadianceBoolFlag('d', 'get_dimensions')
+    output_file = RadiancePath('output', 'getinfo details', check_exists=False)
 
-    def __init__(self, getDimensions=None, headerSuppress=None, radFiles=None,
-                 outputFile=None):
-
+    def __init__(self, get_dimensions=None, header_suppress=None, rad_files=None,
+                 output_file=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        self.getDimensions = getDimensions
-        self.headerSuppress = headerSuppress
+        self.get_dimensions = get_dimensions
+        self.header_suppress = header_suppress
 
-        self.inputFile = radFiles
-        self.outputFile = outputFile
+        self.input_file = rad_files
+        self.output_file = output_file
 
     @property
-    def inputFile(self):
+    def input_file(self):
         """Get and set rad files."""
-        return self.__inputFile
+        return self.__input_file
 
-    @inputFile.setter
-    def inputFile(self, files):
+    @input_file.setter
+    def input_file(self, files):
         if files:
             if isinstance(files, basestring):
                 files = [files]
-            self.__inputFile = [os.path.normpath(f) for f in files]
+            self.__input_file = [os.path.normpath(f) for f in files]
         else:
-            self.__inputFile = []
+            self.__input_file = []
 
-    def toRadString(self, relativePath=False):
-        warning = self.getDimensions.toRadString()
-        radFiles = " ".join(self.normspace(f) for f in self.inputFile)
-        cmdPath = self.normspace(os.path.join(self.radbinPath, 'getinfo'))
-        outputFilePath = self.outputFile.toRadString()
-        outputFile = ">%s" % outputFilePath if outputFilePath else ''
-        radString = "{0} {1} {2} {3}".format(cmdPath, warning, radFiles,
-                                                 outputFile)
-        self.checkInputFiles(radString)
+    def to_rad_string(self, relative_path=False):
+        warning = self.get_dimensions.to_rad_string()
+        rad_files = " ".join(self.normspace(f) for f in self.input_file)
+        cmd_path = self.normspace(os.path.join(self.radbin_path, 'getinfo'))
+        output_file_path = self.output_file.to_rad_string()
+        output_file = ">%s" % output_file_path if output_file_path else ''
+        rad_string = "{0} {1} {2} {3}".format(cmd_path, warning, rad_files,
+                                              output_file)
+        self.check_input_files(rad_string)
 
-        return radString
+        return rad_string
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Return input files by user."""
-        return self.inputFile
+        return self.input_file

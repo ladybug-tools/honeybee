@@ -7,7 +7,7 @@ class RadianceSky(object):
     __slots__ = ()
 
     @classmethod
-    def fromJson(cls):
+    def from_json(cls):
         raise NotImplementedError(
             "fromJson is not implemented for {}.".format(cls.__class__.__name__)
         )
@@ -18,17 +18,17 @@ class RadianceSky(object):
         return True
 
     @property
-    def isPointInTime(self):
+    def is_point_in_time(self):
         """Return True if the sky is generated for a single poin in time."""
         return False
 
     @abstractproperty
-    def isClimateBased(self):
+    def is_climate_based(self):
         """Return True if the sky is created based on values from weather file."""
         pass
 
     @abstractmethod
-    def toRadString(self):
+    def to_rad_string(self):
         """Return radiance definition as a string."""
         pass
 

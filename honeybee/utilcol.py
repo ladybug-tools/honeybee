@@ -3,7 +3,7 @@ import uuid
 import re
 
 
-def randomName(shorten=True):
+def random_name(shorten=True):
     """Generate a random name as a string using uuid.
 
     Args:
@@ -15,7 +15,7 @@ def randomName(shorten=True):
         return str(uuid.uuid4())
 
 
-def checkName(name):
+def check_name(name):
     """Check if a name is a valid honeybee name.
 
     A valid name can only have alphabet, digits, - and _.
@@ -32,7 +32,7 @@ def checkName(name):
 
 
 if __name__ == '__main__':
-    checkName('should_be_fine')
-#     checkName('also-fine')
-    checkName('this.is.also.fine.1234')
-#     checkName('not good')
+    check_name('should_be_fine')
+#     check_name('also-fine')
+    check_name('this.is.also.fine.1234')
+#     check_name('not good')

@@ -12,24 +12,24 @@ class GenskyParameters(AdvancedRadianceParameters):
 
 
     Attributes:
-        altitudeAzimuth: [-ang] A tuple corresponding to altitude and azimuth
+        altitude_azimuth: [-ang] A tuple corresponding to altitude and azimuth
             angle.This input can be used instead of specifying the monthDayTime.
-        sunnySky: [-s|+s] A boolean value to generate sunny sky with or without
+        sunny_sky: [-s|+s] A boolean value to generate sunny sky with or without
             sun. Set to True to generate a sunnny sky with sun, Fasle to generate
             a sunny sky without sun (Default: None)
-        cloudySky: [-c] A boolean value to generate cloudy sky
-        intermSky: [-i|+i] A boolean value to generate intermediate sky with or
+        cloudy_sky: [-c] A boolean value to generate cloudy sky
+        interm_sky: [-i|+i] A boolean value to generate intermediate sky with or
             without sun. Set to True to generate an intermediate sky with sun,
             Fasle to generate a intermediate sky without sun (Default: None)
-        uniformCloudySky: [-u] A boolean value to generate Uniform cloudy sky.
-        groundReflect: [-g rfl] A float number to indicate ground reflectance.
-        zenithBright: [-b brt] A float number to indicate zenith brightness in
+        uniform_cloudy_sky: [-u] A boolean value to generate Uniform cloudy sky.
+        ground_reflect: [-g rfl] A float number to indicate ground reflectance.
+        zenith_bright: [-b brt] A float number to indicate zenith brightness in
             watts/steradian/meter-sq.
-        zenithBrightHorzDiff: [-B irrad] A float number to indicate zenith
+        zenith_bright_horz_diff: [-B irrad] A float number to indicate zenith
             brightness from horizontal diffuse irradiance in watts/meter-sq.
-        solarRad: [-r rad] A float number to indicate solar radiance in
+        solar_rad: [-r rad] A float number to indicate solar radiance in
         watts/steradians/meter-sq.
-        solarRadHorzDiff: [-R irrad] A float number to indicate solar radiance
+        solar_rad_horz_diff: [-R irrad] A float number to indicate solar radiance
             from horizontal direct irradiance in watts/meter-sq.
         turbidity: [-t trb] A float number to indicate turbidity.
         latitude: [-a lat] A float number to indicate site altitude. Negative
@@ -48,116 +48,117 @@ class GenskyParameters(AdvancedRadianceParameters):
         gnskyparam = GenskyParameters()
 
         # check the current values
-        print gnskyparam.toRadString()
+        print(gnskyparam.to_rad_string())
         > -g 0.5
 
 
         # set altitude and azimuth angle values
-        gnsky.altitudeAzimuth = (12,31)
+        gnsky.altitude_azimuth = (12,31)
 
         #check the new values added.
-        print gnskyparam.toRadString()
+        print(gnskyparam.to_rad_string())
         > -g 0.5 -ang 12.0 31.0
 
     """
 
-    def __init__(self, altitudeAzimuth=None, sunnySky=None,
-                 cloudySky=None, intermSky=None, uniformCloudySky=None,
-                 groundReflect=None, zenithBright=None, zenithBrightHorzDiff=None,
-                 solarRad=None, solarRadHorzDiff=None, turbidity=None,
+    def __init__(self, altitude_azimuth=None, sunny_sky=None,
+                 cloudy_sky=None, interm_sky=None, uniform_cloudy_sky=None,
+                 ground_reflect=None, zenith_bright=None, zenith_bright_horz_diff=None,
+                 solar_rad=None, solar_rad_horz_diff=None, turbidity=None,
                  latitude=None, longitude=None, meridian=None):
         """Init sky parameters."""
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadianceTuple('ang', 'altitude azimuth', tupleSize=2,
-                              numType=float, attributeName='altitudeAzimuth')
-        self.altitudeAzimuth = altitudeAzimuth
+        self.add_radiance_tuple('ang', 'altitude azimuth', tuple_size=2,
+                                num_type=float, attribute_name='altitude_azimuth')
+        self.altitude_azimuth = altitude_azimuth
         """[-ang] A tuple corresponding to altitude and azimuth
             angle.This input can be used instead of specifying the monthDayTime."""
 
-        self.addRadianceBoolFlag('s', 'sunny sky with or without sun',
-                                 attributeName='sunnySky',
-                                 isDualSign=True)
+        self.add_radiance_bool_flag('s', 'sunny sky with or without sun',
+                                    attribute_name='sunny_sky',
+                                    is_dual_sign=True)
         # set current value
-        self.sunnySky = sunnySky
+        self.sunny_sky = sunny_sky
         """[-s|+s] A boolean value to generate sunny sky with or without sun.
         Set to True to generate a sunnny sky with sun, Fasle to generate a sunny
         sky without sun (Default: None)
         """
 
-        self.addRadianceBoolFlag('c', 'cloudy sky', attributeName='cloudySky')
-        self.cloudySky = cloudySky
+        self.add_radiance_bool_flag('c', 'cloudy sky', attribute_name='cloudy_sky')
+        self.cloudy_sky = cloudy_sky
         """[-c] A boolean value to generate cloudy sky"""
 
-        self.addRadianceBoolFlag('i', 'intermediate sky with or without sun',
-                                 attributeName='intermSky',
-                                 isDualSign=True)
-        self.intermSky = intermSky
+        self.add_radiance_bool_flag('i', 'intermediate sky with or without sun',
+                                    attribute_name='interm_sky',
+                                    is_dual_sign=True)
+        self.interm_sky = interm_sky
         """[-i|+i] A boolean value to generate intermediate sky with or without
         sun. Set to True to generate an intermediate sky with sun, Fasle to
         generate a intermediate sky without sun (Default: None)
         """
 
-        self.addRadianceBoolFlag('u', 'uniform cloudy sky',
-                                 attributeName='uniformCloudySky')
-        self.uniformCloudySky = uniformCloudySky
+        self.add_radiance_bool_flag('u', 'uniform cloudy sky',
+                                    attribute_name='uniform_cloudy_sky')
+        self.uniform_cloudy_sky = uniform_cloudy_sky
         """[-u] A boolean value to generate Uniform cloudy sky."""
 
-        self.addRadianceNumber('g', 'ground reflectance',
-                               attributeName='groundReflect',
-                               numType=float, validRange=(0, 1))
-        self.groundReflect = groundReflect
+        self.add_radiance_number('g', 'ground reflectance',
+                                 attribute_name='ground_reflect',
+                                 num_type=float, valid_range=(0, 1))
+        self.ground_reflect = ground_reflect
         """[-g rfl] A float number to indicate ground reflectance """
 
-        self.addRadianceNumber('b', 'zenith brightness',
-                               attributeName='zenithBright',
-                               numType=float)
-        self.zenithBright = zenithBright
+        self.add_radiance_number('b', 'zenith brightness',
+                                 attribute_name='zenith_bright',
+                                 num_type=float)
+        self.zenith_bright = zenith_bright
         """ [-b brt] A float number to indicate zenith brightness in
          watts/steradian/meter-sq."""
 
-        self.addRadianceNumber('B',
-                               'zenith brightness from horizontal diffuse'
-                               'irradiance',
-                               attributeName='zenithBrightHorzDiff',
-                               numType=float)
-        self.zenithBrightHorzDiff = zenithBrightHorzDiff
+        self.add_radiance_number('B',
+                                 'zenith brightness from horizontal diffuse'
+                                 'irradiance',
+                                 attribute_name='zenith_bright_horz_diff',
+                                 num_type=float)
+        self.zenith_bright_horz_diff = zenith_bright_horz_diff
         """[-B irrad] A float number to indicate zenith  brightness from
         horizontal diffuse irradiance in watts/meter-sq."""
 
-        self.addRadianceNumber('r', 'solar radiance',
-                               attributeName='solarRad',
-                               numType=float)
-        self.solarRad = solarRad
+        self.add_radiance_number('r', 'solar radiance',
+                                 attribute_name='solar_rad',
+                                 num_type=float)
+        self.solar_rad = solar_rad
         """[-r rad] A float number to indicate solar radiance in
         watts/steradians/meter-sq."""
 
-        self.addRadianceNumber('R', 'solar radiance from horizontal diffuse irradiance',
-                               attributeName='solarRadHorzDiff',
-                               numType=float)
-        self.solarRadHorzDiff = solarRadHorzDiff
+        self.add_radiance_number('R',
+                                 'solar radiance from horizontal diffuse irradiance',
+                                 attribute_name='solar_rad_horz_diff',
+                                 num_type=float)
+        self.solar_rad_horz_diff = solar_rad_horz_diff
         """ [-R irrad] A float number to indicate solar radiance from horizontal
         direct irradiance in watts/meter-sq."""
 
-        self.addRadianceNumber('t', 'turbidity', attributeName='turbidity',
-                               numType=float)
+        self.add_radiance_number('t', 'turbidity', attribute_name='turbidity',
+                                 num_type=float)
         self.turbidity = turbidity
         """ [-t trb] A float number to indicate turbidity."""
 
-        self.addRadianceNumber('a', 'latitude', attributeName='latitude',
-                               numType=float)
+        self.add_radiance_number('a', 'latitude', attribute_name='latitude',
+                                 num_type=float)
         self.latitude = latitude
         """[-a lat] A float number to indicate site altitude. Negative angle
         indicates south latitude."""
 
-        self.addRadianceNumber('o', 'longitude', attributeName='longitude',
-                               numType=float)
+        self.add_radiance_number('o', 'longitude', attribute_name='longitude',
+                                 num_type=float)
         self.longitude = longitude
         """[-o lon] A float number to indicate site latitude. Negative angle
         indicates east longitude."""
 
-        self.addRadianceNumber('m', 'meridian', attributeName='meridian',
-                               numType=float)
+        self.add_radiance_number('m', 'meridian', attribute_name='meridian',
+                                 num_type=float)
         self.meridian = meridian
         """[-m mer] A float number to indicate site meridian west of
         Greenwich. """

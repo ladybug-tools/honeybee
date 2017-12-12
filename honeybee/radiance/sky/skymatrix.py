@@ -10,7 +10,7 @@ class SkyMatrix(RadianceSky):
 
     Attributes:
         wea: An instance of ladybug Wea.
-        skyDensity: A positive intger for sky density. [1] Tregenza Sky,
+        sky_density: A positive intger for sky density. [1] Tregenza Sky,
             [2] Reinhart Sky, etc. (Default: 1)
         north: An angle in degrees between 0-360 to indicate north direction
             (Default: 0).
@@ -21,26 +21,27 @@ class SkyMatrix(RadianceSky):
             avoid sky being overwritten by other skymatrix components.
     """
 
-    __slots__ = ('_wea', 'hoys', '_skyType', '_skyMatrixParameters',
+    __slots__ = ('_wea', 'hoys', '_sky_type', '_sky_matrixParameters',
                  '_mode', 'suffix', 'north')
 
-    def __init__(self, wea, skyDensity=1, north=0, hoys=None, mode=0, suffix=None):
+    def __init__(self, wea, sky_density=1, north=0, hoys=None, mode=0, suffix=None):
         """Create sky."""
         RadianceSky.__init__(self)
         self.wea = wea
         self.hoys = hoys or range(8760)
-        skyDensity = skyDensity or 1
-        self._skyType = 0  # default to visible radiation
-        self._skyMatrixParameters = GendaymtxParameters(outputType=self._skyType)
+        sky_density = sky_density or 1
+        self._sky_type = 0  # default to visible radiation
+        self._sky_matrixParameters = GendaymtxParameters(output_type=self._sky_type)
         self.north = north
-        self.skyDensity = skyDensity
+        self.sky_density = sky_density
         self.mode = mode
         self.suffix = suffix or ''
 
     @classmethod
-    def fromEpwFile(cls, epwFile, skyDensity=1, north=0, hoys=None, mode=0, suffix=None):
+    def from_epw_file(cls, epw_file, sky_density=1, north=0,
+                      hoys=None, mode=0, suffix=None):
         """Create sky from an epw file."""
-        return cls(Wea.fromEpwFile(epwFile), skyDensity, north, hoys, mode,
+        return cls(Wea.from_epw_file(epw_file), sky_density, north, hoys, mode,
                    suffix=suffix)
 
     @property
@@ -49,14 +50,14 @@ class SkyMatrix(RadianceSky):
         return True
 
     @property
-    def isClimateBased(self):
+    def is_climate_based(self):
         """Return True if the sky is generated from values from weather file."""
         return True
 
     @property
-    def skyMatrixParameters(self):
+    def sky_matrix_parameters(self):
         """Return sky matrix parameters."""
-        return self._skyMatrixParameters
+        return self._sky_matrixParameters
 
     @property
     def wea(self):
@@ -70,24 +71,24 @@ class SkyMatrix(RadianceSky):
         self._wea = w
 
     @property
-    def skyDensity(self):
+    def sky_density(self):
         """A positive intger for sky density. [1] Tregenza Sky, [2] Reinhart Sky, etc."""
-        return self._skyMatrixParameters.skyDensity
+        return self._sky_matrixParameters.sky_density
 
-    @skyDensity.setter
-    def skyDensity(self, s):
-        skyDensity = s or 1
-        self._skyMatrixParameters.skyDensity = skyDensity
+    @sky_density.setter
+    def sky_density(self, s):
+        sky_density = s or 1
+        self._sky_matrixParameters.sky_density = sky_density
 
     @property
     def north(self):
         """An angle in degrees between 0-360 to indicate north direction (Default: 0)."""
-        return self._skyMatrixParameters.rotation
+        return self._sky_matrixParameters.rotation
 
     @north.setter
     def north(self, n):
         north = n or 0
-        self._skyMatrixParameters.rotation = north
+        self._sky_matrixParameters.rotation = north
 
     @property
     def mode(self):
@@ -98,102 +99,102 @@ class SkyMatrix(RadianceSky):
     def mode(self, m):
         self._mode = m or 0
         if self._mode == 0:
-            self._skyMatrixParameters.onlyDirect = False
-            self._skyMatrixParameters.onlySky = False
+            self._sky_matrixParameters.only_direct = False
+            self._sky_matrixParameters.only_sky = False
         elif self._mode == 1:
-            self._skyMatrixParameters.onlyDirect = True
-            self._skyMatrixParameters.onlySky = False
+            self._sky_matrixParameters.only_direct = True
+            self._sky_matrixParameters.only_sky = False
         elif self._mode == 2:
-            self._skyMatrixParameters.onlyDirect = False
-            self._skyMatrixParameters.onlySky = True
+            self._sky_matrixParameters.only_direct = False
+            self._sky_matrixParameters.only_sky = True
 
     @property
     def name(self):
         """Sky default name."""
         return "skymtx_{}_r{}_{}_{}_{}_{}_{}{}".format(
-            self.skyTypeHumanReadable, self.skyDensity,
-            self.mode, self.wea.location.stationId,
+            self.sky_type_human_readable, self.sky_density,
+            self.mode, self.wea.location.station_id,
             self.wea.location.latitude, self.wea.location.longitude, self.north,
             '_{}'.format(self.suffix) if self.suffix else ''
         )
 
     @property
-    def skyType(self):
+    def sky_type(self):
         """Specify 0 for visible radiation, 1 for total solar radiation."""
-        return self._skyType
+        return self._sky_type
 
-    @skyType.setter
-    def skyType(self, t):
+    @sky_type.setter
+    def sky_type(self, t):
         """Specify 0 for visible radiation, 1 for total solar radiation."""
-        self._skyType = t % 2
-        self._skyMatrixParameters.outputType = self._skyType
+        self._sky_type = t % 2
+        self._sky_matrixParameters.output_type = self._sky_type
 
     @property
-    def skyTypeHumanReadable(self):
+    def sky_type_human_readable(self):
         """Human readable sky type."""
         values = ('vis', 'sol')
-        return values[self.skyType]
+        return values[self.sky_type]
 
-    def hoursMatch(self, hoursFile):
+    def hours_match(self, hours_file):
         """Check if hours in the hours file matches the hours of wea."""
-        if not os.path.isfile(hoursFile):
+        if not os.path.isfile(hours_file):
             return False
 
-        with open(hoursFile, 'r') as hrf:
+        with open(hours_file, 'r') as hrf:
             line = hrf.read()
         return line == ','.join(str(h) for h in self.hoys) + '\n'
 
-    def writeWea(self, targetDir, writeHours=False):
+    def write_wea(self, target_dir, write_hours=False):
         """Write the wea file.
 
         WEA carries radiation values from epw and is what gendaymtx uses to
         generate the sky.
         Args:
-            targetDir: Path to target directory.
-            writeHours: Write hours in a separate file in folder.
+            target_dir: Path to target directory.
+            write_hours: Write hours in a separate file in folder.
         """
-        weafilepath = os.path.join(targetDir, '{}.wea'.format(self.name))
-        return self.wea.write(weafilepath, self.hoys, writeHours)
+        weafilepath = os.path.join(target_dir, '{}.wea'.format(self.name))
+        return self.wea.write(weafilepath, self.hoys, write_hours)
 
-    def toRadString(self, workingDir, writeHours=False):
+    def to_rad_string(self, working_dir, write_hours=False):
         """Get the radiance command line as a string."""
         # check if wea file in available otherwise include the line
-        outfilepath = os.path.join(workingDir, '{}.smx'.format(self.name))
-        weafilepath = os.path.join(workingDir, '{}.wea'.format(self.name))
-        weafilepath = self.wea.write(weafilepath, self.hoys, writeHours)
-        genday = Gendaymtx(weaFile=weafilepath, outputName=outfilepath)
-        genday.gendaymtxParameters = self._skyMatrixParameters
-        genday.gendaymtxParameters.outputType = self.skyType
-        return genday.toRadString()
+        outfilepath = os.path.join(working_dir, '{}.smx'.format(self.name))
+        weafilepath = os.path.join(working_dir, '{}.wea'.format(self.name))
+        weafilepath = self.wea.write(weafilepath, self.hoys, write_hours)
+        genday = Gendaymtx(wea_file=weafilepath, output_name=outfilepath)
+        genday.gendaymtx_parameters = self._sky_matrixParameters
+        genday.gendaymtx_parameters.output_type = self.sky_type
+        return genday.to_rad_string()
 
-    def execute(self, workingDir, reuse=True):
+    def execute(self, working_dir, reuse=True):
         """Generate sky matrix.
 
         Args:
-            workingDir: Folder to execute and write the output.
+            working_dir: Folder to execute and write the output.
             reuse: Reuse the matrix if already existed in the folder.
         """
-        outfilepath = os.path.join(workingDir, '{}.smx'.format(self.name))
-        weafilepath = os.path.join(workingDir, '{}.wea'.format(self.name))
+        outfilepath = os.path.join(working_dir, '{}.smx'.format(self.name))
+        weafilepath = os.path.join(working_dir, '{}.wea'.format(self.name))
         hoursfilepath = weafilepath[:-4] + '.hrs'
 
-        if reuse and os.path.isfile(outfilepath) and self.hoursMatch(hoursfilepath):
+        if reuse and os.path.isfile(outfilepath) and self.hours_match(hoursfilepath):
             print('Using the same SkyMatrix from an older run.'.format())
             return outfilepath
         else:
-            outfilepath = os.path.join(workingDir, '{}.smx'.format(self.name))
-            weafilepath = os.path.join(workingDir, '{}.wea'.format(self.name))
+            outfilepath = os.path.join(working_dir, '{}.smx'.format(self.name))
+            weafilepath = os.path.join(working_dir, '{}.wea'.format(self.name))
             weafilepath = self.wea.write(weafilepath)
-            genday = Gendaymtx(weaFile=weafilepath, outputName=outfilepath)
-            genday.gendaymtxParameters = self._skyMatrixParameters
-            genday.gendaymtxParameters.outputType = self.skyType
+            genday = Gendaymtx(wea_file=weafilepath, output_name=outfilepath)
+            genday.gendaymtx_parameters = self._sky_matrixParameters
+            genday.gendaymtx_parameters.output_type = self.sky_type
             return genday.execute()
 
     def duplicate(self):
         """Duplicate this class."""
-        skymtx = SkyMatrix(self.wea, self.skyDensity, self.north, self.hoys,
+        skymtx = SkyMatrix(self.wea, self.sky_density, self.north, self.hoys,
                            self.mode, self.suffix)
-        skymtx.skyType = self.skyType
+        skymtx.sky_type = self.sky_type
         return skymtx
 
     def ToString(self):

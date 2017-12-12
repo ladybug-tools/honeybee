@@ -6,43 +6,45 @@ import os
 from ..parameters.raBmp import RaBmpParameters
 from ..datatype import RadiancePath
 
-class RaBmp(RadianceCommand):
-    inputHdrFile = RadiancePath('inputHdr', 'inputHDR file')
-    outputBmpFile = RadiancePath('outputBmp', 'output TIFF file', extension='.bmp')
 
-    def __init__(self, inputHdrFile=None, outputBmpFile=None, raBmpParameters=None):
-        RadianceCommand.__init__(self,executableName='ra_bmp.exe')
-        self.inputHdrFile = inputHdrFile
+class RaBmp(RadianceCommand):
+    input_hdr_file = RadiancePath('inputHdr', 'inputHDR file')
+    output_bmp_file = RadiancePath('outputBmp', 'output TIFF file', extension='.bmp')
+
+    def __init__(self, input_hdr_file=None, output_bmp_file=None,
+                 ra_bmp_parameters=None):
+        RadianceCommand.__init__(self, executable_name='ra_bmp.exe')
+        self.input_hdr_file = input_hdr_file
         """Path for input HDR file"""
-        self.outputBmpFile = outputBmpFile
+        self.output_bmp_file = output_bmp_file
         """Path for output tiff file"""
-        self.raBmpParameters = raBmpParameters
+        self.ra_bmp_parameters = ra_bmp_parameters
         """An instance of RaBmp parameters"""
 
     @property
-    def raBmpParameters(self):
-        """Get and set raBmpParameters."""
-        return self.__raBmpParameters
+    def ra_bmp_parameters(self):
+        """Get and set ra_bmp_parameters."""
+        return self.__ra_bmp_parameters
 
-    @raBmpParameters.setter
-    def raBmpParameters(self, raBmpParam):
-        self.__raBmpParameters = raBmpParam if raBmpParam is not None \
+    @ra_bmp_parameters.setter
+    def ra_bmp_parameters(self, ra_bmp_param):
+        self.__ra_bmp_parameters = ra_bmp_param if ra_bmp_param is not None \
             else RaBmpParameters()
 
-        assert hasattr(self.raBmpParameters, "isRadianceParameters"), \
-            "input raBmpParameters is not a valid parameters type."
+        assert hasattr(self.ra_bmp_parameters, "isRadianceParameters"), \
+            "input ra_bmp_parameters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
-        cmdName = self.normspace(os.path.join(self.radbinPath, 'ra_bmp'))
-        params = self.raBmpParameters.toRadString()
+    def to_rad_string(self, relative_path=False):
+        cmd_name = self.normspace(os.path.join(self.radbin_path, 'ra_bmp'))
+        params = self.ra_bmp_parameters.to_rad_string()
 
-        inputFile = self.inputHdrFile.toRadString()
-        outputFile = self.outputBmpFile.toRadString()
+        input_file = self.input_hdr_file.to_rad_string()
+        output_file = self.output_bmp_file.to_rad_string()
 
-        radString = "%s %s %s > %s" % (cmdName, params, inputFile, outputFile)
+        rad_string = "%s %s %s > %s" % (cmd_name, params, input_file, output_file)
 
-        return radString
+        return rad_string
 
     @property
-    def inputFiles(self):
-        return self.inputHdrFile,
+    def input_files(self):
+        return self.input_hdr_file,

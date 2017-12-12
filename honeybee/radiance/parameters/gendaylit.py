@@ -12,9 +12,9 @@ class GendaylitParameters(AdvancedRadianceParameters):
 
 
     Attributes:
-        altitudeAzimuth: [-ang] A tuple corresponding to altitude and azimuth
+        altitude_azimuth: [-ang] A tuple corresponding to altitude and azimuth
             angle.This input can be used instead of specifying the monthDayTime.
-        groundReflect: [-g rfl] A float number to indicate ground reflectance.
+        ground_reflect: [-g rfl] A float number to indicate ground reflectance.
         latitude: [-a lat] A float number to indicate site altitude. Negative
             angle indicates south latitude.
         longitude: [-o lon] A float number to indicate site latitude. Negative
@@ -30,98 +30,98 @@ class GendaylitParameters(AdvancedRadianceParameters):
 
     """
 
-    def __init__(self, altitudeAzimuth=None, latitude=None, longitude=None,
-                 meridian=None, groundReflect=None, suppressWarnings=None,
-                 timeInterval=None, suppressSun=None, perezParameters=None,
-                 dirNormDifHorzIrrad=None, dirHorzDifHorzIrrad=None,
-                 dirHorzDifHorzIllum=None, globHorzIrrad=None, outputType=None):
+    def __init__(self, altitude_azimuth=None, latitude=None, longitude=None,
+                 meridian=None, ground_reflect=None, suppress_warnings=None,
+                 time_interval=None, suppress_sun=None, perez_parameters=None,
+                 dir_norm_dif_horz_irrad=None, dir_horz_dif_horz_irrad=None,
+                 dir_horz_dif_horz_illum=None, glob_horz_irrad=None, output_type=None):
         """Init sky parameters."""
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadianceTuple('ang', 'altitude azimuth', tupleSize=2,
-                              numType=float, attributeName='altitudeAzimuth')
-        self.altitudeAzimuth = altitudeAzimuth
+        self.add_radiance_tuple('ang', 'altitude azimuth', tuple_size=2,
+                                num_type=float, attribute_name='altitude_azimuth')
+        self.altitude_azimuth = altitude_azimuth
         """[-ang] A tuple corresponding to altitude and azimuth
             angle.This input can be used instead of specifying the monthDayTime."""
 
-        self.addRadianceNumber('g', 'ground reflectance',
-                               attributeName='groundReflect',
-                               numType=float, validRange=(0, 1))
-        self.groundReflect = groundReflect
+        self.add_radiance_number('g', 'ground reflectance',
+                                 attribute_name='ground_reflect',
+                                 num_type=float, valid_range=(0, 1))
+        self.ground_reflect = ground_reflect
         """[-g rfl] A float number to indicate ground reflectance """
 
-        self.addRadianceNumber('a', 'latitude', attributeName='latitude',
-                               numType=float)
+        self.add_radiance_number('a', 'latitude', attribute_name='latitude',
+                                 num_type=float)
         self.latitude = latitude
         """[-a lat] A float number to indicate site altitude. Negative angle
         indicates south latitude."""
 
-        self.addRadianceNumber('o', 'longitude', attributeName='longitude',
-                               numType=float)
+        self.add_radiance_number('o', 'longitude', attribute_name='longitude',
+                                 num_type=float)
         self.longitude = longitude
         """[-o lon] A float number to indicate site latitude. Negative angle
         indicates east longitude."""
 
-        self.addRadianceNumber('m', 'meridian', attributeName='meridian',
-                               numType=float)
+        self.add_radiance_number('m', 'meridian', attribute_name='meridian',
+                                 num_type=float)
         self.meridian = meridian
         """[-m mer] A float number to indicate site meridian west of
         Greenwich. """
 
-        self.addRadianceBoolFlag('w', 'suppress warnings',
-                                 attributeName='suppressWarnings')
-        self.suppressWarnings = suppressWarnings
+        self.add_radiance_bool_flag('w', 'suppress warnings',
+                                    attribute_name='suppress_warnings')
+        self.suppress_warnings = suppress_warnings
         """Suppress warning messages."""
 
-        self.addRadianceNumber('i', 'time interval', attributeName='timeInterval',
-                               numType=int)
-        self.timeInterval = timeInterval
+        self.add_radiance_number('i', 'time interval', attribute_name='time_interval',
+                                 num_type=int)
+        self.time_interval = time_interval
         """..."""
 
-        self.addRadianceBoolFlag('s', 'suppress sun', attributeName='suppressSun')
-        self.suppressSun = suppressSun
+        self.add_radiance_bool_flag('s', 'suppress sun', attribute_name='suppress_sun')
+        self.suppress_sun = suppress_sun
         """Prevent the solar disc from being in the output."""
 
-        self.addRadianceTuple('P', 'perez parameters', tupleSize=2,
-                              attributeName='perezParameters')
-        self.perezParameters = perezParameters
+        self.add_radiance_tuple('P', 'perez parameters', tuple_size=2,
+                                attribute_name='perez_parameters')
+        self.perez_parameters = perez_parameters
         """Perez parameters corresponding to epsilon and delta values."""
 
-        self.addRadianceTuple('W', 'direct-normal,diffuse-horizontal irradiance',
-                              tupleSize=2,
-                              attributeName='dirNormDifHorzIrrad')
-        self.dirNormDifHorzIrrad = dirNormDifHorzIrrad
+        self.add_radiance_tuple('W', 'direct-normal,diffuse-horizontal irradiance',
+                                tuple_size=2,
+                                attribute_name='dir_norm_dif_horz_irrad')
+        self.dir_norm_dif_horz_irrad = dir_norm_dif_horz_irrad
         """Direct-normal irradiance and diffuse-horizontal irradiance in W/m^2"""
 
-        self.addRadianceTuple('G', 'direct-horizontal,diffuse-horizontal irradiance',
-                              tupleSize=2,
-                              attributeName='dirHorzDifHorzIrrad')
-        self.dirHorzDifHorzIrrad = dirHorzDifHorzIrrad
+        self.add_radiance_tuple('G', 'direct-horizontal,diffuse-horizontal irradiance',
+                                tuple_size=2,
+                                attribute_name='dir_horz_dif_horz_irrad')
+        self.dir_horz_dif_horz_irrad = dir_horz_dif_horz_irrad
         """Direct-horizontal irradiance and diffuse-horizontal irradiance in W/m^2"""
 
-        self.addRadianceTuple('L', 'direct-horizontal,diffuse-horizontal illuminance',
-                              tupleSize=2,
-                              attributeName='dirHorzDifHorzIllum')
-        self.dirHorzDifHorzIllum = dirHorzDifHorzIllum
+        self.add_radiance_tuple('L', 'direct-horizontal,diffuse-horizontal illuminance',
+                                tuple_size=2,
+                                attribute_name='dir_horz_dif_horz_illum')
+        self.dir_horz_dif_horz_illum = dir_horz_dif_horz_illum
         """Direct normal luminance and diffuse horizontal illuminance"""
 
-        self.addRadianceNumber('E', 'global horizontal irradiance',
-                               attributeName='globHorzIrrad')
-        self.globHorzIrrad = globHorzIrrad
+        self.add_radiance_number('E', 'global horizontal irradiance',
+                                 attribute_name='glob_horz_irrad')
+        self.glob_horz_irrad = glob_horz_irrad
         """Global horizontal irradiance"""
 
-        self.addRadianceNumber('O', 'output type',
-                               attributeName='outputType', acceptedInputs=(0, 1, 2))
-        self.outputType = outputType
+        self.add_radiance_number('O', 'output type',
+                                 attribute_name='output_type', accepted_inputs=(0, 1, 2))
+        self.output_type = output_type
         """Specify 0 for visible radiation, 1 for solar radiation and 2 for luminance"""
 
-    def toRadString(self):
+    def to_rad_string(self):
         """Generate Radiance string for gendaylit."""
         # Ensure only one of the inputs in the arguments below is set to True
-        self.checkIncompatibleInputs(self.perezParameters.toRadString(),
-                                     self.dirNormDifHorzIrrad.toRadString(),
-                                     self.dirHorzDifHorzIrrad.toRadString(),
-                                     self.dirHorzDifHorzIllum.toRadString(),
-                                     self.globHorzIrrad.toRadString())
+        self.check_incompatible_inputs(self.perez_parameters.to_rad_string(),
+                                       self.dir_norm_dif_horz_irrad.to_rad_string(),
+                                       self.dir_horz_dif_horz_irrad.to_rad_string(),
+                                       self.dir_horz_dif_horz_illum.to_rad_string(),
+                                       self.glob_horz_irrad.to_rad_string())
 
-        return AdvancedRadianceParameters.toRadString(self)
+        return AdvancedRadianceParameters.to_rad_string(self)

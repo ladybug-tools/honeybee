@@ -1,6 +1,4 @@
-import urllib
 import urllib2
-import json
 from mpupload import MultiPartForm
 
 
@@ -13,14 +11,14 @@ class Client():
             'Content-Type': 'application/zip'
         }
 
-    def uploadFile(self, filename):
+    def upload_file(self, filename):
         """Upload a file and send it to the server."""
         form = MultiPartForm()
         # add file
-        form.addFile('file', filename, open(filename, 'rb'))
+        form.add_file('file', filename, open(filename, 'rb'))
         request = urllib2.Request(self.url)
         body = str(form)
-        request.add_header('Content-type', form.getContentType())
+        request.add_header('Content-type', form.get_content_type())
         request.add_header('Content-length', str(len(body)))
         request.add_data(body)
         request.get_data()

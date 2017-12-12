@@ -7,7 +7,7 @@ from ..parameters.rcontrib import RcontribParameters
 import os
 
 
-# TODO(mostapha): pointsFile should change to input file. It can also be used for
+# TODO(mostapha): points_file should change to input file. It can also be used for
 # vwrays output
 class Rcontrib(RadianceCommand):
     u"""
@@ -17,27 +17,27 @@ class Rcontrib(RadianceCommand):
     https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rcontrib.pdf
 
     Attributes:
-        outputName: An optional name for output file name. If None the name of
+        output_name: An optional name for output file name. If None the name of
             .epw file will be used.
-        rcontribParameters: Radiance parameters for rcontrib. If None Default
-            parameters will be set. You can use self.rcontribParameters to view,
+        rcontrib_parameters: Radiance parameters for rcontrib. If None Default
+            parameters will be set. You can use self.rcontrib_parameters to view,
             add or remove the parameters before executing the command.
 
     Usage:
 
         from honeybee.radiance.command.rcontrib import Rcontrib
 
-        rcontrib = Rcontrib(outputName="test3",
-                            octreeFile=r"C:/ladybug/test3/gridbased/test3.oct",
-                            pointsFile=r"C:/ladybug/test3/gridbased/test3.pts")
+        rcontrib = Rcontrib(output_name="test3",
+                            octree_file=r"C:/ladybug/test3/gridbased/test3.oct",
+                            points_file=r"C:/ladybug/test3/gridbased/test3.pts")
 
         # set up parameters
-        rcontrib.rcontribParameters.modFile = r"C:/ladybug/test3/sunlist.txt"
-        rcontrib.rcontribParameters.I = True
-        rcontrib.rcontribParameters.ab = 0
-        rcontrib.rcontribParameters.ad = 10000
+        rcontrib.rcontrib_parameters.mod_file = r"C:/ladybug/test3/sunlist.txt"
+        rcontrib.rcontrib_parameters.I = True
+        rcontrib.rcontrib_parameters.ab = 0
+        rcontrib.rcontrib_parameters.ad = 10000
 
-        print rcontrib.toRadString()
+        print(rcontrib.to_rad_string())
         > c:/radiance/bin/rcontrib -ab 0 -ad 10000 -M
             C:/ladybug/test3/gridbased/sunlist.txt -I
             C:/ladybug/test3/gridbased/test3.oct <
@@ -47,83 +47,83 @@ class Rcontrib(RadianceCommand):
         rcontrib.execute()
     """
 
-    outputFile = RadiancePath("dc", "results file", extension=".dc")
-    octreeFile = RadiancePath("oct", "octree file", extension=".oct")
-    pointsFile = RadiancePath("points", "test point file")
+    output_file = RadiancePath("dc", "results file", extension=".dc")
+    octree_file = RadiancePath("oct", "octree file", extension=".oct")
+    points_file = RadiancePath("points", "test point file")
 
-    def __init__(self, outputName=None, octreeFile=None, pointsFile=None,
-                 rcontribParameters=None):
+    def __init__(self, output_name=None, octree_file=None, points_file=None,
+                 rcontrib_parameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        self.outputFile = None
+        self.output_file = None
         """results file for coefficients (Default: untitled)"""
-        if outputName:
-            self.outputFile = outputName if outputName.lower().endswith(".dc") \
-                else outputName if outputName.lower().endswith(".hdr") \
-                else outputName + ".dc"
+        if output_name:
+            self.output_file = output_name if output_name.lower().endswith(".dc") \
+                else output_name if output_name.lower().endswith(".hdr") \
+                else output_name + ".dc"
 
-        self.octreeFile = octreeFile
+        self.octree_file = octree_file
         """Full path to input oct file."""
 
-        self.pointsFile = pointsFile
+        self.points_file = points_file
         """Full path to input points file."""
 
-        self.rcontribParameters = rcontribParameters
+        self.rcontrib_parameters = rcontrib_parameters
         """Radiance parameters for rcontrib. If None Default parameters will be
-        set. You can use self.rcontribParameters to view, add or remove the
+        set. You can use self.rcontrib_parameters to view, add or remove the
         parameters before executing the command."""
 
     @property
-    def rcontribParameters(self):
-        """Get and set gendaymtxParameters."""
-        return self.__rcontribParameters
+    def rcontrib_parameters(self):
+        """Get and set gendaymtx_parameters."""
+        return self.__rcontrib_parameters
 
-    @rcontribParameters.setter
-    def rcontribParameters(self, parameters):
-        self.__rcontribParameters = parameters if parameters is not None \
+    @rcontrib_parameters.setter
+    def rcontrib_parameters(self, parameters):
+        self.__rcontrib_parameters = parameters if parameters is not None \
             else RcontribParameters()
 
-        assert hasattr(self.rcontribParameters, "isRadianceParameters"), \
+        assert hasattr(self.rcontrib_parameters, "isRadianceParameters"), \
             "input rcontribParamters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         """Return full command as a string."""
-        if self.outputFile.toRadString().strip():
-            radString = "%s %s %s < %s > %s" % (
-                self.normspace(os.path.join(self.radbinPath, "rcontrib")),
-                self.rcontribParameters.toRadString(),
-                self.normspace(self.octreeFile.toRadString()),
-                self.normspace(self.pointsFile.toRadString()),
-                self.normspace(self.outputFile.toRadString())
+        if self.output_file.to_rad_string().strip():
+            rad_string = "%s %s %s < %s > %s" % (
+                self.normspace(os.path.join(self.radbin_path, "rcontrib")),
+                self.rcontrib_parameters.to_rad_string(),
+                self.normspace(self.octree_file.to_rad_string()),
+                self.normspace(self.points_file.to_rad_string()),
+                self.normspace(self.output_file.to_rad_string())
             )
-        elif not str(self.rcontribParameters.outputFilenameFormat) == 'None':
+        elif not str(self.rcontrib_parameters.output_filename_format) == 'None':
             # image-based daylight coefficient - order matters
-            mod = str(self.rcontribParameters.modFile)
-            out = str(self.rcontribParameters.outputFilenameFormat)
-            self.rcontribParameters.modFile = None
-            self.rcontribParameters.outputFilenameFormat = None
+            mod = str(self.rcontrib_parameters.mod_file)
+            out = str(self.rcontrib_parameters.output_filename_format)
+            self.rcontrib_parameters.mod_file = None
+            self.rcontrib_parameters.output_filename_format = None
 
-            radString = "%s %s < %s -o %s -M %s %s" % (
-                self.normspace(os.path.join(self.radbinPath, "rcontrib")),
-                self.rcontribParameters.toRadString(),
-                self.normspace(self.pointsFile.toRadString()),
+            rad_string = "%s %s < %s -o %s -M %s %s" % (
+                self.normspace(os.path.join(self.radbin_path, "rcontrib")),
+                self.rcontrib_parameters.to_rad_string(),
+                self.normspace(self.points_file.to_rad_string()),
                 out, mod,
-                self.normspace(self.octreeFile.toRadString())
+                self.normspace(self.octree_file.to_rad_string())
             )
         else:
-            radString = "%s %s %s < %s" % (
-                self.normspace(os.path.join(self.radbinPath, "rcontrib")),
-                self.rcontribParameters.toRadString(),
-                self.normspace(self.octreeFile.toRadString()),
-                self.normspace(self.pointsFile.toRadString())
+            rad_string = "%s %s %s < %s" % (
+                self.normspace(os.path.join(self.radbin_path, "rcontrib")),
+                self.rcontrib_parameters.to_rad_string(),
+                self.normspace(self.octree_file.to_rad_string()),
+                self.normspace(self.points_file.to_rad_string())
             )
 
         # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+        self.check_input_files(rad_string)
+        return rad_string
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Input files for this command."""
-        return self.octreeFile, self.pointsFile
+        return self.octree_file, self.points_file

@@ -2,7 +2,6 @@
 """xform - transform a RADIANCE scene description"""
 
 from _commandbase import RadianceCommand
-from ..datatype import RadiancePath
 from ..parameters.xform import XformParameters
 
 import os
@@ -10,46 +9,46 @@ import os
 
 class Xform(RadianceCommand):
 
-    def __init__(self, radFile=None, xformParameters=None, outputFile=None,
+    def __init__(self, rad_file=None, xform_parameters=None, output_file=None,
                  transforms=None):
         RadianceCommand.__init__(self)
 
-        self.radFile = radFile
-        self.xformParameters = xformParameters
-        self.outputFile = outputFile
+        self.rad_file = rad_file
+        self.xform_parameters = xform_parameters
+        self.output_file = output_file
         self.transforms = transforms
 
     @property
-    def xformParameters(self):
-        """Get and set gendaymtxParameters."""
-        return self.__xformParameters
+    def xform_parameters(self):
+        """Get and set gendaymtx_parameters."""
+        return self.__xform_parameters
 
-    @xformParameters.setter
-    def xformParameters(self, parameters):
-        self.__xformParameters = parameters if parameters is not None \
+    @xform_parameters.setter
+    def xform_parameters(self, parameters):
+        self.__xform_parameters = parameters if parameters is not None \
             else XformParameters()
 
-        assert hasattr(self.xformParameters, "isRadianceParameters"), \
-            "input xformParameters is not a valid parameters type."
+        assert hasattr(self.xform_parameters, "isRadianceParameters"), \
+            "input xform_parameters is not a valid parameters type."
 
     @property
     def transforms(self):
         return self._transforms
 
     @transforms.setter
-    def transforms(self, xformList):
+    def transforms(self, xform_list):
         """
 
         Args:
-            xformList:
+            xform_list:
 
         Returns:
 
         """
-        if xformList:
+        if xform_list:
             # If the xformlist is a string.
             try:
-                xformList = xformList.split()
+                xform_list = xform_list.split()
             except AttributeError:
                 pass
 
@@ -57,16 +56,16 @@ class Xform(RadianceCommand):
             xformcmds = {'-t': 3, '-rx': 1, '-ry': 1, '-rz': 1, '-mx': 0,
                          '-my': 0, '-mz': 0, '-i': 1, '-a': 1, "-s": 1}
 
-            if xformList:
-                assert xformList[0] in xformcmds, \
+            if xform_list:
+                assert xform_list[0] in xformcmds, \
                     "The xform statement {0} is incorrect.\nThe first value " \
                     "of xform should be a flag and should be one of the " \
-                    "follwoing:{1}".format(" ".join(map(str, xformList)),
+                    "follwoing:{1}".format(" ".join(map(str, xform_list)),
                                            " ".join(xformcmds.keys()))
 
-                for idx, value in enumerate(xformList):
+                for idx, value in enumerate(xform_list):
                     try:
-                        testfordigits = float(value)
+                        float(value)
                     except ValueError:
                         assert value in xformcmds.keys(),\
                             "{} is not a valid xform flag. Valid xform flags " \
@@ -77,13 +76,13 @@ class Xform(RadianceCommand):
                             try:
                                 # Test1: Check if the right amount of numbers
                                 # follow a particular flag.
-                                numbers = xformList[idx + 1:idx + 1 + flagdigits]
+                                numbers = xform_list[idx + 1:idx + 1 + flagdigits]
 
                                 assert len(numbers) == xformcmds[value], \
                                     "{} in {} at index:{} should have {} " \
                                     "arguments. Incorrect number of arguments " \
                                     "were supplied."\
-                                    .format(value, " ".join(map(str, xformList)),
+                                    .format(value, " ".join(map(str, xform_list)),
                                             idx, flagdigits)
 
                                 # Test3: Check if the values specfied are
@@ -97,21 +96,21 @@ class Xform(RadianceCommand):
                                         "{} in {}  at index:{} should have {} "
                                         "arguments. Incorrect number of arguments "
                                         "were supplied.".format(
-                                            xformList[0],
-                                            ' '.join(map(str, xformList)),
+                                            xform_list[0],
+                                            ' '.join(map(str, xform_list)),
                                             idx, flagdigits
                                         )
                                     )
 
                                 # Test2: Check by testing if the value
                                 # following the required number of arguments is a flag.
-                                nextflag = xformList[idx + 1 + flagdigits]
+                                nextflag = xform_list[idx + 1 + flagdigits]
                                 assert nextflag in xformcmds,\
                                     "{} in {} at index:{} should have {} " \
                                     "numeric arguments.Either an incorrect " \
                                     "number or inappropriate type of arguments " \
                                     "were supplied.".format(
-                                        value, ' '.join(map(str, xformList)),
+                                        value, ' '.join(map(str, xform_list)),
                                         idx, flagdigits)
 
                             # Index error will be raised in the end as the last
@@ -125,60 +124,59 @@ class Xform(RadianceCommand):
                             # Which is incorrect. Attribute Error is arbitrary
                             # here.
                             try:
-                                testfordigits2 = float(xformList[idx + 1])
-
+                                float(xform_list[idx + 1])
                                 assert False, \
                                     "{} in {} should not be followed by a " \
-                                    "number.".format(xformList[idx],
-                                                     " ".join(map(str, xformList)))
+                                    "number.".format(xform_list[idx],
+                                                     " ".join(map(str, xform_list)))
                             except (ValueError, IndexError):
                                 pass
 
-            self._transforms = " ".join(xformList)
+            self._transforms = " ".join(xform_list)
 
         else:
             self._transforms = " "
 
     @property
-    def radFile(self):
+    def rad_file(self):
         """Get and set rad files."""
-        return self.__radFile
+        return self.__rad_file
 
-    @radFile.setter
-    def radFile(self, files):
+    @rad_file.setter
+    def rad_file(self, files):
         if files:
             if isinstance(files, basestring):
                 files = [files]
-            self.__radFile = [os.path.normpath(f) for f in files]
+            self.__rad_file = [os.path.normpath(f) for f in files]
         else:
-            self.__radFile = []
+            self.__rad_file = []
 
     @property
-    def outputFile(self):
-        return self._outputFile
+    def output_file(self):
+        return self._output_file
 
-    @outputFile.setter
-    def outputFile(self, filePath):
-        if filePath:
-            self._outputFile = os.path.abspath(os.path.normpath(filePath))
+    @output_file.setter
+    def output_file(self, file_path):
+        if file_path:
+            self._output_file = os.path.abspath(os.path.normpath(file_path))
         else:
-            self._outputFile = ''
+            self._output_file = ''
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Return input files by the user."""
-        return self.radFile
+        return self.rad_file
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         """Return full command as a string"""
-        cmdPath = self.normspace(os.path.join(self.radbinPath, 'xform'))
-        xformParam = self.xformParameters.toRadString()
-        inputPath = " ".join(self.normspace(f) for f in self.radFile)
-        outputPath = self.normspace(self.outputFile)
+        cmd_path = self.normspace(os.path.join(self.radbin_path, 'xform'))
+        xform_param = self.xform_parameters.to_rad_string()
+        input_path = " ".join(self.normspace(f) for f in self.rad_file)
+        output_path = self.normspace(self.output_file)
 
-        radString = "{0} {1} {2} {3} > {4}".format(cmdPath, xformParam,
-                                                   self.transforms, inputPath,
-                                                   outputPath)
-        self.checkInputFiles(radString)
+        rad_string = "{0} {1} {2} {3} > {4}".format(cmd_path, xform_param,
+                                                    self.transforms, input_path,
+                                                    output_path)
+        self.check_input_files(rad_string)
 
-        return radString
+        return rad_string

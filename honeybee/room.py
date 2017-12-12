@@ -26,90 +26,92 @@ class Room(HBZone):
     """
 
     def __init__(self, origin=(0, 0, 0), width=3, depth=6, height=3.2,
-                 rotationAngle=0):
+                 rotation_angle=0):
         """Init room."""
         self.origin = Point3(*tuple(origin)) if origin else Point3(0, 0, 0)
         self.width = float(width)
         self.depth = float(depth)
         self.height = float(height)
-        self.rotationAngle = float(rotationAngle)
+        self.rotationAngle = float(rotation_angle)
 
-        self._zAxis = Vector3(0, 0, 1)
-        self._xAxis = Vector3(1, 0, 0).rotate_around(self._zAxis, math.radians(rotationAngle))
-        self._yAxis = Vector3(0, 1, 0).rotate_around(self._zAxis, math.radians(rotationAngle))
+        self._z_axis = Vector3(0, 0, 1)
+        self._x_axis = Vector3(1, 0, 0).rotate_around(
+            self._zAxis, math.radians(rotation_angle))
+        self._y_axis = Vector3(0, 1, 0).rotate_around(
+            self._zAxis, math.radians(rotation_angle))
 
         # create 8 points
-        self.__calculateVertices()
-        self.__createHBSurfaces()
+        self.__calculate_vertices()
+        self.__create_hb_surfaces()
 
         HBZone.__init__(self, name='HBRoom', origin=self.origin)
 
         # add honeybee surfaces
         for surface in self.__surfaces:
-            self.addSurface(surface)
+            self.add_surface(surface)
 
-    def addFenestrationSurface(self, wallName, width, height, sillHeight,
-                               radianceMaterial=None):
+    def add_fenestration_surface(self, wall_name, width, height, sill_height,
+                                 radiance_material=None):
         u"""Add rectangular fenestration surface to surface.
 
         Args:
-            wallName: Target wall name (back, right, front, left)
+            wall_name: Target wall name (back, right, front, left)
             width: Opening width. Opening will be centered in HBSurface.
             height: Opening height.
-            sillHeight: Sill height (default: 1).
-            radianceMaterial: Optional radiance material for this fenestration.
+            sill_height: Sill height (default: 1).
+            radiance_material: Optional radiance material for this fenestration.
 
         Usage:
 
             r = Room()
-            # for pt in r.generateTestPoints():
-            #     print pt
-            r.addFenestrationSurface('back', 2, 2, .7)
-            r.addFenestrationSurface('right', 4, 1.5, .5)
-            r.addFenestrationSurface('right', 4, 0.5, 2.2)
+            for pt in r.generate_test_points():
+                print(pt)
+            r.add_fenestration_surface('back', 2, 2, .7)
+            r.add_fenestration_surface('right', 4, 1.5, .5)
+            r.add_fenestration_surface('right', 4, 0.5, 2.2)
             with open('c:/ladybug/room.rad', 'wb') as outf:
-                outf.write(r.toRadString(includeMaterials=True))
+                outf.write(r.to_rad_string(include_materials=True))
         """
         # find the wall
         try:
             wall = tuple(srf for srf in self.surfaces
-                         if srf.name == '%sWall' % wallName.lower())[0]
-        except:
-            raise ValueError('Cannot find {} wall'.format(wallName))
+                         if srf.name == '%sWall' % wall_name.lower())[0]
+        except BaseException:
+            raise ValueError('Cannot find {} wall'.format(wall_name))
 
-        name = '{}Glazing_{}'.format(wallName.lower(),
-                                     len(wall.childrenSurfaces))
+        name = '{}Glazing_{}'.format(wall_name.lower(),
+                                     len(wall.children_surfaces))
 
-        wall.addFenestrationSurfaceBySize(name, width, height, sillHeight,
-                                          radianceMaterial)
+        wall.add_fenestration_surface_by_size(name, width, height, sill_height,
+                                              radiance_material)
 
-    def generateTestPoints(self, gridSize=1, height=0.75):
+    def generate_test_points(self, grid_size=1, height=0.75):
         """Generate a grid of test points in the room.
 
         Args:
-            gridSize: Size of test grid.
+            grid_size: Size of test grid.
             height: Test points height.
         """
         # find number of divisions in width
-        uCount = int(self.width / gridSize)
-        uStep = 1.0 / uCount
-        uValues = tuple((i * uStep) + (gridSize / (2.0 * self.width))
-                        for i in xrange(uCount))
+        u_count = int(self.width / grid_size)
+        u_step = 1.0 / u_count
+        u_values = tuple((i * u_step) + (grid_size / (2.0 * self.width))
+                         for i in xrange(u_count))
 
         # find number of divisions in depth
-        vCount = int(self.depth / gridSize)
-        vStep = 1.0 / vCount
-        vValues = tuple((i * vStep) + (gridSize / (2.0 * self.depth))
-                        for i in xrange(vCount))
+        v_count = int(self.depth / grid_size)
+        v_step = 1.0 / v_count
+        v_values = tuple((i * v_step) + (grid_size / (2.0 * self.depth))
+                         for i in xrange(v_count))
 
         z = float(height) / self.height
 
-        return tuple(self.getLocation(u, v, z)
-                     for v in vValues
-                     for u in uValues
+        return tuple(self.get_location(u, v, z)
+                     for v in v_values
+                     for u in u_values
                      )
 
-    def getLocation(self, u=0.5, v=0.5, z=0.5):
+    def get_location(self, u=0.5, v=0.5, z=0.5):
         """Get location as a point based on u, v, z.
 
         u, v, z must be between 0..1.
@@ -119,17 +121,17 @@ class Room(HBZone):
         z = z * self.height * self._zAxis
         return self.origin + x + y + z
 
-    def generateInteriorView(self, u=0.5, v=0.5, z=0.5, angle=0,
-                             viewUpVector=(0, 0, 1), viewType=0, viewHSize=60,
-                             viewVSize=60, xRes=64, yRes=64, viewShift=0,
-                             viewLift=0):
+    def generate_interior_view(self, u=0.5, v=0.5, z=0.5, angle=0,
+                               view_up_vector=(0, 0, 1), view_type=0, view_h_size=60,
+                               view_v_size=60, x_resolution=64, y_resolution=64,
+                               view_shift=0, view_lift=0):
         u"""Generate an inetrior view.
 
         Args:
             angle: Rotation angle from back wall.
-            viewUpVector: Set the view up (-vu) vector (vertical direction) to
+            view_up_vector: Set the view up (-vu) vector (vertical direction) to
                 (x, y, z).cDefault: (0, 0, 1)
-            viewType: Set view type (-vt) to one of the choices below.
+            view_type: Set view type (-vt) to one of the choices below.
                     0: Perspective (v)
                     1: Hemispherical fisheye (h)
                     2: Parallel (l)
@@ -138,30 +140,30 @@ class Room(HBZone):
                     5: Planisphere [stereographic] projection (s)
                 For more detailed description about view types check rpict manual
                 page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-            viewHSize: Set the view horizontal size (-vs). For a perspective
+            view_h_size: Set the view horizontal size (-vs). For a perspective
                 projection (including fisheye views), val is the horizontal field
                 of view (in degrees). For a parallel projection, val is the view
                 width in world coordinates.
-            viewVSize: Set the view vertical size (-vv). For a perspective
+            view_v_size: Set the view vertical size (-vv). For a perspective
                 projection (including fisheye views), val is the horizontal field
                 of view (in degrees). For a parallel projection, val is the view
                 width in world coordinates.
-            xRes: Set the maximum x resolution (-x) to an integer.
-            yRes: Set the maximum y resolution (-y) to an integer.
-            viewShift: Set the view shift (-vs). This is the amount the actual
+            x_resolution: Set the maximum x resolution (-x) to an integer.
+            y_resolution: Set the maximum y resolution (-y) to an integer.
+            view_shift: Set the view shift (-vs). This is the amount the actual
                 image will be shifted to the right of the specified view. This
                 option is useful for generating skewed perspectives or rendering
                 an image a piece at a time. A value of 1 means that the rendered
                 image starts just to the right of the normal view. A value of −1
                 would be to the left. Larger or fractional values are permitted
                 as well.
-            viewLift: Set the view lift (-vl) to a value. This is the amount the
+            view_lift: Set the view lift (-vl) to a value. This is the amount the
                 actual image will be lifted up from the specified view.
         """
-        v = View(self.getLocation(u, v, z),
+        v = View(self.get_location(u, v, z),
                  self._yAxis.rotate_around(self._zAxis, math.radians(angle)),
-                 viewUpVector, viewType, viewHSize, viewVSize, xRes, yRes,
-                 viewShift, viewLift)
+                 view_up_vector, view_type, view_h_size, view_v_size,
+                 x_resolution, y_resolution, view_shift, view_lift)
 
         return v
 
@@ -177,7 +179,7 @@ class Room(HBZone):
         return (self.floor, self.ceiling, self.backWall, self.rightWall,
                 self.frontWall, self.leftWall)
 
-    def __calculateVertices(self):
+    def __calculate_vertices(self):
         self.pt0 = self.origin
         self.pt1 = self.origin + self.width * self._xAxis
         self.pt2 = self.pt1 + self.depth * self._yAxis
@@ -187,21 +189,21 @@ class Room(HBZone):
         self.pt6 = self.pt2 + self.height * self._zAxis
         self.pt7 = self.pt3 + self.height * self._zAxis
 
-    def __createHBSurfaces(self):
+    def __create_hb_surfaces(self):
         self.floor = HBSurface(
-            'floor', sortedPoints=(self.pt0, self.pt3, self.pt2, self.pt1))
+            'floor', sorted_points=(self.pt0, self.pt3, self.pt2, self.pt1))
 
         self.ceiling = HBSurface(
-            'ceiling', sortedPoints=(self.pt4, self.pt5, self.pt6, self.pt7))
+            'ceiling', sorted_points=(self.pt4, self.pt5, self.pt6, self.pt7))
 
         self.backWall = HBSurface(
-            'backWall', sortedPoints=(self.pt0, self.pt1, self.pt5, self.pt4))
+            'backWall', sorted_points=(self.pt0, self.pt1, self.pt5, self.pt4))
 
         self.rightWall = HBSurface(
-            'rightWall', sortedPoints=(self.pt1, self.pt2, self.pt6, self.pt5))
+            'rightWall', sorted_points=(self.pt1, self.pt2, self.pt6, self.pt5))
 
         self.frontWall = HBSurface(
-            'frontWall', sortedPoints=(self.pt2, self.pt3, self.pt7, self.pt6))
+            'frontWall', sorted_points=(self.pt2, self.pt3, self.pt7, self.pt6))
 
         self.leftWall = HBSurface(
-            'leftWall', sortedPoints=(self.pt0, self.pt4, self.pt7, self.pt3))
+            'leftWall', sorted_points=(self.pt0, self.pt4, self.pt7, self.pt3))

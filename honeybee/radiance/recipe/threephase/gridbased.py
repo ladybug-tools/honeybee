@@ -1,14 +1,15 @@
-from ..parameters import getRadianceParametersGridBased
+from ..parameters import get_radiance_parameters_grid_based
 
-from ..recipeutil import writeExtraFiles
-from ..recipedcutil import getCommandsSceneDaylightCoeff, getCommandsSky
+from ..recipeutil import write_extra_files
+from ..recipedcutil import get_commands_scene_daylight_coeff, get_commands_sky
 
-from ..recipexphaseutil import matrixCalculationThreePhase, writeRadFilesMultiPhase
-from ..recipexphaseutil import getCommandsViewDaylightMatrices
+from ..recipexphaseutil import matrix_calculation_three_phase, \
+    write_rad_files_multi_phase
+from ..recipexphaseutil import get_commands_view_daylight_matrices
 
 from ..daylightcoeff.gridbased import DaylightCoeffGridBased
 from ...sky.skymatrix import SkyMatrix
-from ....futil import writeToFile
+from ....futil import write_to_file
 
 import os
 
@@ -17,230 +18,231 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
     """Grid based three phase analysis recipe.
 
     Attributes:
-        skyMtx: A radiance SkyMatrix or SkyVector. For an SkyMatrix the analysis
+        sky_mtx: A radiance SkyMatrix or SkyVector. For an SkyMatrix the analysis
             will be ran for the analysis period.
-        analysisGrids: A list of Honeybee analysis grids. Daylight metrics will
+        analysis_grids: A list of Honeybee analysis grids. Daylight metrics will
             be calculated for each analysisGrid separately.
-        simulationType: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
+        simulation_type: 0: Illuminance(lux), 1: Radiation (kWh), 2: Luminance (Candela)
             (Default: 0)
-        radianceParameters: Radiance parameters for this analysis. Parameters
+        radiance_parameters: Radiance parameters for this analysis. Parameters
             should be an instance of RfluxmtxParameters.
-        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
+        hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+        sub_folder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
 
     Usage:
 
-        # initiate analysisRecipe
-        analysisRecipe = ThreePhaseGridBased(
-            skyMtx, analysisGrids, radParameters
+        # initiate analysis_recipe
+        analysis_recipe = ThreePhaseGridBased(
+            sky_mtx, analysis_grids, rad_parameters
             )
 
         # add honeybee object
-        analysisRecipe.hbObjects = HBObjs
+        analysis_recipe.hb_objects = HBObjs
 
         # write analysis files to local drive
-        commandsFile = analysisRecipe.write(_folder_, _name_)
+        commandsFile = analysis_recipe.write(_folder_, _name_)
 
         # run the analysis
-        analysisRecipe.run(commandsFile)
+        analysis_recipe.run(commandsFile)
 
         # get the results
-        print analysisRecipe.results()
+        print(analysis_recipe.results())
     """
 
-    def __init__(self, skyMtx, analysisGrids, simulationType=0,
-                 viewMtxParameters=None, daylightMtxParameters=None,
-                 reuseViewMtx=True, reuseDaylightMtx=True, hbObjects=None,
-                 subFolder="gridbased_threephase"):
+    def __init__(self, sky_mtx, analysis_grids, simulation_type=0,
+                 view_mtx_parameters=None, daylight_mtx_parameters=None,
+                 reuse_view_mtx=True, reuse_daylight_mtx=True, hb_objects=None,
+                 sub_folder="gridbased_threephase"):
         """Create an annual recipe."""
         DaylightCoeffGridBased.__init__(
-            self, skyMtx, analysisGrids, simulationType,
-            reuseDaylightMtx=reuseDaylightMtx, hbObjects=hbObjects,
-            subFolder=subFolder
+            self, sky_mtx, analysis_grids, simulation_type,
+            reuse_daylight_mtx=reuse_daylight_mtx, hb_objects=hb_objects,
+            sub_folder=sub_folder
         )
 
-        self.viewMtxParameters = viewMtxParameters
-        self.daylightMtxParameters = daylightMtxParameters
-        self.reuseViewMtx = reuseViewMtx
+        self.view_mtx_parameters = view_mtx_parameters
+        self.daylight_mtx_parameters = daylight_mtx_parameters
+        self.reuse_view_mtx = reuse_view_mtx
 
     @classmethod
-    def fromWeatherFilePointsAndVectors(
-        cls, epwFile, pointGroups, vectorGroups=None, skyDensity=1,
-        simulationType=0, viewMtxParameters=None, daylightMtxParameters=None,
-        reuseViewMtx=True, reuseDaylightMtx=True, hbWindowSurfaces=None,
-            hbObjects=None, subFolder="gridbased_threephase"):
+    def from_weather_file_points_and_vectors(
+        cls, epw_file, point_groups, vector_groups=None, sky_density=1,
+        simulation_type=0, view_mtx_parameters=None, daylight_mtx_parameters=None,
+        reuse_view_mtx=True, reuse_daylight_mtx=True, hb_window_surfaces=None,
+            hb_objects=None, sub_folder="gridbased_threephase"):
         """Create three-phase recipe from weather file, points and vectors.
 
         Args:
-            epwFile: An EnergyPlus weather file.
-            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
+            epw_file: An EnergyPlus weather file.
+            point_groups: A list of (x, y, z) test points or lists of (x, y, z)
                 test points. Each list of test points will be converted to a
                 TestPointGroup. If testPts is a single flattened list only one
                 TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+            vector_groups: An optional list of (x, y, z) vectors. Each vector
                 represents direction of corresponding point in testPts. If the
                 vector is not provided (0, 0, 1) will be assigned.
-            skyDensity: A positive intger for sky density. 1: Tregenza Sky,
+            sky_density: A positive intger for sky density. 1: Tregenza Sky,
                 2: Reinhart Sky, etc. (Default: 1)
-            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-            subFolder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+            hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+            sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
         """
-        assert epwFile.lower().endswith('.epw'), \
-            ValueError('{} is not a an EnergyPlus weather file.'.format(epwFile))
-        skyMtx = SkyMatrix(epwFile, skyDensity)
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
+        assert epw_file.lower().endswith('.epw'), \
+            ValueError('{} is not a an EnergyPlus weather file.'.format(epw_file))
+        sky_mtx = SkyMatrix(epw_file, sky_density)
+        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
+                                                                    vector_groups)
 
         return cls(
-            skyMtx, analysisGrids, simulationType, viewMtxParameters,
-            daylightMtxParameters, reuseViewMtx, reuseDaylightMtx, hbWindowSurfaces,
-            hbObjects, subFolder)
+            sky_mtx, analysis_grids, simulation_type, view_mtx_parameters,
+            daylight_mtx_parameters, reuse_view_mtx, reuse_daylight_mtx,
+            hb_window_surfaces, hb_objects, sub_folder)
 
     @classmethod
-    def fromPointsFile(
-        cls, epwFile, pointsFile, skyDensity=1, simulationType=0,
-        viewMtxParameters=None, daylightMtxParameters=None, reuseViewMtx=True,
-        reuseDaylightMtx=True, hbWindowSurfaces=None, hbObjects=None,
-            subFolder="gridbased_threephase"):
+    def from_points_file(
+        cls, epw_file, points_file, sky_density=1, simulation_type=0,
+        view_mtx_parameters=None, daylight_mtx_parameters=None, reuse_view_mtx=True,
+        reuse_daylight_mtx=True, hb_window_surfaces=None, hb_objects=None,
+            sub_folder="gridbased_threephase"):
         """Create an annual recipe from points file."""
         try:
-            with open(pointsFile, "rb") as inf:
-                pointGroups = tuple(line.split()[:3] for line in inf.readline())
-                vectorGroups = tuple(line.split()[3:] for line in inf.readline())
+            with open(points_file, "rb") as inf:
+                point_groups = tuple(line.split()[:3] for line in inf.readline())
+                vector_groups = tuple(line.split()[3:] for line in inf.readline())
         except Exception as e:
             raise ValueError("Couldn't import points from {}:\n\t{}".format(
-                pointsFile, e))
+                points_file, e))
 
-        return cls.fromWeatherFilePointsAndVectors(
-            epwFile, pointGroups, vectorGroups, skyDensity, simulationType,
-            viewMtxParameters, daylightMtxParameters, reuseViewMtx, reuseDaylightMtx,
-            hbWindowSurfaces, hbObjects, subFolder)
+        return cls.from_weather_file_points_and_vectors(
+            epw_file, point_groups, vector_groups, sky_density, simulation_type,
+            view_mtx_parameters, daylight_mtx_parameters, reuse_view_mtx,
+            reuse_daylight_mtx, hb_window_surfaces, hb_objects, sub_folder)
 
     @property
-    def viewMtxParameters(self):
+    def view_mtx_parameters(self):
         """View matrix parameters."""
-        return self._viewMtxParameters
+        return self._view_mtx_parameters
 
-    @viewMtxParameters.setter
-    def viewMtxParameters(self, vm):
+    @view_mtx_parameters.setter
+    def view_mtx_parameters(self, vm):
         if not vm:
-            self._viewMtxParameters = getRadianceParametersGridBased(0, 2).vmtx
+            self._view_mtx_parameters = get_radiance_parameters_grid_based(0, 2).vmtx
         else:
             assert hasattr(vm, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(vm)))
-            self._viewMtxParameters = vm
+            self._view_mtx_parameters = vm
 
         # reset -I option for when parameters are updated.
         if self._simType < 2:
-            self._viewMtxParameters.irradianceCalc = True
+            self._view_mtx_parameters.irradiance_calc = True
         else:
-            self._viewMtxParameters.irradianceCalc = None
+            self._view_mtx_parameters.irradiance_calc = None
 
     @property
-    def daylightMtxParameters(self):
+    def daylight_mtx_parameters(self):
         """View matrix parameters."""
-        return self._daylightMtxParameters
+        return self._daylight_mtx_parameters
 
-    @daylightMtxParameters.setter
-    def daylightMtxParameters(self, dm):
+    @daylight_mtx_parameters.setter
+    def daylight_mtx_parameters(self, dm):
         if not dm:
-            self._daylightMtxParameters = getRadianceParametersGridBased(0, 2).dmtx
+            self._daylight_mtx_parameters = get_radiance_parameters_grid_based(0, 2).dmtx
         else:
             assert hasattr(dm, 'isRfluxmtxParameters'), \
                 TypeError('Expected RfluxmtxParameters not {}'.format(type(dm)))
-            self._daylightMtxParameters = dm
+            self._daylight_mtx_parameters = dm
 
         # reset -I option for when parameters are updated.
         if self._simType < 2:
-            self._daylightMtxParameters.irradianceCalc = True
+            self._daylight_mtx_parameters.irradiance_calc = True
         else:
-            self._daylightMtxParameters.irradianceCalc = None
+            self._daylight_mtx_parameters.irradiance_calc = None
 
     @property
-    def skyDensity(self):
+    def sky_density(self):
         """Radiance sky type e.g. r1, r2, r4."""
-        return "r{}".format(self.skyMatrix.skyDensity)
+        return "r{}".format(self.sky_matrix.sky_density)
 
-    def write(self, targetFolder, projectName='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
 
         Args:
-            targetFolder: Path to parent folder. Files will be created under
-                targetFolder/gridbased. use self.subFolder to change subfolder name.
-            projectName: Name of this project as a string.
+            target_folder: Path to parent folder. Files will be created under
+                target_folder/gridbased. use self.sub_folder to change subfolder name.
+            project_name: Name of this project as a string.
             header: A boolean to include path to radiance folder in commands file.
 
         Returns:
             Path yo commands file.
         """
         # 0.prepare target folder
-        # create main folder targetFolder\projectName
-        projectFolder = \
-            super(DaylightCoeffGridBased, self).writeContent(
-                targetFolder, projectName, False, subfolders=['tmp', 'result/matrix']
+        # create main folder target_folder/project_name
+        project_folder = \
+            super(DaylightCoeffGridBased, self).write_content(
+                target_folder, project_name, False, subfolders=['tmp', 'result/matrix']
             )
 
         # write geometry and material files
-        opqfiles, glzfiles, wgsfiles = writeRadFilesMultiPhase(
-            projectFolder + '/scene', projectName, self.opaqueRadFile,
-            self.glazingRadFile, self.windowGroupsRadFiles
+        opqfiles, glzfiles, wgsfiles = write_rad_files_multi_phase(
+            project_folder + '/scene', project_name, self.opaque_rad_file,
+            self.glazing_rad_file, self.window_groups_rad_files
         )
 
-        assert len(self.windowGroups) > 0, \
+        assert len(self.window_groups) > 0, \
             ValueError(
                 'Found no window groups! If you do not have a window group'
                 ' in the scene use daylight coefficient ')
 
         # additional radiance files added to the recipe as scene
-        extrafiles = writeExtraFiles(self.scene, projectFolder + '/scene')
+        extrafiles = write_extra_files(self.scene, project_folder + '/scene')
 
         # 0.write points
-        pointsFile = self.writeAnalysisGrids(projectFolder, projectName)
-        numberOfPoints = sum(len(ag) for ag in self.analysisGrids)
+        points_file = self.write_analysis_grids(project_folder, project_name)
+        number_of_points = sum(len(ag) for ag in self.analysis_grids)
 
         # 2.write batch file
         if header:
-            self.commands.append(self.header(projectFolder))
+            self.commands.append(self.header(project_folder))
 
         # # 2.1.Create sky matrix.
         # # 2.2. Create sun matrix
-        skycommands, skyfiles = getCommandsSky(projectFolder, self.skyMatrix,
-                                               reuse=True)
+        skycommands, skyfiles = get_commands_sky(project_folder, self.sky_matrix,
+                                                 reuse=True)
 
         self._commands.extend(skycommands)
 
         # for statcic glazing - calculate total, direct and direct-analemma results
         # calculate the contribution of glazing if any with all window groups blacked
         inputfiles = opqfiles, glzfiles, wgsfiles, extrafiles
-        commands, results = getCommandsSceneDaylightCoeff(
-            projectName, self.skyMatrix.skyDensity, projectFolder, skyfiles,
-            inputfiles, pointsFile, self.totalPointCount, self.radianceParameters,
-            self.reuseDaylightMtx, self.totalRunsCount)
+        commands, results = get_commands_scene_daylight_coeff(
+            project_name, self.sky_matrix.sky_density, project_folder, skyfiles,
+            inputfiles, points_file, self.total_point_count, self.radiance_parameters,
+            self.reuse_daylight_mtx, self.total_runs_count)
 
         self._commands.extend(commands)
-        self._resultFiles.extend(
-            os.path.join(projectFolder, str(result)) for result in results
+        self._result_files.extend(
+            os.path.join(project_folder, str(result)) for result in results
         )
 
         # calculate three-phase for window groups
-        for count, wg in enumerate(self.windowGroups):
+        for count, wg in enumerate(self.window_groups):
 
-            commands, vMatrix, dMatrix = getCommandsViewDaylightMatrices(
-                projectFolder, wg, count, inputfiles, pointsFile, numberOfPoints,
-                self.skyMatrix.skyDensity, self.viewMtxParameters,
-                self.daylightMtxParameters, self.reuseViewMtx, self.reuseDaylightMtx)
+            commands, v_matrix, d_matrix = get_commands_view_daylight_matrices(
+                project_folder, wg, count, inputfiles, points_file, number_of_points,
+                self.sky_matrix.sky_density, self.view_mtx_parameters,
+                self.daylight_mtx_parameters, self.reuse_view_mtx,
+                self.reuse_daylight_mtx)
 
             self._commands.extend(commands)
 
-            # tMatrix
-            cmd, results = matrixCalculationThreePhase(
-                projectFolder, wg, vMatrix, dMatrix, skyfiles.skyMtxTotal)
+            # t_matrix
+            cmd, results = matrix_calculation_three_phase(
+                project_folder, wg, v_matrix, d_matrix, skyfiles.sky_mtx_total)
 
             self._commands.extend(cmd)
-            self._resultFiles.extend(results)
+            self._result_files.extend(results)
 
         # # 5. write batch file
-        batchFile = os.path.join(projectFolder, "commands.bat")
-        writeToFile(batchFile, '\n'.join(self.preprocCommands()))
+        batch_file = os.path.join(project_folder, "commands.bat")
+        write_to_file(batch_file, '\n'.join(self.preproc_commands()))
 
-        return batchFile
+        return batch_file

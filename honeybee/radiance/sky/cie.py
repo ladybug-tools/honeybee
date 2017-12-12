@@ -15,7 +15,7 @@ class CIE(PointInTimeSky):
         north_: A number between 0 and 360 that represents the degrees off from
             the y-axis to make North. The default North direction is set to the
             Y-axis (default: 0 degrees).
-        skyType: An integer between 0..5 to indicate CIE Sky Type.
+        sky_type: An integer between 0..5 to indicate CIE Sky Type.
             [0] Sunny with sun, [1] sunny without sun, [2] intermediate with sun
             [3] intermediate without sun, [4] cloudy sky, [5] uniform sky
         suffix: An optional suffix for sky name. The suffix will be added at the
@@ -28,11 +28,11 @@ class CIE(PointInTimeSky):
         1: ('-s', 'sunnyNoSun'),
         2: ('+i', 'intermWSun'),
         3: ('-i', 'intermNoSun'),
-        4: ('-c', 'cloudySky'),
+        4: ('-c', 'cloudy_sky'),
         5: ('-u', 'uniformSky')
     }
 
-    def __init__(self, location=None, month=9, day=21, hour=12, north=0, skyType=0,
+    def __init__(self, location=None, month=9, day=21, hour=12, north=0, sky_type=0,
                  suffix=None):
         """Create CIE sky.
 
@@ -44,16 +44,16 @@ class CIE(PointInTimeSky):
             north_: A number between 0 and 360 that represents the degrees off from
                 the y-axis to make North. The default North direction is set to the
                 Y-axis (default: 0 degrees).
-            skyType: An integer between 0..5 to indicate CIE Sky Type.
+            sky_type: An integer between 0..5 to indicate CIE Sky Type.
                 [0] Sunny with sun, [1] sunny without sun, [2] intermediate with sun
                 [3] intermediate without sun, [4] cloudy sky, [5] uniform sky
         """
         PointInTimeSky.__init__(self, location, month, day, hour, north, suffix=suffix)
-        self.skyType = skyType % 6
-        self.humanReadableSkyType = self.SKYTYPES[self.skyType][1]
+        self.sky_type = sky_type % 6
+        self.humanReadableSkyType = self.SKYTYPES[self.sky_type][1]
 
     @classmethod
-    def fromJson(cls, locJson):
+    def from_json(cls, loc_json):
         """Create sky form json.
         {
           "location": {}, // honeybee (or actually ladybug location schema)
@@ -73,18 +73,18 @@ class CIE(PointInTimeSky):
           "elevation": 0
         }
         """
-        data = locJson
-        location = Location.fromJson(data["location"])
+        data = loc_json
+        location = Location.from_json(data["location"])
         return cls(location, month=data["month"],
                    day=data["day"], hour=data["hour"], north=data["north"],
-                   skyType=data["sky_type"])
+                   sky_type=data["sky_type"])
 
     @classmethod
-    def fromLatLong(cls, city, latitude, longitude, timezone, elevation,
-                    month=6, day=21, hour=9, north=0, skyType=0, suffix=None):
+    def from_lat_long(cls, city, latitude, longitude, timezone, elevation,
+                      month=6, day=21, hour=9, north=0, sky_type=0, suffix=None):
         """Create sky from latitude and longitude."""
         loc = Location(city, None, latitude, longitude, timezone, elevation)
-        return cls(loc, month, day, hour, skyType, north, suffix=suffix)
+        return cls(loc, month, day, hour, sky_type, north, suffix=suffix)
 
     @property
     def name(self):
@@ -101,13 +101,13 @@ class CIE(PointInTimeSky):
     def command(self, folder=None):
         """Gensky command."""
         if folder:
-            outputName = folder + '/' + self.name
+            output_name = folder + '/' + self.name
         else:
-            outputName = self.name
+            output_name = self.name
 
-        cmd = Gensky.fromSkyType(
-            outputName=outputName, monthDayHour=(self.month, self.day, self.hour),
-            skyType=self.skyType, latitude=self.location.latitude,
+        cmd = Gensky.from_sky_type(
+            output_name=output_name, month_day_hour=(self.month, self.day, self.hour),
+            sky_type=self.sky_type, latitude=self.location.latitude,
             longitude=-1 * self.location.longitude, meridian=self.location.meridian,
             rotation=self.north)
         return cmd
@@ -115,13 +115,13 @@ class CIE(PointInTimeSky):
     def duplicate(self):
         """Duplicate class."""
         return CIE(self.location, self.month, self.day, self.hour, self.north,
-                   self.skyType, self.suffix)
+                   self.sky_type, self.suffix)
 
     def ToString(self):
         """Overwrite .NET ToString method."""
         return self.__repr__()
 
-    def toJson(self):
+    def to_json(self):
         """Return sky as a json.
         {
           "location": {}, // honeybee (or actually ladybug location schema)
@@ -142,14 +142,14 @@ class CIE(PointInTimeSky):
         }
         """
         return {
-            "location": self.location.toJson(),
+            "location": self.location.to_json(),
             "day": self.day,
             "month": self.month,
             "hour": self.hour,
             "north": self.north,
-            "sky_type": self.skyType
+            "sky_type": self.sky_type
         }
 
     def __repr__(self):
         """Sky representation."""
-        return self.toRadString()
+        return self.to_rad_string()

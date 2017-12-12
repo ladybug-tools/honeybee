@@ -3,12 +3,12 @@ import re
 import os
 
 
-def getEnergyPlusObjectsFromString(epFileString):
+def get_energy_plus_objects_from_string(ep_file_string):
     """
     Parse idf file string.
 
     Args:
-        epFileString: EnergyPlus data as a single string. The string can be multiline
+        ep_file_string: EnergyPlus data as a single string. The string can be multiline
 
     Returns:
         A list of strings. Each string represents a differnt Rdiance Object
@@ -20,11 +20,15 @@ def getEnergyPlusObjectsFromString(epFileString):
                   "shading:site:detailed": {}, "shading:building:detailed": {},
                   "shading:zone:detailed": {}}
 
-    rawEPObjects = re.findall(r'.[^;]*;.*[^$]', "\n" + epFileString + "\n", re.MULTILINE)
+    raw_ep_objects = re.findall(
+        r'.[^;]*;.*[^$]',
+        "\n" + ep_file_string + "\n",
+        re.MULTILINE)
 
-    for obj in rawEPObjects:
+    for obj in raw_ep_objects:
         # seperate each segment of EnergyPlus object
-        segments = [seg.split("!")[0] for seg in re.findall(r'.+[,|;]', obj, re.MULTILINE)]
+        segments = [seg.split("!")[0]
+                    for seg in re.findall(r'.+[,|;]', obj, re.MULTILINE)]
 
         # clean the objects and join them into a single comma separated string
         segments = "".join(segments).replace("\t", "").replace(" ", "")[:-1].split(",")
@@ -41,7 +45,7 @@ def getEnergyPlusObjectsFromString(epFileString):
     return _epObjects
 
 
-def getEnergyPlusObjectsFromFile(epFilePath):
+def get_energy_plus_objects_from_file(ep_file_path):
     """
     Parse EnergyPlus file and return a list of radiance objects as separate strings.
 
@@ -49,30 +53,31 @@ def getEnergyPlusObjectsFromFile(epFilePath):
     instead of strings
 
     Args:
-        epFilePath: Path to EnergyPlus file
+        ep_file_path: Path to EnergyPlus file
 
     Returns:
         A list of strings. Each string represents a differnt Rdiance Object
 
     Usage:
-        getEnergyPlusObjectsFromFile(r"C:/ladybug/21MAR900/energySimulation/21MAR900.rad")
+        get_energy_plus_objects_from_file(r"C:/ladybug/21MAR900/energySimulation/21MAR900.rad")
     """
-    if not os.path.isfile(epFilePath):
-        raise ValueError("Can't find %s." % epFilePath)
+    if not os.path.isfile(ep_file_path):
+        raise ValueError("Can't find %s." % ep_file_path)
 
-    with open(epFilePath, "r") as epFile:
-        return getEnergyPlusObjectsFromString("".join(epFile.readlines()))
+    with open(ep_file_path, "r") as epFile:
+        return get_energy_plus_objects_from_string("".join(epFile.readlines()))
 
 
 if __name__ == "__main__":
-    objects = getEnergyPlusObjectsFromFile(r"C:\EnergyPlusV8-3-0\ExampleFiles\5ZoneWaterCooled_GasFiredSteamHumidifier.idf")
+    objects = get_energy_plus_objects_from_file(
+        r"C:/EnergyPlusV8-3-0/ExampleFiles/5ZoneWaterCooled_GasFiredSteamHumidifier.idf")
 
     # if the geometry rules is relative then all the points should be added
     # to X, Y, Z of zone origin
-    print objects['globalgeometryrules'].values()
+    print(objects['globalgeometryrules'].values())
     for z in objects['zone']:
-        print "zone:", objects['zone'][z]
+        print("zone:", objects['zone'][z])
     for s in objects['buildingsurface:detailed']:
-        print "buildingsurface:", s
+        print("buildingsurface:", s)
     for w in objects['fenestrationsurface:detailed']:
-        print "fenestrationsurface:", w
+        print("fenestrationsurface:", w)

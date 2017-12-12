@@ -13,18 +13,18 @@ class GendaylitTestCase(unittest.TestCase):
     # preparing to test.
     def setUp(self):
         # instantiate gendaylit with monthdayhour
-        self.gendayMonthDay = Gendaylit(monthDayHour=(11, 12, '11EST'))
-        self.gendayMonthDay.outputFile = 'room/temp/genday.sky'
+        self.genday_month_day = Gendaylit(month_day_hour=(11, 12, '11EST'))
+        self.genday_month_day.output_file = 'room/temp/genday.sky'
         # instantiate gendaylit params and add some values
-        gendaylitParam1 = GendaylitParameters()
+        gendaylit_param1 = GendaylitParameters()
 
         # add params to gendaylit class.
-        self.gendayMonthDay.gendaylitParameters = gendaylitParam1
+        self.gendayMonthDay.gendaylit_parameters = gendaylit_param1
 
         # instantiate another gendaylit, with altitude and azimuth angles.
-        self.gendayAltAzi = Gendaylit()
-        gendayParam2 = GendaylitParameters(altitudeAzimuth=(32,11))
-        self.gendayAltAzi.gendaylitParameters = gendayParam2
+        self.genday_alt_azi = Gendaylit()
+        genday_param2 = GendaylitParameters(altitude_azimuth=(32, 11))
+        self.genday_alt_azi.gendaylit_parameters = genday_param2
 
     def tearDown(self):
         "Clean stuff created during the test"
@@ -32,14 +32,16 @@ class GendaylitTestCase(unittest.TestCase):
 
     def test_default_values(self):
         "Test the command runs correctly"
-        gendaylitMonthDayString = self.gendayMonthDay.toRadString()
-        self.gendayMonthDay.execute()
+        # gendaylit_month_day_string = self.genday_month_day.to_rad_string()
+        self.genday_month_day.execute()
         # This prints gendaylit 11 12 11EST -ang 32 11 -g 0.2 +s -c
         # The -ang 32 11 and +s where not assigned for this instance but they
         # pop up for some reason.
 
-        gendaylitAltAziString = self.gendayAltAzi.gendaylitParameters.toRadString()
-        self.assertEqual(gendaylitAltAziString, '-ang 32.0 11.0')
+        gendaylit_alt_azi_string = self.genday_alt_azi.gendaylit_parameters \
+            .to_rad_string()
+        self.assertEqual(gendaylit_alt_azi_string, '-ang 32.0 11.0')
+
 
 if __name__ == "__main__":
     unittest.main()

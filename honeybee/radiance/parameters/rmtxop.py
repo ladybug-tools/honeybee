@@ -8,12 +8,12 @@ class RmtxopParameters(AdvancedRadianceParameters):
     """Radiance parameters for the command rmtxop.
 
     Read more:
-    http://www.radiance-online.org/learning/documentation/
+    http://www.radiance-online.org/learning/documentation\
     manual-pages/pdfs/rmtxop.pdf
 
     Attributes:
-        verboseReporting: [-v] Boolean option to print each operation to stdout.
-        outputFormat: [-f[a|c|d|f]] Format in which the output data should be
+        verbose_reporting: [-v] Boolean option to print each operation to stdout.
+        output_format: [-f[a|c|d|f]] Format in which the output data should be
             written.
 
     Usage:
@@ -21,45 +21,45 @@ class RmtxopParameters(AdvancedRadianceParameters):
         rmtx = RmtxopParameters()
 
         #check current values
-        print rmtx.toRadString()
+        print(rmtx.to_rad_string())
         >
 
         #add verbose flag.
-        rmtx.verboseReporting = True
+        rmtx.verbose_reporting = True
 
         #check values again.
-        print rmtx.toRadString()
+        print(rmtx.to_rad_string())
         > -v
 
     """
 
-    def __init__(self, verboseReporting=None, outputFormat=None,combineValues=None,
-                 transposeMatrix=None):
+    def __init__(self, verbose_reporting=None, output_format=None, combine_values=None,
+                 transpose_matrix=None):
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadianceBoolFlag('v', 'verbose Reporting',
-                                 attributeName='verboseReporting')
+        self.add_radiance_bool_flag('v', 'verbose Reporting',
+                                    attribute_name='verbose_reporting')
 
-        self.verboseReporting = verboseReporting
+        self.verbose_reporting = verbose_reporting
         """This boolean option turns on verbose reporting, which announces each
         operation of rmtxop"""
 
-        self.addRadianceBoolFlag('t', 'transpose matrix',
-                                 attributeName='transposeMatrix')
+        self.add_radiance_bool_flag('t', 'transpose matrix',
+                                    attribute_name='transpose_matrix')
 
-        self.transposeMatrix = transposeMatrix
+        self.transpose_matrix = transpose_matrix
         """This boolean option transposes the matrix."""
 
-        self.addRadianceValue('f', 'output format',
-                              attributeName='outputFormat',
-                              acceptedInputs=('a', 'f', 'd', 'c'),
-                              isJoined=True)
+        self.add_radiance_value('f', 'output format',
+                                attribute_name='output_format',
+                                accepted_inputs=('a', 'f', 'd', 'c'),
+                                is_joined=True)
 
-        self.outputFormat = outputFormat
+        self.output_format = output_format
         """Specify the output format. Output formats correspond to a for ASCII,
         d for binary doubles, f for floats and c for RGBE colors."""
 
-        self.addRadianceTuple('c', 'combine values',
-                              attributeName='combineValues', tupleSize=3)
+        self.add_radiance_tuple('c', 'combine values',
+                                attribute_name='combine_values', tuple_size=3)
 
-        self.combineValues = combineValues
+        self.combine_values = combine_values

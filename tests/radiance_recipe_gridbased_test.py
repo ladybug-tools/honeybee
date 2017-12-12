@@ -12,7 +12,7 @@ class GridbasedTestCase(unittest.TestCase):
         """Set up the test case by initiating the class."""
         # create a sky to be able to initiate gridbased module
         sky = radSky(1000)
-        self.rp = GridBased(sky, pointGroups=[0, 0, 0])
+        self.rp = GridBased(sky, point_groups=[0, 0, 0])
 
     # ending the test
     def tearDown(self):
@@ -22,7 +22,7 @@ class GridbasedTestCase(unittest.TestCase):
     # test default values
     def test_default_values(self):
         """Make sure default values are set correctly."""
-        self.assertEqual(self.rp.simulationType, 0,
+        self.assertEqual(self.rp.simulation_type, 0,
                          "Default simulation type is changed from 0!")
         # more tests here
 
@@ -39,8 +39,8 @@ class GridbasedTestCase(unittest.TestCase):
     # test for specific cases
     def test_single_point_input(self):
         """A single point should be converted to a single test group."""
-        self.rp.updatePointGroups([0, 0, 0])
-        self.assertEqual(self.rp.numOfPointGroups, 1,
+        self.rp.updatepoint_groups([0, 0, 0])
+        self.assertEqual(self.rp.num_of_point_groups, 1,
                          "Failed to convert single test point to a group!")
 
 

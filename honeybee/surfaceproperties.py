@@ -18,64 +18,64 @@ class SurfaceProperties(object):
     add the states to each HBSurface using HBSurface.addState.
 
     Attributes:
-        surfaceType: A honeybee surface type (Default: surfacetype.Wall).
-        radProperties: Radiance properties for this surface. If empty default
+        surface_type: A honeybee surface type (Default: surfacetype.Wall).
+        rad_properties: Radiance properties for this surface. If empty default
             RADProperties will be assigned based on surface type once assigned
             to a surface.
-        epProperties: EnergyPlus properties for this surface. If empty default
-            epProperties will be assigned based on surface type once assigned
+        ep_properties: EnergyPlus properties for this surface. If empty default
+            ep_properties will be assigned based on surface type once assigned
             to a surface.
     """
 
-    # TODO: add default epProperties - based on surface type.
-    def __init__(self, surfaceType=None, radProperties=None, epProperties=None):
-        self.surfaceType = surfaceType or surfacetype.Wall()
-        self.radProperties = radProperties
-        if epProperties:
+    # TODO: add default ep_properties - based on surface type.
+    def __init__(self, surface_type=None, rad_properties=None, ep_properties=None):
+        self.surface_type = surface_type or surfacetype.Wall()
+        self.rad_properties = rad_properties
+        if ep_properties:
             raise NotImplementedError('EnergyPlus properties is not implemented yet!')
-        self.epProperties = epProperties
+        self.ep_properties = ep_properties
 
     def isSurfaceProperties(self):
         """Return True for states."""
         return True
 
     @property
-    def surfaceType(self):
+    def surface_type(self):
         """Get and set Surface Type."""
-        return self._surfaceType
+        return self._surface_type
 
-    @surfaceType.setter
-    def surfaceType(self, value):
+    @surface_type.setter
+    def surface_type(self, value):
         # it is either a number or already a valid type
         assert hasattr(value, 'isSurfaceType'), \
             ValueError('%s is not a valid surface type.' % value)
 
-        self._surfaceType = value
+        self._surface_type = value
 
         # update radiance material
         try:
-            self.radProperties.radianceMaterial = self.surfaceType.radianceMaterial
+            self.rad_properties.radiance_material = self.surface_type.radiance_material
         except AttributeError:
             pass  # surface rad properties is not set yet!
 
     @property
-    def radProperties(self):
+    def rad_properties(self):
         """Get and set Radiance properties."""
-        return self._radProperties
+        return self._rad_properties
 
-    @radProperties.setter
-    def radProperties(self, radProperties):
-        radProperties = radProperties or \
-            RadianceProperties(self.surfaceType.radianceMaterial)
-        assert hasattr(radProperties, 'isRadianceProperties'), \
-            "%s is not a valid RadianceProperties" % str(radProperties)
-        if radProperties.radianceMaterial is None:
-            radProperties.radianceMaterial = self.surfaceType.radianceMaterial
-        self._radProperties = radProperties
+    @rad_properties.setter
+    def rad_properties(self, rad_properties):
+        rad_properties = rad_properties or \
+            RadianceProperties(self.surface_type.radiance_material)
+        assert hasattr(rad_properties, 'isRadianceProperties'), \
+            "%s is not a valid RadianceProperties" % str(rad_properties)
+        if rad_properties.radiance_material is None:
+            rad_properties.radiance_material = self.surface_type.radiance_material
+        self._rad_properties = rad_properties
 
-    def radMaterialFromType(self):
+    def rad_material_from_type(self):
         """Get default radiance material for the surface type."""
-        return self.surfaceType.radianceMaterial
+        return self.surface_type.radiance_material
 
     def ToString(self):
         """Overwrite .NET ToString method."""
@@ -101,21 +101,21 @@ class SurfaceState(object):
 
     Attributes:
         name: Name as a string.
-        surfaceProperties: An instance of SurfaceProperties (Default: None).
+        surface_properties: An instance of SurfaceProperties (Default: None).
         surfaces: A list of HBSurfaces to be added to the scene. For multi-phase
-            daylight simulation hbSurfaces can only be located outside the room
+            daylight simulation hb_surfaces can only be located outside the room
             (Default: None).
     """
 
-    __slots__ = ('_surfaceProperties', '_surfaces', '_name')
+    __slots__ = ('_surface_properties', '_surfaces', '_name')
 
-    def __init__(self, name, surfaceProperties=None, surfaces=None):
+    def __init__(self, name, surface_properties=None, surfaces=None):
         """Create a state."""
         self.name = name
-        self.surfaceProperties = surfaceProperties
+        self.surface_properties = surface_properties
         self.surfaces = surfaces
-        if not (self.surfaceProperties or self.surfaces):
-            raise ValueError('A state must have a surfaceProperties or hbSurfaces.'
+        if not (self.surface_properties or self.surfaces):
+            raise ValueError('A state must have a surface_properties or hb_surfaces.'
                              ' Both cannot be None.')
 
     @property
@@ -130,22 +130,22 @@ class SurfaceState(object):
 
     @name.setter
     def name(self, n):
-        util.checkName(n)
+        util.check_name(n)
         self._name = n
 
     @property
-    def surfaceProperties(self):
+    def surface_properties(self):
         """SurfaceProperties for this state."""
-        return self._surfaceProperties
+        return self._surface_properties
 
-    @surfaceProperties.setter
-    def surfaceProperties(self, srfProp):
-        if srfProp:
-            assert hasattr(srfProp, 'isSurfaceProperties'), \
+    @surface_properties.setter
+    def surface_properties(self, srf_prop):
+        if srf_prop:
+            assert hasattr(srf_prop, 'isSurfaceProperties'), \
                 TypeError(
-                    'Expected SurfaceProperties not {}'.format(type(srfProp))
+                    'Expected SurfaceProperties not {}'.format(type(srf_prop))
             )
-        self._surfaceProperties = srfProp
+        self._surface_properties = srf_prop
 
     @property
     def surfaces(self):
@@ -160,40 +160,41 @@ class SurfaceState(object):
         self._surfaces = srfs
 
     @property
-    def radProperties(self):
+    def rad_properties(self):
         """Get Radiance material from SurfaceProperties."""
-        if not self._surfaceProperties:
+        if not self._surface_properties:
             return None
         else:
-            return self._surfaceProperties.radProperties
+            return self._surface_properties.rad_properties
 
     @property
-    def radianceMaterial(self):
+    def radiance_material(self):
         """Get Radiance material from SurfaceProperties."""
-        if not self._surfaceProperties:
+        if not self._surface_properties:
             return None
         else:
-            return self._surfaceProperties.radProperties.radianceMaterial
+            return self._surface_properties.rad_properties.radiance_material
 
-    def radianceMaterials(self, blacked=False, toRadString=False):
+    def radiance_materials(self, blacked=False, to_rad_string=False):
         """Get the full list of materials for surfaces."""
-        mt_base = [srf.radianceMaterial for srf in self.surfaces]
-        mt_child = [childSrf.radianceMaterial
+        mt_base = [srf.radiance_material for srf in self.surfaces]
+        mt_child = [childSrf.radiance_material
                     for srf in self.surfaces
-                    for childSrf in srf.childrenSurfaces
-                    if srf.hasChildSurfaces]
+                    for childSrf in srf.children_surfaces
+                    if srf.has_child_surfaces]
         mt = set(mt_base + mt_child)
-        return '\n'.join(m.toRadString() for m in mt) if toRadString else tuple(mt)
+        return '\n'.join(m.to_rad_string() for m in mt) if to_rad_string else tuple(mt)
 
-    def toRadString(self, mode=1, includeMaterials=False, flipped=False, blacked=False):
-        """Get surfaces as a RadFile. Use str(toRadString) to get the full str.
+    def to_rad_string(self, mode=1, include_materials=False,
+                      flipped=False, blacked=False):
+        """Get surfaces as a RadFile. Use str(to_rad_string) to get the full str.
 
         Args:
             mode: An integer 0-2 (Default: 1)
                 0 - Do not include children surfaces.
                 1 - Include children surfaces.
                 2 - Only children surfaces.
-            includeMaterials: Set to False if you only want the geometry definition
+            include_materials: Set to False if you only want the geometry definition
              (default:True).
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
@@ -201,8 +202,8 @@ class SurfaceState(object):
         if not self.surfaces:
             return ''
         mode = mode or 1
-        return RadFile(self.surfaces).toRadString(mode, includeMaterials,
-                                                  flipped, blacked)
+        return RadFile(self.surfaces).to_rad_string(mode, include_materials,
+                                                    flipped, blacked)
 
     def ToString(self):
         """Overwrite .NET ToString method."""
@@ -215,6 +216,6 @@ class SurfaceState(object):
 
 if __name__ == '__main__':
     sp = SurfaceProperties()
-    print(sp.radProperties.radianceMaterial)
+    print(sp.rad_properties.radiance_material)
 
     st = SurfaceState('newState', sp)
