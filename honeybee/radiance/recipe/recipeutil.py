@@ -19,13 +19,13 @@ def input_srfs_to_rad_files(in_srfs):
     wgs = []
 
     for srf in in_srfs:
-        if srf.is_hb_dynamic_surface:
+        if srf.isHBDynamicSurface:
             # window groups, multiple of single state
             wgs.append(srf)
-        elif srf.is_hb_fen_surface or srf.radiance_material.is_glass_material:
+        elif srf.isHBFenSurface or srf.radiance_material.isGlassMaterial:
             # generic window surfaces
             fen.append(srf)
-        elif srf.is_hb_surface:
+        elif srf.isHBSurface:
             opaque.append(srf)
             fen.extend(srf.children_surfaces)
         else:
@@ -50,13 +50,13 @@ def input_srfs_to_rad_files(in_srfs):
     return RadFile(opaque), RadFile(fen), tuple(RadFile((wg,)) for wg in wgs)
 
 
-def glz_srf_towin_group():
+def glz_srf_to_window_group():
     """Create a named tuple that looks like window groups for glazing surfaces.
 
     This is neccessary to work with normal glazing just like window groups.
     """
     State = namedtuple('State', 'name')
-    WindowGroup = namedtuple('WindowGroup', 'name states stateCount')
+    WindowGroup = namedtuple('WindowGroup', 'name states state_count')
 
     state = State('default')
     wg = WindowGroup('scene', (state,), 1)

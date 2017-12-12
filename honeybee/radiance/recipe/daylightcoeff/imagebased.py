@@ -1,5 +1,5 @@
 """Radiance Daylight Coefficient Image-Based Analysis Recipe."""
-from ..recipeutil import write_extra_files, glz_srf_towin_group
+from ..recipeutil import write_extra_files, glz_srf_to_window_group
 from ..recipedcutil import write_rad_files_daylight_coeff, create_reference_map_command
 from ..recipedcutil import image_based_view_sampling_commands, \
     image_based_view_coeff_matrix_commands, imaged_based_sun_coeff_matrix_commands
@@ -242,7 +242,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         # this is a hack. A better solution is to create a HBDynamicSurface from glazing
         # surfaces. The current limitation is that HBDynamicSurface can't have several
         # surfaces with different materials.
-        all_window_groups = [glz_srf_towin_group()]
+        all_window_groups = [glz_srf_to_window_group()]
         all_window_groups.extend(self.window_groups)
         all_wgs_files = [glzfiles] + list(wgsfiles)
 

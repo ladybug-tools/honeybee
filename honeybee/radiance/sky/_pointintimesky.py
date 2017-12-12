@@ -107,7 +107,7 @@ class PointInTimeSky(RadianceSky):
     @hoy.setter
     def hoy(self, v):
         """Set datetime by hour of year."""
-        self._datetime = DateTime.fromHoy(v)
+        self._datetime = DateTime.from_hoy(v)
 
     @property
     def name(self):

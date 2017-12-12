@@ -145,7 +145,7 @@ class Gensky(RadianceCommand):
             else GenskyParameters()
 
         assert hasattr(self.gensky_parameters, "isRadianceParameters"), \
-            "input gensky_parameters is not a valid parameters type."
+            "Expected GenSkyParameters not {}.".format(type(self.gensky_parameters))
 
     def to_rad_string(self):
         """Return full command as a string."""
@@ -153,7 +153,7 @@ class Gensky(RadianceCommand):
         if self.rotation != 0:
             rad_string = "%s %s %s | xform -rz %.3f > %s" % (
                 self.normspace(os.path.join(self.radbin_path, 'gensky')),
-                self.month_day_hour.to_rad_string().replace("-month_day_hour ", ""),
+                self.month_day_hour.to_rad_string().replace("-monthdayhour ", ""),
                 self.gensky_parameters.to_rad_string(),
                 self.rotation,
                 self.normspace(self.output_file.to_rad_string())
@@ -161,7 +161,7 @@ class Gensky(RadianceCommand):
         else:
             rad_string = "%s %s %s > %s" % (
                 self.normspace(os.path.join(self.radbin_path, 'gensky')),
-                self.month_day_hour.to_rad_string().replace("-month_day_hour ", ""),
+                self.month_day_hour.to_rad_string().replace("-monthdayhour ", ""),
                 self.gensky_parameters.to_rad_string(),
                 self.normspace(self.output_file.to_rad_string())
             )

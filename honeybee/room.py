@@ -123,8 +123,8 @@ class Room(HBZone):
 
     def generate_interior_view(self, u=0.5, v=0.5, z=0.5, angle=0,
                                view_up_vector=(0, 0, 1), view_type=0, view_h_size=60,
-                               view_v_size=60, x_res=64, y_res=64, view_shift=0,
-                               view_lift=0):
+                               view_v_size=60, x_resolution=64, y_resolution=64,
+                               view_shift=0, view_lift=0):
         u"""Generate an inetrior view.
 
         Args:
@@ -148,8 +148,8 @@ class Room(HBZone):
                 projection (including fisheye views), val is the horizontal field
                 of view (in degrees). For a parallel projection, val is the view
                 width in world coordinates.
-            x_res: Set the maximum x resolution (-x) to an integer.
-            y_res: Set the maximum y resolution (-y) to an integer.
+            x_resolution: Set the maximum x resolution (-x) to an integer.
+            y_resolution: Set the maximum y resolution (-y) to an integer.
             view_shift: Set the view shift (-vs). This is the amount the actual
                 image will be shifted to the right of the specified view. This
                 option is useful for generating skewed perspectives or rendering
@@ -162,8 +162,8 @@ class Room(HBZone):
         """
         v = View(self.get_location(u, v, z),
                  self._yAxis.rotate_around(self._zAxis, math.radians(angle)),
-                 view_up_vector, view_type, view_h_size, view_v_size, x_res, y_res,
-                 view_shift, view_lift)
+                 view_up_vector, view_type, view_h_size, view_v_size,
+                 x_resolution, y_resolution, view_shift, view_lift)
 
         return v
 

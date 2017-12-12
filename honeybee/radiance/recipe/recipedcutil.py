@@ -9,7 +9,7 @@ from ..command.rpict import Rpict
 from ..command.rcontrib import Rcontrib
 from ..command.vwrays import Vwrays
 from ..parameters.imagebased import ImageBasedParameters
-from .recipeutil import glz_srf_towin_group
+from .recipeutil import glz_srf_to_window_group
 from .parameters import get_radiance_parameters_grid_based, \
     get_radiance_parameters_image_based
 
@@ -116,8 +116,8 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
         raise TypeError('You must use a SkyMatrix to generate the sky.')
 
     # # 2.2. Create sun matrix
-    sm = sun_matrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
-                    sky_matrix.sky_type, suffix=sky_matrix.suffix)
+    sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
+                   sky_matrix.sky_type, suffix=sky_matrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
 
@@ -160,8 +160,8 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
     sky_matrix.mode = 0
 
     # # 2.2. Create sun matrix
-    sm = sun_matrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
-                    sky_matrix.sky_type, suffix=sky_matrix.suffix)
+    sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
+                   sky_matrix.sky_type, suffix=sky_matrix.suffix)
     analemma, sunlist, analemmaMtx = \
         sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
 
@@ -211,7 +211,7 @@ def get_commands_scene_daylight_coeff(
         blkmaterial = ()
         wgsblacked = ()
 
-    window_group = glz_srf_towin_group()
+    window_group = glz_srf_to_window_group()
     window_groupfiles = glzfiles.fp
 
     commands, results = _get_commands_daylight_coeff(
@@ -334,7 +334,7 @@ def _get_commands_daylight_coeff(
              blkmaterial, wgsblacked)
             for f in fl)
 
-        d_matrix = 'result/matrix\normal_{}..{}..{}.dc'.format(
+        d_matrix = 'result/matrix/normal_{}..{}..{}.dc'.format(
             project_name, window_group.name, state.name)
 
         d_matrix_direct = 'result/matrix/black_{}..{}..{}.dc'.format(
@@ -548,8 +548,8 @@ def image_based_view_sampling_commands(
 
     # calculate sampling for each view
     # the value will be different for each view
-    vwrays_parameters.x_resolution = view.x_res
-    vwrays_parameters.y_resolution = view.y_res
+    vwrays_parameters.x_resolution = view.x_resolution
+    vwrays_parameters.y_resolution = view.y_resolution
 
     vwr_samp = Vwrays()
     vwr_samp.vwrays_parameters = vwrays_parameters

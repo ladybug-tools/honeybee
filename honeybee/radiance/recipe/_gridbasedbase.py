@@ -70,7 +70,7 @@ class GenericGridBased(AnalysisRecipe):
 
         for ag in self._analysis_grids:
             assert hasattr(ag, 'isAnalysisGrid'), \
-                '{} is not an AnalysisGrid.'.format(ag)
+                'Expected an AnalysisGrid not {}'.format(type(ag))
 
     @property
     def points(self):

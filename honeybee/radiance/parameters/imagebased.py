@@ -417,7 +417,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         return cls(quality=2)
 
     @property
-    def is_image_based_radiance_parameters(self):
+    def isImageBasedRadianceParameters(self):
         """Return True to indicate this object is a RadianceParameters."""
         return True
 

@@ -32,6 +32,6 @@ class HBDynamicSurface(HBSurface):
     """
 
     @property
-    def is_hb_dynamic_surface(self):
+    def isHBDynamicSurface(self):
         """Check if the surface is HBDynamicSurface."""
         return True

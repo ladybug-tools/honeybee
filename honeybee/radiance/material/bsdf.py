@@ -48,7 +48,7 @@ class BSDFMaterial(RadianceMaterial):
         self.thickness = thickness or 0
 
     @property
-    def is_glass_material(self):
+    def isGlassMaterial(self):
         """Indicate if this object has glass Material.
 
         This property will be used to separate the glass surfaces in a separate

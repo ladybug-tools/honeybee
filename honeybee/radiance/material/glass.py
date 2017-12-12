@@ -62,7 +62,7 @@ class GlassMaterial(RadianceMaterial):
             b_transmittance=rgb_transmittance, refraction=1.52, modifier="void")
 
     @property
-    def is_glass_material(self):
+    def isGlassMaterial(self):
         """Indicate if this object has glass Material.
 
         This property will be used to separate the glass surfaces in a separate

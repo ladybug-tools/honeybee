@@ -116,7 +116,7 @@ class ImageBased(GenericImageBased):
     @radiance_parameters.setter
     def radiance_parameters(self, rad_parameters):
         if not rad_parameters:
-            rad_parameters = ImageBasedParameters.LowQuality()
+            rad_parameters = ImageBasedParameters.low_quality()
         assert hasattr(rad_parameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(rad_parameters)
         self._radiance_parameters = rad_parameters
@@ -188,6 +188,10 @@ class ImageBased(GenericImageBased):
         # # 4.2.prepare rpict
         # TODO: Add overtrue
         for view, f in zip(self.views, view_files):
+            # set x and y resolution based on x and y resolution in view
+            self.radiance_parameters.x_resolution = view.x_resolution
+            self.radiance_parameters.y_resolution = view.y_resolution
+
             rp = Rpict('result/' + view.name,
                        simulation_type=self.simulation_type,
                        rpict_parameters=self.radiance_parameters)

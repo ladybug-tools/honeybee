@@ -323,7 +323,7 @@ class DaylightCoeffGridBased(GenericGridBased):
                     print('\nloading the results for {} AnalysisGrid form {}::{}\n{}\n'
                           .format(analysisGrid.name, source, state, rf))
                     # total value only
-                    analysisGrid.set_valuesFromFile(
+                    analysisGrid.set_values_from_file(
                         rf, self.sky_matrix.hoys, source, state, start_line=start_line,
                         header=True, check_point_count=False, mode=mode
                     )

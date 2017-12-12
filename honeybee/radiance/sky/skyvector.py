@@ -114,7 +114,7 @@ class SkyVector(RadianceSky):
         return self.__is_climate_based
 
     @property
-    def is_sky_vector(self):
+    def isSkyVector(self):
         """Return True."""
         return True
 

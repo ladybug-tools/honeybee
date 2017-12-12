@@ -281,7 +281,7 @@ class GridBasedParameters(AdvancedRadianceParameters):
         """
 
     @property
-    def is_grid_based_radiance_parameters(self):
+    def isGridBasedRadianceParameters(self):
         """Return True to indicate this object is a RadianceParameters."""
         return True
 

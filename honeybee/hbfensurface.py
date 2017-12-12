@@ -163,7 +163,7 @@ class HBFenSurface(HBAnalysisSurface):
         return self._isCreatedFromGeo
 
     @property
-    def is_hb_fen_surface(self):
+    def isHBFenSurface(self):
         """Return True for HBFenSurface."""
         return True
 

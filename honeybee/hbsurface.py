@@ -187,7 +187,7 @@ class HBSurface(HBAnalysisSurface):
         return self._isCreatedFromGeo
 
     @property
-    def is_hb_surface(self):
+    def isHBSurface(self):
         """Return True for HBSurface."""
         return True
 

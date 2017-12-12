@@ -45,7 +45,7 @@ class SkyMatrix(RadianceSky):
                    suffix=suffix)
 
     @property
-    def is_sky_matrix(self):
+    def isSkyMatrix(self):
         """Return True."""
         return True
 
@@ -113,7 +113,7 @@ class SkyMatrix(RadianceSky):
         """Sky default name."""
         return "skymtx_{}_r{}_{}_{}_{}_{}_{}{}".format(
             self.sky_type_human_readable, self.sky_density,
-            self.mode, self.wea.location.stationId,
+            self.mode, self.wea.location.station_id,
             self.wea.location.latitude, self.wea.location.longitude, self.north,
             '_{}'.format(self.suffix) if self.suffix else ''
         )

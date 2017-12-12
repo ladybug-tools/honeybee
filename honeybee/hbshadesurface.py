@@ -79,7 +79,7 @@ class HBShadingSurface(HBAnalysisSurface):
         return cls(name, sorted_points=_pts, is_name_set_by_user=True)
 
     @property
-    def is_hb_shading_surface(self):
+    def isHBShadingSurface(self):
         """Return True for HBFenSurface."""
         return True
 

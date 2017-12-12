@@ -279,7 +279,7 @@ class GridBased(GenericGridBased):
             if count:
                 start_line += len(self.analysis_grids[count - 1])
 
-            analysisGrid.set_valuesFromFile(
+            analysisGrid.set_values_from_file(
                 rf, (int(dt.hoy),), start_line=start_line, header=False, mode=mode
             )
 

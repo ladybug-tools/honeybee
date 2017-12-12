@@ -17,8 +17,8 @@ class View(object):
         view_direction: Set the view direction (-vd) vector to (x, y, z). The
             length of this vector indicates the focal distance as needed by
             the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
-        upVector: Set the view up (-vu) vector (vertical direction) to (x, y, z).
-            Default: (0, 1, 0)
+        view_up_vector: Set the view up (-vu) vector (vertical direction) to
+            (x, y, z) default: (0, 1, 0).
         view_type: Set view type (-vt) to one of the choices below.
                 0: Perspective (v)
                 1: Hemispherical fisheye (h)
@@ -36,8 +36,8 @@ class View(object):
             projection (including fisheye views), val is the horizontal field
             of view (in degrees). For a parallel projection, val is the view
             width in world coordinates.
-        x_res: Set the maximum x resolution (-x) to an integer.
-        y_res: Set the maximum y resolution (-y) to an integer.
+        x_resolution: Set the maximum x resolution (-x) to an integer.
+        y_resolution: Set the maximum y resolution (-y) to an integer.
         view_shift: Set the view shift (-vs). This is the amount the actual
             image will be shifted to the right of the specified view. This
             option is useful for generating skewed perspectives or rendering
@@ -52,7 +52,7 @@ class View(object):
 
         v = View()
         # set x and y resolution
-        v.x_res = v.y_res = 600
+        v.x_resolution = v.y_resolution = 600
         # add a fore clip
         v.add_fore_clip(distance=100)
         print(v)
@@ -95,8 +95,8 @@ class View(object):
     view_h_size = RadianceNumber('vh', 'view horizontal size', num_type=float)
     view_v_size = RadianceNumber('vv', 'view vertical size', num_type=float)
 
-    x_res = RadianceNumber('x', 'x resolution', num_type=int)
-    y_res = RadianceNumber('y', 'y resolution', num_type=int)
+    x_resolution = RadianceNumber('x', 'x resolution', num_type=int)
+    y_resolution = RadianceNumber('y', 'y resolution', num_type=int)
     view_shift = RadianceNumber('vs', 'view shift', num_type=float)
     view_lift = RadianceNumber('vl', 'view lift', num_type=float)
 
@@ -107,8 +107,8 @@ class View(object):
                                  default_value=0)
 
     def __init__(self, name, view_point=None, view_direction=None, view_up_vector=None,
-                 view_type=0, view_h_size=60, view_v_size=60, x_res=64, y_res=64,
-                 view_shift=0, view_lift=0):
+                 view_type=0, view_h_size=60, view_v_size=60, x_resolution=64,
+                 y_resolution=64, view_shift=0, view_lift=0):
         u"""Init view."""
         self.name = name
         """View name."""
@@ -134,10 +134,10 @@ class View(object):
         degrees). For a parallel projection, val is the view width in world
         coordinates."""
 
-        self.x_res = x_res
+        self.x_resolution = x_resolution
         """Set the maximum x resolution (-x)."""
 
-        self.y_res = y_res
+        self.y_resolution = y_resolution
         """Set the maximum y resolution (-y)."""
 
         self.view_shift = view_shift
@@ -159,7 +159,7 @@ class View(object):
         """
 
     @property
-    def is_view(self):
+    def isView(self):
         """Return True for view."""
         return True
 
@@ -197,8 +197,8 @@ class View(object):
 
         This method is same as vwrays -d
         """
-        max_x = max_x or self.x_res
-        max_y = max_y or self.y_res
+        max_x = max_x or self.x_resolution
+        max_y = max_y or self.y_resolution
 
         if self.view_type in (1, 4, 5):
             return min(max_x, max_y), min(max_x, max_y)
@@ -253,8 +253,8 @@ class View(object):
             return [self]
 
         _views = range(x_div_count * y_div_count)
-        _x = int(self.x_res / x_div_count)
-        _y = int(self.y_res / y_div_count)
+        _x = int(self.x_resolution / x_div_count)
+        _y = int(self.y_resolution / y_div_count)
 
         if self.view_type == 2:
             # parallel view (vtl)
@@ -300,8 +300,8 @@ class View(object):
             # update parameters
             _nView.view_h_size = _vh
             _nView.view_v_size = _vv
-            _nView.x_res = _x
-            _nView.y_res = _y
+            _nView.x_resolution = _x
+            _nView.y_resolution = _y
             _nView.view_shift = _vs
             _nView.view_lift = _vl
 
@@ -336,7 +336,7 @@ class View(object):
 
         # view size properties
         _viewSize = "-vh %.3f -vv %.3f -x %d -y %d" % (
-            self.view_h_size, self.view_v_size, self.x_res, self.y_res
+            self.view_h_size, self.view_v_size, self.x_resolution, self.y_resolution
         )
 
         __viewComponents = [_view, _viewSize]

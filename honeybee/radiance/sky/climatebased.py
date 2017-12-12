@@ -60,10 +60,10 @@ class ClimateBased(PointInTimeSky):
     def from_wea(cls, wea, month, day, hour, north=0, suffix=None):
         """Create sky from wea file."""
         assert hasattr(wea, 'isWea'), \
-            TypeError('Wea input should be form type WEA not {}.'.format(type(wea)))
+            TypeError('Expected WEA not {}.'.format(type(wea)))
 
         # get radiation values
-        direct, diffuse = wea.getRadiationValues(month, day, hour)
+        direct, diffuse = wea.get_radiation_values(month, day, hour)
         return cls(wea.location, month, day, hour, int(direct), int(diffuse), north,
                    suffix=suffix)
 

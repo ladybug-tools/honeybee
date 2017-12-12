@@ -29,12 +29,12 @@ class RadianceMaterial(object):
         """Material modifier. Default is void"""
 
     @property
-    def is_radiance_material(self):
+    def isRadianceMaterial(self):
         """Indicate that this object is a Radiance Material."""
         return True
 
     @property
-    def is_glass_material(self):
+    def isGlassMaterial(self):
         """Indicate if this object has glass Material.
 
         This property will be used to separate the glass surfaces in a separate

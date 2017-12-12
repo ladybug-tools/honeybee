@@ -98,7 +98,7 @@ class AnalysisGrid(object):
         return cls(points)
 
     @property
-    def is_analysis_grid(self):
+    def isAnalysisGrid(self):
         """Return True for AnalysisGrid."""
         return True
 
@@ -747,7 +747,7 @@ class AnalysisGrid(object):
                 state = fn[-1]
                 print('\nloading the results for {} AnalysisGrid form {}::{}\n{}\n'
                       .format(self.name, source, state, rfPath))
-                self.set_valuesFromFile(
+                self.set_values_from_file(
                     rf, hoys, source, state, start_line, is_direct=False,
                     header=header, check_point_count=False, mode=mode
                 )
@@ -759,7 +759,7 @@ class AnalysisGrid(object):
                 state = fn[-1]
                 print('\nloading the results for {} AnalysisGrid form {}::{}\n{}\n'
                       .format(self.name, source, state, rfPath))
-                self.set_valuesFromFile(
+                self.set_values_from_file(
                     rf, hoys, source, state, start_line, is_direct=True,
                     header=header, check_point_count=False, mode=mode
                 )

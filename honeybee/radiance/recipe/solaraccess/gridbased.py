@@ -148,8 +148,8 @@ class SolarAccessGridBased(GenericGridBased):
             sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
         """
         try:
-            sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
-            hoys = tuple(s.hoy for s in suns if s.isDuringDay)
+            sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
+            hoys = tuple(s.hoy for s in suns if s.is_during_day)
         except AttributeError:
             raise TypeError('The input is not a valid LBSun.')
 
@@ -161,11 +161,11 @@ class SolarAccessGridBased(GenericGridBased):
     def from_location_and_hoys(cls, location, hoys, point_groups, vector_groups=[],
                                timestep=1, hb_objects=None, sub_folder='sunlighthour'):
         """Create sunlighthours recipe from Location and hours of year."""
-        sp = Sunpath.fromLocation(location)
+        sp = Sunpath.from_location(location)
 
-        suns = (sp.calculateSunFromHOY(hoy) for hoy in hoys)
+        suns = (sp.calculate_sun_from_hoy(hoy) for hoy in hoys)
 
-        sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
+        sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
 
         analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
                                                                     vector_groups)
@@ -179,12 +179,12 @@ class SolarAccessGridBased(GenericGridBased):
         """Create sunlighthours recipe from Location and analysis period."""
         vector_groups = vector_groups or ()
 
-        sp = Sunpath.fromLocation(location)
+        sp = Sunpath.from_location(location)
 
-        suns = (sp.calculateSunFromHOY(hoy) for hoy in analysis_period.floatHOYs)
+        suns = (sp.calculate_sun_from_hoy(hoy) for hoy in analysis_period.float_hoys)
 
-        sun_vectors = tuple(s.sunVector for s in suns if s.isDuringDay)
-        hoys = tuple(s.hoy for s in suns if s.isDuringDay)
+        sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
+        hoys = tuple(s.hoy for s in suns if s.is_during_day)
 
         analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
                                                                     vector_groups)
@@ -213,8 +213,8 @@ class SolarAccessGridBased(GenericGridBased):
             raise ValueError("Failed to create the sun vectors!")
 
         if len(self.sun_vectors) != len(vectors):
-            print('%d vectors with positive z value are found and removed ' \
-                'from sun vectors' % (len(vectors) - len(self.sun_vectors)))
+            print('%d vectors with positive z value are found and removed '
+                  'from sun vectors' % (len(vectors) - len(self.sun_vectors)))
 
     @property
     def timestep(self):
@@ -236,7 +236,7 @@ class SolarAccessGridBased(GenericGridBased):
     @property
     def legend_parameters(self):
         """Legend parameters for solar access analysis."""
-        col = Colorset.Ecotect()
+        col = Colorset.ecotect()
         return LegendParameters([0, 'max'], colors=col)
 
     def write_suns(self, target_dir, project_name, mkdir=False):
@@ -378,7 +378,7 @@ class SolarAccessGridBased(GenericGridBased):
             if count:
                 start_line += len(self.analysis_grids[count - 1])
 
-            analysisGrid.set_valuesFromFile(
+            analysisGrid.set_values_from_file(
                 rf, hours, start_line=start_line, header=True, check_point_count=False,
                 mode=1
             )

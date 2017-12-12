@@ -15,7 +15,7 @@ class SurfaceTypeBase(object):
     energyPlusConstruction = None
     """Default EnergyPlus Construction."""
 
-    def is_surface_type(self):
+    def isSurfaceType(self):
         """Return True for surface types."""
         return True
 

@@ -13,7 +13,7 @@ class RadianceSky(object):
         )
 
     @property
-    def is_radiance_sky(self):
+    def isRadianceSky(self):
         """Return True for skies."""
         return True
 

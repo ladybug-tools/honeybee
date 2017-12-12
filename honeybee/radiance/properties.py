@@ -19,7 +19,7 @@ class RadianceProperties(object):
         self.radiance_material = (radiance_material, is_material_set_by_user)
 
     @property
-    def is_radiance_properties(self):
+    def isRadianceProperties(self):
         """Indicate this object is RadianceProperties."""
         return True
 

@@ -85,7 +85,7 @@ class RadianceDefault(object):
             else name
 
     @property
-    def is_radiance_data_type(self):
+    def isRadianceDataType(self):
         """Check if object is a RadinaceDataType."""
         return True
 

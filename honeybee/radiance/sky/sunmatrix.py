@@ -43,7 +43,7 @@ class SunMatrix(RadianceSky):
         return cls(Wea.from_epw_file(epw_file), north, hoys)
 
     @property
-    def is_sun_matrix(self):
+    def isSunMatrix(self):
         """Return True."""
         return True
 
@@ -78,7 +78,7 @@ class SunMatrix(RadianceSky):
         """Sky default name."""
         return "sunmtx_{}_{}_{}_{}_{}{}".format(
             self.sky_type_human_readable,
-            self.wea.location.stationId,
+            self.wea.location.station_id,
             self.wea.location.latitude,
             self.wea.location.longitude,
             self.north,
@@ -159,10 +159,10 @@ class SunMatrix(RadianceSky):
             outf.write(','.join(str(h) for h in self.hoys) + '\n')
 
         wea = self.wea
-        month_date_time = (DateTime.fromHoy(idx) for idx in self.hoys)
+        month_date_time = (DateTime.from_hoy(idx) for idx in self.hoys)
         latitude, longitude = wea.location.latitude, -wea.location.longitude
 
-        sp = Sunpath.fromLocation(wea.location, self.north)
+        sp = Sunpath.from_location(wea.location, self.north)
         solarradiances = []
         sun_values = []
         sun_up_hours = []  # collect hours that sun is up
@@ -175,15 +175,15 @@ class SunMatrix(RadianceSky):
         count = 0
         for timecount, timeStamp in enumerate(month_date_time):
             month, day, hour = timeStamp.month, timeStamp.day, timeStamp.hour + 0.5
-            dnr, dhr = int(wea.direct_normal_radiation[timeStamp.intHOY]), \
-                int(wea.diffuse_horizontal_radiation[timeStamp.intHOY])
+            dnr, dhr = int(wea.direct_normal_radiation[timeStamp.int_hoy]), \
+                int(wea.diffuse_horizontal_radiation[timeStamp.int_hoy])
             if dnr == 0:
                 continue
             count += 1
-            sun = sp.calculateSun(month, day, hour)
+            sun = sp.calculate_sun(month, day, hour)
             if sun.altitude < 0:
                 continue
-            x, y, z = sun.sunVector
+            x, y, z = sun.sun_vector
             solarradiance = \
                 int(gendaylit(sun.altitude, month, day, hour, dnr, dhr, output_type))
             cur_sun_definition = solarstring.format(count, solarradiance, -x, -y, -z)

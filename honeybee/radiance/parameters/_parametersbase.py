@@ -40,7 +40,7 @@ class RadianceParameters(object):
         setattr(self, 'is{}'.format(self.__class__.__name__), True)
 
     @property
-    def is_radiance_parameters(self):
+    def isRadianceParameters(self):
         """Return True to indicate this object is a RadianceParameters."""
         return True
 

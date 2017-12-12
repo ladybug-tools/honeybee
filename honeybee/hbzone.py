@@ -66,7 +66,7 @@ class HBZone(HBObject):
                    is_conditioned)
 
     @property
-    def is_hb_zone(self):
+    def isHBZone(self):
         """Return True if a HBZone."""
         return True
 

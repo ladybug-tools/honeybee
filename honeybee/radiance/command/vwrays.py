@@ -23,7 +23,7 @@ class Vwrays(RadianceCommand):
         self.output_data_format = output_data_format
 
     @property
-    def is_vwrays_parameters(self):
+    def isVwraysParameters(self):
         """return True for type check."""
         return True
 

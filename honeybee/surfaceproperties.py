@@ -35,7 +35,7 @@ class SurfaceProperties(object):
             raise NotImplementedError('EnergyPlus properties is not implemented yet!')
         self.ep_properties = ep_properties
 
-    def is_surface_properties(self):
+    def isSurfaceProperties(self):
         """Return True for states."""
         return True
 
@@ -119,7 +119,7 @@ class SurfaceState(object):
                              ' Both cannot be None.')
 
     @property
-    def is_surface_state(self):
+    def isSurfaceState(self):
         """Return True if a SurfaceState."""
         return True
 

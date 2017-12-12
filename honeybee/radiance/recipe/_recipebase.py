@@ -41,7 +41,7 @@ class AnalysisRecipe(object):
         )
 
     @property
-    def is_analysis_recipe(self):
+    def isAnalysisRecipe(self):
         """Return true to indicate it is an analysis recipe."""
         return True
 
@@ -80,7 +80,7 @@ class AnalysisRecipe(object):
                         self._hbObjs.extend(obj.surfaces)
                         for srf in obj.surfaces:
                             self._hbObjs.extend(srf.children_surfaces)
-                    elif obj.is_hb_analysis_surface:
+                    elif obj.isHBAnalysisSurface:
                         self._hbObjs.append(obj)
                         try:
                             self._hbObjs.extend(obj.children_surfaces)
@@ -232,16 +232,17 @@ class AnalysisRecipe(object):
                 bf.write("\npause\n")
 
         # FIX: Heroku Permission Patch
-        print('Command RUN: {}'.format(command_file))
-        process = subprocess.Popen(command_file,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE,
-                                   shell=True)
-
-        proc_stdout, errmsg = process.communicate()
-        print('Subprocess Log Results:')
-        print(proc_stdout)
-        print('ERRORS:\n{}'.format(errmsg))
+        subprocess.call(command_file)
+        # print('Command RUN: {}'.format(command_file))
+        # process = subprocess.Popen(command_file,
+        #                            stdout=subprocess.PIPE,
+        #                            stderr=subprocess.PIPE,
+        #                            shell=True)
+        #
+        # proc_stdout, errmsg = process.communicate()
+        # print('Subprocess Log Results:')
+        # print(proc_stdout)
+        # print('ERRORS:\n{}'.format(errmsg))
 
         self._isCalculated = True
         # self.isChanged = False

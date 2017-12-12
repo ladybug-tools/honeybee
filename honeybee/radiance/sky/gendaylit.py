@@ -71,7 +71,7 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
 
     # print '# Solar altitude and azimuth: %.2f %.2f' % (sun.altitude, sun.azimuth - 180)
     # print '# Day number: %d' % daynumber
-    # print -1 * sun.sunVector
+    # print -1 * sun.sun_vector
 
     day_angle = 2 * math.pi * (daynumber - 1) / 365
 
@@ -213,7 +213,7 @@ def theta_phi_to_dzeta_gamma(theta, phi, z):
 
 
 def calc_rel_lum_perez(dzeta, gamma, z, epsilon, delta, coeff_perez):
-    """/* sky luminance perez model * \"""
+    """Sky luminance perez model."""
     x = [[], [], [], [], []]
     c_perez = range(5)
 
@@ -255,11 +255,11 @@ def calc_rel_lum_perez(dzeta, gamma, z, epsilon, delta, coeff_perez):
 
 
 def sky_clearness(diffuseirradiance, directirradiance, sunzenith):
-    """  # Perez sky's clearness */"""
+    """Perez sky's clearness."""
     try:
         value = (
             (diffuseirradiance + directirradiance) / (diffuseirradiance) +
-            1.041 * sunzenith * math.pi / 180 * sunzenith * math.pi
+            1.041 * sunzenith * math.pi / 180 * sunzenith * math.pi /
             180 * sunzenith * math.pi / 180) / (1 + 1.041 * sunzenith * math.pi / 180 *
                                                 sunzenith * math.pi / 180 * sunzenith *
                                                 math.pi / 180)
@@ -280,7 +280,7 @@ def sky_brightness(diffuseirradiance, sunzenith, day_angle):
 
 
 def get_eccentricity(day_angle):
-    """enter day number, return E0 = square(R0/R): eccentricity correction factor."""
+    """Enter day number, return E0 = square(R0/R): eccentricity correction factor."""
     e0 = 1.00011 + 0.034221 * math.cos(day_angle) + 0.00128 * math.sin(day_angle) + \
         0.000719 * math.cos(2 * day_angle) + 0.000077 * math.sin(2 * day_angle)
 
@@ -288,7 +288,7 @@ def get_eccentricity(day_angle):
 
 
 def air_mass(sunzenith):
-    """enter sunzenith angle (degrees) return relative air mass (double)."""
+    """Enter sunzenith angle (degrees) return relative air mass (double)."""
     if sunzenith > 90:
         # print("Warning: air mass has reached the maximal value: %f \n" % sunzenith)
         sunzenith = 90
@@ -299,7 +299,7 @@ def air_mass(sunzenith):
 
 
 def check_parametrization(skyclearness, skybrightness):
-    """check the range of epsilon and delta indexes of the perez parametrization."""
+    """Check the range of epsilon and delta indexes of the perez parametrization."""
     # #  limitations for the variation of the Perez parameters * \
     skyclearinf = 1.0
     skyclearsup = 12.01
@@ -337,7 +337,7 @@ def check_parametrization(skyclearness, skybrightness):
 
 
 def glob_h_diffuse_effi_perez(skyclearness, skybrightness, sunzenith):
-    """#  global horizontal diffuse efficacy model, according to PEREZ */"""
+    """Global horizontal diffuse efficacy model, according to PEREZ."""
     # #  initialize category bounds (clearness index bounds) */
     atm_preci_water = 2
 
@@ -371,7 +371,7 @@ def glob_h_diffuse_effi_perez(skyclearness, skybrightness, sunzenith):
 
 
 def direct_n_effi_perez(skyclearness, skybrightness, sunzenith):
-    """#  direct normal efficacy model, according to PEREZ * \"""
+    """Direct normal efficacy model, according to PEREZ."""
     atm_preci_water = 2
     # #  initialize category bounds(clearness index bounds) * \
     category_bounds = (1, 1.065, 1.230, 1.500, 1.950, 2.800, 4.500, 6.200, 12.01)
@@ -401,7 +401,7 @@ def direct_n_effi_perez(skyclearness, skybrightness, sunzenith):
 
 
 def check_input_values(directilluminance, diffuseilluminance, altitude):
-    """  # validity of the direct and diffuse components * \"""
+    """Validity of the direct and diffuse components."""
     solar_constant_l = 127500   # solar constant lux
     if directilluminance < 0:
         print("Warning: direct illuminance < 0. Using 0.0\n")
@@ -421,7 +421,7 @@ def check_input_values(directilluminance, diffuseilluminance, altitude):
 
 
 def coeff_lum_perez(z, epsilon, delta, coeff_perez):
-    """coefficients for the sky luminance perez model"""
+    """Coefficients for the sky luminance perez model."""
     x = [[], [], [], [], []]
     c_perez = range(5)
 

@@ -116,22 +116,22 @@ class HBAnalysisSurface(HBObject):
         return _cls
 
     @property
-    def is_hb_analysis_surface(self):
+    def isHBAnalysisSurface(self):
         """Return True for HBSurface."""
         return True
 
     @property
-    def is_hb_surface(self):
+    def isHBSurface(self):
         """Return True for HBSurfaces."""
         return False
 
     @property
-    def is_hb_fen_surface(self):
+    def isHBFenSurface(self):
         """Return True for HBFenSurfaces."""
         return False
 
     @property
-    def is_hb_dynamic_surface(self):
+    def isHBDynamicSurface(self):
         """Return True for HBSurfaces."""
         return False
 
@@ -153,7 +153,7 @@ class HBAnalysisSurface(HBObject):
     @property
     def has_bsdf_radiance_material(self):
         """Return True if .xml BSDF material is assigned for radiance material."""
-        return self.is_hb_fen_surface and hasattr(self.radiance_material, 'xmlfile')
+        return self.isHBFenSurface and hasattr(self.radiance_material, 'xmlfile')
 
     @property
     def has_radiance_glass_material(self):
@@ -301,7 +301,7 @@ class HBAnalysisSurface(HBObject):
 
     def _surface_type_from_points(self):
         normal = go.normal_from_points(self.points[0])
-        angle_to_z_axis = go.vector_angleToZAxis(normal)
+        angle_to_z_axis = go.vector_angle_to_z_axis(normal)
         return surfacetype.SurfaceTypes.by_normal_angle_and_points(angle_to_z_axis,
                                                                    self.points[0])()
 
