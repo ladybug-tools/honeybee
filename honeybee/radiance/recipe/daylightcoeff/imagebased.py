@@ -285,7 +285,6 @@ class DaylightCoeffImageBased(GenericImageBased):
                     view, self.relpath(view_file, project_folder),
                     'result/dc/refmap', oc.output_file)
                 self._commands.append(rfm.to_rad_string())
-
             # Step1: Create the view matrix.
             self.commands.append(':: 1 view sampling')
             view_info_file, vwr_samp = image_based_view_sampling_commands(

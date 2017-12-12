@@ -350,7 +350,6 @@ class SolarAccessGridBased(GenericGridBased):
         batch_file = os.path.join(project_folder, "commands.bat")
         rmtx = rgb_matrix_file_to_ill((str(rct.output_file),),
                                       'result/{}.ill'.format(project_name))
-
         # # 4.3 write batch file
         self._commands.append(oc.to_rad_string())
         self._commands.append(rct.to_rad_string())
