@@ -1,4 +1,4 @@
-![Honeybee](http://www.ladybug.tools/images/graph/honeybee.png)
+![Honeybee](http://www.ladybug.tools/assets/img/honeybee.png)
 
 # honeybee
 
