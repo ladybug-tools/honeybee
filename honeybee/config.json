@@ -1,5 +1,5 @@
 {
-  "__comment__": "Add full path to installation folder (e.g. c:\radiance).",
+  "__comment__": "Add full path to installation folder (e.g. c:\radiance, /usr/local/radiance).",
   "path_to_radiance": "",
   "path_to_openstudio": "",
   "path_to_perl": ""
