@@ -86,7 +86,7 @@ class HBAnalysisSurface(HBObject):
         name = srf_json["name"]
         vertices = srf_json["vertices"]
         type_id = srf_json["surface_type"]
-        srf_type = surfacetype.SurfaceTypes.getTypeByKey(type_id)
+        srf_type = surfacetype.SurfaceTypes.get_type_by_key(type_id)
         return cls(name, vertices, srf_type)
 
     @classmethod

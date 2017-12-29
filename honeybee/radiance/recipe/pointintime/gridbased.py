@@ -82,10 +82,10 @@ class GridBased(GenericGridBased):
           "analysis_type": 0
         }
         """
-        sky = CIE.fromJson(rec_json['sky'])
+        sky = CIE.from_json(rec_json['sky'])
         analysis_grids = \
-            tuple(AnalysisGrid.fromJson(ag) for ag in rec_json['analysis_grids'])
-        hb_objects = tuple(HBSurface.fromJson(srf) for srf in rec_json['surfaces'])
+            tuple(AnalysisGrid.from_json(ag) for ag in rec_json['analysis_grids'])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json['surfaces'])
         return cls(sky, analysis_grids, rec_json['analysis_type'], None, hb_objects)
 
     @classmethod

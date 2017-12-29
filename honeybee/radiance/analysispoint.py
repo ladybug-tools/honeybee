@@ -69,13 +69,16 @@ class AnalysisPoint(object):
             sid, stateid = _cls._create_data_structure(None, None)
             values = []
             hoys = []
-            state_res = ap_json['values'][0]
+            try:
+                state_res = ap_json['values'][0]
+            except IndexError:
+                state_res = []
             for item in state_res:
                 for k, v in item.iteritems():
                     values.append(v)
                     hoys.append(float(k))
             # set the values
-            _cls.setCoupledValues(values, hoys, source=None, state=None)
+            _cls.set_coupled_values(values, hoys, source=None, state=None)
         return _cls
 
     @classmethod

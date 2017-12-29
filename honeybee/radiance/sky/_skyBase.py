@@ -9,7 +9,7 @@ class RadianceSky(object):
     @classmethod
     def from_json(cls):
         raise NotImplementedError(
-            "fromJson is not implemented for {}.".format(cls.__class__.__name__)
+            "from_json is not implemented for {}.".format(cls.__class__.__name__)
         )
 
     @property
