@@ -1,7 +1,7 @@
 FROM ladybugtools/ladybug
 MAINTAINER Ladybug Tools "info@ladybug.tools"
 
-WORKDIR /usr/local/lib/python2.7/dist-packages
+WORKDIR /usr/local/lib/python2.7/site-packages
 
 # copy radiance
 COPY ./radiance/bin /usr/local/bin
