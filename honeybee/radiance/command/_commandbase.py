@@ -111,9 +111,11 @@ class RadianceCommand(object):
         for f in self.input_files:
             # this is for oconv where it has list of files which are not
             # RadiancePath
-            if isinstance(f, str):
+            if isinstance(f, (str, unicode)):
                 continue
-            assert hasattr(f, 'normpath'), "%s is missing!\n" % f + _msg
+
+            assert hasattr(f, 'normpath'), \
+                "%s is not a radiance path but a %s\n" % (f, type(f)) + _msg
             assert f.normpath is not None, _msg
 
     def __check_executable(self, radbin_path=None, raise_exception=False):
