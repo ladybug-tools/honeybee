@@ -114,6 +114,7 @@ class ClimateBased(PointInTimeSky):
             diffuse_radiation=self.diffuse_radiation,
             rotation=self.north)
 
+        cmd.gendaylit_parameters.meridian = self.location.meridian
         cmd.gendaylit_parameters.output_type = self.sky_type % 2
 
         return cmd
