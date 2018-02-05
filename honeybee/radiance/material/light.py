@@ -4,7 +4,7 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Light
 """
 
 from ..datatype import RadianceNumber
-from _materialbase import RadianceMaterial
+from ._materialbase import RadianceMaterial
 
 
 class LightMaterial(RadianceMaterial):

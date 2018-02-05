@@ -1,10 +1,10 @@
 # coding=utf-8
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadianceBoolFlag, RadianceValue
 from ..datatype import RadianceNumber
 import os
 
-from pyRad import objview
+from .pyRad import objview
 
 
 class Objview(RadianceCommand):

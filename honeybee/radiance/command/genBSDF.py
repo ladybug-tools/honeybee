@@ -1,11 +1,11 @@
 # coding=utf-8
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceBoolFlag, RadianceValue
 from ..parameters.genBsdf import GenbsdfParameters
 from ..parameters.gridbased import GridBasedParameters
-from getbbox import Getbbox
-from xform import Xform
+from .getbbox import Getbbox
+from .xform import Xform
 import tempfile
 
 import os
