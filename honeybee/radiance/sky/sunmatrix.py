@@ -179,7 +179,6 @@ class SunMatrix(RadianceSky):
                 int(wea.diffuse_horizontal_radiation[timeStamp.int_hoy])
             if dnr == 0:
                 continue
-            count += 1
             sun = sp.calculate_sun(month, day, hour)
             if sun.altitude < 0:
                 continue
@@ -187,6 +186,7 @@ class SunMatrix(RadianceSky):
             solarradiance = \
                 int(gendaylit(sun.altitude, month, day, hour, dnr, dhr, output_type))
             cur_sun_definition = solarstring.format(count, solarradiance, -x, -y, -z)
+            count += 1  # keep track of number of suns above the horizon for naming
             solarradiances.append(solarradiance)
             sun_values.append(cur_sun_definition)
             # keep the number of hour relative to hoys in this sun matrix
@@ -207,7 +207,7 @@ class SunMatrix(RadianceSky):
         # create list of suns.
         with open(lfp, 'w') as sunlist:
             sunlist.write(
-                "\n".join(("solar%s" % (idx + 1) for idx in xrange(sun_count)))
+                "\n".join(("solar%s" % idx for idx in xrange(sun_count)))
             )
             sunlist.write('\n')
 
