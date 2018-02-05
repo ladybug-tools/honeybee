@@ -18,9 +18,19 @@ from datetime import datetime
 
 def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
               output_type=0):
-    """Get sun position and RGB values for sky.
+    """Get solar irradiance.
 
-    altitude: Sun altitude in degrees.
+    Args:
+        altitude: Sun altitude in degrees.
+        month: A value for month between 1-12.
+        day: A value for day between 1-31.
+        hour: A value for hour between 0-23.
+        directirradiance: Direct irradiance value.
+        diffuseirradiance: Diffuse irradiance value.
+        output_type: An integer between 0-2. 0=output in W/m^2/sr visible,
+            1=output in W/m^2/sr solar, 2=output in candela/m^2 (default: 0).
+    Returns:
+        solarradiance: solar irradiance.
     """
     #
     coeff_perez = [
@@ -77,7 +87,7 @@ def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,
 
     # altitude correction if too close to zenith
     if altitude > 87.0:
-        # print "warning - sun too close to zenith, reducing altitude to 87 degrees."
+        print("warning - sun too close to zenith, reducing altitude to 87 degrees.")
         altitude = 87.0
 
     sunzenith = 90 - altitude
@@ -416,6 +426,9 @@ def check_input_values(directilluminance, diffuseilluminance, altitude):
 
     if directilluminance > solar_constant_l:
         raise ValueError("Warning: direct illuminance exceeds solar constant\n")
+
+    if directilluminance != 0 and diffuseilluminance == 0:
+        diffuseilluminance = 0.00000001
 
     return directilluminance, diffuseilluminance
 
