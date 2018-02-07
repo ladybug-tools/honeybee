@@ -500,12 +500,22 @@ class AnalysisGrid(object):
 
         return res
 
-    def spatial_daylight_autonomy(self, da_threshhold=None, blinds_state_ids=None,
-                                  occ_schedule=None, target_area=None):
+    def spatial_daylight_autonomy(self, da_threshhold=None, target_da=None,
+                                  blinds_state_ids=None, occ_schedule=None):
         """Calculate Spatial Daylight Autonomy (sDA).
 
         Args:
-            target_area: Minimum target area percentage for this grid (default: 50)
+            da_threshhold: Minimum illuminance threshhold for daylight (default: 300).
+            target_da: Minimum threshhold for daylight autonomy in percentage
+                (default: 50%).
+            blinds_state_ids:  List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
+            occ_schedule: An annual occupancy schedule.
+
+        Returns:
+            sDA: Spatial daylight autonomy as percentage of analysis points.
+            DA: Daylight autonomy for each analysis point.
+            Problematic points: List of problematic points.
         """
         results_loaded = True
         if not self.has_values and not self.result_files[0]:
@@ -520,20 +530,30 @@ class AnalysisGrid(object):
             results_loaded = False
             print('Loading the results from result files.')
 
+        res = ([], [])
+
         da_threshhold = da_threshhold or 300.0
+        target_da = target_da or 50.0
         hoys = self.hoys
         occ_schedule = occ_schedule or Schedule.from_workday_hours()
 
         if results_loaded:
             blinds_state_ids = blinds_state_ids or [[0] * len(self.sources)] * len(hoys)
 
-            # get the annual results for each sensor
-            hourly_results = (
-                sensor.combined_values_by_id(hoys, blinds_state_ids)
-                for sensor in self.analysis_points
-            )
+            for sensor in self.analysis_points:
+                for c, r in enumerate(sensor.daylight_autonomy(da_threshhold,
+                                                               blinds_state_ids,
+                                                               occ_schedule
+                                                               )):
+                    res[c].append(r)
         else:
+            # This is a method for annual recipe to load the results line by line
+            # which unlike the other method doesn't load all the values to the memory
+            # at once.
             blinds_state_ids = [[0] * len(self.sources)] * len(hoys)
+            calculate_daylight_autonomy = \
+                self.analysis_points[0]._calculate_daylight_autonomy
+
             for file_data in self.result_files[0]:
                 file_path, hoys, start_line, header, mode = file_data
 
@@ -556,30 +576,28 @@ class AnalysisGrid(object):
                         inf.next()
 
                     end = len(self._analysis_points)
-                    hourly_results = \
-                        tuple(tuple((int(float(r)), None) for r in inf.next().split())
-                              for count in xrange(end))
 
-        # iterate through the results
-        # find minimum number of points to meet the target_area
-        target_area = target_area * len(self.analysis_points) / 100 or \
-            0.50 * len(self.analysis_points)
-        # change target area to an integer to enhance the performance in the loop
-        target = int(target_area) if int(target_area) != target_area \
-            else int(target_area - 1)
+                    # load one line at a time
+                    for count in xrange(end):
+                        values = (int(float(r)) for r in inf.next().split())
+                        for c, r in enumerate(
+                            calculate_daylight_autonomy(
+                                values, hoys, da_threshhold,
+                                blinds_state_ids, occ_schedule)):
 
-        met_hours = 0
-        problematic_hours = []
-        for hr, hrv in izip(hoys, izip(*hourly_results)):
-            if hr not in occ_schedule:
-                continue
-            count = sum(1 if res[0] > da_threshhold else 0 for res in hrv)
-            if count > target:
-                met_hours += 1
-            else:
-                problematic_hours.append(hr)
+                            res[c].append(r)
 
-        return 100 * met_hours / len(occ_schedule.occupied_hours), problematic_hours
+        daylight_autonomy = res[0]
+        problematic_points = []
+        for pt, da in izip(self.analysis_points, daylight_autonomy):
+            if da < target_da:
+                problematic_points.append(pt)
+        try:
+            sda = (1 - len(problematic_points) / len(self.analysis_points)) * 100
+        except ZeroDivisionError:
+            sda = 0
+
+        return sda, daylight_autonomy, problematic_points
 
     def annual_solar_exposure(self, threshhold=None, blinds_state_ids=None,
                               occ_schedule=None, target_hours=None, target_area=None):
@@ -598,7 +616,7 @@ class AnalysisGrid(object):
                 to study the effect of different blind states.
             occ_schedule: An annual occupancy schedule.
             target_hours: Minimum targe hours for each point (default: 250).
-            target_area: Minimum target area percentage for this grid (default: 10)
+            target_area: Minimum target area percentage for this grid (default: 10).
 
         Returns:
             Success as a Boolean, ase values for each point, Percentage area,

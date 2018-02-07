@@ -889,6 +889,41 @@ class AnalysisPoint(object):
             100 * udi_m / total_hour_count
 
     @staticmethod
+    def _calculate_daylight_autonomy(
+            values, hoys, da_threshhold=None, blinds_state_ids=None, occ_schedule=None):
+        """Calculate daylight autonomy and continious daylight autonomy.
+
+        Args:
+            da_threshhold: Threshhold for daylight autonomy in lux (default: 300).
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
+            occ_schedule: An annual occupancy schedule.
+
+        Returns:
+            Daylight autonomy, Continious daylight autonomy
+        """
+        da_threshhold = da_threshhold or 300
+        hours = hoys
+        schedule = occ_schedule or set(hours)
+        DA = 0
+        cda = 0
+        total_hour_count = len(hours)
+        for h, v in izip(hours, values):
+            if h not in schedule:
+                total_hour_count -= 1
+                continue
+            if v >= da_threshhold:
+                DA += 1
+                cda += 1
+            else:
+                cda += v / da_threshhold
+
+        if total_hour_count == 0:
+            raise ValueError('There is 0 hours available in the schedule.')
+
+        return 100 * DA / total_hour_count, 100 * cda / total_hour_count
+
+    @staticmethod
     def parse_blind_states(blinds_state_ids):
         """Parse input blind states.
 
