@@ -114,7 +114,7 @@ class HBFenSurface(HBAnalysisSurface):
 
         namescount = len(names) - 1
 
-        srf_data = plus.extractGeometryPoints(geometry)
+        srf_data = plus.extract_geometry_points(geometry)
         cls._isCreatedFromGeo = True
 
         if not group:
@@ -203,5 +203,5 @@ class HBFenSurface(HBAnalysisSurface):
         assert honeybee.isplus, \
             '"profile" property can only be used in [+] libraries.'
         return plus.polygon(
-            tuple(plus.xyzToGeometricalPoints(self.absolute_points))
+            tuple(plus.xyz_to_geometrical_points(self.absolute_points))
         )
