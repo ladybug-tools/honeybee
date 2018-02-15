@@ -6,6 +6,10 @@ import surfacetype
 import geometryoperation as go
 from surfacetype import Floor, Wall, Window, Ceiling
 from radiance.radfile import RadFile
+from radiance.material.glass import GlassMaterial
+from radiance.material.glow import GlowMaterial
+from radiance.material.plastic import PlasticMaterial
+from radiance.material.metal import MetalMaterial
 
 import os
 import types
@@ -78,16 +82,25 @@ class HBAnalysisSurface(HBObject):
         """Create a surface from json object.
 
         The minimum schema is:
-        {"name": "",
-        "vertices": [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
-        "surface_type": null  // 0: wall, 5: window
-        }
+            {"name": "",
+            "vertices": [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
+            "surface_material": {}  // radiance material json file
+            }
         """
         name = srf_json["name"]
         vertices = srf_json["vertices"]
-        type_id = srf_json["surface_type"]
-        srf_type = surfacetype.SurfaceTypes.get_type_by_key(type_id)
-        return cls(name, vertices, srf_type)
+        HBsrf = cls(name, vertices)
+        # Check material type and determine appropriate "from_json" classmethod
+        material_json = srf_json["surface_material"]
+        material_type = material_json["type"]
+        if material_type == "plastic":
+            radiance_material = PlasticMaterial.from_json(material_json)
+        elif material_type == "metal":
+            radiance_material = MetalMaterial.from_json(material_json)
+        elif material_type == "glass":
+            radiance_material = GlassMaterial.from_json(material_json)
+        HBsrf.radiance_material = radiance_material
+        return HBsrf
 
     @classmethod
     def from_rad_ep_properties(
@@ -615,12 +628,12 @@ class HBAnalysisSurface(HBObject):
         """Get HBSurface as a dictionary.
             {"name": "",
             "vertices": [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
-            "surface_type": null  // 0: wall, 5: window
+            "surface_material": {}  // radiance material json file
             }
         """
         return {"name": self.name,
                 "vertices": [[tuple(pt) for pt in ptgroup] for ptgroup in self.points],
-                "surface_type": self.surface_type.type_id
+                "surface_material": self.radiance_material.to_json()
                 }
 
     def __repr__(self):

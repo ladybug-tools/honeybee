@@ -9,6 +9,7 @@ from ....futil import write_to_file
 from ...analysisgrid import AnalysisGrid
 from ....hbsurface import HBSurface
 from ...sky.cie import CIE
+from ...parameters.gridbased import GridBasedParameters
 
 from ladybug.dt import DateTime
 
@@ -86,7 +87,8 @@ class GridBased(GenericGridBased):
         analysis_grids = \
             tuple(AnalysisGrid.from_json(ag) for ag in rec_json['analysis_grids'])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json['surfaces'])
-        return cls(sky, analysis_grids, rec_json['analysis_type'], None, hb_objects)
+        rad_parameters = GridBasedParameters.from_json(rec_json["rad_parameters"])
+        return cls(sky, analysis_grids, rec_json['analysis_type'], rad_parameters, hb_objects)
 
     @classmethod
     def from_points_and_vectors(cls, sky, point_groups, vector_groups=None,
@@ -305,7 +307,8 @@ class GridBased(GenericGridBased):
             "sky": self.sky.to_json(),
             "surfaces": [srf.to_json() for srf in self.hb_objects],
             "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
-            "analysis_type": self.simulation_type
+            "analysis_type": self.simulation_type,
+            "rad_parameters": self.radiance_parameters.to_json()
         }
 
     def __repr__(self):

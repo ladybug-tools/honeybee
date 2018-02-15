@@ -1,6 +1,7 @@
 """Radiance raytracing Parameters."""
 import warnings
 from collections import OrderedDict
+import re
 
 
 class RadianceParameters(object):
@@ -210,13 +211,23 @@ class RadianceParameters(object):
         if parameters_string is None:
             return rad_par
 
-        # split input string: each part will look like key value (eg ad 1)
-        par_list = parameters_string.split("-")
+        # use re to find the start and end index for each parameter in parameter string
+        indices = [(m.start(0), m.end(0)) for m in re.finditer(r'-[a-zA-Z]{1,6}'\
+                    , parameters_string)]
 
-        for p in par_list:
-            key, sep, value = p.partition(" ")
+        indices = [item for sublist in indices for item in sublist]
 
-            # convert the value to number
+        indices.append(len(parameters_string))
+
+        for i in xrange(0,len(indices)-2,2):
+            key_start = indices[i] + 1
+            key_end = indices[i+1]
+            key = parameters_string[key_start:key_end]
+
+            value_start = key_end
+            value_end = indices[i+2]
+            value = parameters_string[value_start:value_end]
+
             try:
                 value = int(value)
             except ValueError:
@@ -227,13 +238,7 @@ class RadianceParameters(object):
                     if key.strip() == "":
                         continue
                     elif value.strip() == "":
-                        value = ""
-                    else:
-                        # case for tuples
-                        try:
-                            value = value.strip().split(" ")
-                        except Exception:
-                            value = ""
+                        value = True
 
             rad_par[key.strip()] = value
 

@@ -11,6 +11,9 @@ from ..daylightcoeff.gridbased import DaylightCoeffGridBased
 from ...sky.skymatrix import SkyMatrix
 from ....futil import write_to_file
 
+from ...analysisgrid import AnalysisGrid
+from ...parameters.rfluxmtx import RfluxmtxParameters
+
 import os
 
 
@@ -63,6 +66,36 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
         self.view_mtx_parameters = view_mtx_parameters
         self.daylight_mtx_parameters = daylight_mtx_parameters
         self.reuse_view_mtx = reuse_view_mtx
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create three phase recipe from JSON file
+            {
+            "id": 5,
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "view_mtx_parameters": {} // radiance gridbased parameters json file
+            "daylight_mtx_parameters": {} //radiance gridbased parameters json file
+            }
+        """
+        sky_mtx = SkyMatrix.from_json(rec_json["sky_mtx"])
+        analysis_grids = \
+            tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+        simulation_type = rec_json["simulation_type"]
+
+        # From setter methods for view and daylight mtx params I am assuming
+        # that they are both RfluxmtxParameters
+        view_mtx_parameters = RfluxmtxParameters.from_json(rec_json["view_mtx_parameters"])
+        daylight_mtx_parameters = RfluxmtxParameters.from_json(rec_json["view_mtx_parameters"])
+
+        return cls(sky_mtx = sky_mtx, analysis_grids = analysis_grids, \
+                view_mtx_parameters = view_mtx_parameters, \
+                daylight_mtx_parameters = daylight_mtx_parameters, \
+                hb_objects = hb_objects, \
+                simulation_type = simulation_type)
 
     @classmethod
     def from_weather_file_points_and_vectors(
@@ -161,6 +194,28 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
     def sky_density(self):
         """Radiance sky type e.g. r1, r2, r4."""
         return "r{}".format(self.sky_matrix.sky_density)
+
+    def to_json(self):
+        """Create three phase recipe JSON file
+            {
+            "id": 5,
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "view_mtx_parameters": {} // radiance gridbased parameters json file
+            "daylight_mtx_parameters": {} //radiance gridbased parameters json file
+            }
+        """
+        return {
+                "id": 5,
+                "sky_mtx": self.sky_matrix.to_json(),
+                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+                "surfaces": [srf.to_json() for srf in self.hb_objects],
+                "simulation_type": self.simulation_type,
+                "view_mtx_parameters": self.view_mtx_parameters.to_json(),
+                "daylight_mtx_parameters": self.daylight_mtx_parameters.to_json()
+                }
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.

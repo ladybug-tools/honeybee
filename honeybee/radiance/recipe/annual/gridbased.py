@@ -6,6 +6,9 @@ however it can only be used for models with no window groups.
 
 """
 from ..daylightcoeff.gridbased import DaylightCoeffGridBased
+from ...sky.skymatrix import SkyMatrix
+from ...analysisgrid import AnalysisGrid
+from ...parameters.rfluxmtx import RfluxmtxParameters
 
 import os
 
@@ -40,6 +43,32 @@ class GridBased(DaylightCoeffGridBased):
             self, sky_mtx, analysis_grids, simulation_type, radiance_parameters,
             reuse_daylight_mtx, hb_objects, sub_folder)
 
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create annual recipe from JSON file
+            {
+            "id":3
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "rad_parameters": {
+                gridbased_parameters: string //  A standard radiance parameter string
+                (e.g. -ab 5 -aa 0.05 -ar 128)
+                }
+            }
+        """
+        sky_mtx = SkyMatrix.from_json(rec_json["sky_mtx"])
+        analysis_grids = \
+            tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+        rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
+        simulation_type = rec_json["simulation_type"]
+
+        return cls(sky_mtx = sky_mtx, analysis_grids = analysis_grids, \
+                radiance_parameters = rad_parameters, hb_objects = hb_objects, \
+                simulation_type = simulation_type)
+
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
 
@@ -60,6 +89,29 @@ class GridBased(DaylightCoeffGridBased):
             self.sub_folder == "gridbased_annual"
 
         return super(GridBased, self).write(target_folder, project_name, header)
+
+    def to_json(self):
+        """Create annual recipe JSON file
+            {
+            "id": 3,
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "rad_parameters": {
+                gridbased_parameters: string //  A standard radiance parameter string
+                (e.g. -ab 5 -aa 0.05 -ar 128)
+                }
+            }
+        """
+        return {
+                "id": 3,
+                "sky_mtx": self.sky_matrix.to_json(),
+                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+                "surfaces": [srf.to_json() for srf in self.hb_objects],
+                "simulation_type": self.simulation_type,
+                "rad_parameters": self.radiance_parameters.to_json()
+                }
 
     def results(self):
         """Return results for this analysis."""

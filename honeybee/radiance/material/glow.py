@@ -37,6 +37,40 @@ class GlowMaterial(RadianceMaterial):
         self.max_radius = max_radius
         """Maximum radius for shadow testing"""
 
+    def to_json(self):
+        """Translate radiance material to json
+        {
+            "type": "glow", // Material type
+            "name": "", // Material Name
+            "red": int, // A positive value for the Red channel of the glow
+            "green": int, // A positive value for the Green channel of the glow
+            "blue": int, // A positive value for the Blue channel of the glow
+            "radius": float // Maximum radius for shadow testing
+        }
+        """
+        return {
+            "type": "glow", 
+            "name": self.name,
+            "red": int(self.red),
+            "green": int(self.green),
+            "blue": int(self.blue),
+            "radius": self.max_radius
+        }
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Make radiance material from json
+        {
+            "name": "", // Material Name
+            "red": float, // A positive value for the Red channel of the glow
+            "green": float, // A positive value for the Green channel of the glow
+            "blue": float, // A positive value for the Blue channel of the glow
+            "radius": float // Maximum radius for shadow testing
+        }
+        """
+        return cls(name = rec_json["name"], red = rec_json["red"], green = rec_json["green"],\
+                    blue = rec_json["blue"], max_radius = rec_json["radius"])
+
     def to_rad_string(self, minimal=False):
         """Return full Radiance definition"""
         base_string = self.head_line + "0\n0\n4 %.3f %.3f %.3f %.3f"

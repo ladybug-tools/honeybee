@@ -30,6 +30,21 @@ class CertainIlluminanceLevel(CIE):
         CIE.__init__(self, sky_type=sky_type + 4, suffix=suffix)
         self.illuminance_value = illuminance_value or 10000
 
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create sky from json file
+            {
+                "sky_type": int // CIE Sky Type [0] cloudy sky, [1] uniform sky
+                "illuminance_value": int // Illuminance value of sky
+            }
+        """
+        sky_type = rec_json["sky_type"]
+        illuminance_value = rec_json["illuminance_value"]
+
+        sky = cls(illuminance_value=illuminance_value, sky_type=sky_type)
+
+        return sky
+
     @property
     def is_climate_based(self):
         """Return True if the sky is generated from values from weather file."""
@@ -71,6 +86,17 @@ class CertainIlluminanceLevel(CIE):
             self.illuminance_value, self.sky_type - 4, self.suffix
         )
 
+    def to_json(self):
+        """Create json from sky
+            {
+                "sky_type": int // CIE Sky Type [0] cloudy sky, [1] uniform sky
+                "illuminance_value": int // Illuminance value of sky
+            }
+        """
+        return {
+                "sky_type": self.sky_type - 4,
+                "illuminance_value": self.illuminance_value
+                }
 
 if __name__ == "__main__":
     # test code

@@ -280,6 +280,21 @@ class GridBasedParameters(AdvancedRadianceParameters):
         character is missing, the input format is used.
         """
 
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create radiance parameters from json.
+           {
+           "gridbased_parameters": string // A standard radiance parameter string
+               (e.g. -ab 5 -aa 0.05 -ar 128)
+           }
+        """
+
+        parameters = cls()
+
+        parameters.import_parameter_values_from_string(rec_json["gridbased_parameters"])
+
+        return parameters
+
     @property
     def isGridBasedRadianceParameters(self):
         """Return True to indicate this object is a RadianceParameters."""
@@ -341,6 +356,15 @@ class GridBasedParameters(AdvancedRadianceParameters):
 
         return rtrace_number_parameters[__key]["values"][self.quality]
 
+    def to_json(self):
+        """Write radiance grid_based parameters to json.
+           {
+           "gridbased_parameters": string // A standard radiance parameter string
+               (e.g. -ab 5 -aa 0.05 -ar 128)
+           }
+        """
+        return {"gridbased_parameters": self.to_rad_string()
+                }
 
 class LowQuality(GridBasedParameters):
     """Radiance parmaters for a quick analysis."""

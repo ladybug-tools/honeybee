@@ -38,6 +38,22 @@ class SkyMatrix(RadianceSky):
         self.suffix = suffix or ''
 
     @classmethod
+    def from_json(cls, rec_json):
+        """Create sky from json file
+            {
+            "wea": {}, // ladybug wea schema
+            "sky_density": int, // [1] Tregenza Sky, [2] Reinhart Sky, etc. (Default: 1)
+            "north": float, // Angle in degrees between 0-360 to indicate North
+            "hoys": [], // List of hours for generating the sky
+            "mode": int, // Sky mode, integer between 0 and 2
+            "suffix": string //Suffix for sky matrix
+            }
+        """
+        wea = Wea.from_json(rec_json["wea"])
+        return cls(wea, rec_json["sky_density"], rec_json["north"], \
+                rec_json["hoys"], rec_json["mode"], rec_json["suffix"])
+
+    @classmethod
     def from_epw_file(cls, epw_file, sky_density=1, north=0,
                       hoys=None, mode=0, suffix=None):
         """Create sky from an epw file."""
@@ -134,6 +150,26 @@ class SkyMatrix(RadianceSky):
         """Human readable sky type."""
         values = ('vis', 'sol')
         return values[self.sky_type]
+
+    def to_json(self):
+        """Create json file from sky matrix
+            {
+            "wea": {}, // ladybug wea schema
+            "sky_density": int, // [1] Tregenza Sky, [2] Reinhart Sky, etc. (Default: 1)
+            "north": float, // Angle in degrees between 0-360 to indicate North
+            "hoys": [], // List of hours for generating the sky
+            "mode": int, // Sky mode, integer between 0 and 2
+            "suffix": string //Suffix for sky matrix
+            }
+        """
+        return {
+                "wea": self.wea.to_json(),
+                "sky_density": int(self.sky_density),
+                "north": float(self.north),
+                "hoys": self.hoys,
+                "mode": self.mode,
+                "suffix": self.suffix
+                }
 
     def hours_match(self, hours_file):
         """Check if hours in the hours file matches the hours of wea."""
