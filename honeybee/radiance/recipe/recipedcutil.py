@@ -318,7 +318,7 @@ def _get_commands_daylight_coeff(
         )
         commands.append('::')
 
-        if not window_groupfiles:
+        if scount != 0 or not window_groupfiles:
             # in case window group is not already provided
             window_groupfiles = (wgsfiles[window_group_count].fp[scount],)
 
