@@ -55,7 +55,7 @@ def write_rad_files_daylight_coeff(working_dir, project_name, opq, glz, wgs):
     folder = os.path.join(working_dir, 'wgroup')
     bsdfs = []
     bsdffolder = os.path.join(working_dir, 'bsdf')
-    preparedir(bsdffolder)
+    preparedir(bsdffolder, remove_content=False)
     # write black material to folder
     for count, wgf in enumerate(wgs):
         # write it as a black geometry

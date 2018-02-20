@@ -97,7 +97,9 @@ def write_to_file_by_name(folder, fname, data, mkdir=False):
         if mkdir:
             preparedir(folder)
         else:
-            raise ValueError("Failed to find %s." % folder)
+            created = preparedir(folder, False)
+            if not created:
+                raise ValueError("Failed to find %s." % folder)
 
     file_path = os.path.join(folder, fname)
 
@@ -151,7 +153,7 @@ def copy_files_to_folder(files, target_folder, overwrite=True):
         else:
             print('Copying %s to %s' % (os.path.split(f)[-1],
                                         os.path.normpath(target_folder)))
-            shutil.copy(f, target_folder)
+            shutil.copy(f, target)
 
     return [os.path.join(target_folder, os.path.split(f)[-1]) for f in files]
 

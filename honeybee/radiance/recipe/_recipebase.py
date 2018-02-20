@@ -264,4 +264,7 @@ class AnalysisRecipe(object):
     @staticmethod
     def relpath(path, start):
         """Return a relative path."""
-        return os.path.relpath(path, start)
+        try:
+            return os.path.relpath(path, start)
+        except AttributeError:
+            raise TypeError('Failed to convert to relative path: {}'.format(path))

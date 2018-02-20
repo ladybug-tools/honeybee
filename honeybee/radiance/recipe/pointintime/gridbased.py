@@ -225,8 +225,17 @@ class GridBased(GenericGridBased):
             [os.path.join(project_folder, str(self.sky.command('sky').output_file)),
              skyground] + opqfiles + glzfiles + wgsfiles + extrafiles.fp
 
+        oct_scene_files_items = []
+        for f in oct_scene_files:
+            if isinstance(f, (list, tuple)):
+                print('Point-in-time recipes cannot currently handle dynamic window'
+                      ' groups. The first state will be used for simulation.')
+                oct_scene_files_items.append(f[0])
+            else:
+                oct_scene_files_items.append(f)
         oc = Oconv(project_name)
-        oc.scene_files = tuple(self.relpath(f, project_folder) for f in oct_scene_files)
+        oc.scene_files = tuple(self.relpath(f, project_folder)
+                               for f in oct_scene_files_items)
 
         # # 4.2.prepare rtrace
         rt = Rtrace('result/' + project_name,

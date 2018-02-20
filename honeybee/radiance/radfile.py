@@ -111,7 +111,7 @@ class RadFile(object):
         bsdf_files = tuple(mat.xmlfile for mat in bsdf_materials)
         basefolder = os.path.split(os.path.normpath(target_folder))[0]
         target_folder = os.path.join(basefolder, 'bsdf')
-        is_created = preparedir(target_folder)
+        is_created = preparedir(target_folder, False)
         assert is_created, 'Failed to create {}'.format(target_folder)
 
         # copy the xml file locally
