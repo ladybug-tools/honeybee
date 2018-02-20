@@ -108,13 +108,15 @@ class RadFile(object):
             bsdf_materials: A collection of BSDF materials.
             target_folder: The study folder where the materials will be written.
         """
-        bsdf_files = (mat.xmlfile for mat in bsdf_materials)
+        bsdf_files = tuple(mat.xmlfile for mat in bsdf_materials)
         basefolder = os.path.split(os.path.normpath(target_folder))[0]
         target_folder = os.path.join(basefolder, 'bsdf')
         is_created = preparedir(target_folder)
         assert is_created, 'Failed to create {}'.format(target_folder)
+
         # copy the xml file locally
         copy_files_to_folder(bsdf_files, target_folder)
+
         # replace the full path with relative path
         # The root folder in Radiance is the place that commands are executed
         # which in honeybee is the root so the relative path is scene/glazing/bsdf
@@ -124,6 +126,7 @@ class RadFile(object):
             material_string = material_string.replace(
                 os.path.normpath(mat.xmlfile), 'scene/bsdf/%s' % name
             )
+
         return material_string
 
     def materials(self, mode=1, join=False, blacked=False, glowed=False):

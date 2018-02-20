@@ -1,4 +1,5 @@
 """A collection of useful methods for daylight-coeff recipes."""
+from ...futil import preparedir, copy_files_to_folder
 from ..command.rfluxmtx import Rfluxmtx
 from ..command.dctimestep import Dctimestep
 from ..command.rmtxop import Rmtxop, RmtxopMatrix
@@ -52,6 +53,9 @@ def write_rad_files_daylight_coeff(working_dir, project_name, opq, glz, wgs):
 
     wgfs = []
     folder = os.path.join(working_dir, 'wgroup')
+    bsdfs = []
+    bsdffolder = os.path.join(working_dir, 'bsdf')
+    preparedir(bsdffolder)
     # write black material to folder
     for count, wgf in enumerate(wgs):
         # write it as a black geometry
@@ -66,10 +70,16 @@ def write_rad_files_daylight_coeff(working_dir, project_name, opq, glz, wgs):
         wgfstate = []
         for scount, state in enumerate(wg.states):
             wg.state = scount
+            if hasattr(wg.radiance_material, 'xmlfile'):
+                bsdfs.append(wg.radiance_material.xmlfile)
+
             wgfst = wgf.write(folder, '%s..%s.rad' % (name, state.name), 0)
             wgfstate.append(wgfst)
+
         wg.state = 0  # set the state back to 0
         wgfs.append(Files(wgfstate, (wgbm, wgbf)))
+
+        copy_files_to_folder(bsdfs, bsdffolder)
 
     return opqf, glzf, wgfs
 
