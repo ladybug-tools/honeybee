@@ -703,10 +703,21 @@ def coeff_matrix_commands(output_name, receiver, rad_files, sender, points_file=
     return rfluxmtx
 
 
-def window_group_to_receiver(filepath, upnormal, material_name='vmtx_glow'):
+def window_group_to_receiver(filepath, upnormal, material_name='vmtx_glow',
+                             angle_basis='Kelms Full'):
     """Take a filepath to a window group and create a receiver."""
+    hemi_type_mapper = {
+        'klemsfull': 'kf', 'klemshalf': 'kh', 'klemsquarter': 'kq',
+        'tensortree': 'tt'}
+
+    try:
+        hemi_type = hemi_type_mapper[''.join(angle_basis.split()).lower()]
+    except KeyError:
+        raise ValueError('{} is not a valid angle basis.'.format(angle_basis))
+
     rec_ctrl_par = Rfluxmtx.control_parameters(
-        hemi_type='kf', hemi_up_direction=upnormal)
+        hemi_type=hemi_type, hemi_up_direction=upnormal)
+
     wg_m = Rfluxmtx.add_control_parameters(filepath, {material_name: rec_ctrl_par})
     return wg_m
 

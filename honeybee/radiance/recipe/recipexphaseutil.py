@@ -61,7 +61,8 @@ def write_rad_files_multi_phase(working_dir, project_name, opq, glz, wgs):
         wgbf = wgf.write_geometries_blacked(folder, '%s..blk.rad' % name, 0)
         wggf = wgf.write(folder, '%s..glw.rad' % name, 0, flipped=True,
                          glowed=True, mkdir=True)
-        recf = window_group_to_receiver(wggf, wg.upnormal, wg.radiance_material.name)
+        recf = window_group_to_receiver(wggf, wg.upnormal, wg.radiance_material.name,
+                                        wg.radiance_material.angle_basis)
         # remove the original window group and rename the new one to original
         os.remove(wggf)
         os.rename(recf, wggf)

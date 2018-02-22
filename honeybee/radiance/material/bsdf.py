@@ -34,6 +34,7 @@ class BSDFMaterial(RadianceMaterial):
         name = '.'.join(os.path.split(self.xmlfile)[-1].split('.')[:-1])
 
         RadianceMaterial.__init__(self, name, material_type="BSDF", modifier=modifier)
+
         try:
             x, y, z = up_orientation or (0.01, 0.01, 1.00)
         except TypeError as e:
@@ -45,7 +46,17 @@ class BSDFMaterial(RadianceMaterial):
                 raise TypeError(str(e))
 
         self.up_orientation = x, y, z
+
         self.thickness = thickness or 0
+
+        with open(self.xmlfile, 'rb') as inf:
+            for count, line in enumerate(inf):
+                if line.strip().startswith('<AngleBasisName>'):
+                    self._angle_basis = line.replace('<AngleBasisName>', '') \
+                        .replace('</AngleBasisName>', '').replace('LBNL/', '').strip()
+                    break
+
+                assert count < 100, 'Failed to find AngleBasisName in first 100 lines.'
 
     @property
     def isGlassMaterial(self):
@@ -55,6 +66,14 @@ class BSDFMaterial(RadianceMaterial):
         file than the opaque surfaces.
         """
         return True
+
+    @property
+    def angle_basis(self):
+        """XML file angle basis.
+
+        Klems full, Klems half, Klems Quarter or tensor tree
+        """
+        return self._angle_basis
 
     def to_rad_string(self, minimal=False):
         """Return full radiance definition."""
