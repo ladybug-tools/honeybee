@@ -745,7 +745,7 @@ class AnalysisPoint(object):
         udi_min_max = udi_min_max or (100, 2000)
         udiMin, udiMax = udi_min_max
         hours = self.hoys
-        schedule = occ_schedule or set(hours)
+        schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         udi = 0
         udi_l = 0
         udi_m = 0
@@ -783,7 +783,7 @@ class AnalysisPoint(object):
         """
         da_threshhold = da_threshhold or 300
         hours = self.hoys
-        schedule = occ_schedule or set(hours)
+        schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         DA = 0
         cda = 0
         total_hour_count = len(hours)
@@ -838,7 +838,7 @@ class AnalysisPoint(object):
             target_hours=None):
         threshhold = threshhold or 1000
         target_hours = target_hours or 250
-        schedule = occ_schedule or set(hoys)
+        schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         ase = 0
         problematic_hours = []
         for h, v in izip(hoys, values):
@@ -858,7 +858,7 @@ class AnalysisPoint(object):
         udiMin, udiMax = udi_min_max
         udi_min_max = udi_min_max or (100, 2000)
         da_threshhold = da_threshhold or 300.0
-        schedule = occ_schedule or Schedule.from_workday_hours()
+        schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         DA = 0
         cda = 0
         udi = 0
@@ -904,7 +904,7 @@ class AnalysisPoint(object):
         """
         da_threshhold = da_threshhold or 300
         hours = hoys
-        schedule = occ_schedule or set(hours)
+        schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         DA = 0
         cda = 0
         total_hour_count = len(hours)

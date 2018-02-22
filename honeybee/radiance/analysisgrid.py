@@ -446,7 +446,7 @@ class AnalysisGrid(object):
         da_threshhold = da_threshhold or 300.0
         udi_min_max = udi_min_max or (100, 3000)
         hoys = self.hoys
-        occ_schedule = occ_schedule or Schedule.from_workday_hours()
+        occ_schedule = occ_schedule or Schedule.eight_am_to_six_pm()
 
         if results_loaded:
             blinds_state_ids = blinds_state_ids or [[0] * len(self.sources)] * len(hoys)
@@ -535,7 +535,7 @@ class AnalysisGrid(object):
         da_threshhold = da_threshhold or 300.0
         target_da = target_da or 50.0
         hoys = self.hoys
-        occ_schedule = occ_schedule or Schedule.from_workday_hours()
+        occ_schedule = occ_schedule or Schedule.eight_am_to_six_pm()
 
         if results_loaded:
             blinds_state_ids = blinds_state_ids or [[0] * len(self.sources)] * len(hoys)

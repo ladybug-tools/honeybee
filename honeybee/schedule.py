@@ -50,26 +50,28 @@ class Schedule(object):
         daily_hours = [0] * 24
         occ_hours = occ_hours or (8, 17)
         off_hours = off_hours or (12, 13)
-        weekend = set(weekend) if weekend else set((6, 7))
+        weekend = [0] if weekend == [0] else set(weekend) if weekend else set((6, 7))
         default_value = default_value or 1
 
         # create daily schedules
         for h in xrange(*occ_hours):
             daily_hours[h] = default_value
 
-        for h in xrange(*off_hours):
-            daily_hours[h] = 0
+        if off_hours != -1 and off_hours != [-1]:
+            for h in xrange(*off_hours):
+                daily_hours[h] = 0
 
         # create annual schedule
         values = [daily_hours[h % 24] for h in xrange(8760)]
 
         # set the values to 0 for weekendHours
         # assuming the year starts on a Monday
-        for d in xrange(365):
-            if (d + 1) % 8 in weekend:
-                # set the hours for that day to 0
-                for h in range(d * 24, (d + 1) * 24):
-                    values[h] = 0
+        if weekend != [0]:
+            for d in xrange(365):
+                if (d + 1) % 8 in weekend:
+                    # set the hours for that day to 0
+                    for h in range(d * 24, (d + 1) * 24):
+                        values[h] = 0
 
         hours = xrange(8760)
         return cls(values, hours)
@@ -90,7 +92,7 @@ class Schedule(object):
         """
         occ_period = occ_period or AnalysisPeriod(stHour=8, endHour=17)
         off_hours = set(off_hours) if off_hours else set((12, 13))
-        weekend = set(weekend) if weekend else set((6, 7))
+        weekend = [0] if weekend == [0] else set(weekend) if weekend else set((6, 7))
         default_value = default_value or 1
 
         try:
@@ -101,12 +103,22 @@ class Schedule(object):
             )
         else:
             # remove weekends
-            hours = tuple(h for h in hours if ((h % 24) + 1) % 8 not in weekend)
+            if weekend != [0]:
+                hours = tuple(h for h in hours if ((h % 24) + 1) % 8 not in weekend)
             # remove off hours
-            hours = tuple(h for h in hours if h % 24 not in off_hours)
+            if off_hours != -1 and off_hours != [-1]:
+                hours = tuple(h for h in hours if h % 24 not in off_hours)
 
             values = tuple(1 for h in hours)
             return cls(values, hours)
+
+    @classmethod
+    def eight_am_to_six_pm(cls):
+        """An 8am to 6pm schedule for IES-LM-83-12 requirements.
+
+        This schedule includes 10 hours per day from 8am to 6pm.
+        """
+        return cls.from_workday_hours((8, 18), [-1], [-1])
 
     @property
     def values(self):
