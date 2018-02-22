@@ -707,9 +707,12 @@ def window_group_to_receiver(filepath, upnormal, material_name='vmtx_glow',
                              angle_basis='Kelms Full'):
     """Take a filepath to a window group and create a receiver."""
     hemi_type_mapper = {
-        'klemsfull': 'kf', 'klemshalf': 'kh', 'klemsquarter': 'kq',
-        'tensortree': 'tt'}
+        'klemsfull': 'kf', 'klemshalf': 'kh', 'klemsquarter': 'kq'
+    }
 
+    assert ''.join(angle_basis.split()).lower() != 'tensortree', \
+        'Tensor Tree BSDF ({}) can only be used for in-scene caluclation.' \
+        .format(material_name)
     try:
         hemi_type = hemi_type_mapper[''.join(angle_basis.split()).lower()]
     except KeyError:
