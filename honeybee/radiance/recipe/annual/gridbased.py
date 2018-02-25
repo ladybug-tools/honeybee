@@ -65,9 +65,9 @@ class GridBased(DaylightCoeffGridBased):
         rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
         simulation_type = rec_json["simulation_type"]
 
-        return cls(sky_mtx = sky_mtx, analysis_grids = analysis_grids, \
-                radiance_parameters = rad_parameters, hb_objects = hb_objects, \
-                simulation_type = simulation_type)
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
+                radiance_parameters=rad_parameters, hb_objects=hb_objects, \
+                simulation_type=simulation_type)
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.

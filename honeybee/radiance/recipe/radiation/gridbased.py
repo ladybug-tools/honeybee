@@ -62,12 +62,10 @@ class GridBased(DaylightCoeffGridBased):
             tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
 
-        # Assume RfluxmtxParameters is correc through debugging
-        # rad_parameters = GridBasedParameters.from_json(rec_json["rad_parameters"])
         rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
 
-        return cls(sky_mtx = sky_mtx, analysis_grids = analysis_grids, \
-                radiance_parameters = rad_parameters, hb_objects = hb_objects)
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
+                radiance_parameters=rad_parameters, hb_objects=hb_objects)
 
     @classmethod
     def from_weather_file_points_and_vectors(

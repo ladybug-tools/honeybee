@@ -66,7 +66,7 @@ class AnalysisGrid(object):
         """Create an analysis grid from json objects."""
         analysis_points = tuple(AnalysisPoint.from_json(pt)
                                 for pt in ag_json["analysis_points"])
-        return cls(analysis_points = analysis_points, name = ag_json["name"], window_groups=None)
+        return cls(analysis_points=analysis_points, name=ag_json["name"], window_groups=None)
 
     @classmethod
     def from_points_and_vectors(cls, points, vectors=None,

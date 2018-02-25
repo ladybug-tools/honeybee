@@ -79,17 +79,13 @@ class FivePhaseGridBased(ThreePhaseGridBased):
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
         simulation_type = rec_json["simulation_type"]
 
-        # From setter methods for view and daylight mtx params I am assuming
-        # that they are both RfluxmtxParameters
         view_mtx_parameters = RfluxmtxParameters.from_json(rec_json["view_mtx_parameters"])
         daylight_mtx_parameters = RfluxmtxParameters.from_json(rec_json["daylight_mtx_parameters"])
 
-
-        return cls(sky_mtx = sky_mtx, analysis_grids = analysis_grids, \
-                view_mtx_parameters = view_mtx_parameters, \
-                daylight_mtx_parameters = daylight_mtx_parameters, \
-                hb_objects = hb_objects, \
-                simulation_type = simulation_type)
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
+                view_mtx_parameters=view_mtx_parameters, \
+                daylight_mtx_parameters=daylight_mtx_parameters, hb_objects=hb_objects, \
+                simulation_type=simulation_type)
 
     def to_json(self):
         """Create five phase recipe JSON file

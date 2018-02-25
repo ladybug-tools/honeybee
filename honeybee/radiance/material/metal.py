@@ -75,17 +75,18 @@ class MetalMaterial(RadianceMaterial):
     def from_json(cls, rec_json):
         """Make radiance material from json
         {
+            "type": "metal", // Material type
             "name": "", // Material Name
-            "r_reflectance": float, // reflectance for red
-            "g_reflectance": float, // reflectance for green
-            "b_reflectance": float, // reflectance for blue
-            "refraction": float, // Index of refraction
-            "modifier": "" // material modifier (Default: "void")
+            "r_reflectance": float, // Reflectance for red
+            "g_reflectance": float, // Reflectance for green
+            "b_reflectance": float, // Reflectance for blue
+            "specularity": float, // Material specularity
+            "roughness": float // Material roughness
         }
         """
-        return cls(name = rec_json["name"], r_reflectance = rec_json["r_reflectance"], \
-                    g_reflectance = rec_json["g_reflectance"], b_reflectance = rec_json["b_reflectance"], \
-                     specularity= rec_json["specularity"], roughness= rec_json["roughness"])
+        return cls(name=rec_json["name"], r_reflectance=rec_json["r_reflectance"], \
+                    g_reflectance=rec_json["g_reflectance"], b_reflectance=rec_json["b_reflectance"], \
+                     specularity=rec_json["specularity"], roughness=rec_json["roughness"])
 
     @classmethod
     def by_single_reflect_value(cls, name, rgb_reflectance=0, specularity=0,

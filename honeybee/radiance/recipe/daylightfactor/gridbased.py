@@ -45,13 +45,12 @@ class GridBased(PITGridBased):
                 },
             }
         """
-        analysis_grids = \
-            tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        analysis_grids = tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
         rad_parameters = GridBasedParameters.from_json(rec_json["rad_parameters"])
 
-        recipe = cls(analysis_grids = analysis_grids, rad_parameters=rad_parameters, \
-        hb_objects=hb_objects)
+        recipe = cls(analysis_grids=analysis_grids, rad_parameters=rad_parameters, \
+            hb_objects=hb_objects)
 
         return recipe
 

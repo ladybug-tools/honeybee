@@ -212,20 +212,22 @@ class RadianceParameters(object):
             return rad_par
 
         # use re to find the start and end index for each parameter in parameter string
-        indices = [(m.start(0), m.end(0)) for m in re.finditer(r'-[a-zA-Z]{1,6}'\
+        pattern = r'-([a-zA-Z]+)\s([-+]*\d+[eE][-+]\d+|\d*)'
+        results = re.finditer(pattern, parameters_string.strip())
+        indices = [(m.start(0), m.end(0)) for m in re.finditer(r'-[a-zA-Z]+'\
                     , parameters_string)]
 
         indices = [item for sublist in indices for item in sublist]
 
         indices.append(len(parameters_string))
 
-        for i in xrange(0,len(indices)-2,2):
+        for i in xrange(0 , len(indices) - 2, 2):
             key_start = indices[i] + 1
-            key_end = indices[i+1]
+            key_end = indices[i + 1]
             key = parameters_string[key_start:key_end]
 
             value_start = key_end
-            value_end = indices[i+2]
+            value_end = indices[i + 2]
             value = parameters_string[value_start:value_end]
 
             try:
