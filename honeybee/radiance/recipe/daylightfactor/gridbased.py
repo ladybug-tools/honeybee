@@ -5,7 +5,7 @@ from ...parameters.gridbased import GridBasedParameters
 from ...analysisgrid import AnalysisGrid
 from ladybug.dt import DateTime
 from ladybug.legendparameters import LegendParameters
-
+from ....hbsurface import HBSurface
 
 class GridBased(PITGridBased):
     """Daylight factor grid based analysis.

@@ -9,6 +9,7 @@ from ..daylightcoeff.gridbased import DaylightCoeffGridBased
 from ...sky.skymatrix import SkyMatrix
 from ...analysisgrid import AnalysisGrid
 from ...parameters.rfluxmtx import RfluxmtxParameters
+from ....hbsurface import HBSurface
 
 import os
 
