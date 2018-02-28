@@ -94,18 +94,19 @@ class HBAnalysisSurface(HBObject):
         srf_type = surfacetype.SurfaceTypes.get_type_by_key(type_id)
         HBsrf = cls(name, vertices, srf_type)
         # Check material type and determine appropriate "from_json" classmethod
-        material_json = srf_json["surface_material"]
-        material_type = material_json["type"]
-        if material_type == "plastic":
-            radiance_material = PlasticMaterial.from_json(material_json)
-        elif material_type == "metal":
-            radiance_material = MetalMaterial.from_json(material_json)
-        elif material_type == "glass":
-            radiance_material = GlassMaterial.from_json(material_json)
-        else:
-            raise ValueError "The material type {} in the surface json is either \
-            not currently suported or incorrect.".format(srf_json["surface_material"])
-        HBsrf.radiance_material = radiance_material
+        if "surface_material" in srf_json.keys():
+            material_json = srf_json["surface_material"]
+            material_type = material_json["type"]
+            if material_type == "plastic":
+                radiance_material = PlasticMaterial.from_json(material_json)
+            elif material_type == "metal":
+                radiance_material = MetalMaterial.from_json(material_json)
+            elif material_type == "glass":
+                radiance_material = GlassMaterial.from_json(material_json)
+            else:
+                #raise ValueError "The material type {} in the surface json is either not currently suported or incorrect".format(srf_json["surface_material"])
+                radiance_material = None
+            HBsrf.radiance_material = radiance_material
         return HBsrf
 
     @classmethod
@@ -641,7 +642,7 @@ class HBAnalysisSurface(HBObject):
         return {"name": self.name,
                 "vertices": [[tuple(pt) for pt in ptgroup] for ptgroup in self.points],
                 "surface_material": self.radiance_material.to_json(),
-                "surface_type" = self.surface_type.type_id
+                "surface_type": self.surface_type.typeId
                 }
 
     def __repr__(self):
