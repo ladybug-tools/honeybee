@@ -48,7 +48,8 @@ class GridBased(DaylightCoeffGridBased):
     def from_json(cls, rec_json):
         """Create annual recipe from JSON file
             {
-            "id":3
+            "id": "annual",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -94,7 +95,8 @@ class GridBased(DaylightCoeffGridBased):
     def to_json(self):
         """Create annual recipe JSON file
             {
-            "id": 3,
+            "id": "annual",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -106,7 +108,8 @@ class GridBased(DaylightCoeffGridBased):
             }
         """
         return {
-                "id": 3,
+                "id": "annual",
+                "type": "gridbased",
                 "sky_mtx": self.sky_matrix.to_json(),
                 "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
                 "surfaces": [srf.to_json() for srf in self.hb_objects],

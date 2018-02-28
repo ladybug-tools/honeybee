@@ -36,7 +36,8 @@ class GridBased(PITGridBased):
     def from_json(cls, rec_json):
         """Create Daylight Factor recipe from json.
             {
-            "id": 2, // do Not overwrite this id
+            "id": "daylight_factor",
+            "type": "gridbased",
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
             "rad_parameters": {
@@ -80,7 +81,8 @@ class GridBased(PITGridBased):
     def to_json(self):
         """Convert Daylight Factor recipe to json.
             {
-            "id": 2, // do Not overwrite this id
+            "id": "daylight_factor",
+            "type": "gridbased",
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
             "rad_parameters": {
@@ -90,7 +92,8 @@ class GridBased(PITGridBased):
             }
         """
         return {
-                "id": 2,
+                "id": "daylight_factor",
+                "type": "gridbased",
                 "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
                 "surfaces": [srf.to_json() for srf in self.hb_objects],
                 "rad_parameters": self.radiance_parameters.to_json()

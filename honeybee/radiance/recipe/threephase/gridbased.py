@@ -72,7 +72,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
     def from_json(cls, rec_json):
         """Create three phase recipe from JSON file
             {
-            "id": 5,
+            "id": "three_phase",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -197,7 +198,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
     def to_json(self):
         """Create three phase recipe JSON file
             {
-            "id": 5,
+            "id": "three_phase",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -207,7 +209,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
             }
         """
         return {
-                "id": 5,
+                "id": "three_phase",
+                "type": "gridbased",
                 "sky_mtx": self.sky_matrix.to_json(),
                 "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
                 "surfaces": [srf.to_json() for srf in self.hb_objects],

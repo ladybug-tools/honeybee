@@ -65,7 +65,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
     def from_json(cls, rec_json):
         """Create five phase recipe from JSON file
             {
-            "id": 6,
+            "id": "five_phase",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -91,7 +92,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
     def to_json(self):
         """Create five phase recipe JSON file
             {
-            "id": 6,
+            "id": "five_phase",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -101,7 +103,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             }
         """
         return {
-                "id": 6,
+                "id": "five_phase",
+                "type": "gridbased",
                 "sky_mtx": self.sky_matrix.to_json(),
                 "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
                 "surfaces": [srf.to_json() for srf in self.hb_objects],

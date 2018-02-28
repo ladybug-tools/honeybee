@@ -75,7 +75,8 @@ class GridBased(GenericGridBased):
     def from_json(cls, rec_json):
         """Create the solar access recipe from json.
         {
-          "id": 1, // do NOT overwrite this id
+          "id": "point_in_time",
+          "type": "gridbased",
           "sky": null, // a honeybee sky
           "surfaces": [], // list of honeybee surfaces
           "analysis_grids": [] // list of analysis grids
@@ -294,7 +295,8 @@ class GridBased(GenericGridBased):
     def to_json(self):
         """Create point-in-time recipe from json.
             {
-              "id": 1, // do NOT overwrite this id
+              "id": "point_in_time",
+              "type": "gridbased",
               "sky": null, // a honeybee sky
               "surfaces": [], // list of honeybee surfaces
               "analysis_grids": [] // list of analysis grids
@@ -303,7 +305,8 @@ class GridBased(GenericGridBased):
             }
         """
         return {
-            "id": 1,
+            "id": "point_in_time",
+            "type": "gridbased",
             "sky": self.sky.to_json(),
             "surfaces": [srf.to_json() for srf in self.hb_objects],
             "analysis_grids": [ag.to_json() for ag in self.analysis_grids],

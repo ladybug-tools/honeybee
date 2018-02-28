@@ -73,7 +73,8 @@ class DaylightCoeffGridBased(GenericGridBased):
     def from_json(cls, rec_json):
         """Create daylight coefficient recipe from JSON file
             {
-            "id": 4,
+            "id": "daylight_coeff",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -248,7 +249,8 @@ class DaylightCoeffGridBased(GenericGridBased):
     def to_json(self):
         """Create daylight coefficient JSON file
             {
-            "id": 4,
+            "id": "daylight_coeff",
+            "type": "gridbased",
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
@@ -257,7 +259,8 @@ class DaylightCoeffGridBased(GenericGridBased):
             }
         """
         return {
-                "id": 4,
+                "id": "daylight_coeff",
+                "type": "gridbased",
                 "sky_mtx": self.sky_matrix.to_json(),
                 "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
                 "surfaces": [srf.to_json() for srf in self.hb_objects],
