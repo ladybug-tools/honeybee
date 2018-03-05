@@ -1,0 +1,31 @@
+{ RCSid $Id$ }
+{
+	Compute Lab color space and color differences from XYZ primaries.
+
+	5/25/02	G.Ward
+}
+Xw = 1; Yw = 1; Zw = 1;			{ default white }
+sq(x) : x*x;
+DEL : 6/29;
+bfunc(x) : if(x - DEL*DEL*DEL, x^(1/3), x/(3*DEL*DEL) + 2/3*DEL);
+Ls(Yi) : 116*bfunc(Yi/Yw) - 16;
+as(Xi,Yi,Zi) : 500*(bfunc(Xi/Xw) - bfunc(Yi/Yw));
+bs(Xi,Yi,Zi) : 200*(bfunc(Yi/Yw) - bfunc(Zi/Zw));
+
+					{ CIE 1976 Lab delta E formula }
+dE76(X1,Y1,Z1,X2,Y2,Z2) : sqrt( sq(Ls(Y1)-Ls(Y2))
+				+ sq(as(X1,Y1,Z1)-as(X2,Y2,Z2))
+				+ sq(bs(X1,Y1,Z1)-bs(X2,Y2,Z2)) );
+
+					{ CIE 1994 Lab delta E formula }
+kL = 1; kC = 1; kH = 1;			{ viewing factors }
+Cs(Xi,Yi,Zi) : sqrt( sq(as(Xi,Yi,Zi)) + sq(bs(Xi,Yi,Zi)) );
+C1s(X1,Y1,Z1,X2,Y2,Z2) : sqrt(Cs(X1,Y1,Z1)*Cs(X2,Y2,Z2));
+dHs(X1,Y1,Z1,X2,Y2,Z2) : sqrt( sq(as(X1,Y1,Z1)-as(X2,Y2,Z2))   
+                               + sq(bs(X1,Y1,Z1)-bs(X2,Y2,Z2))
+			       - sq(Cs(X1,Y1,Z1)-Cs(X2,Y2,Z2)) );
+dE94(X1,Y1,Z1,X2,Y2,Z2) : sqrt( sq((Ls(X1,Y1,Z1)-Ls(X2,Y2,Z2))/kL)
+			+ sq( (Cs(X1,Y1,Z1)-Cs(X2,Y2,Z2)) /
+				(kC*(1+.048*C1s(X1,Y1,Z1,X2,Y2,Z2))) )
+			+ sq( dHs(X1,Y1,Z1,X2,Y2,Z2) /
+				(kH*(1+.014*C1s(X1,Y1,Z1,X2,Y2,Z2))) ) )
