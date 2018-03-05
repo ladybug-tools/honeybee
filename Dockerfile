@@ -9,4 +9,4 @@ COPY ./radiance/lib /usr/local/lib/ray
 WORKDIR /usr/local/lib/python2.7/site-packages
 
 # copy honeybee
-COPY ./honeybee ./honeybee
+COPY ./honeybee /usr/local/lib/python2.7/site-packages/honeybee
