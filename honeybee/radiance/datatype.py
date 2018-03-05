@@ -575,7 +575,11 @@ class RadianceDataType(object):
                     return "-%s%s" % (self._name, str(self._value))
                 else:
                     # numbers
-                    return "-%s %s" % (self._name, str(self._value))
+                    if int(self._value) == self._value:
+                        value = int(self._value)
+                    else:
+                        value = self._value
+                    return "-%s %s" % (self._name, str(value))
 
         except TypeError:
             raise ValueError("Failed to set the value to {}".format(self._value))
