@@ -49,6 +49,45 @@ class MetalMaterial(RadianceMaterial):
            rough surface. Roughness values greater than 0.2 are not very realistic.
            (Default: 0)."""
 
+    def to_json(self):
+        """Translate radiance material to json
+        {
+            "type": "metal", // Material type
+            "name": "", // Material Name
+            "r_reflectance": float, // Reflectance for red
+            "g_reflectance": float, // Reflectance for green
+            "b_reflectance": float, // Reflectance for blue
+            "specularity": float, // Material specularity
+            "roughness": float // Material roughness
+        }
+        """
+        return {
+            "type": "metal",
+            "name": self.name,
+            "r_reflectance": self.r_reflectance,
+            "g_reflectance": self.g_reflectance,
+            "b_reflectance": self.b_reflectance,
+            "specularity": self.specularity,
+            "roughness": self.roughness
+        }
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Make radiance material from json
+        {
+            "type": "metal", // Material type
+            "name": "", // Material Name
+            "r_reflectance": float, // Reflectance for red
+            "g_reflectance": float, // Reflectance for green
+            "b_reflectance": float, // Reflectance for blue
+            "specularity": float, // Material specularity
+            "roughness": float // Material roughness
+        }
+        """
+        return cls(name=rec_json["name"], r_reflectance=rec_json["r_reflectance"], \
+                    g_reflectance=rec_json["g_reflectance"], b_reflectance=rec_json["b_reflectance"], \
+                     specularity=rec_json["specularity"], roughness=rec_json["roughness"])
+
     @classmethod
     def by_single_reflect_value(cls, name, rgb_reflectance=0, specularity=0,
                                 roughness=0, modifier="void"):

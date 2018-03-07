@@ -78,7 +78,8 @@ class SolarAccessGridBased(GenericGridBased):
     def from_json(cls, rec_json):
         """Create the solar access recipe from json.
             {
-              "id": 0, // do NOT overwrite this id
+              "id": "solar_access",
+              "type": "gridbased",
               "location": null, // a honeybee location - see below
               "hoys": [], // list of hours of the year
               "surfaces": [], // list of honeybee surfaces
@@ -396,7 +397,8 @@ class SolarAccessGridBased(GenericGridBased):
     def to_json(self):
         """Create the solar access recipe from json.
             {
-              "id": 0, // do NOT overwrite this id
+              "id": "solar_access",
+              "type": "gridbased",
               "location": null, // a honeybee location - see below
               "hoys": [], // list of hours of the year
               "surfaces": [], // list of honeybee surfaces
@@ -405,7 +407,8 @@ class SolarAccessGridBased(GenericGridBased):
             }
         """
         return {
-            "id": 0,
+            "id": "solar_access",
+            "type": "gridbased",
             "location": None,
             "hoys": self.hoys,
             "surfaces": [srf.to_json() for srf in self.hb_objects],

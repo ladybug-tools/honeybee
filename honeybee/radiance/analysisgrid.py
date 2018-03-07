@@ -66,7 +66,7 @@ class AnalysisGrid(object):
         """Create an analysis grid from json objects."""
         analysis_points = tuple(AnalysisPoint.from_json(pt)
                                 for pt in ag_json["analysis_points"])
-        return cls(analysis_points)
+        return cls(analysis_points=analysis_points, name=ag_json["name"], window_groups=None)
 
     @classmethod
     def from_points_and_vectors(cls, points, vectors=None,
@@ -808,9 +808,12 @@ class AnalysisGrid(object):
         return self.__repr__()
 
     def to_json(self):
-        """Create an analysis grid from json objects."""
+        """Create json object from analysisGrid."""
         analysis_points = [ap.to_json() for ap in self.analysis_points]
-        return {"analysis_points": analysis_points}
+        return {
+                "name": self._name,
+                "analysis_points": analysis_points
+                }
 
     def __add__(self, other):
         """Add two analysis grids and create a new one.

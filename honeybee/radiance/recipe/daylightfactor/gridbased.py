@@ -1,9 +1,11 @@
 """Radiance Grid-based Analysis Recipe."""
 from ..pointintime.gridbased import GridBased as PITGridBased
 from ...sky.certainIlluminance import CertainIlluminanceLevel
+from ...parameters.gridbased import GridBasedParameters
+from ...analysisgrid import AnalysisGrid
 from ladybug.dt import DateTime
 from ladybug.legendparameters import LegendParameters
-
+from ....hbsurface import HBSurface
 
 class GridBased(PITGridBased):
     """Daylight factor grid based analysis.
@@ -31,6 +33,29 @@ class GridBased(PITGridBased):
             sub_folder)
 
     @classmethod
+    def from_json(cls, rec_json):
+        """Create Daylight Factor recipe from json.
+            {
+            "id": "daylight_factor",
+            "type": "gridbased",
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "rad_parameters": {
+                gridbased_parameters: string //  A standard radiance parameter string
+                (e.g. -ab 5 -aa 0.05 -ar 128)
+                },
+            }
+        """
+        analysis_grids = tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+        rad_parameters = GridBasedParameters.from_json(rec_json["rad_parameters"])
+
+        recipe = cls(analysis_grids=analysis_grids, rad_parameters=rad_parameters, \
+            hb_objects=hb_objects)
+
+        return recipe
+
+    @classmethod
     def from_points_and_vectors(
         cls, point_groups, vector_groups=None, rad_parameters=None, hb_objects=None,
             sub_folder="gridbased"):
@@ -52,6 +77,27 @@ class GridBased(PITGridBased):
         analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
                                                                     vector_groups)
         return cls(analysis_grids, rad_parameters, hb_objects, sub_folder)
+
+    def to_json(self):
+        """Convert Daylight Factor recipe to json.
+            {
+            "id": "daylight_factor",
+            "type": "gridbased",
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "rad_parameters": {
+                gridbased_parameters: tring //  A standard radiance parameter string
+                (e.g. -ab 5 -aa 0.05 -ar 128)
+                },
+            }
+        """
+        return {
+                "id": "daylight_factor",
+                "type": "gridbased",
+                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+                "surfaces": [srf.to_json() for srf in self.hb_objects],
+                "rad_parameters": self.radiance_parameters.to_json()
+                }
 
     @property
     def legend_parameters(self):

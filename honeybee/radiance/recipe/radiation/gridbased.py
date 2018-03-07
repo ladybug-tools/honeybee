@@ -14,6 +14,10 @@ from ..daylightcoeff.gridbased import DaylightCoeffGridBased
 from ...sky.skymatrix import SkyMatrix
 from ....futil import write_to_file
 
+from ...analysisgrid import AnalysisGrid
+from ...parameters.rfluxmtx import RfluxmtxParameters
+from ....hbsurface import HBSurface
+
 import os
 
 
@@ -42,6 +46,28 @@ class GridBased(DaylightCoeffGridBased):
         DaylightCoeffGridBased.__init__(
             self, sky_mtx, analysis_grids, simulation_type, radiance_parameters,
             reuse_daylight_mtx, hb_objects, sub_folder)
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create radiation recipe from JSON file
+            {
+            "id": "radiation",
+            "type": "gridbased",
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "rad_parameters": {} // radiance gridbased parameters json file
+            }
+        """
+        sky_mtx = SkyMatrix.from_json(rec_json["sky_mtx"])
+        analysis_grids = \
+            tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+
+        rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
+
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
+                radiance_parameters=rad_parameters, hb_objects=hb_objects)
 
     @classmethod
     def from_weather_file_points_and_vectors(
@@ -88,6 +114,27 @@ class GridBased(DaylightCoeffGridBased):
         return cls.from_weather_file_points_and_vectors(
             epw_file, point_groups, vector_groups, sky_density,
             radiance_parameters, reuse_daylight_mtx, hb_objects, sub_folder)
+
+    def to_json(self):
+        """Create radiation recipe JSON file
+            {
+            "id": "radiation",
+            "type": "gridbased",
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "rad_parameters": {} // radiance gridbased parameters json file
+            }
+        """
+        return {
+                "id": "radiation",
+                "type": "gridbased",
+                "sky_mtx": self.sky_matrix.to_json(),
+                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+                "surfaces": [srf.to_json() for srf in self.hb_objects],
+                "rad_parameters": self.radiance_parameters.to_json()
+                }
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.

@@ -7,6 +7,11 @@ from ..recipexphaseutil import get_commands_direct_view_daylight_matrices
 from ..threephase.gridbased import ThreePhaseGridBased
 from ....futil import write_to_file
 
+from ...sky.skymatrix import SkyMatrix
+from ...analysisgrid import AnalysisGrid
+from ...parameters.rfluxmtx import RfluxmtxParameters
+from ....hbsurface import HBSurface
+
 import os
 
 
@@ -55,6 +60,58 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             view_mtx_parameters, daylight_mtx_parameters,
             reuse_view_mtx, reuse_daylight_mtx, hb_objects,
             sub_folder)
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create five phase recipe from JSON file
+            {
+            "id": "five_phase",
+            "type": "gridbased",
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "view_mtx_parameters": {} // radiance gridbased parameters json file
+            "daylight_mtx_parameters": {} //radiance gridbased parameters json file
+            }
+        """
+        sky_mtx = SkyMatrix.from_json(rec_json["sky_mtx"])
+        analysis_grids = \
+            tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+        simulation_type = rec_json["simulation_type"]
+
+        view_mtx_parameters = RfluxmtxParameters.from_json(rec_json["view_mtx_parameters"])
+        daylight_mtx_parameters = RfluxmtxParameters.from_json(rec_json["daylight_mtx_parameters"])
+
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
+                view_mtx_parameters=view_mtx_parameters, \
+                daylight_mtx_parameters=daylight_mtx_parameters, hb_objects=hb_objects, \
+                simulation_type=simulation_type)
+
+    def to_json(self):
+        """Create five phase recipe JSON file
+            {
+            "id": "five_phase",
+            "type": "gridbased",
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "view_mtx_parameters": {} // radiance gridbased parameters json file
+            "daylight_mtx_parameters": {} //radiance gridbased parameters json file
+            }
+        """
+        return {
+                "id": "five_phase",
+                "type": "gridbased",
+                "sky_mtx": self.sky_matrix.to_json(),
+                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+                "surfaces": [srf.to_json() for srf in self.hb_objects],
+                "simulation_type": self.simulation_type,
+                "view_mtx_parameters": self.view_mtx_parameters.to_json(),
+                "daylight_mtx_parameters": self.daylight_mtx_parameters.to_json()
+                }
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.

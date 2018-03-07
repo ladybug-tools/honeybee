@@ -7,6 +7,9 @@ from .._gridbasedbase import GenericGridBased
 from ..parameters import get_radiance_parameters_grid_based
 from ...sky.skymatrix import SkyMatrix
 from ....futil import write_to_file
+from ...analysisgrid import AnalysisGrid
+from ...parameters.rfluxmtx import RfluxmtxParameters
+from ....hbsurface import HBSurface
 
 import os
 
@@ -65,6 +68,30 @@ class DaylightCoeffGridBased(GenericGridBased):
         """
 
         self.reuse_daylight_mtx = reuse_daylight_mtx
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Create daylight coefficient recipe from JSON file
+            {
+            "id": "daylight_coeff",
+            "type": "gridbased",
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "rad_parameters": {} // radiance gridbased parameters json file
+            }
+        """
+        sky_mtx = SkyMatrix.from_json(rec_json["sky_mtx"])
+        analysis_grids = \
+            tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+        rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
+        simulation_type = rec_json["simulation_type"]
+
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
+                radiance_parameters=rad_parameters, hb_objects=hb_objects, \
+                simulation_type=simulation_type)
 
     @classmethod
     def from_weather_file_points_and_vectors(
@@ -218,6 +245,28 @@ class DaylightCoeffGridBased(GenericGridBased):
             # there are changes in the sky.
             # matrices multiplication needs to be recalculated.
             self._commands.extend(commands)
+
+    def to_json(self):
+        """Create daylight coefficient JSON file
+            {
+            "id": "daylight_coeff",
+            "type": "gridbased",
+            "sky_mtx": {}, // sky matrix json file
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "simulation_type": int // value between 0-2
+            "rad_parameters": {} // radiance gridbased parameters json file
+            }
+        """
+        return {
+                "id": "daylight_coeff",
+                "type": "gridbased",
+                "sky_mtx": self.sky_matrix.to_json(),
+                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+                "surfaces": [srf.to_json() for srf in self.hb_objects],
+                "simulation_type": self.simulation_type,
+                "rad_parameters": self.radiance_parameters.to_json()
+                }
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
