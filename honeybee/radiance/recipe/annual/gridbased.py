@@ -53,7 +53,6 @@ class GridBased(DaylightCoeffGridBased):
             "sky_mtx": {}, // sky matrix json file
             "analysis_grids": [], // list of analysis grids
             "surfaces": [], // list of honeybee surfaces
-            "simulation_type": int // value between 0-2
             "rad_parameters": {
                 gridbased_parameters: string //  A standard radiance parameter string
                 (e.g. -ab 5 -aa 0.05 -ar 128)
@@ -65,11 +64,9 @@ class GridBased(DaylightCoeffGridBased):
             tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
         rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
-        simulation_type = rec_json["simulation_type"]
 
         return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
-                radiance_parameters=rad_parameters, hb_objects=hb_objects, \
-                simulation_type=simulation_type)
+                radiance_parameters=rad_parameters, hb_objects=hb_objects)
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
