@@ -1,0 +1,14 @@
+language: python
+
+python:
+  - "2.7"
+
+install:
+  - pip install -U setuptools
+  - pip install git+git://github.com/saeranv/ladybug-1.git@master#egg=ladybug
+
+# command to run tests
+script: pytest
+
+notifications:
+  email: never
