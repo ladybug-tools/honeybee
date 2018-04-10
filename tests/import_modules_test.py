@@ -3,7 +3,7 @@ from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.epw import EPW
 import os
 
-# Can import, but need to change the relative modules to global (I think) or else fails
+# Can import, but need to change the relative modules to global or else fails
 #from ladybug.comfort.pmv import PMV()
 
 class TestLadybugCase():
