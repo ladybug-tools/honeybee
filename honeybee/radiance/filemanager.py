@@ -13,12 +13,18 @@ def get_radiance_objects_from_string(full_string):
     Returns:
         A list of strings. Each string represents a differnt Rdiance Object
     """
+    if '!xform' in full_string:
+        raise ValueError('Honeybee[+] cannot import files with !xform.\n'
+                         'Try importing the original files.')
     raw_rad_objects = re.findall(
-        r'(\n|^)(\w*(\h*\w.*\n){1,})',
-        full_string + "\n",
+        r'\s*[^0-9].*[^a-zA-Z]*',
+        full_string,
         re.MULTILINE)
 
-    return [("").join(radObject[:-1]) for radObject in raw_rad_objects]
+    rad_objects = tuple(' '.join(radiance_object.split())
+                        for radiance_object in raw_rad_objects
+                        if radiance_object.strip()[0] != '#')
+    return rad_objects
 
 
 def get_radiance_objects_from_file(file_path):
@@ -37,7 +43,7 @@ def get_radiance_objects_from_file(file_path):
     assert os.path.isfile(file_path), "Can't find %s." % file_path
 
     with open(file_path, "r") as rad_file:
-        return get_radiance_objects_from_string("".join(rad_file.readlines()))
+        return get_radiance_objects_from_string(rad_file.read())
 
 
 def import_radiance_materials_from_file(file_path):
