@@ -5,7 +5,7 @@ python:
 
 install:
   - pip install -U setuptools
-  - pip install git+git://github.com/saeranv/ladybug-1.git@master#egg=ladybug
+  - pip install git+git://github.com/ladybug-tools/ladybug.git@master#egg=ladybug
 
 # command to run tests
 script: pytest
