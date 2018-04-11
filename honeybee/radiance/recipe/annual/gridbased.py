@@ -31,7 +31,7 @@ class GridBased(DaylightCoeffGridBased):
         radiance_parameters: Radiance parameters for this analysis. Parameters
             should be an instance of RfluxmtxParameters.
         hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
-        sub_folder: Analysis subfolder for this recipe. (Default: "daylightcoeff").
+        sub_folder: Analysis subfolder for this recipe. (Default: "gridbased_annual").
 
     """
 
@@ -65,11 +65,14 @@ class GridBased(DaylightCoeffGridBased):
             tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
         rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
-        simulation_type = rec_json["simulation_type"]
+        if 'simulation_type' in rec_json:
+            simulation_type = rec_json["simulation_type"]
+        else:
+            simulation_type = None
 
-        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
-                radiance_parameters=rad_parameters, hb_objects=hb_objects, \
-                simulation_type=simulation_type)
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids,
+                   radiance_parameters=rad_parameters, hb_objects=hb_objects,
+                   simulation_type=simulation_type)
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
@@ -108,14 +111,14 @@ class GridBased(DaylightCoeffGridBased):
             }
         """
         return {
-                "id": "annual",
-                "type": "gridbased",
-                "sky_mtx": self.sky_matrix.to_json(),
-                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
-                "surfaces": [srf.to_json() for srf in self.hb_objects],
-                "simulation_type": self.simulation_type,
-                "rad_parameters": self.radiance_parameters.to_json()
-                }
+            "id": "annual",
+            "type": "gridbased",
+            "sky_mtx": self.sky_matrix.to_json(),
+            "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+            "surfaces": [srf.to_json() for srf in self.hb_objects],
+            "simulation_type": self.simulation_type,
+            "rad_parameters": self.radiance_parameters.to_json()
+        }
 
     def results(self):
         """Return results for this analysis."""
