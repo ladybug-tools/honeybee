@@ -3,10 +3,17 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Metal
 """
 from materialbase import RadianceMaterial
+from ..datatype import RadianceNumber
 
 
 class Metal(RadianceMaterial):
     """Radiance metal material."""
+
+    r_reflectance = RadianceNumber('r_reflectance', num_type=float, valid_range=(0, 1))
+    g_reflectance = RadianceNumber('g_reflectance', num_type=float, valid_range=(0, 1))
+    b_reflectance = RadianceNumber('b_reflectance', num_type=float, valid_range=(0, 1))
+    specularity = RadianceNumber('specularity', num_type=float, valid_range=(0, 1))
+    roughness = RadianceNumber('roughness', num_type=float, valid_range=(0, 1))
 
     def __init__(self, name, r_reflectance=0, g_reflectance=0, b_reflectance=0,
                  specularity=0.9, roughness=0, modifier="void"):
@@ -44,6 +51,11 @@ class Metal(RadianceMaterial):
            corresponds to a perfectly smooth surface, and a value of 1 would be a very
            rough surface. Roughness values greater than 0.2 are not very realistic.
            (Default: 0)."""
+
+        if self.specularity < 0.9:
+            print("Warning: Specularity of metals is usually .9 or greater.")
+        if self.roughness > 0.2:
+            print("Warning: Roughness values above .2 is uncommon.")
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
@@ -128,61 +140,7 @@ class Metal(RadianceMaterial):
         """
         return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
                    b_reflectance=rgb_reflectance, specularity=specularity,
-                   roughness=roughness, modifier="void")
-
-    @property
-    def r_reflectance(self):
-        """Red reflectance."""
-        return self.__r
-
-    @r_reflectance.setter
-    def r_reflectance(self, value):
-        assert 0 <= value <= 1, "Red reflectance should be between 0 and 1"
-        self.__r = value
-
-    @property
-    def g_reflectance(self):
-        """Green reflectance."""
-        return self.__g
-
-    @g_reflectance.setter
-    def g_reflectance(self, value):
-        assert 0 <= value <= 1, "Green reflectance should be between 0 and 1"
-        self.__g = value
-
-    @property
-    def b_reflectance(self):
-        """Blue reflectance."""
-        return self.__b
-
-    @b_reflectance.setter
-    def b_reflectance(self, value):
-        assert 0 <= value <= 1, "Blue reflectance should be between 0 and 1"
-        self.__b = value
-
-    @property
-    def specularity(self):
-        """Specularity fraction."""
-        return self.__spec
-
-    @specularity.setter
-    def specularity(self, value):
-        assert 0 <= value <= 1, "Specularity should be between 0 and 1"
-        if value < 0.9:
-            print("Warning: Specularity of metals is usually .9 or greater.")
-        self.__spec = value
-
-    @property
-    def roughness(self):
-        """Roughness."""
-        return self.__rough
-
-    @roughness.setter
-    def roughness(self, value):
-        assert 0 <= value <= 1, "Roughness should be between 0 and 1"
-        if value > 0.2:
-            print("Warning: Roughness values above .2 is uncommon.")
-        self.__rough = value
+                   roughness=roughness, modifier=modifier)
 
     @property
     def average_reflectance(self):

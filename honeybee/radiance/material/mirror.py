@@ -9,9 +9,9 @@ from ..datatype import RadianceNumber
 class Mirror(RadianceMaterial):
     """Radiance mirror material."""
 
-    r_reflectance = RadianceNumber('red', num_type=float, valid_range=(0, 1))
-    g_reflectance = RadianceNumber('green', num_type=float, valid_range=(0, 1))
-    b_reflectance = RadianceNumber('blue', num_type=float, valid_range=(0, 1))
+    r_reflectance = RadianceNumber('r_reflectance', num_type=float, valid_range=(0, 1))
+    g_reflectance = RadianceNumber('g_reflectance', num_type=float, valid_range=(0, 1))
+    b_reflectance = RadianceNumber('b_reflectance', num_type=float, valid_range=(0, 1))
 
     def __init__(self, name, r_reflectance=0.95, g_reflectance=0.95, b_reflectance=0.95,
                  modifier="void"):

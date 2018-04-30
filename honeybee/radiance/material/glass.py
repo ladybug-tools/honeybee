@@ -4,13 +4,23 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 import math
 from materialbase import RadianceMaterial
+from ..datatype import RadianceNumber
 
 
 class Glass(RadianceMaterial):
     """Radiance glass material."""
 
-    def __init__(self, name, r_transmittance=0, g_transmittance=0, b_transmittance=0,
-                 refraction=1.52, modifier="void"):
+    r_transmittance = \
+        RadianceNumber('r_transmittance', num_type=float, valid_range=(0, 1))
+    g_transmittance = \
+        RadianceNumber('g_transmittance', num_type=float, valid_range=(0, 1))
+    b_transmittance = \
+        RadianceNumber('b_transmittance', num_type=float, valid_range=(0, 1))
+    refraction_index = \
+        RadianceNumber('refraction_index', num_type=float, check_positive=True)
+
+    def __init__(self, name, r_transmittance=0.0, g_transmittance=0.0,
+                 b_transmittance=0.0, refraction_index=1.52, modifier="void"):
         """Create glass material.
 
         Attributes:
@@ -36,7 +46,7 @@ class Glass(RadianceMaterial):
         """Transmittance for green. The value should be between 0 and 1 (Default: 0)."""
         self.b_transmittance = float(b_transmittance)
         """Transmittance for blue. The value should be between 0 and 1 (Default: 0)."""
-        self.refractionIndex = float(refraction)
+        self.refraction_index = float(refraction_index)
         """Index of refraction. 1.52 for glass and 1.4 for ETFE (Default: 1.52)."""
 
     @classmethod
@@ -78,7 +88,7 @@ class Glass(RadianceMaterial):
         """
         return cls(
             name, r_transmittance=rgb_transmittance, g_transmittance=rgb_transmittance,
-            b_transmittance=rgb_transmittance, refraction=1.52, modifier="void")
+            b_transmittance=rgb_transmittance, refraction=refraction, modifier=modifier)
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
@@ -111,36 +121,6 @@ class Glass(RadianceMaterial):
         return True
 
     @property
-    def r_transmittance(self):
-        """Red transmittance."""
-        return self.__r
-
-    @r_transmittance.setter
-    def r_transmittance(self, value):
-        assert 0 <= value <= 1, "Red transmittance should be between 0 and 1"
-        self.__r = value
-
-    @property
-    def g_transmittance(self):
-        """Green transmittance."""
-        return self.__g
-
-    @g_transmittance.setter
-    def g_transmittance(self, value):
-        assert 0 <= value <= 1, "Green transmittance should be between 0 and 1"
-        self.__g = value
-
-    @property
-    def b_transmittance(self):
-        """Blue transmittance."""
-        return self.__b
-
-    @b_transmittance.setter
-    def b_transmittance(self, value):
-        assert 0 <= value <= 1, "Blue transmittance should be between 0 and 1"
-        self.__b = value
-
-    @property
     def average_transmittance(self):
         """Calculate average transmittance."""
         return 0.265 * self.r_transmittance + \
@@ -167,7 +147,7 @@ class Glass(RadianceMaterial):
             self.get_transmissivity(self.r_transmittance),
             self.get_transmissivity(self.g_transmittance),
             self.get_transmissivity(self.b_transmittance),
-            self.refractionIndex
+            self.refraction_index
         )
 
         return glass_definition.replace("\n", " ") if minimal else glass_definition
@@ -190,7 +170,7 @@ class Glass(RadianceMaterial):
             "r_transmittance": self.r_transmittance,
             "g_transmittance": self.g_transmittance,
             "b_transmittance": self.b_transmittance,
-            "refraction": self.refractionIndex,
+            "refraction": self.refraction_index,
             "modifier": "void"
         }
 
