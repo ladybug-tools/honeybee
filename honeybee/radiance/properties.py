@@ -12,11 +12,14 @@ class RadianceProperties(object):
             overwritten by honeybee in cases like solve adjacencies.
     """
 
-    __slots__ = ('_radiance_material', '_is_material_set_by_user', '_hb_surfaces')
+    __slots__ = ('_radiance_material', '_is_material_set_by_user', '_hb_surfaces',
+                 '_radiance_black_material')
 
-    def __init__(self, radiance_material=None, is_material_set_by_user=False):
+    def __init__(self, radiance_material=None, is_material_set_by_user=False,
+                 radiance_black_material=None):
         """Create radiance properties for surface."""
         self.radiance_material = (radiance_material, is_material_set_by_user)
+        self.radiance_black_material = radiance_black_material
 
     @property
     def isRadianceProperties(self):
@@ -37,7 +40,7 @@ class RadianceProperties(object):
 
         Usage:
 
-            radiance_material = PlasticMaterial.by_single_reflect_value(
+            radiance_material = Plastic.by_single_reflect_value(
                 'wall_material', 0.55)
             HBSrf.radiance_material = (radiance_material, True)
         """
@@ -80,7 +83,7 @@ class RadianceProperties(object):
         return copy.copy(self)
 
     def to_rad_string(self):
-        """Get radianace definition for honeybee surfaces if any."""
+        """Get Radiance definition for honeybee surfaces if any."""
         raise NotImplementedError()
 
     def ToString(self):

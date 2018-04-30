@@ -5,7 +5,8 @@ Create, modify and generate radiance files from a collection of hbobjects.
 from ..futil import write_to_file_by_name, copy_files_to_folder, preparedir
 from .geometry import polygon
 from .material.plastic import BlackMaterial
-from .material.glow import WhiteGlowMaterial
+from .material.glow import WhiteGlow
+import radparser
 
 import datetime
 import os
@@ -19,22 +20,29 @@ class RadFile(object):
 
     Attributes:
         hb_surfaces: A collection of honeybee surfaces.
-        additional_matrials: Additional radiance material objects that will be added on
+        additional_materials: Additional radiance material objects that will be added on
             top of the file.
     """
-    __slots__ = ('hb_surfaces', 'additional_matrials')
+    __slots__ = ('hb_surfaces', 'additional_materials')
 
     # TODO(Mostapha) add property for inputs to check the input values
-    def __init__(self, hb_surfaces, additional_matrials=None):
+    def __init__(self, hb_surfaces, additional_materials=None):
         """Initiate a radiance file."""
         self.hb_surfaces = hb_surfaces
-        if additional_matrials:
-            raise NotImplementedError('additional_matrials is not implemented!')
+        if additional_materials:
+            raise NotImplementedError('additional_materials is not implemented!')
 
     @classmethod
-    def from_file(cls, filepath):
+    def from_file(cls, file_paths):
+        """create a RadFile from Radiance files."""
         # parse the file and get the materials and geometries
-        raise NotImplementedError()
+        geometries = []
+        materials = []
+        for file_path in file_paths:
+            for obj in radparser.parse_from_file(file_path):
+                if obj.startswith('#'):
+                    continue
+        return cls(geometries, materials)
 
     def find_bsdf_materials(self, mode=1):
         """Return a list fo BSDF materials if any."""
@@ -150,7 +158,7 @@ class RadFile(object):
                 mt = set(BlackMaterial(srf.radiance_material.name).to_rad_string()
                          for srf in self.hb_surfaces)
             elif glowed:
-                mt = set(WhiteGlowMaterial(srf.radiance_material.name).to_rad_string()
+                mt = set(WhiteGlow(srf.radiance_material.name).to_rad_string()
                          for srf in self.hb_surfaces)
             else:
                 mt = set(srf.radiance_material.to_rad_string()
@@ -168,10 +176,10 @@ class RadFile(object):
                             if srf.has_child_surfaces]
             elif glowed:
                 mt_base = [
-                    WhiteGlowMaterial(srf.radiance_material.name).to_rad_string()
+                    WhiteGlow(srf.radiance_material.name).to_rad_string()
                     for srf in self.hb_surfaces]
                 mt_child = [
-                    WhiteGlowMaterial(childSrf.radiance_material.name).to_rad_string()
+                    WhiteGlow(childSrf.radiance_material.name).to_rad_string()
                     for srf in self.hb_surfaces
                     for childSrf in srf.children_surfaces
                     if srf.has_child_surfaces]
@@ -191,7 +199,7 @@ class RadFile(object):
                          for childSrf in srf.children_surfaces
                          if srf.has_child_surfaces)
             elif glowed:
-                mt = set(WhiteGlowMaterial(childSrf.radiance_material.name)
+                mt = set(WhiteGlow(childSrf.radiance_material.name)
                          .to_rad_string()
                          for srf in self.hb_surfaces
                          for childSrf in srf.children_surfaces
@@ -350,17 +358,17 @@ class RadFile(object):
 
     def write_glow_material(self, folder, filename, mkdir=False):
         """Write white glow material to a file."""
-        text = self.header() + '\n\n' + WhiteGlowMaterial().to_rad_string()
+        text = self.header() + '\n\n' + WhiteGlow().to_rad_string()
         return write_to_file_by_name(folder, filename, text, mkdir)
 
     def write_geometries_glowed(self, folder, filename, mode=0, flipped=False,
                                 mkdir=False):
-        """Write all the surfaces to a file with WhiteGlowMaterial.
+        """Write all the surfaces to a file with WhiteGlow.
 
         Use this method to write objects like window-groups.
         """
         geo = self.geometries(mode, flipped=flipped)
-        mat_name = WhiteGlowMaterial().name
+        mat_name = WhiteGlow().name
         # replace the material in string with BlackMaterial.name
         names = self.radiance_material_names(mode)
 

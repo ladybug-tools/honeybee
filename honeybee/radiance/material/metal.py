@@ -2,14 +2,14 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Metal
 """
-from _materialbase import RadianceMaterial
+from materialbase import RadianceMaterial
 
 
-class MetalMaterial(RadianceMaterial):
+class Metal(RadianceMaterial):
     """Radiance metal material."""
 
     def __init__(self, name, r_reflectance=0, g_reflectance=0, b_reflectance=0,
-                 specularity=0, roughness=0, modifier="void"):
+                 specularity=0.9, roughness=0, modifier="void"):
         """Create metal material.
 
         Attributes:
@@ -21,19 +21,15 @@ class MetalMaterial(RadianceMaterial):
                 (Default: 0).
             b_reflectance: Reflectance for blue. The value should be between 0 and 1
                 (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1
-                are not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A value
-                of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
-                a very rough surface. Roughness values greater than 0.2 are not very
-                realistic. (Default: 0).
+            specularity: Fraction of specularity. Specularity of metals is usually .9
+                or greater (Default: 0.9).
+            roughness: Roughness is specified as the rms slope of surface facets.
+                A value of 0 corresponds to a perfectly smooth surface, and a value of
+                1 would be a very rough surface. Roughness values greater than 0.2 are
+                not very realistic. (Default: 0).
             modifier: Material modifier (Default: "void").
-
-        Usage:
-            wallMaterial = MetalMaterial("generic wall", .55, .65, .75)
-            print(wallMaterial)
         """
-        RadianceMaterial.__init__(self, name, material_type="metal", modifier="void")
+        RadianceMaterial.__init__(self, name, type="metal", modifier=modifier)
         self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
         self.g_reflectance = g_reflectance
@@ -42,12 +38,29 @@ class MetalMaterial(RadianceMaterial):
         """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
         self.specularity = specularity
         """Fraction of specularity. Specularity fractions greater than 0.1 are not
-           realistic (Default: 0)."""
+           realistic (Default: 0.9)."""
         self.roughness = roughness
         """Roughness is specified as the rms slope of surface facets. A value of 0
            corresponds to a perfectly smooth surface, and a value of 1 would be a very
            rough surface. Roughness values greater than 0.2 are not very realistic.
            (Default: 0)."""
+
+    @classmethod
+    def from_string(cls, material_string, modifier=None):
+        """Create a Radiance material from a string.
+
+        If the material has a modifier the modifier material should also be partof the
+        string or should be provided using modifier argument.
+        """
+
+        modifier, name, base_material_data = cls._analyze_string_input(
+            cls.__name__.lower(), material_string, modifier)
+
+        _, _, _, r_reflectance, g_reflectance, b_reflectance, \
+            specularity, roughness = base_material_data
+
+        return cls(name, r_reflectance, g_reflectance, b_reflectance, specularity,
+                   roughness, modifier)
 
     def to_json(self):
         """Translate radiance material to json
@@ -84,9 +97,12 @@ class MetalMaterial(RadianceMaterial):
             "roughness": float // Material roughness
         }
         """
-        return cls(name=rec_json["name"], r_reflectance=rec_json["r_reflectance"], \
-                    g_reflectance=rec_json["g_reflectance"], b_reflectance=rec_json["b_reflectance"], \
-                     specularity=rec_json["specularity"], roughness=rec_json["roughness"])
+        return cls(name=rec_json["name"],
+                   r_reflectance=rec_json["r_reflectance"],
+                   g_reflectance=rec_json["g_reflectance"],
+                   b_reflectance=rec_json["b_reflectance"],
+                   specularity=rec_json["specularity"],
+                   roughness=rec_json["roughness"])
 
     @classmethod
     def by_single_reflect_value(cls, name, rgb_reflectance=0, specularity=0,
@@ -107,7 +123,7 @@ class MetalMaterial(RadianceMaterial):
             modifier: Material modifier (Default: "void").
 
         Usage:
-            wallMaterial = MetalMaterial.by_single_reflect_value("generic wall", .55)
+            wallMaterial = Metal.by_single_reflect_value("generic wall", .55)
             print(wallMaterial)
         """
         return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
@@ -152,8 +168,8 @@ class MetalMaterial(RadianceMaterial):
     @specularity.setter
     def specularity(self, value):
         assert 0 <= value <= 1, "Specularity should be between 0 and 1"
-        if value > 0.1:
-            print("Warning: Specularity values above .1 is uncommon.")
+        if value < 0.9:
+            print("Warning: Specularity of metals is usually .9 or greater.")
         self.__spec = value
 
     @property
@@ -176,7 +192,7 @@ class MetalMaterial(RadianceMaterial):
 
     def to_rad_string(self, minimal=False):
         """Return full radiance definition."""
-        __base_string = self.head_line + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
+        __base_string = self.head_line(minimal) + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
 
         metal_definition = __base_string % (
             self.r_reflectance, self.g_reflectance, self.b_reflectance,
@@ -184,12 +200,3 @@ class MetalMaterial(RadianceMaterial):
         )
 
         return metal_definition.replace("\n", " ") if minimal else metal_definition
-
-
-if __name__ == "__main__":
-    # some test code
-    panelMaterial = MetalMaterial.by_single_reflect_value("generic wall", .55)
-    print(panelMaterial)
-
-    panelMaterial = MetalMaterial("generic wall", .55, .65, .75)
-    print(panelMaterial)

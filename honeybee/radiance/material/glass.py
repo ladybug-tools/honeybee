@@ -3,10 +3,10 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 import math
-from _materialbase import RadianceMaterial
+from materialbase import RadianceMaterial
 
 
-class GlassMaterial(RadianceMaterial):
+class Glass(RadianceMaterial):
     """Radiance glass material."""
 
     def __init__(self, name, r_transmittance=0, g_transmittance=0, b_transmittance=0,
@@ -26,17 +26,17 @@ class GlassMaterial(RadianceMaterial):
             modifier: Material modifier (Default: "void").
 
         Usage:
-            glassMaterial = GlassMaterial("generic glass", .65, .65, .65)
+            glassMaterial = Glass("generic glass", .65, .65, .65)
             print(glassMaterial)
         """
-        RadianceMaterial.__init__(self, name, material_type="glass", modifier="void")
-        self.r_transmittance = r_transmittance
+        RadianceMaterial.__init__(self, name, type="glass", modifier=modifier)
+        self.r_transmittance = float(r_transmittance)
         """Transmittance for red. The value should be between 0 and 1 (Default: 0)."""
-        self.g_transmittance = g_transmittance
+        self.g_transmittance = float(g_transmittance)
         """Transmittance for green. The value should be between 0 and 1 (Default: 0)."""
-        self.b_transmittance = b_transmittance
+        self.b_transmittance = float(b_transmittance)
         """Transmittance for blue. The value should be between 0 and 1 (Default: 0)."""
-        self.refractionIndex = refraction
+        self.refractionIndex = float(refraction)
         """Index of refraction. 1.52 for glass and 1.4 for ETFE (Default: 1.52)."""
 
     @classmethod
@@ -51,9 +51,12 @@ class GlassMaterial(RadianceMaterial):
             "modifier": "" // material modifier (Default: "void")
         }
         """
-        return cls(name=rec_json["name"], r_transmittance=rec_json["r_transmittance"], \
-                    g_transmittance=rec_json["g_transmittance"], b_transmittance=rec_json["b_transmittance"], \
-                     refraction=rec_json["refraction"], modifier=rec_json["modifier"])
+        return cls(name=rec_json["name"],
+                   r_transmittance=rec_json["r_transmittance"],
+                   g_transmittance=rec_json["g_transmittance"],
+                   b_transmittance=rec_json["b_transmittance"],
+                   refraction=rec_json["refraction"],
+                   modifier=rec_json["modifier"])
 
     @classmethod
     def by_single_trans_value(cls, name, rgb_transmittance=0,
@@ -70,12 +73,33 @@ class GlassMaterial(RadianceMaterial):
             modifier: Material modifier (Default: "void").
 
         Usage:
-            glassMaterial = GlassMaterial.by_single_trans_value("generic glass", .65)
+            glassMaterial = Glass.by_single_trans_value("generic glass", .65)
             print(glassMaterial)
         """
         return cls(
             name, r_transmittance=rgb_transmittance, g_transmittance=rgb_transmittance,
             b_transmittance=rgb_transmittance, refraction=1.52, modifier="void")
+
+    @classmethod
+    def from_string(cls, material_string, modifier=None):
+        """Create a Radiance material from a string.
+
+        If the material has a modifier the modifier material should also be part of the
+        string or should be provided using modifier argument.
+        """
+
+        modifier, name, base_material_data = cls._analyze_string_input(
+            cls.__name__.lower(), material_string, modifier)
+
+        if len(base_material_data) == 6:
+            r_transmittance, g_transmittance, b_transmittance = base_material_data[3:]
+            refraction = 1.52
+        else:
+            r_transmittance, g_transmittance, b_transmittance, refraction = \
+                base_material_data[3:]
+
+        return cls(name, r_transmittance, g_transmittance, b_transmittance, refraction,
+                   modifier)
 
     @property
     def isGlassMaterial(self):
@@ -137,7 +161,7 @@ class GlassMaterial(RadianceMaterial):
 
     def to_rad_string(self, minimal=False):
         """Return full radiance definition."""
-        __base_string = self.head_line + "0\n0\n4 %.3f %.3f %.3f %.3f"
+        __base_string = self.head_line(minimal) + "0\n0\n4 %.3f %.3f %.3f %.3f"
 
         glass_definition = __base_string % (
             self.get_transmissivity(self.r_transmittance),
@@ -170,8 +194,9 @@ class GlassMaterial(RadianceMaterial):
             "modifier": "void"
         }
 
+
 if __name__ == "__main__":
     # some test code
-    glassMaterial = GlassMaterial.by_single_trans_value("generic glass", .65)
+    glassMaterial = Glass.by_single_trans_value("generic glass", .65)
     print(glassMaterial)
     print(glassMaterial.to_rad_string(minimal=True))

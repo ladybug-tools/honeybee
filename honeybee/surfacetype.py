@@ -1,6 +1,6 @@
 """Honeybee surface types (e.g. wall, roof, etc.)."""
-from radiance.material.plastic import PlasticMaterial
-from radiance.material.glass import GlassMaterial
+from radiance.material.plastic import Plastic
+from radiance.material.glass import Glass
 
 
 class SurfaceTypeBase(object):
@@ -33,7 +33,7 @@ class Wall(SurfaceTypeBase):
 
     typeId = 0.0
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_wall", 0.50)
+    radiance_material = Plastic.by_single_reflect_value("generic_wall", 0.50)
     """Default Radiance material."""
 
 
@@ -42,7 +42,7 @@ class UndergroundWall(SurfaceTypeBase):
 
     typeId = 0.5
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_wall", 0.50)
+    radiance_material = Plastic.by_single_reflect_value("generic_wall", 0.50)
     """Default Radiance material."""
 
 
@@ -51,7 +51,7 @@ class Roof(SurfaceTypeBase):
 
     typeId = 1.0
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_roof", 0.80)
+    radiance_material = Plastic.by_single_reflect_value("generic_roof", 0.80)
     """Default Radiance material."""
 
 
@@ -60,7 +60,7 @@ class UndergroundCeiling(SurfaceTypeBase):
 
     typeId = 1.5
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_wall", 0.5)
+    radiance_material = Plastic.by_single_reflect_value("generic_wall", 0.5)
     """Default Radiance material."""
 
 
@@ -69,7 +69,7 @@ class Floor(SurfaceTypeBase):
 
     typeId = 2.0
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
@@ -81,7 +81,7 @@ class UndergroundSlab(SurfaceTypeBase):
 
     typeId = 2.25
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
@@ -93,7 +93,7 @@ class SlabOnGrade(SurfaceTypeBase):
 
     typeId = 2.5
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
@@ -105,7 +105,7 @@ class ExposedFloor(SurfaceTypeBase):
 
     typeId = 2.75
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
@@ -114,7 +114,7 @@ class Ceiling(SurfaceTypeBase):
 
     typeId = 3
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_ceiling", 0.80)
+    radiance_material = Plastic.by_single_reflect_value("generic_ceiling", 0.80)
     """Default Radiance material."""
 
 
@@ -126,7 +126,7 @@ class AirWall(SurfaceTypeBase):
 
     typeId = 4
     """Surface type id."""
-    radiance_material = GlassMaterial.by_single_trans_value("generic_glass", 1.00)
+    radiance_material = Glass.by_single_trans_value("generic_glass", 1.00)
     """Default Radiance material."""
 
 
@@ -135,7 +135,7 @@ class Window(SurfaceTypeBase):
 
     typeId = 5
     """Surface type id."""
-    radiance_material = GlassMaterial.by_single_trans_value("generic_glass", 0.60)
+    radiance_material = Glass.by_single_trans_value("generic_glass", 0.60)
     """Default Radiance material."""
 
 
@@ -144,7 +144,7 @@ class Context(SurfaceTypeBase):
 
     typeId = 6
     """Surface type id."""
-    radiance_material = PlasticMaterial.by_single_reflect_value("generic_shading", 0.35)
+    radiance_material = Plastic.by_single_reflect_value("generic_shading", 0.35)
     """Default Radiance material."""
 
 

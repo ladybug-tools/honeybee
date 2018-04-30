@@ -86,7 +86,7 @@ class RadianceDefault(object):
 
     @property
     def isRadianceDataType(self):
-        """Check if object is a RadinaceDataType."""
+        """Check if object is a RadianceDataType."""
         return True
 
     def __get__(self, instance, owner):
@@ -336,7 +336,7 @@ class RadianceNumber(RadianceDefault):
                     if self._check_positive:
                         msg = "The value for %s should be greater than 0." \
                               " The value specified was %s" % (var_name, value)
-                        assert int(value) >= 0, msg
+                        assert final_value >= 0, msg
                 # Value error will be raised if the input was anything else
                 # other than a number.
                 except ValueError:
@@ -366,7 +366,7 @@ class RadianceNumber(RadianceDefault):
                     msg = "The specified input for %s is %s. This is beyond " \
                           "the valid range. The value for %s should be " \
                           "between %s and %s" % (var_name, final_value, var_name,
-                                                 maxVal, minVal)
+                                                 minVal, maxVal)
                     raise ValueError(msg)
 
             setattr(instance, self._name, RadianceNumberType(self._name, final_value))

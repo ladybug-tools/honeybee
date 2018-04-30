@@ -6,10 +6,10 @@ import surfacetype
 import geometryoperation as go
 from surfacetype import Floor, Wall, Window, Ceiling
 from radiance.radfile import RadFile
-from radiance.material.glass import GlassMaterial
-from radiance.material.glow import GlowMaterial
-from radiance.material.plastic import PlasticMaterial
-from radiance.material.metal import MetalMaterial
+from radiance.material.glass import Glass
+from radiance.material.glow import Glow
+from radiance.material.plastic import Plastic
+from radiance.material.metal import Metal
 
 import os
 import types
@@ -96,15 +96,17 @@ class HBAnalysisSurface(HBObject):
         # Check material type and determine appropriate "from_json" classmethod
         if "surface_material" in srf_json.keys():
             material_json = srf_json["surface_material"]
-            material_type = material_json["type"]
-            if material_type == "plastic":
-                radiance_material = PlasticMaterial.from_json(material_json)
-            elif material_type == "metal":
-                radiance_material = MetalMaterial.from_json(material_json)
-            elif material_type == "glass":
-                radiance_material = GlassMaterial.from_json(material_json)
+            type = material_json["type"]
+            if type == "plastic":
+                radiance_material = Plastic.from_json(material_json)
+            elif type == "metal":
+                radiance_material = Metal.from_json(material_json)
+            elif type == "glass":
+                radiance_material = Glass.from_json(material_json)
             else:
-                #raise ValueError "The material type {} in the surface json is either not currently suported or incorrect".format(srf_json["surface_material"])
+                # raise ValueError "The material type {} in the surface json is either
+                # not currently suported or incorrect"
+                # .format(srf_json["surface_material"])
                 radiance_material = None
             HBsrf.radiance_material = radiance_material
         return HBsrf
@@ -499,7 +501,7 @@ class HBAnalysisSurface(HBObject):
 
         Usage:
 
-            radMat = PlasticMaterial.by_single_reflect_value("wall_material", 0.55)
+            radMat = Plastic.by_single_reflect_value("wall_material", 0.55)
             HBSrf.radiance_material = (radMat, True)
             # or
             HBSrf.radiance_material = radMat
@@ -619,7 +621,7 @@ class HBAnalysisSurface(HBObject):
         raise NotImplementedError
         # self.ep_properties.energy_plus_materials
 
-    def toep_string(self, include_construction=False, include_materials=False):
+    def to_ep_string(self, include_construction=False, include_materials=False):
         """Return EnergyPlus definition for this surface."""
         raise NotImplementedError
 

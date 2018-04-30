@@ -11,7 +11,7 @@ def get_energy_plus_objects_from_string(ep_file_string):
         ep_file_string: EnergyPlus data as a single string. The string can be multiline
 
     Returns:
-        A list of strings. Each string represents a differnt Rdiance Object
+        A list of strings. Each string represents a differnt Radiance Object
     """
     _epObjects = {"zone": {}, "buildingsurface:detailed": {},
                   "fenestrationsurface:detailed": {}, "material": {},
@@ -56,7 +56,7 @@ def get_energy_plus_objects_from_file(ep_file_path):
         ep_file_path: Path to EnergyPlus file
 
     Returns:
-        A list of strings. Each string represents a differnt Rdiance Object
+        A list of strings. Each string represents a differnt Radiance Object
 
     Usage:
         get_energy_plus_objects_from_file(r"C:/ladybug/21MAR900/energySimulation/21MAR900.rad")

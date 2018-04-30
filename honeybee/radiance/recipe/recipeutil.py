@@ -84,8 +84,8 @@ def write_extra_files(rad_scene, target_dir, add_blacked=False):
     if rad_scene.file_count == 1:
         print('One file from the radiance scene is added to the analysis.')
     else:
-        print('%d files from the radiance scene are added to the analysis.' % \
-            rad_scene.file_count)
+        print('%d files from the radiance scene are added to the analysis.' %
+              rad_scene.file_count)
 
     target_dir = os.path.join(target_dir, 'extra')
     if rad_scene.copy_local:
