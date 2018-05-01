@@ -55,24 +55,6 @@ class Mirror(RadianceMaterial):
 
         return cls(name, red, green, blue, modifier)
 
-    def to_json(self):
-        """Translate radiance material to json
-        {
-            "type": "mirror", // Material type
-            "name": "", // Material Name
-            "r_reflectance": float, // Reflectance for red
-            "g_reflectance": float, // Reflectance for green
-            "b_reflectance": float  // Reflectance for blue
-        }
-        """
-        return {
-            "type": "mirror",
-            "name": self.name,
-            "r_reflectance": self.r_reflectance,
-            "g_reflectance": self.g_reflectance,
-            "b_reflectance": self.b_reflectance
-        }
-
     @classmethod
     def from_json(cls, rec_json):
         """Make radiance material from json
@@ -82,14 +64,16 @@ class Mirror(RadianceMaterial):
             "r_reflectance": float, // Reflectance for red
             "g_reflectance": float, // Reflectance for green
             "b_reflectance": float, // Reflectance for blue
-            "specularity": float, // Material specularity
-            "roughness": float // Material roughness
+            "modifier": modifier
         }
         """
+        modifier = cls._analyze_json_input(cls.__name__.lower(), rec_json)
+
         return cls(name=rec_json["name"],
                    r_reflectance=rec_json["r_reflectance"],
                    g_reflectance=rec_json["g_reflectance"],
-                   b_reflectance=rec_json["b_reflectance"])
+                   b_reflectance=rec_json["b_reflectance"],
+                   modifier=modifier)
 
     @classmethod
     def by_single_reflect_value(cls, name, rgb_reflectance=0, modifier="void"):
@@ -124,6 +108,26 @@ class Mirror(RadianceMaterial):
         )
 
         return mirror_definition.replace("\n", " ") if minimal else mirror_definition
+
+    def to_json(self):
+        """Translate radiance material to json
+        {
+            "modifier": modifier,
+            "type": "mirror", // Material type
+            "name": "", // Material Name
+            "r_reflectance": float, // Reflectance for red
+            "g_reflectance": float, // Reflectance for green
+            "b_reflectance": float  // Reflectance for blue
+        }
+        """
+        return {
+            "modifier": self.modifier.to_json(),
+            "type": "mirror",
+            "name": self.name,
+            "r_reflectance": self.r_reflectance,
+            "g_reflectance": self.g_reflectance,
+            "b_reflectance": self.b_reflectance
+        }
 
 
 if __name__ == "__main__":

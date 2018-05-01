@@ -27,8 +27,8 @@ class Glow(RadianceMaterial):
             overlighting nearby objects.
     """
     red = RadianceNumber('red', num_type=float, valid_range=(0, 1))
-    blue = RadianceNumber('blue', num_type=float, valid_range=(0, 1))
     green = RadianceNumber('green', num_type=float, valid_range=(0, 1))
+    blue = RadianceNumber('blue', num_type=float, valid_range=(0, 1))
     max_radius = RadianceNumber('max_radius', num_type=float)
 
     def __init__(self, name, red=0.0, green=0.0, blue=0.0, max_radius=0.0,
@@ -70,8 +70,14 @@ class Glow(RadianceMaterial):
             "radius": float // Maximum radius for shadow testing
         }
         """
-        return cls(name=rec_json["name"], red=rec_json["red"], green=rec_json["green"],
-                   blue=rec_json["blue"], max_radius=rec_json["radius"])
+        modifier = cls._analyze_json_input(cls.__name__.lower(), rec_json)
+
+        return cls(name=rec_json["name"],
+                   red=rec_json["red"],
+                   green=rec_json["green"],
+                   blue=rec_json["blue"],
+                   max_radius=rec_json["max_radius"],
+                   modifier=modifier)
 
     def to_rad_string(self, minimal=False):
         """Return full Radiance definition"""
@@ -95,12 +101,13 @@ class Glow(RadianceMaterial):
         }
         """
         return {
+            "modifier": self.modifier.to_json(),
             "type": "glow",
             "name": self.name,
-            "red": float(self.red),
-            "green": float(self.green),
-            "blue": float(self.blue),
-            "radius": self.max_radius
+            "red": self.red,
+            "green": self.green,
+            "blue": self.blue,
+            "max_radius": self.max_radius
         }
 
 

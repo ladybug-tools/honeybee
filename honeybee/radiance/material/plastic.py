@@ -41,16 +41,16 @@ class Plastic(RadianceMaterial):
             print(wallMaterial)
         """
         RadianceMaterial.__init__(self, name, type="plastic", modifier=modifier)
-        self.r_reflectance = float(r_reflectance)
+        self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
-        self.g_reflectance = float(g_reflectance)
+        self.g_reflectance = g_reflectance
         """Reflectance for green. The value should be between 0 and 1 (Default: 0)."""
-        self.b_reflectance = float(b_reflectance)
+        self.b_reflectance = b_reflectance
         """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
-        self.specularity = float(specularity)
+        self.specularity = specularity
         """Fraction of specularity. Specularity fractions greater than 0.1 are not
            realistic (Default: 0)."""
-        self.roughness = float(roughness)
+        self.roughness = roughness
         """Roughness is specified as the rms slope of surface facets. A value of 0
            corresponds to a perfectly smooth surface, and a value of 1 would be a
            very rough surface. Roughness values greater than 0.2 are not very realistic.
@@ -78,33 +78,11 @@ class Plastic(RadianceMaterial):
         return cls(name, r_reflectance, g_reflectance, b_reflectance, specularity,
                    roughness, modifier)
 
-    def to_json(self):
-        """Translate radiance material to json
-        {
-            "type": "plastic", // Material type
-            "name": "", // Material Name
-            "r_reflectance": float, // Reflectance for red
-            "g_reflectance": float, // Reflectance for green
-            "b_reflectance": float, // Reflectance for blue
-            "specularity": float, // Material specularity
-            "roughness": float // Material roughness
-        }
-        """
-        return {
-            "modifier": self.modifier.to_json(),
-            "type": "plastic",
-            "name": self.name,
-            "r_reflectance": self.r_reflectance,
-            "g_reflectance": self.g_reflectance,
-            "b_reflectance": self.b_reflectance,
-            "specularity": self.specularity,
-            "roughness": self.roughness
-        }
-
     @classmethod
     def from_json(cls, rec_json):
         """Make radiance material from json
         {
+            "modifier": {} or void, // Material modifier
             "type": "plastic", // Material type
             "name": "", // Material Name
             "r_reflectance": float, // Reflectance for red
@@ -114,13 +92,14 @@ class Plastic(RadianceMaterial):
             "roughness": float // Material roughness
         }
         """
+        modifier = cls._analyze_json_input(cls.__name__.lower(), rec_json)
         return cls(name=rec_json["name"],
                    r_reflectance=rec_json["r_reflectance"],
                    g_reflectance=rec_json["g_reflectance"],
                    b_reflectance=rec_json["b_reflectance"],
                    specularity=rec_json["specularity"],
-                   roughness=rec_json["roughness"])
-        # modifier=rec_json["modifier"])
+                   roughness=rec_json["roughness"],
+                   modifier=modifier)
 
     @classmethod
     def by_single_reflect_value(cls, name, rgb_reflectance=0.0, specularity=0.0,
@@ -163,6 +142,29 @@ class Plastic(RadianceMaterial):
         )
 
         return plastic_definition.replace("\n", " ") if minimal else plastic_definition
+
+    def to_json(self):
+        """Translate radiance material to json
+        {
+            "type": "plastic", // Material type
+            "name": "", // Material Name
+            "r_reflectance": float, // Reflectance for red
+            "g_reflectance": float, // Reflectance for green
+            "b_reflectance": float, // Reflectance for blue
+            "specularity": float, // Material specularity
+            "roughness": float // Material roughness
+        }
+        """
+        return {
+            "modifier": self.modifier.to_json(),
+            "type": "plastic",
+            "name": self.name,
+            "r_reflectance": self.r_reflectance,
+            "g_reflectance": self.g_reflectance,
+            "b_reflectance": self.b_reflectance,
+            "specularity": self.specularity,
+            "roughness": self.roughness
+        }
 
 
 class BlackMaterial(Plastic):

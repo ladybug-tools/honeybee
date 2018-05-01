@@ -26,8 +26,10 @@ class BSDF(RadianceMaterial):
         modifier: Material modifier (Default: "void").
     """
 
-    def __init__(self, xmlfile, up_orientation=None, thickness=None, modifier="void",
-                 name=None):
+    # TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669
+    # TODO(): restructure the code to include xml data and not the file.
+    def __init__(self, xmlfile, name=None, up_orientation=None, thickness=None,
+                 modifier="void"):
         """Create BSDF material."""
         assert os.path.isfile(xmlfile), 'Invalid path: {}'.format(xmlfile)
         assert xmlfile.lower().endswith('.xml'), 'Invalid xml file: {}'.format(xmlfile)
@@ -62,6 +64,10 @@ class BSDF(RadianceMaterial):
                 assert count < 100, 'Failed to find AngleBasisName in first 100 lines.'
 
     @classmethod
+    def from_file(cls, xmlfile):
+        pass
+
+    @classmethod
     def from_string(cls, material_string, modifier=None):
         """Create a Radiance material from a string.
 
@@ -82,7 +88,30 @@ class BSDF(RadianceMaterial):
 
         thickness, xmlfile, upx, upy, upz = base_material_data[1:6]
 
-        return cls(xmlfile, (upx, upy, upz), thickness, modifier, name)
+        return cls(xmlfile, name, (upx, upy, upz), thickness, modifier)
+
+    @classmethod
+    def from_json(cls, json_data):
+        """Make radiance material from json
+        {
+            "modifier": "", // material modifier (Default: "void")
+            "type": "custom", // Material type
+            "base_type": "type", // Material type
+            "name": "", // Material Name
+            "values": {} // values
+        }
+        """
+        raise NotImplementedError(
+            'from_json is not currently implemented for BSDF materials.')
+
+        modifier = cls._analyze_json_input(cls.__name__.lower(), json_data)
+
+        return cls(
+            xml_data=json_data["xml_data"],
+            name=json_data["name"],
+            up_orientation=json_data["up_orientation"],
+            thickness=json_data["thickness"],
+            modifier=modifier)
 
     @property
     def isGlassMaterial(self):
@@ -113,9 +142,21 @@ class BSDF(RadianceMaterial):
 
         return mat_def.replace("\n", " ") if minimal else mat_def
 
+    def to_json(self):
+        raise NotImplementedError(
+            'to_json is not currently implemented for BSDF materials.')
+
+        return {
+            'xml_data': self.xml_data,
+            'name': self.name,
+            'up_orientation': self.up_orientation,
+            'thickness': self.thickness,
+            'modifier': self.modifier.to_json()
+        }
+
 
 if __name__ == "__main__":
     # some test code
     material = BSDF(
-        r"C:/Users/Administrator/Documents/GitHub/honeybee/tests/room/xmls/clear.xml")
+        r".../tests/room/xmls/clear.xml")
     print(material)

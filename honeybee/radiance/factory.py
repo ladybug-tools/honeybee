@@ -16,34 +16,70 @@ material_mapper = {
     'glow': material.glow,
     'light': material.light,
     'metal': material.metal,
-    # 'mirror': material.mirror,
-    'plastic': material.plastic
+    'mirror': material.mirror,
+    'plastic': material.plastic,
+    'custom': material.custom
 }
 
 
-def modifier_from_json(mod_json):
+def primitive_from_json(prm_json):
     """
     Args:
-        mod_json: A radiance modifier as a dictionary.
+        prm_json: A radiance modifier as a dictionary.
 
-    Return:
-        A Radiance modifier (currently Material).
+    Returns:
+        A list of Honeybee Radiance primitives. If input includes polygons and
+        materials, materials will be added to polygons as modifiers. This method
+        will return all the polygons and only the materials that are not used.
     """
-    pass
     # parse input json
-    # if not mod_json:
-    #     return Void()
-    #
-    # type = mod_json['type']
-    # # create a Radiance material based on the input
-    # if type in material_mapper:
-    #     return material_mapper[type].from_json(mod_json)
-    # else:
-    #     # create a generic material
-    #     return GenericMaterial.from_json(mod_json)
+    if not prm_json or prm_json == 'void':
+        return primitive.Void()
+
+    type = prm_json['type']
+
+    if type in primitive.Primitive.MATERIALTYPES:
+        return material_from_json(prm_json)
+    else:
+        raise NotImplementedError(
+            'Pasring for {} primitives is not implemented!'.format(type)
+        )
 
 
-def primitive_from_string(prim_string):
+def material_from_json(mat_json):
+    """Create Honeybee Radiance material from string.
+
+    Args:
+        mat_json: A radiance modifier string. The input can be a multi-line string.
+
+    Returns:
+        A list of Honeybee Radiance materials.
+    """
+    # parse input json
+    if not mat_json or mat_json == 'void':
+        return primitive.Void()
+
+    type = mat_json['type']
+
+    assert type in primitive.Primitive.MATERIALTYPES, \
+        '{} is not a Radiance material:\n{}'.format(
+            type, '\n'.join(primitive.Primitive.MATERIALTYPES)
+        )
+
+    # create a Radiance material based on the input
+    try:
+        matcls = getattr(material_mapper[type], type.capitalize())
+        return matcls.from_json(mat_json)
+    except AttributeError:
+        # BSDF
+        matcls = getattr(material_mapper[type], type)
+        return matcls.from_json(mat_json)
+    except KeyError as e:
+        # the class is not part of honeybee yet. Create a custom material instead.
+        return material.custom.Custom.from_json(mat_json)
+
+
+def primitive_from_string(prm_string):
     """Create Honeybee Radiance primitives from string.
 
     Args:
@@ -55,14 +91,14 @@ def primitive_from_string(prim_string):
         will return all the polygons and only the materials that are not used.
     """
     # parse input json
-    if not prim_string or prim_string == 'void':
+    if not prm_string or prm_string == 'void':
         return primitive.Void()
 
     # run the initial parsing
-    materials = radparser.parse_from_string(prim_string)
+    materials = radparser.parse_from_string(prm_string)
     type = materials[-1].split()[1]
     if type in primitive.Primitive.MATERIALTYPES:
-        return material_from_string(prim_string)
+        return material_from_string(prm_string)
     else:
         raise NotImplementedError(
             'Pasring for {} primitives is not implemented!'.format(type)
@@ -99,5 +135,5 @@ def material_from_string(mat_string):
         matcls = getattr(material_mapper[type], type)
         return matcls.from_string(mat_string)
     except KeyError:
-        # the class is not part of honeybee yet. Create a custom material
+        # the class is not part of honeybee yet. Create a custom material instead.
         return material.custom.Custom.from_string(mat_string)

@@ -353,7 +353,7 @@ class RadianceNumber(RadianceDefault):
                     raise AttributeError(msg)
 
             # Raise a warning if the number got modified.
-            if hash(final_value) != hash(value) and self._type:
+            if self._type and final_value != self._type(value):
                 msg = "The expected type for %s is %s." \
                       "The provided input %s has been converted to %s" % \
                       (var_name, self._type, value, final_value)

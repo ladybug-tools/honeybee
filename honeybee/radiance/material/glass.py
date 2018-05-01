@@ -61,12 +61,13 @@ class Glass(RadianceMaterial):
             "modifier": "" // material modifier (Default: "void")
         }
         """
+        modifier = cls._analyze_json_input(cls.__name__.lower(), rec_json)
         return cls(name=rec_json["name"],
                    r_transmittance=rec_json["r_transmittance"],
                    g_transmittance=rec_json["g_transmittance"],
                    b_transmittance=rec_json["b_transmittance"],
-                   refraction=rec_json["refraction"],
-                   modifier=rec_json["modifier"])
+                   refraction_index=rec_json["refraction_index"],
+                   modifier=modifier)
 
     @classmethod
     def by_single_trans_value(cls, name, rgb_transmittance=0,
@@ -160,18 +161,18 @@ class Glass(RadianceMaterial):
             "r_transmittance": float, // Transmittance for red
             "g_transmittance": float, // Transmittance for green
             "b_transmittance": float, // Transmittance for blue
-            "refraction": float, // Index of refraction
+            "refraction_index": float, // Index of refraction
             "modifier": "" // material modifier (Default: "void")
         }
         """
         return {
+            "modifier": self.modifier.to_json(),
             "type": "glass",
             "name": self.name,
             "r_transmittance": self.r_transmittance,
             "g_transmittance": self.g_transmittance,
             "b_transmittance": self.b_transmittance,
-            "refraction": self.refraction_index,
-            "modifier": "void"
+            "refraction_index": self.refraction_index
         }
 
 

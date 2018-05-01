@@ -13,6 +13,11 @@ try:
 except ImportError:
     # circular import
     pass
+try:
+    from .factory import primitive_from_json
+except ImportError:
+    # circular import
+    pass
 
 
 class Void(object):
@@ -237,6 +242,41 @@ class Primitive(object):
                 modifier = primitive_from_string(modifier_materials)
 
         return modifier, bm_name, bm_data[3:]
+
+    @staticmethod
+    def _analyze_json_input(desired_type, input_json):
+        """This is a helper function for from_json classmethod.
+
+        Args:
+            desired_type: Desired type of base modifier as a string (e.g. plastic).
+            input_json: Radiance input as a dictionary.
+        Returns:
+            modifier as a Honeybee Radiance primitive.
+        """
+        if not input_json:
+            raise ValueError('{} includes no radiance materials.'.format(input_json))
+
+        bm_data = input_json
+        bm_modifier = bm_data['modifier']
+        bm_type = bm_data['type']
+
+        if desired_type:
+            # custom materials won't have desired_type
+            assert bm_type == desired_type, \
+                '{} is a {} not a {}.'.format(bm_data, bm_type, desired_type)
+
+        if bm_modifier != 'void':
+            # create modifier if any
+            try:
+                modifier = primitive_from_json(bm_modifier)
+            except UnboundLocalError:
+                # circular import
+                from .factory import primitive_from_json
+                modifier = primitive_from_json(bm_modifier)
+        else:
+            modifier = Void()
+
+        return modifier
 
     def head_line(self, minimal=False):
         """Return first line of Material definition.

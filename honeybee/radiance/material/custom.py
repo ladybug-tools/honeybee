@@ -50,6 +50,24 @@ class Custom(RadianceMaterial):
 
         return cls(name, material_type, values, modifier)
 
+    @classmethod
+    def from_json(cls, mat_json):
+        """Make radiance material from json
+        {
+            "modifier": "", // material modifier (Default: "void")
+            "type": "custom", // Material type
+            "base_type": "type", // Material type
+            "name": "", // Material Name
+            "values": {} // values
+        }
+        """
+        modifier = cls._analyze_json_input(cls.__name__.lower(), mat_json)
+
+        return cls(name=mat_json["name"],
+                   type=mat_json["base_type"],
+                   values=mat_json["values"],
+                   modifier=modifier)
+
     @property
     def values(self):
         return self._values
@@ -107,3 +125,21 @@ class Custom(RadianceMaterial):
                 output.append(line)
 
         return " ".join(output) if minimal else "\n".join(output)
+
+    def to_json(self):
+        """Translate radiance material to json
+        {
+            "modifier": "", // material modifier (Default: "void")
+            "type": "custom", // Material type
+            "base_type": "type", // Material type
+            "name": "", // Material Name
+            "values": {} // values
+        }
+        """
+        return {
+            "modifier": self.modifier.to_json(),
+            "type": "custom",
+            "base_type": self.type,
+            "name": self.name,
+            "values": self.values
+        }
