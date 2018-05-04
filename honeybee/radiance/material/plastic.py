@@ -56,11 +56,6 @@ class Plastic(RadianceMaterial):
            very rough surface. Roughness values greater than 0.2 are not very realistic.
            (Default: 0)."""
 
-        if self.specularity > 0.1:
-            print("Warning: Specularity values above .1 is uncommon for plastic.")
-        if self.roughness > 0.2:
-            print("Warning: Roughness values above .2 is uncommon.")
-
         self._update_values()
 
     @classmethod
@@ -140,6 +135,11 @@ class Plastic(RadianceMaterial):
             self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness
         ]
+
+        if self.specularity > 0.1:
+            print("Warning: Specularity values above .1 is uncommon for plastic.")
+        if self.roughness > 0.2:
+            print("Warning: Roughness values above .2 is uncommon.")
 
     def to_json(self):
         """Translate radiance material to json
