@@ -1,12 +1,12 @@
 """Material utility."""
 import material.bsdf
-import material.custom
 import material.glass
 import material.glow
 import material.light
 import material.metal
 import material.mirror
 import material.plastic
+import material.spotlight
 import primitive
 import radparser
 
@@ -18,7 +18,7 @@ material_mapper = {
     'metal': material.metal,
     'mirror': material.mirror,
     'plastic': material.plastic,
-    'custom': material.custom
+    'spotlight': material.spotlight
 }
 
 
@@ -74,9 +74,6 @@ def material_from_json(mat_json):
         # BSDF
         matcls = getattr(material_mapper[type], type)
         return matcls.from_json(mat_json)
-    except KeyError as e:
-        # the class is not part of honeybee yet. Create a custom material instead.
-        return material.custom.Custom.from_json(mat_json)
 
 
 def primitive_from_string(prm_string):
@@ -134,6 +131,3 @@ def material_from_string(mat_string):
         # BSDF
         matcls = getattr(material_mapper[type], type)
         return matcls.from_string(mat_string)
-    except KeyError:
-        # the class is not part of honeybee yet. Create a custom material instead.
-        return material.custom.Custom.from_string(mat_string)

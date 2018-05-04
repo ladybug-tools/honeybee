@@ -584,7 +584,7 @@ class RadianceDataType(object):
         return str(self._value)
 
     def __repr__(self):
-        return self._value
+        return str(self._value)
 
     def __eq__(self, other):
         return self._value == other

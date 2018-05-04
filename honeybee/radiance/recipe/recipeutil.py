@@ -22,7 +22,7 @@ def input_srfs_to_rad_files(in_srfs):
         if srf.isHBDynamicSurface:
             # window groups, multiple of single state
             wgs.append(srf)
-        elif srf.isHBFenSurface or srf.radiance_material.isGlassMaterial:
+        elif srf.isHBFenSurface or not srf.radiance_material.is_opaque:
             # generic window surfaces
             fen.append(srf)
         elif srf.isHBSurface:

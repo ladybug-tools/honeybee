@@ -48,6 +48,7 @@ class Glass(RadianceMaterial):
         """Transmittance for blue. The value should be between 0 and 1 (Default: 0)."""
         self.refraction_index = float(refraction_index)
         """Index of refraction. 1.52 for glass and 1.4 for ETFE (Default: 1.52)."""
+        self._update_values()
 
     @classmethod
     def from_json(cls, rec_json):
@@ -113,15 +114,6 @@ class Glass(RadianceMaterial):
                    modifier)
 
     @property
-    def isGlassMaterial(self):
-        """Indicate if this object has glass Material.
-
-        This property will be used to separate the glass surfaces in a separate
-        file than the opaque surfaces.
-        """
-        return True
-
-    @property
     def average_transmittance(self):
         """Calculate average transmittance."""
         return 0.265 * self.r_transmittance + \
@@ -140,18 +132,14 @@ class Glass(RadianceMaterial):
         return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
                 0.9166530661) / 0.0036261119 / transmittance
 
-    def to_rad_string(self, minimal=False):
-        """Return full radiance definition."""
-        __base_string = self.head_line(minimal) + "0\n0\n4 %.3f %.3f %.3f %.3f"
-
-        glass_definition = __base_string % (
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [
             self.get_transmissivity(self.r_transmittance),
             self.get_transmissivity(self.g_transmittance),
             self.get_transmissivity(self.b_transmittance),
             self.refraction_index
-        )
-
-        return glass_definition.replace("\n", " ") if minimal else glass_definition
+        ]
 
     def to_json(self):
         """Translate radiance material to json

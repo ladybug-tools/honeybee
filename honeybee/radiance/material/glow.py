@@ -43,6 +43,7 @@ class Glow(RadianceMaterial):
         """A positive value for the Blue channel of the glow"""
         self.max_radius = max_radius
         """Maximum radius for shadow testing"""
+        self._update_values()
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
@@ -79,15 +80,11 @@ class Glow(RadianceMaterial):
                    max_radius=rec_json["max_radius"],
                    modifier=modifier)
 
-    def to_rad_string(self, minimal=False):
-        """Return full Radiance definition"""
-        base_string = self.head_line(minimal) + "0\n0\n4 %.3f %.3f %.3f %.3f"
-
-        glow_definition = base_string % (
-            self.red._value, self.green._value, self.blue._value, self.max_radius._value
-        )
-
-        return glow_definition.replace("\n", " ") if minimal else glow_definition
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [
+            self.red, self.green, self.blue, self.max_radius
+        ]
 
     def to_json(self):
         """Translate radiance material to json

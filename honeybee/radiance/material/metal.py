@@ -51,11 +51,7 @@ class Metal(RadianceMaterial):
            corresponds to a perfectly smooth surface, and a value of 1 would be a very
            rough surface. Roughness values greater than 0.2 are not very realistic.
            (Default: 0)."""
-
-        if self.specularity < 0.9:
-            print("Warning: Specularity of metals is usually .9 or greater.")
-        if self.roughness > 0.2:
-            print("Warning: Roughness values above .2 is uncommon.")
+        self._update_values()
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
@@ -130,16 +126,16 @@ class Metal(RadianceMaterial):
         return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
                 0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
 
-    def to_rad_string(self, minimal=False):
-        """Return full radiance definition."""
-        __base_string = self.head_line(minimal) + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
-
-        metal_definition = __base_string % (
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [
             self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness
-        )
-
-        return metal_definition.replace("\n", " ") if minimal else metal_definition
+        ]
+        if self.specularity < 0.9:
+            print("Warning: Specularity of metals is usually .9 or greater.")
+        if self.roughness > 0.2:
+            print("Warning: Roughness values above .2 is uncommon.")
 
     def to_json(self):
         """Translate radiance material to json

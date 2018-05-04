@@ -61,6 +61,8 @@ class Plastic(RadianceMaterial):
         if self.roughness > 0.2:
             print("Warning: Roughness values above .2 is uncommon.")
 
+        self._update_values()
+
     @classmethod
     def from_string(cls, material_string, modifier=None):
         """Create a Radiance material from a string.
@@ -132,16 +134,12 @@ class Plastic(RadianceMaterial):
         return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
                 0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
 
-    def to_rad_string(self, minimal=False):
-        """Return full radiance definition."""
-        base_string = self.head_line(minimal) + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
-
-        plastic_definition = base_string % (
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [
             self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness
-        )
-
-        return plastic_definition.replace("\n", " ") if minimal else plastic_definition
+        ]
 
     def to_json(self):
         """Translate radiance material to json
@@ -170,7 +168,8 @@ class Plastic(RadianceMaterial):
 class BlackMaterial(Plastic):
     """Radiance black plastic material."""
 
-    def __init__(self, name='black'):
+    def __init__(self, name='black', r_reflectance=0.0, g_reflectance=0.0,
+                 b_reflectance=0.0, specularity=0.0, roughness=0.0, modifier="void"):
         Plastic.__init__(self, name)
 
 

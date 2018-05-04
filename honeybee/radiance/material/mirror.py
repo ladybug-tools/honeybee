@@ -39,6 +39,7 @@ class Mirror(RadianceMaterial):
         """Reflectance for green. The value should be between 0 and 1 (Default: 0)."""
         self.b_reflectance = b_reflectance
         """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
+        self._update_values()
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
@@ -99,15 +100,9 @@ class Mirror(RadianceMaterial):
         return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
                 0.065 * self.b_reflectance)
 
-    def to_rad_string(self, minimal=False):
-        """Return full radiance definition."""
-        __base_string = self.head_line(minimal) + "0\n0\n3 %.3f %.3f %.3f"
-
-        mirror_definition = __base_string % (
-            self.r_reflectance, self.g_reflectance, self.b_reflectance
-        )
-
-        return mirror_definition.replace("\n", " ") if minimal else mirror_definition
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [self.r_reflectance, self.g_reflectance, self.b_reflectance]
 
     def to_json(self):
         """Translate radiance material to json

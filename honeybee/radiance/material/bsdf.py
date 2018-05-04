@@ -63,8 +63,11 @@ class BSDF(RadianceMaterial):
 
                 assert count < 100, 'Failed to find AngleBasisName in first 100 lines.'
 
+        self._update_values()
+
     @classmethod
     def from_file(cls, xmlfile):
+        raise NotImplementedError()
         pass
 
     @classmethod
@@ -114,15 +117,6 @@ class BSDF(RadianceMaterial):
             modifier=modifier)
 
     @property
-    def isGlassMaterial(self):
-        """Indicate if this object has glass Material.
-
-        This property will be used to separate the glass surfaces in a separate
-        file than the opaque surfaces.
-        """
-        return True
-
-    @property
     def angle_basis(self):
         """XML file angle basis.
 
@@ -130,17 +124,15 @@ class BSDF(RadianceMaterial):
         """
         return self._angle_basis
 
-    def to_rad_string(self, minimal=False):
-        """Return full radiance definition."""
-        base_string = self.head_line(minimal) + "6 %.3f %s %.3f %.3f %.3f .\n0\n0\n"
-
-        mat_def = base_string % (float(self.thickness),
-                                 os.path.normpath(self.xmlfile),
-                                 self.up_orientation[0],
-                                 self.up_orientation[1],
-                                 self.up_orientation[2])
-
-        return mat_def.replace("\n", " ") if minimal else mat_def
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[0] = [
+            float(self.thickness),
+            os.path.normpath(self.xmlfile),
+            self.up_orientation[0],
+            self.up_orientation[1],
+            self.up_orientation[2]
+        ]
 
     def to_json(self):
         raise NotImplementedError(

@@ -32,6 +32,7 @@ class Light(RadianceMaterial):
         """A positive value for the Green channel of the light"""
         self.blue = blue
         """A positive value for the Blue channel of the light"""
+        self._update_values()
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
@@ -83,14 +84,9 @@ class Light(RadianceMaterial):
         """
         return cls(name, red=rgb, green=rgb, blue=rgb, modifier=modifier)
 
-    def to_rad_string(self, minimal=False):
-        """Return full Radiance definition"""
-        __base_string = self.head_line(minimal) + "0\n0\n3 %.3f %.3f %.3f"
-
-        light_definition = __base_string % (
-            self.red._value, self.green._value, self.blue._value)
-
-        return light_definition.replace("\n", " ") if minimal else light_definition
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [self.red, self.green, self.blue]
 
     def to_json(self):
         """Translate radiance material to json
