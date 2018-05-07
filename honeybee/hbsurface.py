@@ -74,8 +74,8 @@ class HBSurface(HBAnalysisSurface):
             self.add_surface_state(state)
 
         self._parent = None
-        self._childSurfaces = []
-        self._isCreatedFromGeo = False
+        self._child_surfaces = []
+        self._is_created_from_geo = False
 
     # TODO: Parse EnergyPlus properties
     @classmethod
@@ -131,7 +131,7 @@ class HBSurface(HBAnalysisSurface):
         namescount = len(names) - 1
 
         srf_data = plus.extract_geometry_points(geometry)
-        cls._isCreatedFromGeo = True
+        cls._is_created_from_geo = True
         if not group:
             if ep_properties:
                 print('ep_properties.duplicate must be implemented to honeybee surface.')
@@ -184,7 +184,7 @@ class HBSurface(HBAnalysisSurface):
     @property
     def is_created_from_geometry(self):
         """Return True if the surface is created from a geometry not points."""
-        return self._isCreatedFromGeo
+        return self._isCeatedFromGeo
 
     @property
     def isHBSurface(self):
@@ -199,7 +199,7 @@ class HBSurface(HBAnalysisSurface):
     @property
     def has_child_surfaces(self):
         """Return True if Honeybee surface has Fenestration surrfaces."""
-        return len(self._childSurfaces) != 0
+        return len(self._child_surfaces) != 0
 
     @property
     def parent(self):
@@ -209,7 +209,7 @@ class HBSurface(HBAnalysisSurface):
     @property
     def children_surfaces(self):
         """Get children surfaces."""
-        return self._childSurfaces
+        return self._child_surfaces
 
     @property
     def geometry(self):
@@ -226,9 +226,6 @@ class HBSurface(HBAnalysisSurface):
         """Set geometry."""
         assert honeybee.isplus, \
             '"geometry" property can only be used in [+] libraries.'
-
-        assert honeybee.isplus, \
-            '"profile" property can only be used in [+] libraries.'
         self._geometry = geo
 
     @property
@@ -288,7 +285,7 @@ class HBSurface(HBAnalysisSurface):
         assert hasattr(fenestration_surface, 'isHBFenSurface'), \
             '{} is not a HBFenSurfaces'.format(type(fenestration_surface))
 
-        self._childSurfaces.append(fenestration_surface)
+        self._child_surfaces.append(fenestration_surface)
 
         # set up parent object if it's not set
         fenestration_surface._parent = self

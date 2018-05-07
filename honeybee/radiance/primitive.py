@@ -25,11 +25,18 @@ class Void(object):
 
     @property
     def name(self):
+        """Void."""
         return 'void'
 
     @property
     def can_be_modifier(self):
+        """True."""
         return True
+
+    @property
+    def is_opaque(self):
+        """False for a void."""
+        return False
 
     def to_rad_string(self):
         """Return full radiance definition."""
@@ -264,7 +271,7 @@ class Primitive(object):
         This property is used to separate opaque and non-opaque surfaces.
         """
         if self._is_opaque is None:
-            return self.type not in self.NONEOPAQUETYPES
+            return self.modifier.is_opaque and self.type not in self.NONEOPAQUETYPES
         return self._is_opaque
 
     @is_opaque.setter
@@ -392,7 +399,7 @@ class Primitive(object):
         """
         pass
 
-    def head_line(self, minimal=False):
+    def head_line(self, minimal=False, include_modifier=True):
         """Return first line of primitive definition.
 
         If primitive has a modifier it returns the modifier definition as well.
@@ -400,14 +407,17 @@ class Primitive(object):
         if self.modifier.name == 'void':
             return "void %s %s\n" % (self.type, self.name)
 
-        # include modifier primitive in definition
-        modifier = self.modifier.to_rad_string(minimal)
+        if include_modifier:
+            # include modifier primitive in definition
+            modifier = self.modifier.to_rad_string(minimal)
+            return "%s\n\n%s %s %s\n" % (modifier, self.modifier.name,
+                                         self.type, self.name)
+        else:
+            return "%s %s %s\n" % (self.modifier.name, self.type, self.name)
 
-        return "%s\n\n%s %s %s\n" % (modifier, self.modifier.name, self.type, self.name)
-
-    def to_rad_string(self, minimal=False):
+    def to_rad_string(self, minimal=False, include_modifier=True):
         """Return full radiance definition."""
-        output = [self.head_line(minimal).strip()]
+        output = [self.head_line(minimal, include_modifier).strip()]
         for line_count in xrange(3):
             try:
                 values = (str(v) for v in self.values[line_count])

@@ -72,7 +72,7 @@ class Glass(RadianceMaterial):
 
     @classmethod
     def by_single_trans_value(cls, name, rgb_transmittance=0,
-                              refraction=1.52, modifier="void"):
+                              refraction_index=1.52, modifier="void"):
         """Create glass material with single transmittance value.
 
         Attributes:
@@ -90,7 +90,8 @@ class Glass(RadianceMaterial):
         """
         return cls(
             name, r_transmittance=rgb_transmittance, g_transmittance=rgb_transmittance,
-            b_transmittance=rgb_transmittance, refraction=refraction, modifier=modifier)
+            b_transmittance=rgb_transmittance, refraction_index=refraction_index,
+            modifier=modifier)
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
@@ -133,7 +134,7 @@ class Glass(RadianceMaterial):
                 0.9166530661) / 0.0036261119 / transmittance
 
     def _update_values(self):
-        "update value dictionaries."
+        """update value dictionaries."""
         self._values[2] = [
             self.get_transmissivity(self.r_transmittance),
             self.get_transmissivity(self.g_transmittance),

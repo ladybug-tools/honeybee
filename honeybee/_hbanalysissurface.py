@@ -612,18 +612,18 @@ class HBAnalysisSurface(HBObject):
     @property
     def energy_plus_materials(self):
         """Return list of EnergyPlus materials for this surface."""
-        raise NotImplementedError
+        raise NotImplementedError()
         # self.ep_properties.energy_plus_materials
 
     @property
     def energy_plus_construction(self):
         """Return surface EnergyPlus construction."""
-        raise NotImplementedError
+        raise NotImplementedError()
         # self.ep_properties.energy_plus_materials
 
     def to_ep_string(self, include_construction=False, include_materials=False):
         """Return EnergyPlus definition for this surface."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def duplicate(self):
         """Copy honeybee surface."""
