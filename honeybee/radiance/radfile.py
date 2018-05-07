@@ -3,7 +3,7 @@
 Create, modify and generate radiance files from a collection of hbobjects.
 """
 from ..futil import write_to_file_by_name, copy_files_to_folder, preparedir
-from .geometry import polygon
+from .geometry.polygon import Polygon
 from .material.plastic import BlackMaterial
 from .material.glow import WhiteGlow
 import radparser
@@ -407,7 +407,8 @@ class RadFile(object):
             _name = name if sub_srf_count == 1 else '{}_{}'.format(name, ptCount)
 
             # collect definition for each subsurface
-            place_holder[ptCount] = polygon(_name, surface.radiance_material.name, pts)
+            pl = Polygon(_name, pts, modifier=surface.radiance_material)
+            place_holder[ptCount] = pl.to_rad_string(include_modifier=False)
 
         return '\n'.join(place_holder)
 
