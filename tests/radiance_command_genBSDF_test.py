@@ -1,5 +1,5 @@
 from honeybee.radiance.parameters.genBsdf import GenbsdfParameters
-from honeybee.radiance.command.genBSDF import GenBSDF, GridBasedParameters
+from honeybee.radiance.command.genBSDF import GenBSDF, RtraceParameters
 from honeybee.radiance.command.rmtxop import Rmtxop, RmtxopParameters
 import os
 
@@ -10,7 +10,7 @@ y.geom_unit_incl = 'meter'
 
 
 z = GenBSDF()
-z.grid_based_parameters = GridBasedParameters()
+z.grid_based_parameters = RtraceParameters()
 z.grid_based_parameters.ambient_bounces = 1
 z.gen_bsdf_parameters = y
 z.input_geometry = ['room/room.mat', 'room/glazing.rad']

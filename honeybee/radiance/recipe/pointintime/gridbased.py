@@ -1,7 +1,7 @@
 """Radiance Grid-based Analysis Recipe."""
 from .._gridbasedbase import GenericGridBased
 from ..recipeutil import write_rad_files, write_extra_files
-from ...parameters.gridbased import LowQuality
+from ...parameters.rtrace import LowQuality
 from ...command.oconv import Oconv
 from ...command.rtrace import Rtrace
 from ...command.rcalc import Rcalc
@@ -9,7 +9,7 @@ from ....futil import write_to_file
 from ...analysisgrid import AnalysisGrid
 from ....hbsurface import HBSurface
 from ...sky.cie import CIE
-from ...parameters.gridbased import GridBasedParameters
+from ...parameters.rtrace import RtraceParameters
 
 from ladybug.dt import DateTime
 
@@ -88,7 +88,7 @@ class GridBased(GenericGridBased):
         analysis_grids = \
             tuple(AnalysisGrid.from_json(ag) for ag in rec_json['analysis_grids'])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json['surfaces'])
-        rad_parameters = GridBasedParameters.from_json(rec_json["rad_parameters"])
+        rad_parameters = RtraceParameters.from_json(rec_json["rad_parameters"])
         return cls(sky, analysis_grids, rec_json['analysis_type'], rad_parameters, hb_objects)
 
     @classmethod

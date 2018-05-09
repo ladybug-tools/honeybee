@@ -16,8 +16,8 @@ Note on default parameters for daylight coefficient based studies
         these default values are based on best-practice discussions and experience of
         developers.
 """
-from ..parameters.gridbased import GridBasedParameters
-from ..parameters.imagebased import ImageBasedParameters
+from ..parameters.rtrace import RtraceParameters
+from ..parameters.rpict import RpictParameters
 from ..parameters.rcontrib import RcontribParameters
 from ..parameters.rfluxmtx import RfluxmtxParameters
 
@@ -128,7 +128,7 @@ def get_radiance_parameters_grid_based(quality, rec_type):
     """
 
     if rec_type == 0:
-        return Parameters(GridBasedParameters(quality), None, None, None)
+        return Parameters(RtraceParameters(quality), None, None, None)
     elif rec_type == 1:
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
@@ -172,7 +172,7 @@ def get_radiance_parameters_image_based(quality, rec_type):
         radiance_parameters, viewMatrixParameters, daylight_matrixParameters
     """
     if rec_type == 0:
-        return Parameters(ImageBasedParameters(quality), None, None, None)
+        return Parameters(RpictParameters(quality), None, None, None)
     elif rec_type == 1:
         # this is a place holder.
         # daylight matrix

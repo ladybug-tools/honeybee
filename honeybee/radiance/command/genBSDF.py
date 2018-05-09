@@ -3,7 +3,7 @@
 from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceBoolFlag, RadianceValue
 from ..parameters.genBsdf import GenbsdfParameters
-from ..parameters.gridbased import GridBasedParameters
+from ..parameters.rtrace import RtraceParameters
 from .getbbox import Getbbox
 from .xform import Xform
 import tempfile
@@ -83,7 +83,7 @@ class GenBSDF(RadianceCommand):
     @grid_based_parameters.setter
     def grid_based_parameters(self, grid_based_parameters):
         if grid_based_parameters:
-            assert isinstance(grid_based_parameters, GridBasedParameters),\
+            assert isinstance(grid_based_parameters, RtraceParameters),\
                 'The input for rcontribOptions should be an instance of '\
                 'Gridbased parameters'
             self.__grid_based_parameters = grid_based_parameters
