@@ -142,7 +142,7 @@ class ImageBasedParameters(AdvancedRadianceParameters):
         """
 
         self.add_radiance_number('dr', descriptive_name='direct relays',
-                                 num_type=float, attribute_name='direct_sec_relays')
+                                 num_type=int, attribute_name='direct_sec_relays')
         self.direct_sec_relays = None
         """
         -dr N
