@@ -13,17 +13,17 @@ class HBZone(HBObject):
     Args:
         name: Unique name for this zone.
         origin: Zone origin point (default: 0, 0, 0)
-        geometryRules: EnergyPlus geometryRules. (default: "LowerLeftCorner";
+        geometry_rules: EnergyPlus geometry_rules. (default: "LowerLeftCorner";
             "CounterClockWise"; "Absolute")
-        buildingProgram: HBZone building program.
-        zoneProgram: Specific program for this zone from the available building
+        building_program: HBZone building program.
+        zone_program: Specific program for this zone from the available building
             programs.
-        isConditioned: A boolean that indicates if the zone is conditioned.
+        is_conditioned: A boolean that indicates if the zone is conditioned.
             (default: True)
     """
 
-    def __init__(self, name=None, origin=(0, 0, 0), geometryRules=None,
-                 buildingProgram=None, zoneProgram=None, isConditioned=True):
+    def __init__(self, name=None, origin=(0, 0, 0), geometry_rules=None,
+                 building_program=None, zone_program=None, is_conditioned=True):
         """Init Honeybee Zone."""
         self.name = name
         """Zone name"""
@@ -31,24 +31,24 @@ class HBZone(HBObject):
         self.origin = origin
         """origin of the zone."""
 
-        self.geometryRules = geometryRules
+        self.geometry_rules = geometry_rules
 
-        self.buildingProgram = buildingProgram
+        self.building_program = building_program
 
-        self.zoneProgram = zoneProgram
+        self.zone_program = zone_program
 
         self._surfaces = []
 
     @classmethod
-    def fromEPString(cls, EPString, geometryRules=None, buildingProgram=None,
-                     zoneProgram=None, isConditioned=True):
-        """Init Honeybee zone from an EPString.
+    def from_ep_string(cls, ep_string, geometry_rules=None, building_program=None,
+                      zone_program=None, is_conditioned=True):
+        """Init Honeybee zone from an ep_string.
 
         Args:
-            EPString: The full EPString for an EnergyPlus Zone.
+            ep_string: The full ep_string for an EnergyPlus Zone.
         """
-        # clean input EPString - split based on comma
-        segments = EPString.replace("\t", "") \
+        # clean input ep_string - split based on comma
+        segments = ep_string.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
         name = segments[1]
@@ -62,8 +62,8 @@ class HBZone(HBObject):
         except ValueError:
             origin = 0, 0, 0
 
-        return cls(name, origin, geometryRules, buildingProgram, zoneProgram,
-                   isConditioned)
+        return cls(name, origin, geometry_rules, building_program, zone_program,
+                   is_conditioned)
 
     @property
     def isHBZone(self):
@@ -76,15 +76,15 @@ class HBZone(HBObject):
         return self._name
 
     @name.setter
-    def name(self, newName):
+    def name(self, new_name):
         """Set name and isSetByUser property.
 
         Args:
-            newName: A name.
+            new_name: A name.
         """
-        newName = newName or util.randomName()
-        self._name = str(newName)
-        util.checkName(self._name)
+        new_name = new_name or util.random_name()
+        self._name = str(new_name)
+        util.check_name(self._name)
 
     @property
     def origin(self):
@@ -99,40 +99,40 @@ class HBZone(HBObject):
             raise ValueError("Failed to set zone origin: {}".format(e))
 
     @property
-    def geometryRules(self):
+    def geometry_rules(self):
         """Get and set global geometry rules for this zone."""
-        return self._geometryRules
+        return self._geometry_rules
 
-    @geometryRules.setter
-    def geometryRules(self, geometryRules):
-        if not geometryRules:
-            geometryRules = GlobalGeometryRules()
+    @geometry_rules.setter
+    def geometry_rules(self, geometry_rules):
+        if not geometry_rules:
+            geometry_rules = GlobalGeometryRules()
 
-        self._geometryRules = geometryRules
+        self._geometry_rules = geometry_rules
 
     @property
-    def isRelativeSystem(self):
+    def is_relative_system(self):
         """Return True if coordinate system is relative.
 
         To find the absolute coordinate values in a relative system you should
         add surface coordinates to zone origin.
         """
-        return self.geometryRules.system.lower() == "relative"
+        return self.geometry_rules.system.lower() == "relative"
 
     @property
     def floors(self):
         """Get floor surfaces."""
-        return tuple(srf for srf in self.surfaces if srf.isFloor)
+        return tuple(srf for srf in self.surfaces if srf.is_floor)
 
     @property
     def walls(self):
         """Get wall surfaces."""
-        return tuple(srf for srf in self.surfaces if srf.isWall)
+        return tuple(srf for srf in self.surfaces if srf.is_wall)
 
     @property
     def ceilings(self):
         """Get ceilings surfaces."""
-        return tuple(srf for srf in self.surfaces if srf.isCeiling)
+        return tuple(srf for srf in self.surfaces if srf.is_ceiling)
 
     @property
     def surfaces(self):
@@ -140,38 +140,39 @@ class HBZone(HBObject):
         return self._surfaces
 
     @property
-    def childrenSurfaces(self):
+    def children_surfaces(self):
         """Get list of children Surfaces for this zone."""
         return tuple(childrenSurfaces
                      for srf in self.surfaces
-                     for childrenSurfaces in srf.childrenSurfaces
+                     for childrenSurfaces in srf.children_surfaces
                      )
 
-    def addSurface(self, HBSurface):
+    def add_surface(self, surface):
         """Add a surface to Honeybee zone."""
-        assert hasattr(HBSurface, "isHBSurface"), \
-            "%s input is not a Honeybee surface." % str(HBSurface)
+        assert hasattr(surface, "isHBSurface"), \
+            "%s input is not a Honeybee surface." % str(surface)
 
-        self._surfaces.append(HBSurface)
+        self._surfaces.append(surface)
 
         # update surface parent
-        HBSurface._parent = self
+        surface._parent = self
 
     @property
-    def radianceMaterials(self):
+    def radiance_materials(self):
         """Get list of Radiance materials for zone including fenestration."""
         return set(tuple(material for srf in self.surfaces
-                         for material in srf.radianceMaterials))
+                         for material in srf.radiance_materials))
 
-    def toRadFile(self):
+    def to_rad_file(self):
         """Return a RadFile like object.
 
         Use this method to get easy access to radiance geometries and materials for this
-        zone. For a full definition as a string use toRadString method.
+        zone. For a full definition as a string use to_rad_string method.
         """
         return RadFile((srf for srf in self.surfaces))
 
-    def toRadString(self, mode=1, includeMaterials=False, flipped=False, blacked=False):
+    def to_rad_string(self, mode=1, include_materials=False,
+                      flipped=False, blacked=False):
         """Get full radiance file as a string.
 
         Args:
@@ -179,16 +180,17 @@ class HBZone(HBObject):
                 0 - Do not include children surfaces.
                 1 - Include children surfaces.
                 2 - Only children surfaces.
-            includeMaterials: Set to False if you only want the geometry definition
+            include_materials: Set to False if you only want the geometry definition
              (default:True).
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
         mode = mode or 1
-        return self.toRadFile().toRadString(mode, includeMaterials, flipped, blacked)
+        return self.to_rad_file().to_rad_string(mode, include_materials, flipped,
+                                                blacked)
 
-    def radStringToFile(self, filePath, mode=1, includeMaterials=False, flipped=False,
-                        blacked=False):
+    def rad_string_to_file(self, file_path, mode=1, include_materials=False,
+                           flipped=False, blacked=False):
         """Write Radiance definition for this surface to a file.
 
         Args:
@@ -197,21 +199,21 @@ class HBZone(HBObject):
                 0 - Do not include children surfaces.
                 1 - Include children surfaces.
                 2 - Only children surfaces.
-            includeMaterials: Set to False if you only want the geometry definition
+            include_materials: Set to False if you only want the geometry definition
              (default:True).
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
         mode = mode or 1
-        assert os.path.isdir(os.path.split(filePath)[0]), \
-            "Cannot find %s." % os.path.split(filePath)[0]
+        assert os.path.isdir(os.path.split(file_path)[0]), \
+            "Cannot find %s." % os.path.split(file_path)[0]
 
-        with open(filePath, "wb") as outf:
+        with open(file_path, "wb") as outf:
             try:
-                outf.write(self.toRadString(mode, includeMaterials, flipped, blacked))
+                outf.write(self.to_rad_string(mode, include_materials, flipped, blacked))
                 return True
             except Exception as e:
-                print "Failed to write %s to file:\n%s" % (self.name, e)
+                print("Failed to write %s to file:\n%s" % (self.name, e))
                 return False
 
     @property
@@ -220,8 +222,8 @@ class HBZone(HBObject):
         _geo = []
         for surface in self.surfaces:
             _geo.append(surface.geometry)
-            if surface.hasChildSurfaces:
-                for childSurface in surface.childrenSurfaces:
+            if surface.has_child_surfaces:
+                for childSurface in surface.children_surfaces:
                     _geo.append(childSurface.geometry)
 
         return _geo
@@ -232,8 +234,8 @@ class HBZone(HBObject):
         _profile = []
         for surface in self.surfaces:
             _profile.append(surface.profile)
-            if surface.hasChildSurfaces:
-                for childSurface in surface.childrenSurfaces:
+            if surface.has_child_surfaces:
+                for childSurface in surface.children_surfaces:
                     _profile.append(childSurface.profile)
 
         return _profile
@@ -244,8 +246,8 @@ class HBZone(HBObject):
 
     def __repr__(self):
         """Zone representation."""
-        if self.zoneProgram and self.buildingProgram:
-            return "HBZone %s %s:%s" % (self.name, self.zoneProgram,
-                                        self.buildingProgram)
+        if self.zone_program and self.building_program:
+            return "HBZone %s %s:%s" % (self.name, self.zone_program,
+                                        self.building_program)
         else:
             return "HBZone: %s" % self.name

@@ -1,9 +1,8 @@
 # coding=utf-8
 from _commandbase import RadianceCommand
 import os
-import sys
-from ..datatype import *
-from ..parameters.rcollate import RcollateParameters
+from ..datatype import RadiancePath
+
 
 class Rcollate(RadianceCommand):
     u"""
@@ -12,36 +11,35 @@ class Rcollate(RadianceCommand):
     Attributes:
 
     """
-    matrixFile = RadiancePath('matrixFile',descriptiveName='input matrix file',
-                              checkExists=True)
+    matrix_file = RadiancePath('matrix_file', descriptive_name='input matrix file',
+                               check_exists=True)
 
-    def __index__(self,outputName=None,matrixFile=None,rcollateParameters=None):
+    def __index__(self, output_name=None, matrix_file=None, rcollate_parameters=None):
         """Init command"""
         RadianceCommand.__init__(self)
 
-        self.outputName = outputName
-        self.matrixFile = matrixFile
-        self.rcollateParameters = rcollateParameters
+        self.output_name = output_name
+        self.matrix_file = matrix_file
+        self.rcollate_parameters = rcollate_parameters
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
 
-        outputFile = os.path.splitext(str(self.matrixFile))[0] + ".mtx" \
-            if self.outputName is None and self.matrixFile.normpath is not None \
-            else self.outputName
+        output_file = os.path.splitext(str(self.matrix_file))[0] + ".mtx" \
+            if self.output_name is None and self.matrix_file.normpath is not None \
+            else self.output_name
 
-
-        radString = "%s %s %s > %s" % (
-            os.path.join(self.radbinPath, 'rcollate'),
-            self.rcollateParameters.toRadString(),
-            self.matrixFile,
-            outputFile
+        rad_string = "%s %s %s > %s" % (
+            os.path.join(self.radbin_path, 'rcollate'),
+            self.rcollate_parameters.to_rad_string(),
+            self.matrix_file,
+            output_file
         )
 
         # make sure input files are set by user
-        self.checkInputFiles(radString)
-        return radString
+        self.check_input_files(rad_string)
+        return rad_string
 
     @property
-    def inputFiles(self):
+    def input_files(self):
         """Input files for this command."""
-        return (self.matrixFile,)
+        return (self.matrix_file,)

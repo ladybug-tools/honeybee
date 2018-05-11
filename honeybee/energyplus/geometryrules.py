@@ -4,10 +4,10 @@
 class GlobalGeometryRules(object):
     """Global Geometry Rules."""
 
-    def __init__(self, startingCorner="LowerLeftCorner",
+    def __init__(self, starting_corner="LowerLeftCorner",
                  direction="CounterClockWise",
                  system="Absolute"):
         """Init Global Geometry."""
-        self.startingCorner = startingCorner
+        self.starting_corner = starting_corner
         self.direction = direction
         self.system = system

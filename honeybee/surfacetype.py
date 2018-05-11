@@ -1,16 +1,16 @@
 """Honeybee surface types (e.g. wall, roof, etc.)."""
-from radiance.material.plastic import PlasticMaterial
-from radiance.material.glass import GlassMaterial
+from radiance.material.plastic import Plastic
+from radiance.material.glass import Glass
 
 
-class surfaceTypeBase(object):
+class SurfaceTypeBase(object):
     """Base class for surface types."""
 
     # define materials as static property
     # so they can be accessed without initiating the class
     typeId = -1
     """Surface type id."""
-    radianceMaterial = None
+    radiance_material = None
     """Default Radiance material."""
     energyPlusConstruction = None
     """Default EnergyPlus Construction."""
@@ -28,52 +28,52 @@ class surfaceTypeBase(object):
         return "Surface Type: %s" % (self.__class__.__name__)
 
 
-class Wall(surfaceTypeBase):
+class Wall(SurfaceTypeBase):
     """Wall."""
 
     typeId = 0.0
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_wall", 0.50)
+    radiance_material = Plastic.by_single_reflect_value("generic_wall", 0.50)
     """Default Radiance material."""
 
 
-class UndergroundWall(surfaceTypeBase):
+class UndergroundWall(SurfaceTypeBase):
     """Underground wall."""
 
     typeId = 0.5
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_wall", 0.50)
+    radiance_material = Plastic.by_single_reflect_value("generic_wall", 0.50)
     """Default Radiance material."""
 
 
-class Roof(surfaceTypeBase):
+class Roof(SurfaceTypeBase):
     """Roof."""
 
     typeId = 1.0
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_roof", 0.80)
+    radiance_material = Plastic.by_single_reflect_value("generic_roof", 0.80)
     """Default Radiance material."""
 
 
-class UndergroundCeiling(surfaceTypeBase):
+class UndergroundCeiling(SurfaceTypeBase):
     """Underground Ceiling."""
 
     typeId = 1.5
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_wall", 0.5)
+    radiance_material = Plastic.by_single_reflect_value("generic_wall", 0.5)
     """Default Radiance material."""
 
 
-class Floor(surfaceTypeBase):
+class Floor(SurfaceTypeBase):
     """Floor."""
 
     typeId = 2.0
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
-class UndergroundSlab(surfaceTypeBase):
+class UndergroundSlab(SurfaceTypeBase):
     """Underground slab.
 
     Any floor that is located under ground (z < 0)
@@ -81,11 +81,11 @@ class UndergroundSlab(surfaceTypeBase):
 
     typeId = 2.25
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
-class SlabOnGrade(surfaceTypeBase):
+class SlabOnGrade(SurfaceTypeBase):
     """Slab on Grade.
 
     Any floor that is touching the ground. z=0
@@ -93,11 +93,11 @@ class SlabOnGrade(surfaceTypeBase):
 
     typeId = 2.5
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
-class ExposedFloor(surfaceTypeBase):
+class ExposedFloor(SurfaceTypeBase):
     """Exposed Floor.
 
     Part of the floor/slab the is cantilevered.
@@ -105,20 +105,20 @@ class ExposedFloor(surfaceTypeBase):
 
     typeId = 2.75
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_floor", 0.20)
+    radiance_material = Plastic.by_single_reflect_value("generic_floor", 0.20)
     """Default Radiance material."""
 
 
-class Ceiling(surfaceTypeBase):
+class Ceiling(SurfaceTypeBase):
     """Ceiling."""
 
     typeId = 3
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_ceiling", 0.80)
+    radiance_material = Plastic.by_single_reflect_value("generic_ceiling", 0.80)
     """Default Radiance material."""
 
 
-class AirWall(surfaceTypeBase):
+class AirWall(SurfaceTypeBase):
     """Air wall.
 
     Virtual wall to define zones inside a space. AirWalls don't exist in reality.
@@ -126,25 +126,25 @@ class AirWall(surfaceTypeBase):
 
     typeId = 4
     """Surface type id."""
-    radianceMaterial = GlassMaterial.bySingleTransValue("generic_glass", 1.00)
+    radiance_material = Glass.by_single_trans_value("generic_glass", 1.00)
     """Default Radiance material."""
 
 
-class Window(surfaceTypeBase):
+class Window(SurfaceTypeBase):
     """Window surfaces."""
 
     typeId = 5
     """Surface type id."""
-    radianceMaterial = GlassMaterial.bySingleTransValue("generic_glass", 0.60)
+    radiance_material = Glass.by_single_trans_value("generic_glass", 0.60)
     """Default Radiance material."""
 
 
-class Context(surfaceTypeBase):
+class Context(SurfaceTypeBase):
     """Context surfaces."""
 
     typeId = 6
     """Surface type id."""
-    radianceMaterial = PlasticMaterial.bySingleReflectValue("generic_shading", 0.35)
+    radiance_material = Plastic.by_single_reflect_value("generic_shading", 0.35)
     """Default Radiance material."""
 
 
@@ -181,7 +181,7 @@ class SurfaceTypes(object):
     }
 
     @classmethod
-    def getTypeByKey(cls, key):
+    def get_type_by_key(cls, key):
         """Return type based on key value.
 
         Args:
@@ -195,7 +195,7 @@ class SurfaceTypes(object):
                 6.0: Context
 
         Usage:
-            srfType = SurfaceTypes.getTypeByKey(6)
+            srf_type = SurfaceTypes.get_type_by_key(6)
         """
         if hasattr(key, 'isSurfaceType'):
             return key
@@ -209,67 +209,68 @@ class SurfaceTypes(object):
 
     # TODO: Add changed on boundary condition of the surface
     @classmethod
-    def byNormalAngleAndPoints(cls, normalAngle, points=[]):
+    def by_normal_angle_and_points(cls, normal_angle, points=[]):
         """Get surface type based on surface normal angle to Z axis.
 
         Args:
-            normalAngle: Angle between surface normal and z axis in degrees.
+            normal_angle: Angle between surface normal and z axis in degrees.
             points: List of surface points. If not provided the base type will
                 be returned.
         Returns:
-            Surface type as surfaceTypeBase object.
+            Surface type as SurfaceTypeBase object.
         """
-        _srfType = cls.getBaseTypeByNormalAngle(normalAngle)
+        _srf_type = cls.get_base_type_by_normal_angle(normal_angle)
 
         # if len(points) > 3:
-        #     _srfType = cls.reEvaluateSurfaceType(_srfType, points)
+        #     _srf_type = cls.re_evaluate_surface_type(_srf_type, points)
 
-        return cls._types[_srfType]
+        return cls._types[_srf_type]
 
     @staticmethod
-    def getBaseTypeByNormalAngle(angleToZAxis, maximumRoofAngle=30):
+    def get_base_type_by_normal_angle(angle_to_z_axis, maximum_roof_angle=30):
         """Get based type of the surface.
 
         This method does calculte base methods as wall,roof and floor
 
         Args:
-            angleToZAxis: Angle between surface normal and zAxis in degrees.
+            angle_to_z_axis: Angle between surface normal and z_axis in degrees.
 
         Returns:
             An integer between 0-2 0: Wall, 1: Roof, 2: Floor
         """
-        if angleToZAxis < maximumRoofAngle or angleToZAxis > 360 - maximumRoofAngle:
+        if angle_to_z_axis < maximum_roof_angle \
+                or angle_to_z_axis > 360 - maximum_roof_angle:
             return 1  # roof
-        elif 160 < angleToZAxis < 200:
+        elif 160 < angle_to_z_axis < 200:
             return 2  # floor
         else:
             return 0  # wall
 
-    def reEvaluateSurfaceType(self, baseSurfaceType, pts):
+    def re_evaluate_surface_type(self, base_surface_type, pts):
         """Re-evaluate base type for special types."""
         if pts == []:
-            return baseSurfaceType
+            return base_surface_type
 
-        if baseSurfaceType == 0:
-            if self.isSurfaceUnderground():
-                baseSurfaceType += 0.5  # UndergroundWall
+        if base_surface_type == 0:
+            if self.is_surface_underground():
+                base_surface_type += 0.5  # UndergroundWall
 
-        elif baseSurfaceType == 1:
+        elif base_surface_type == 1:
             # A roof underground will be assigned as UndergroundCeiling
-            if self.isSurfaceUnderground():
-                baseSurfaceType += 0.5  # UndergroundCeiling
+            if self.is_surface_underground():
+                base_surface_type += 0.5  # UndergroundCeiling
 
-        elif baseSurfaceType == 2:
+        elif base_surface_type == 2:
             # floor
-            if self.isSurfaceOnGround():
-                baseSurfaceType += 0.5  # SlabOnGrade
-            elif self.isSurfaceUnderground():
-                baseSurfaceType += 0.25  # UndergroundSlab
+            if self.is_surface_on_ground():
+                base_surface_type += 0.5  # SlabOnGrade
+            elif self.is_surface_underground():
+                base_surface_type += 0.25  # UndergroundSlab
 
-        return baseSurfaceType
+        return base_surface_type
 
     @staticmethod
-    def isSurfaceUnderground(pts):
+    def is_surface_underground(pts):
         """Check if this surface is underground."""
         for pt in pts:
             if pt[2] > 0:
@@ -277,7 +278,7 @@ class SurfaceTypes(object):
         return True
 
     @staticmethod
-    def isSurfaceOnGround(pts):
+    def is_surface_on_ground(pts):
         """Check if this surface is on the ground."""
         for pt in pts:
             if pt[2] != 0:

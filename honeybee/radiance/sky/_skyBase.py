@@ -6,23 +6,29 @@ class RadianceSky(object):
     __metaclass__ = ABCMeta
     __slots__ = ()
 
+    @classmethod
+    def from_json(cls):
+        raise NotImplementedError(
+            "from_json is not implemented for {}.".format(cls.__class__.__name__)
+        )
+
     @property
     def isRadianceSky(self):
         """Return True for skies."""
         return True
 
     @property
-    def isPointInTime(self):
+    def is_point_in_time(self):
         """Return True if the sky is generated for a single poin in time."""
         return False
 
     @abstractproperty
-    def isClimateBased(self):
+    def is_climate_based(self):
         """Return True if the sky is created based on values from weather file."""
         pass
 
     @abstractmethod
-    def toRadString(self):
+    def to_rad_string(self):
         """Return radiance definition as a string."""
         pass
 

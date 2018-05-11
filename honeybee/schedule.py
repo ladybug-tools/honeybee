@@ -34,79 +34,91 @@ class Schedule(object):
             .format(len(self._values), len(self._hoys))
 
     @classmethod
-    def fromWorkdayHours(cls, occHours=None, offHours=None, weekend=None,
-                         defaultValue=None):
+    def from_workday_hours(cls, occ_hours=None, off_hours=None, weekend=None,
+                           default_value=None):
         """Create a schedule from Ladybug's AnalysisPeriod.
 
         Args:
-            occHours: Start and end hour of work day as a tuple. Default is (8, 17).
-            offHours: A list of hours that building is unoccupied during the occupancy
+            occ_hours: Start and end hour of work day as a tuple. Default is (8, 17).
+            off_hours: A list of hours that building is unoccupied during the occupancy
                 period everyday (e.g. lunch break). Default is an hour lunch break at
                 (12, 13). Use -1 for no break during the day.
             weekend: A list of numbers to indicate the weekend days. [0] None, [1-7] MON
                 to SUN. Default is 6, 7 (SAT, SUN).
-            defaultValue: Default value for occupancy hours (Default: 1).
+            default_value: Default value for occupancy hours (Default: 1).
         """
-        dailyHours = [0] * 24
-        occHours = occHours or (8, 17)
-        offHours = offHours or (12, 13)
-        weekend = set(weekend) if weekend else set((6, 7))
-        defaultValue = defaultValue or 1
+        daily_hours = [0] * 24
+        occ_hours = occ_hours or (8, 17)
+        off_hours = off_hours or (12, 13)
+        weekend = [0] if weekend == [0] else set(weekend) if weekend else set((6, 7))
+        default_value = default_value or 1
 
         # create daily schedules
-        for h in xrange(*occHours):
-            dailyHours[h] = defaultValue
+        for h in xrange(*occ_hours):
+            daily_hours[h] = default_value
 
-        for h in xrange(*offHours):
-            dailyHours[h] = 0
+        if off_hours != -1 and off_hours != [-1]:
+            for h in xrange(*off_hours):
+                daily_hours[h] = 0
 
         # create annual schedule
-        values = [dailyHours[h % 24] for h in xrange(8760)]
+        values = [daily_hours[h % 24] for h in xrange(8760)]
 
         # set the values to 0 for weekendHours
         # assuming the year starts on a Monday
-        for d in xrange(365):
-            if (d + 1) % 8 in weekend:
-                # set the hours for that day to 0
-                for h in range(d * 24, (d + 1) * 24):
-                    values[h] = 0
+        if weekend != [0]:
+            for d in xrange(365):
+                if (d + 1) % 8 in weekend:
+                    # set the hours for that day to 0
+                    for h in range(d * 24, (d + 1) * 24):
+                        values[h] = 0
 
         hours = xrange(8760)
         return cls(values, hours)
 
     @classmethod
-    def fromAnalysisPeriod(cls, occPeriod=None, offHours=None, weekend=None,
-                           defaultValue=None):
+    def from_analysis_period(cls, occ_period=None, off_hours=None, weekend=None,
+                             default_value=None):
         """Create a schedule from Ladybug's AnalysisPeriod.
 
         Args:
-            occPeriod: An analysis period for occupancy. Default is (8, 17).
-            offHours: A list of hours that building is unoccupied during the occupancy
+            occ_period: An analysis period for occupancy. Default is (8, 17).
+            off_hours: A list of hours that building is unoccupied during the occupancy
                 period everyday (e.g. lunch break). Default is an hour lunch break at
                 (12, 13). Use -1 for no break during the day.
             weekend: A list of numbers to indicate the weekend days. [0] None, [1-7] MON
                 to SUN. Default is 6, 7 (SAT, SUN).
-            defaultValue: Default value for occupancy hours (Default: 1).
+            default_value: Default value for occupancy hours (Default: 1).
         """
-        occPeriod = occPeriod or AnalysisPeriod(stHour=8, endHour=17)
-        offHours = set(offHours) if offHours else set((12, 13))
-        weekend = set(weekend) if weekend else set((6, 7))
-        defaultValue = defaultValue or 1
+        occ_period = occ_period or AnalysisPeriod(stHour=8, endHour=17)
+        off_hours = set(off_hours) if off_hours else set((12, 13))
+        weekend = [0] if weekend == [0] else set(weekend) if weekend else set((6, 7))
+        default_value = default_value or 1
 
         try:
-            hours = tuple(h for h in occPeriod.hoys)
+            hours = tuple(h for h in occ_period.hoys)
         except AttributeError:
             raise TypeError(
-                'occPeriod should be an AnalysisPeriod not {}'.format(type(occPeriod))
+                'occ_period should be an AnalysisPeriod not {}'.format(type(occ_period))
             )
         else:
             # remove weekends
-            hours = tuple(h for h in hours if ((h % 24) + 1) % 8 not in weekend)
+            if weekend != [0]:
+                hours = tuple(h for h in hours if ((h % 24) + 1) % 8 not in weekend)
             # remove off hours
-            hours = tuple(h for h in hours if h % 24 not in offHours)
+            if off_hours != -1 and off_hours != [-1]:
+                hours = tuple(h for h in hours if h % 24 not in off_hours)
 
             values = tuple(1 for h in hours)
             return cls(values, hours)
+
+    @classmethod
+    def eight_am_to_six_pm(cls):
+        """An 8am to 6pm schedule for IES-LM-83-12 requirements.
+
+        This schedule includes 10 hours per day from 8am to 6pm.
+        """
+        return cls.from_workday_hours((8, 18), [-1], [-1])
 
     @property
     def values(self):
@@ -119,11 +131,11 @@ class Schedule(object):
         return self._hoys
 
     @property
-    def occupiedHours(self):
+    def occupied_hours(self):
         """Occupied hours of the year as a set."""
         return self._occupiedHours
 
-    def write(self, filePath):
+    def write(self, file_path):
         """Write the schedule to a csv file."""
         raise NotImplementedError('Write method is not implemented yet!')
 
@@ -143,5 +155,5 @@ class Schedule(object):
 
 
 if __name__ == '__main__':
-    s = Schedule.fromWorkdayHours()
+    s = Schedule.from_workday_hours()
     print(s)

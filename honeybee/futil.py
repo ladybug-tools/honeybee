@@ -15,49 +15,49 @@ def normspace(path):
         return path
 
 
-def getRadiancePathLines():
+def get_radiance_path_lines():
     """Return path to radiance folders."""
-    if config.radbinPath.find(' ') != -1:
+    if config.radbin_path.find(' ') != -1:
         msg = 'Radiance path {} has a whitespace. Some of the radiance ' \
             'commands may fail.\nWe strongly suggest you to install radiance ' \
             'under a path with no withspace (e.g. c:/radiance)'.format(
-                config.radbinPath
+                config.radbin_path
             )
-        print msg
+        print(msg)
     if os.name == 'nt':
         return "SET RAYPATH=.;{}\nPATH={};$PATH".format(
-            normspace(config.radlibPath),
-            normspace(config.radbinPath))
+            normspace(config.radlib_path),
+            normspace(config.radbin_path))
     else:
         return ""
 
 
-def preparedir(targetDir, removeContent=True):
+def preparedir(target_dir, remove_content=True):
     """Prepare a folder for analysis.
 
     This method creates the folder if it is not created, and removes the file in
     the folder if the folder already existed.
     """
-    if os.path.isdir(targetDir):
-        if removeContent:
-            nukedir(targetDir, False)
+    if os.path.isdir(target_dir):
+        if remove_content:
+            nukedir(target_dir, False)
         return True
     else:
         try:
-            os.makedirs(targetDir)
+            os.makedirs(target_dir)
             return True
         except Exception as e:
-            print "Failed to create folder: %s\n%s" % (targetDir, e)
+            print("Failed to create folder: %s\n%s" % (target_dir, e))
             return False
 
 
-def nukedir(targetDir, rmdir=False):
-    """Delete all the files inside targetDir.
+def nukedir(target_dir, rmdir=False):
+    """Delete all the files inside target_dir.
 
     Usage:
         nukedir("c:/ladybug/libs", True)
     """
-    d = os.path.normpath(targetDir)
+    d = os.path.normpath(target_dir)
 
     if not os.path.isdir(d):
         return
@@ -75,16 +75,16 @@ def nukedir(targetDir, rmdir=False):
             try:
                 os.remove(path)
             except Exception:
-                print "Failed to remove %s" % path
+                print("Failed to remove %s" % path)
 
     if rmdir:
         try:
             os.rmdir(d)
         except Exception:
-            print "Failed to remove %s" % d
+            print("Failed to remove %s" % d)
 
 
-def writeToFileByName(folder, fname, data, mkdir=False):
+def write_to_file_by_name(folder, fname, data, mkdir=False):
     """Write a string of data to file by filename and folder.
 
     Args:
@@ -97,31 +97,33 @@ def writeToFileByName(folder, fname, data, mkdir=False):
         if mkdir:
             preparedir(folder)
         else:
-            raise ValueError("Failed to find %s." % folder)
+            created = preparedir(folder, False)
+            if not created:
+                raise ValueError("Failed to find %s." % folder)
 
-    filePath = os.path.join(folder, fname)
+    file_path = os.path.join(folder, fname)
 
-    with open(filePath, "w") as outf:
+    with open(file_path, "w") as outf:
         try:
             outf.write(str(data))
-            return filePath
+            return file_path
         except Exception as e:
             raise IOError("Failed to write %s to file:\n\t%s" % (fname, str(e)))
 
 
-def writeToFile(filePath, data, mkdir=False):
+def write_to_file(file_path, data, mkdir=False):
     """Write a string of data to file.
 
     Args:
-        filePath: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
+        file_path: Full path for a valid file path (e.g. c:/ladybug/testPts.pts)
         data: Any data as string
         mkdir: Set to True to create the directory if doesn't exist (Default: False)
     """
-    folder, fname = os.path.split(filePath)
-    return writeToFileByName(folder, fname, data, mkdir)
+    folder, fname = os.path.split(file_path)
+    return write_to_file_by_name(folder, fname, data, mkdir)
 
 
-def copyFilesToFolder(files, targetFolder, overwrite=True):
+def copy_files_to_folder(files, target_folder, overwrite=True):
     """Copy a list of files to a new target folder.
 
     Returns:
@@ -131,7 +133,7 @@ def copyFilesToFolder(files, targetFolder, overwrite=True):
         return []
 
     for f in files:
-        target = os.path.join(targetFolder, os.path.split(f)[-1])
+        target = os.path.join(target_folder, os.path.split(f)[-1])
 
         if target == f:
             # both file path are the same!
@@ -149,8 +151,36 @@ def copyFilesToFolder(files, targetFolder, overwrite=True):
             else:
                 continue
         else:
-            print 'Copying %s to %s' % (os.path.split(f)[-1],
-                                        os.path.normpath(targetFolder))
-            shutil.copy(f, targetFolder)
+            print('Copying %s to %s' % (os.path.split(f)[-1],
+                                        os.path.normpath(target_folder)))
+            shutil.copy(f, target)
 
-    return [os.path.join(targetFolder, os.path.split(f)[-1]) for f in files]
+    return [os.path.join(target_folder, os.path.split(f)[-1]) for f in files]
+
+
+def bat_to_sh(file_path):
+    """Convert honeybee .bat file to .sh file.
+
+    WARNING: This is a very simple function and doesn't handle any edge cases.
+    """
+    sh_file = file_path[:-4] + '.sh'
+    with open(file_path, 'rb') as inf, open(sh_file, 'wb') as outf:
+        outf.write('#!/usr/bin/env bash\n\n')
+        for line in inf:
+            # pass the path lines, etc to get to the commands
+            if line.strip():
+                continue
+            else:
+                break
+
+        for line in inf:
+            if line.startswith('echo'):
+                continue
+            modified_line = line.replace('c:\\radiance\\bin\\', '').replace('\\', '/')
+            outf.write(modified_line)
+
+    print('bash file is created at:\n\t%s' % sh_file)
+    # Heroku - Make command.sh executable
+    st = os.stat(sh_file)
+    os.chmod(sh_file, st.st_mode | 0o111)
+    return sh_file

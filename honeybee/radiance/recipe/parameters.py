@@ -33,41 +33,45 @@ from collections import namedtuple
 # High: A room within a sky-scraper with intricate furnitures, complex
 # external geometry (complex fins,overhangs etc).
 DCDEFAULTS = (
-    {'ambientDivisions': 5000, 'ambientBounces': 3, 'limitWeight': 0.000002,
-     'samplingRaysCount': 1},
-    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.67E-07,
-     'samplingRaysCount': 1},
-    {'ambientDivisions': 25000, 'ambientBounces': 6, 'limitWeight': 4E-07,
-     'samplingRaysCount': 1}
+    {'ambient_divisions': 5000, 'ambient_bounces': 3, 'limit_weight': 0.000002,
+     'sampling_rays_count': 1},
+    {'ambient_divisions': 15000, 'ambient_bounces': 5, 'limit_weight': 6.67E-07,
+     'sampling_rays_count': 1},
+    {'ambient_divisions': 25000, 'ambient_bounces': 6, 'limit_weight': 4E-07,
+     'sampling_rays_count': 1}
 )
 
-#Image-based daylight coefficients
-#Parameter settings explained contextually:
-#   Low: Regardless of geometry, these settings are suitable for doing a first pass simulation.
-#   Medium: These parameters will be enough for the results from a single room with side lighting to converge.
+# Image-based daylight coefficients
+# Parameter settings explained contextually:
+#   Low: Regardless of geometry, these settings are suitable for doing a first pass
+#     simulation.
+#   Medium: These parameters will be enough for the results from a single room with side
+#     lighting to converge.
 #   High: Set these parameters for generating high-quality final renderings.
 IMGDCDEFAULTS = (
-    {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
-     'samplingRaysCount': 1},
-    {'ambientDivisions': 5000, 'ambientBounces': 4, 'limitWeight': 0.00002,
-     'samplingRaysCount': 5},
-    {'ambientDivisions': 15000, 'ambientBounces': 5, 'limitWeight': 6.666E-06,
-     'samplingRaysCount': 6}
+    {'ambient_divisions': 1000, 'ambient_bounces': 2, 'limit_weight': 0.0001,
+     'sampling_rays_count': 1},
+    {'ambient_divisions': 5000, 'ambient_bounces': 4, 'limit_weight': 0.00002,
+     'sampling_rays_count': 5},
+    {'ambient_divisions': 15000, 'ambient_bounces': 5, 'limit_weight': 6.666E-06,
+     'sampling_rays_count': 6}
 )
 
 
-#Image-based View Matrix parameters for Three Phase, Five Phase and F-Matrix simulations.
-#Parameter settings explained contextually:
-#   Low: Regardless of geometry, these settings are suitable for doing a first pass simulation.
-#   Medium: These parameters will be enough for the results from a single room with side lighting to converge.
+# Image-based View Matrix parameters for Three Phase, Five Phase and F-Matrix simulations
+# Parameter settings explained contextually:
+#   Low: Regardless of geometry, these settings are suitable for doing a first pass
+#     simulation.
+#   Medium: These parameters will be enough for the results from a single room with side
+#     lighting to converge.
 #   High: Set these parameters for generating high-quality final renderings.
 IMGVMDEFAULTS = (
-    {'ambientDivisions': 1000, 'ambientBounces': 2, 'limitWeight': 0.0001,
-     'samplingRaysCount': 1},
-    {'ambientDivisions': 3000, 'ambientBounces': 4, 'limitWeight': 3.33E-05,
-     'samplingRaysCount': 5},
-    {'ambientDivisions': 10000, 'ambientBounces': 5, 'limitWeight': 1E-05,
-     'samplingRaysCount': 6}
+    {'ambient_divisions': 1000, 'ambient_bounces': 2, 'limit_weight': 0.0001,
+     'sampling_rays_count': 1},
+    {'ambient_divisions': 3000, 'ambient_bounces': 4, 'limit_weight': 3.33E-05,
+     'sampling_rays_count': 5},
+    {'ambient_divisions': 10000, 'ambient_bounces': 5, 'limit_weight': 1E-05,
+     'sampling_rays_count': 6}
 )
 
 # Illuminance based view matrix parameters.
@@ -78,9 +82,9 @@ IMGVMDEFAULTS = (
 # High: Complex room or envrionment, like an Aircraft cabin (!) with lots
 # of detailing and occulding surfaces.
 VMDEFAULTS = (
-    {'ambientDivisions': 1000, 'ambientBounces': 3, 'limitWeight': 0.00001},
-    {'ambientDivisions': 5000, 'ambientBounces': 5, 'limitWeight': 0.00002},
-    {'ambientDivisions': 20000, 'ambientBounces': 7, 'limitWeight': 5E-7}
+    {'ambient_divisions': 1000, 'ambient_bounces': 3, 'limit_weight': 0.00001},
+    {'ambient_divisions': 5000, 'ambient_bounces': 5, 'limit_weight': 0.00002},
+    {'ambient_divisions': 20000, 'ambient_bounces': 7, 'limit_weight': 5E-7}
 )
 
 # Daylight Matrix
@@ -91,41 +95,41 @@ VMDEFAULTS = (
 # High: Room is surrounded by several shapes..The glazing might not have a direct view
 # of the sky.
 DMDEFAULTS = (
-    {'ambientDivisions': 1024, 'ambientBounces': 2, 'limitWeight': 0.00001,
-     'samplingRaysCount': 1000},
-    {'ambientDivisions': 3000, 'ambientBounces': 4, 'limitWeight': 3.33E-06,
-     'samplingRaysCount': 1000},
-    {'ambientDivisions': 10000, 'ambientBounces': 6, 'limitWeight': 0.000001,
-     'samplingRaysCount': 1000}
+    {'ambient_divisions': 1024, 'ambient_bounces': 2, 'limit_weight': 0.00001,
+     'sampling_rays_count': 1000},
+    {'ambient_divisions': 3000, 'ambient_bounces': 4, 'limit_weight': 3.33E-06,
+     'sampling_rays_count': 1000},
+    {'ambient_divisions': 10000, 'ambient_bounces': 6, 'limit_weight': 0.000001,
+     'sampling_rays_count': 1000}
 )
 
 # Sun-matrix
 # These settings are set such that every solar disc disc in the celestial hemisphere is
 # accounted for and participates in shadow testing.
-SMDEFAULTS = {'ambientBounces': 0, 'directJitter': 0, 'directCertainty': 1,
-              'directThreshold': 0}
+SMDEFAULTS = {'ambient_bounces': 0, 'direct_jitter': 0, 'direct_certainty': 1,
+              'direct_threshold': 0}
 
 # ~~~~~~~~~~~ENDING DEFAULT PARAMETERS
 
 Parameters = namedtuple('Parameters', ['rad', 'vmtx', 'dmtx', 'smtx'])
 
 
-def getRadianceParametersGridBased(quality, recType):
+def get_radiance_parameters_grid_based(quality, rec_type):
     """Get Radiance parameters for grid based recipes.
 
     Args:
         quality: 0 > low, 1 > Medium, 2 > High
-        recType: Type of recipe.
+        rec_type: Type of recipe.
             0 > Point-in-time, 1 > Daylight Coeff., 2 > 3Phase, 3 > 5Phase
 
     Returns:
-        radianceParameters, viewMatrixParameters, daylightMatrixParameters,
-        sunMatrixParameters
+        radiance_parameters, viewMatrixParameters, daylight_matrixParameters,
+        sun_matrixParameters
     """
 
-    if recType == 0:
+    if rec_type == 0:
         return Parameters(GridBasedParameters(quality), None, None, None)
-    elif recType == 1:
+    elif rec_type == 1:
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
         for k, v in DCDEFAULTS[quality].iteritems():
@@ -156,20 +160,20 @@ def getRadianceParametersGridBased(quality, recType):
         return Parameters(None, vmtxpar, dmtxpar, sunmtxpar)
 
 
-def getRadianceParametersImageBased(quality, recType):
+def get_radiance_parameters_image_based(quality, rec_type):
     """Get Radiance parameters for image based recipes.
 
     Args:
         quality: 0 > low, 1 > Medium, 2 > High
-        recType: Type of recipe.
+        rec_type: Type of recipe.
             0 > Point-in-time, 1 > Daylight Coeff., 2 > 3Phase, 3 > 5Phase
 
     Returns:
-        radianceParameters, viewMatrixParameters, daylightMatrixParameters
+        radiance_parameters, viewMatrixParameters, daylight_matrixParameters
     """
-    if recType == 0:
+    if rec_type == 0:
         return Parameters(ImageBasedParameters(quality), None, None, None)
-    elif recType == 1:
+    elif rec_type == 1:
         # this is a place holder.
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
@@ -185,7 +189,7 @@ def getRadianceParametersImageBased(quality, recType):
     else:
         # view matrix
         vmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in VMDEFAULTS[quality].iteritems():
+        for k, v in IMGVMDEFAULTS[quality].iteritems():
             setattr(vmtxpar, k, v)
 
         # daylight matrix

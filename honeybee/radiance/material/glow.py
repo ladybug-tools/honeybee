@@ -4,10 +4,10 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Glow
 """
 
 from ..datatype import RadianceNumber
-from ._materialbase import RadianceMaterial
+from .materialbase import RadianceMaterial
 
 
-class GlowMaterial(RadianceMaterial):
+class Glow(RadianceMaterial):
     """
     Create glow material.
 
@@ -15,40 +15,100 @@ class GlowMaterial(RadianceMaterial):
 
         name: Material name as a string. The name should not have whitespaces or
             special characters.
-        red: A positive value for the Red channel of the glow
-        green: A positive value for the Green channel of the glow
-        blue: A positive value for the Blue channel of the glow
-        maxRadius: ---.
+        red: A positive value for the Red channel of the glow (default: 0).
+        green: A positive value for the Green channel of the glow (default: 0).
+        blue: A positive value for the Blue channel of the glow (default: 0).
+        max_radius: a maximum radius for shadow testing (default: 0). If maxrad is zero,
+            then the surface will never be tested for shadow, although it may
+            participate in an interreflection calculation. If maxrad is negative, then
+            the surface will never contribute to scene illumination. Glow sources will
+            never illuminate objects on the other side of an illum surface. This
+            provides a convenient way to illuminate local light fixture geometry without
+            overlighting nearby objects.
     """
-    red = RadianceNumber('red', checkPositive=True)
-    blue = RadianceNumber('blue', checkPositive=True)
-    green = RadianceNumber('green', checkPositive=True)
-    maxRadius = RadianceNumber('maxRadius', checkPositive=True)
+    red = RadianceNumber('red', num_type=float, valid_range=(0, 1))
+    green = RadianceNumber('green', num_type=float, valid_range=(0, 1))
+    blue = RadianceNumber('blue', num_type=float, valid_range=(0, 1))
+    max_radius = RadianceNumber('max_radius', num_type=float)
 
-    def __init__(self, name, red=0, green=0, blue=0, maxRadius=0):
+    def __init__(self, name, red=0.0, green=0.0, blue=0.0, max_radius=0.0,
+                 modifier='void'):
         """Init Glow material."""
-        RadianceMaterial.__init__(self, name, materialType='glow', modifier='void')
+        RadianceMaterial.__init__(self, name, type='glow', modifier=modifier)
         self.red = red
         """A positive value for the Red channel of the glow"""
         self.green = green
         """A positive value for the Green channel of the glow"""
         self.blue = blue
         """A positive value for the Blue channel of the glow"""
-        self.maxRadius = maxRadius
+        self.max_radius = max_radius
         """Maximum radius for shadow testing"""
+        self._update_values()
 
-    def toRadString(self, minimal=False):
-        """Return full Radiance definition"""
-        baseString = self.headLine + "0\n0\n4 %.3f %.3f %.3f %.3f"
+    @classmethod
+    def from_string(cls, material_string, modifier=None):
+        """Create a Radiance material from a string.
 
-        glowDefinition = baseString % (
-            self.red._value, self.green._value, self.blue._value, self.maxRadius._value
-        )
+        If the material has a modifier the modifier material should also be partof the
+        string or should be provided using modifier argument.
+        """
 
-        return glowDefinition.replace("\n", " ") if minimal else glowDefinition
+        modifier, name, base_material_data = cls._analyze_string_input(
+            cls.__name__.lower(), material_string, modifier)
+
+        _, _, _, red, green, blue, radius = base_material_data
+
+        return cls(name, red, green, blue, radius, modifier)
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Make radiance material from json
+        {
+            "name": "", // Material Name
+            "red": float, // A positive value for the Red channel of the glow
+            "green": float, // A positive value for the Green channel of the glow
+            "blue": float, // A positive value for the Blue channel of the glow
+            "radius": float // Maximum radius for shadow testing
+        }
+        """
+        modifier = cls._analyze_json_input(cls.__name__.lower(), rec_json)
+
+        return cls(name=rec_json["name"],
+                   red=rec_json["red"],
+                   green=rec_json["green"],
+                   blue=rec_json["blue"],
+                   max_radius=rec_json["max_radius"],
+                   modifier=modifier)
+
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [
+            self.red, self.green, self.blue, self.max_radius
+        ]
+
+    def to_json(self):
+        """Translate radiance material to json
+        {
+            "type": "glow", // Material type
+            "name": "", // Material Name
+            "red": float, // A positive value for the Red channel of the glow
+            "green": float, // A positive value for the Green channel of the glow
+            "blue": float, // A positive value for the Blue channel of the glow
+            "radius": float // Maximum radius for shadow testing
+        }
+        """
+        return {
+            "modifier": self.modifier.to_json(),
+            "type": "glow",
+            "name": self.name,
+            "red": self.red,
+            "green": self.green,
+            "blue": self.blue,
+            "max_radius": self.max_radius
+        }
 
 
-class WhiteGlowMaterial(GlowMaterial):
+class WhiteGlow(Glow):
     """A white glow material.
 
     Use this material for multi-phase daylight studies.
@@ -56,4 +116,4 @@ class WhiteGlowMaterial(GlowMaterial):
 
     def __init__(self, name='white_glow'):
         """Create glow material."""
-        GlowMaterial.__init__(self, name, 1, 1, 1, 0)
+        Glow.__init__(self, name, 1.0, 1.0, 1.0, 0.0)

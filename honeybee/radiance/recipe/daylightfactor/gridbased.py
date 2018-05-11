@@ -1,60 +1,106 @@
 """Radiance Grid-based Analysis Recipe."""
 from ..pointintime.gridbased import GridBased as PITGridBased
 from ...sky.certainIlluminance import CertainIlluminanceLevel
+from ...parameters.gridbased import GridBasedParameters
+from ...analysisgrid import AnalysisGrid
 from ladybug.dt import DateTime
 from ladybug.legendparameters import LegendParameters
-
+from ....hbsurface import HBSurface
 
 class GridBased(PITGridBased):
     """Daylight factor grid based analysis.
 
     Attributes:
-        analysisGrids: List of analysis grids.
-        radParameters: Radiance parameters for grid based analysis (rtrace).
+        analysis_grids: List of analysis grids.
+        rad_parameters: Radiance parameters for grid based analysis (rtrace).
             (Default: gridbased.LowQuality)
-        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "daylightfactor")
+        hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+        sub_folder: Analysis subfolder for this recipe. (Default: "daylightfactor")
 
     """
     SKYILLUM = 100000
 
-    def __init__(self, analysisGrids, radParameters=None, hbObjects=None,
-                 subFolder="daylightfactor"):
+    def __init__(self, analysis_grids, rad_parameters=None, hb_objects=None,
+                 sub_folder="daylightfactor"):
         """Create grid-based recipe."""
         # create the sky for daylight factor
         sky = CertainIlluminanceLevel(self.SKYILLUM)
         # simulation type is Illuminance
-        simulationType = 0
+        simulation_type = 0
 
         PITGridBased.__init__(
-            self, sky, analysisGrids, simulationType, radParameters, hbObjects,
-            subFolder)
+            self, sky, analysis_grids, simulation_type, rad_parameters, hb_objects,
+            sub_folder)
 
     @classmethod
-    def fromPointsAndVectors(
-        cls, pointGroups, vectorGroups=None, radParameters=None, hbObjects=None,
-            subFolder="gridbased"):
+    def from_json(cls, rec_json):
+        """Create Daylight Factor recipe from json.
+            {
+            "id": "daylight_factor",
+            "type": "gridbased",
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "rad_parameters": {
+                gridbased_parameters: string //  A standard radiance parameter string
+                (e.g. -ab 5 -aa 0.05 -ar 128)
+                },
+            }
+        """
+        analysis_grids = tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
+        rad_parameters = GridBasedParameters.from_json(rec_json["rad_parameters"])
+
+        recipe = cls(analysis_grids=analysis_grids, rad_parameters=rad_parameters, \
+            hb_objects=hb_objects)
+
+        return recipe
+
+    @classmethod
+    def from_points_and_vectors(
+        cls, point_groups, vector_groups=None, rad_parameters=None, hb_objects=None,
+            sub_folder="gridbased"):
         """Create grid based recipe from points and vectors.
 
         Args:
-            pointGroups: A list of (x, y, z) test points or lists of (x, y, z)
+            point_groups: A list of (x, y, z) test points or lists of (x, y, z)
                 test points. Each list of test points will be converted to a
                 TestPointGroup. If testPts is a single flattened list only one
                 TestPointGroup will be created.
-            vectorGroups: An optional list of (x, y, z) vectors. Each vector
+            vector_groups: An optional list of (x, y, z) vectors. Each vector
                 represents direction of corresponding point in testPts. If the
                 vector is not provided (0, 0, 1) will be assigned.
-            radParameters: Radiance parameters for grid based analysis (rtrace).
+            rad_parameters: Radiance parameters for grid based analysis (rtrace).
                 (Default: gridbased.LowQuality)
-            hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-            subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
+            hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+            sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
         """
-        analysisGrids = cls.analysisGridsFromPointsAndVectors(pointGroups,
-                                                              vectorGroups)
-        return cls(analysisGrids, radParameters, hbObjects, subFolder)
+        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
+                                                                    vector_groups)
+        return cls(analysis_grids, rad_parameters, hb_objects, sub_folder)
+
+    def to_json(self):
+        """Convert Daylight Factor recipe to json.
+            {
+            "id": "daylight_factor",
+            "type": "gridbased",
+            "analysis_grids": [], // list of analysis grids
+            "surfaces": [], // list of honeybee surfaces
+            "rad_parameters": {
+                gridbased_parameters: tring //  A standard radiance parameter string
+                (e.g. -ab 5 -aa 0.05 -ar 128)
+                },
+            }
+        """
+        return {
+                "id": "daylight_factor",
+                "type": "gridbased",
+                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+                "surfaces": [srf.to_json() for srf in self.hb_objects],
+                "rad_parameters": self.radiance_parameters.to_json()
+                }
 
     @property
-    def legendParameters(self):
+    def legend_parameters(self):
         """Legend parameters for daylight factor analysis."""
         return LegendParameters([0, 100])
 
@@ -65,7 +111,7 @@ class GridBased(PITGridBased):
             "to run the analysis before loading the results."
 
         print('Unloading the current values from the analysis grids.')
-        for ag in self.analysisGrids:
+        for ag in self.analysis_grids:
             ag.unload()
 
         sky = self.sky
@@ -75,21 +121,21 @@ class GridBased(PITGridBased):
         # all the results will be divided by this value to calculated the percentage
         div = self.SKYILLUM / 100.0
 
-        rf = self._resultFiles
-        startLine = 0
-        for count, analysisGrid in enumerate(self.analysisGrids):
+        rf = self._result_files
+        start_line = 0
+        for count, analysisGrid in enumerate(self.analysis_grids):
             if count:
-                startLine += len(self.analysisGrids[count - 1])
+                start_line += len(self.analysis_grids[count - 1])
 
-            analysisGrid.setValuesFromFile(
-                rf, (int(dt.hoy),), startLine=startLine, header=False, mode=div
+            analysisGrid.set_values_from_file(
+                rf, (int(dt.hoy),), start_line=start_line, header=False, mode=div
             )
 
-        return self.analysisGrids
+        return self.analysis_grids
 
     def __repr__(self):
         """Represent grid based recipe."""
         return "%s: Daylight Factor\n#PointGroups: %d #Points: %d" % \
             (self.__class__.__name__,
-             self.AnalysisGridCount,
-             self.totalPointCount)
+             self.analysis_grid_count,
+             self.total_point_count)

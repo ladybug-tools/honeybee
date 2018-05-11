@@ -26,14 +26,14 @@ def frozen(cls):
         try:
             foo.foobar = 24
         except AttributeError as e:
-            print e
+            print(e)
 
         # unfreeze and assigne the value
         foo.unfreeze()
         foo.foobar = 24
         foo.freeze()
 
-        print foo.foobar
+        print(foo.foobar)
 
         > foobar is not a valid attribute for Foo. Failed to set foobar to 24.
           Use one of the add*** methods to add a new parameter.

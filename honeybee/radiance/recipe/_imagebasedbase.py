@@ -4,7 +4,7 @@ This class is base class for common imagebased analysis recipes.
 """
 
 from abc import ABCMeta, abstractmethod
-from ...futil import writeToFile
+from ...futil import write_to_file
 from ._recipebase import AnalysisRecipe
 
 import os
@@ -18,16 +18,16 @@ class GenericImageBased(AnalysisRecipe):
 
     Attributes:
         views: A collection of honeybee Views.
-        hbObjects: An optional list of Honeybee surfaces or zones (Default: None).
-        subFolder: Analysis subfolder for this recipe. (Default: "gridbased")
+        hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
+        sub_folder: Analysis subfolder for this recipe. (Default: "gridbased")
     """
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, views, hbObjects=None, subFolder="imagebased"):
+    def __init__(self, views, hb_objects=None, sub_folder="imagebased"):
         """Create image-based recipe."""
         # keep track of original points for re-structuring them later on
-        AnalysisRecipe.__init__(self, hbObjects=hbObjects, subFolder=subFolder)
+        AnalysisRecipe.__init__(self, hb_objects=hb_objects, sub_folder=sub_folder)
         self.views = views
 
     @property
@@ -45,26 +45,26 @@ class GenericImageBased(AnalysisRecipe):
                 '{} is not a View.'.format(v)
 
     @property
-    def viewCount(self):
+    def view_count(self):
         """Number of point groups."""
         return len(self.views)
 
-    def writeViews(self, targetDir, mkdir=False):
+    def write_views(self, target_dir, mkdir=False):
         """Write point groups to file.
 
         Args:
-            targetDir: Path to project directory (e.g. c:/ladybug)
+            target_dir: Path to project directory (e.g. c:/ladybug)
 
         Returns:
             Path to file in case of success.
 
         Exceptions:
-            ValueError if targetDir doesn't exist and mkdir is False.
+            ValueError if target_dir doesn't exist and mkdir is False.
         """
 
-        return tuple(writeToFile(os.path.join(targetDir, v.name + '.vf'),
-                                 'rvu ' + v.toRadString() + '\n',
-                                 mkdir)
+        return tuple(write_to_file(os.path.join(target_dir, v.name + '.vf'),
+                                   'rvu ' + v.to_rad_string() + '\n',
+                                   mkdir)
                      for v in self.views)
 
     @abstractmethod
@@ -78,4 +78,4 @@ class GenericImageBased(AnalysisRecipe):
 
     def __repr__(self):
         """Represent grid based recipe."""
-        return "%s\n#Views: %d" % (self.__class__.__name__, self.viewCount)
+        return "%s\n#Views: %d" % (self.__class__.__name__, self.view_count)

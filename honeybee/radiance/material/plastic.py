@@ -2,24 +2,31 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Plastic
 """
-from _materialbase import RadianceMaterial
+from .materialbase import RadianceMaterial
+from ..datatype import RadianceNumber
 
 
-class PlasticMaterial(RadianceMaterial):
+class Plastic(RadianceMaterial):
     """Radiance plastic material."""
 
-    def __init__(self, name, rReflectance=0, gReflectance=0, bReflectance=0,
-                 specularity=0, roughness=0, modifier="void"):
+    r_reflectance = RadianceNumber('r_reflectance', num_type=float, valid_range=(0, 1))
+    g_reflectance = RadianceNumber('g_reflectance', num_type=float, valid_range=(0, 1))
+    b_reflectance = RadianceNumber('b_reflectance', num_type=float, valid_range=(0, 1))
+    specularity = RadianceNumber('specularity', num_type=float, valid_range=(0, 1))
+    roughness = RadianceNumber('roughness', num_type=float, valid_range=(0, 1))
+
+    def __init__(self, name, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
+                 specularity=0.0, roughness=0.0, modifier="void"):
         """Create plastic material.
 
         Attributes:
             name: Material name as a string. Do not use white space and special
                 character.
-            rReflectance: Reflectance for red. The value should be between 0 and 1
+            r_reflectance: Reflectance for red. The value should be between 0 and 1
                 (Default: 0).
-            gReflectance: Reflectance for green. The value should be between 0 and 1
+            g_reflectance: Reflectance for green. The value should be between 0 and 1
                 (Default: 0).
-            bReflectance: Reflectance for blue. The value should be between 0 and 1
+            b_reflectance: Reflectance for blue. The value should be between 0 and 1
                 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
                 are not realistic (Default: 0).
@@ -30,15 +37,15 @@ class PlasticMaterial(RadianceMaterial):
             modifier: Material modifier (Default: "void").
 
         Usage:
-            wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
-            print wallMaterial
+            wallMaterial = Plastic("generic wall", .55, .65, .75)
+            print(wallMaterial)
         """
-        RadianceMaterial.__init__(self, name, materialType="plastic", modifier="void")
-        self.rReflectance = rReflectance
+        RadianceMaterial.__init__(self, name, type="plastic", modifier=modifier)
+        self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
-        self.gReflectance = gReflectance
+        self.g_reflectance = g_reflectance
         """Reflectance for green. The value should be between 0 and 1 (Default: 0)."""
-        self.bReflectance = bReflectance
+        self.b_reflectance = b_reflectance
         """Reflectance for blue. The value should be between 0 and 1 (Default: 0)."""
         self.specularity = specularity
         """Fraction of specularity. Specularity fractions greater than 0.1 are not
@@ -49,14 +56,56 @@ class PlasticMaterial(RadianceMaterial):
            very rough surface. Roughness values greater than 0.2 are not very realistic.
            (Default: 0)."""
 
+        self._update_values()
+
     @classmethod
-    def bySingleReflectValue(cls, name, rgbReflectance=0, specularity=0,
-                             roughness=0, modifier="void"):
+    def from_string(cls, material_string, modifier=None):
+        """Create a Radiance material from a string.
+
+        If the material has a modifier the modifier material should also be partof the
+        string or should be provided using modifier argument.
+        """
+
+        modifier, name, base_material_data = cls._analyze_string_input(
+            cls.__name__.lower(), material_string, modifier)
+
+        _, _, _, r_reflectance, g_reflectance, b_reflectance, \
+            specularity, roughness = base_material_data
+
+        return cls(name, r_reflectance, g_reflectance, b_reflectance, specularity,
+                   roughness, modifier)
+
+    @classmethod
+    def from_json(cls, rec_json):
+        """Make radiance material from json
+        {
+            "modifier": {} or void, // Material modifier
+            "type": "plastic", // Material type
+            "name": "", // Material Name
+            "r_reflectance": float, // Reflectance for red
+            "g_reflectance": float, // Reflectance for green
+            "b_reflectance": float, // Reflectance for blue
+            "specularity": float, // Material specularity
+            "roughness": float // Material roughness
+        }
+        """
+        modifier = cls._analyze_json_input(cls.__name__.lower(), rec_json)
+        return cls(name=rec_json["name"],
+                   r_reflectance=rec_json["r_reflectance"],
+                   g_reflectance=rec_json["g_reflectance"],
+                   b_reflectance=rec_json["b_reflectance"],
+                   specularity=rec_json["specularity"],
+                   roughness=rec_json["roughness"],
+                   modifier=modifier)
+
+    @classmethod
+    def by_single_reflect_value(cls, name, rgb_reflectance=0.0, specularity=0.0,
+                                roughness=0.0, modifier="void"):
         """Create plastic material with single reflectance value.
 
         Attributes:
             name: Material name as a string. Do not use white space and special character
-            rgbReflectance: Reflectance for red, green and blue. The value should be
+            rgb_reflectance: Reflectance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
                 are not realistic (Default: 0).
@@ -67,98 +116,69 @@ class PlasticMaterial(RadianceMaterial):
             modifier: Material modifier (Default: "void").
 
         Usage:
-            wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
-            print wallMaterial
+            wallMaterial = Plastic.by_single_reflect_value("generic wall", .55)
+            print(wallMaterial)
         """
-        return cls(name, rReflectance=rgbReflectance, gReflectance=rgbReflectance,
-                   bReflectance=rgbReflectance, specularity=specularity,
-                   roughness=roughness, modifier="void")
+        return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
+                   b_reflectance=rgb_reflectance, specularity=specularity,
+                   roughness=roughness, modifier=modifier)
 
     @property
-    def rReflectance(self):
-        """Red reflectance."""
-        return self._r
-
-    @rReflectance.setter
-    def rReflectance(self, value):
-        assert 0 <= value <= 1, "Red reflectance should be between 0 and 1"
-        self._r = value
-
-    @property
-    def gReflectance(self):
-        """Green reflectance."""
-        return self._g
-
-    @gReflectance.setter
-    def gReflectance(self, value):
-        assert 0 <= value <= 1, "Green reflectance should be between 0 and 1"
-        self._g = value
-
-    @property
-    def bReflectance(self):
-        """Blue reflectance."""
-        return self._b
-
-    @bReflectance.setter
-    def bReflectance(self, value):
-        assert 0 <= value <= 1, "Blue reflectance should be between 0 and 1"
-        self._b = value
-
-    @property
-    def specularity(self):
-        """Specularity fraction."""
-        return self._spec
-
-    @specularity.setter
-    def specularity(self, value):
-        assert 0 <= value <= 1, "Specularity should be between 0 and 1"
-        if value > 0.1:
-            print "Warning: Specularity values above .1 is uncommon."
-        self._spec = value
-
-    @property
-    def roughness(self):
-        """Roughness."""
-        return self._rough
-
-    @roughness.setter
-    def roughness(self, value):
-        assert 0 <= value <= 1, "Roughness should be between 0 and 1"
-        if value > 0.2:
-            print "Warning: Roughness values above .2 is uncommon."
-        self._rough = value
-
-    @property
-    def averageReflectance(self):
+    def average_reflectance(self):
         """Calculate average reflectance of plastic material."""
-        return (0.265 * self.rReflectance + 0.670 * self.gReflectance +
-                0.065 * self.bReflectance) * (1 - self.specularity) + self.specularity
+        return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
+                0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
 
-    def toRadString(self, minimal=False):
-        """Return full radiance definition."""
-        baseString = self.headLine + "0\n0\n5 %.3f %.3f %.3f %.3f %.3f"
-
-        plasticDefinition = baseString % (
-            self.rReflectance, self.gReflectance, self.bReflectance,
+    def _update_values(self):
+        "update value dictionaries."
+        self._values[2] = [
+            self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness
-        )
+        ]
 
-        return plasticDefinition.replace("\n", " ") if minimal else plasticDefinition
+        if self.specularity > 0.1:
+            print("Warning: Specularity values above .1 is uncommon for plastic.")
+        if self.roughness > 0.2:
+            print("Warning: Roughness values above .2 is uncommon.")
+
+    def to_json(self):
+        """Translate radiance material to json
+        {
+            "type": "plastic", // Material type
+            "name": "", // Material Name
+            "r_reflectance": float, // Reflectance for red
+            "g_reflectance": float, // Reflectance for green
+            "b_reflectance": float, // Reflectance for blue
+            "specularity": float, // Material specularity
+            "roughness": float // Material roughness
+        }
+        """
+        return {
+            "modifier": self.modifier.to_json(),
+            "type": "plastic",
+            "name": self.name,
+            "r_reflectance": self.r_reflectance,
+            "g_reflectance": self.g_reflectance,
+            "b_reflectance": self.b_reflectance,
+            "specularity": self.specularity,
+            "roughness": self.roughness
+        }
 
 
-class BlackMaterial(PlasticMaterial):
+class BlackMaterial(Plastic):
     """Radiance black plastic material."""
 
-    def __init__(self, name='black'):
-        PlasticMaterial.__init__(self, name)
+    def __init__(self, name='black', r_reflectance=0.0, g_reflectance=0.0,
+                 b_reflectance=0.0, specularity=0.0, roughness=0.0, modifier="void"):
+        Plastic.__init__(self, name)
 
 
 if __name__ == "__main__":
     # some test code
-    wallMaterial = PlasticMaterial.bySingleReflectValue("generic wall", .55)
+    wallMaterial = Plastic.by_single_reflect_value("generic wall", .55)
     print(wallMaterial)
 
-    wallMaterial = PlasticMaterial("generic wall", .55, .65, .75)
+    wallMaterial = Plastic("generic wall", .55, .65, .75)
     print(wallMaterial)
 
     print(BlackMaterial())

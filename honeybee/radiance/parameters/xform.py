@@ -4,30 +4,30 @@
 from ._advancedparametersbase import AdvancedRadianceParameters
 from ._frozen import frozen
 
+
 @frozen
 class XformParameters(AdvancedRadianceParameters):
-    def __init__(self,commandExpandPrevent=None,invertSurfaces=None,
-                 namePrefixToMod=None,modReplace=None,argumentFile=None):
-        #Init parameters
+    def __init__(self, command_expand_prevent=None, invert_surfaces=None,
+                 name_prefix_to_mod=None, mod_replace=None, argument_file=None):
+        # Init parameters
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadianceBoolFlag('c','do not expand commands in file',
-                                 attributeName='commandExpandPrevent')
-        self.commandExpandPrevent = commandExpandPrevent
+        self.add_radiance_bool_flag('c', 'do not expand commands in file',
+                                    attribute_name='command_expand_prevent')
+        self.command_expand_prevent = command_expand_prevent
 
+        self.add_radiance_bool_flag('I', 'invert surfaces',
+                                    attribute_name='invert_surfaces')
+        self.invert_surfaces = invert_surfaces
 
-        self.addRadianceBoolFlag('I', 'invert surfaces',
-                                 attributeName='invertSurfaces')
-        self.invertSurfaces = invertSurfaces
+        self.add_radiance_value('m', 'modifier to replace all modifiers',
+                                attribute_name='mod_replace')
+        self.mod_replace = mod_replace
 
-        self.addRadianceValue('m','modifier to replace all modifiers',
-                              attributeName='modReplace')
-        self.modReplace=modReplace
+        self.add_radiance_value('name_prefix_to_mod', 'prefix value to all modifiers',
+                                attribute_name='name_prefix_to_mod')
+        self.name_prefix_to_mod = name_prefix_to_mod
 
-        self.addRadianceValue('namePrefixToMod','prefix value to all modifiers',
-                              attributeName='namePrefixToMod')
-        self.namePrefixToMod = namePrefixToMod
-
-        self.addRadiancePath('argumentFile','file that contains transforms',
-                             attributeName='argumentFile')
-        self.argumentFile = argumentFile
+        self.add_radiance_path('argument_file', 'file that contains transforms',
+                               attribute_name='argument_file')
+        self.argument_file = argument_file

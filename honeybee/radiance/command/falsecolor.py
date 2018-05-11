@@ -12,59 +12,57 @@ class Falsecolor(RadianceCommand):
     """
     falsecolor - make a falsecolor Radiance picture
     """
-    inputImageFile=RadiancePath('i','input file',checkExists=True)
-    outputFile=RadiancePath('outputFile','output file')
-    
-    def __init__(self,inputImageFile=None,outputFile=None,falsecolorParameters=None):
-        RadianceCommand.__init__(self,executableName='falsecolor.pl')
-        self.inputImageFile=inputImageFile
-        """The file path for which the falsecolor image is to be created."""
-        
-        self.outputFile=outputFile
-        """The name of the output file."""
-        
-        self.falsecolorParameters=falsecolorParameters
-        """Paramters for the falsecolor command."""
-        
-        
-    @property
-    def falsecolorParameters(self):
-        """Get and set falsecolorParameters."""
-        return self.__falsecolorParameters
+    input_image_file = RadiancePath('i', 'input file', check_exists=True)
+    output_file = RadiancePath('output_file', 'output file')
 
-    @falsecolorParameters.setter
-    def falsecolorParameters(self, falsecolorParam):
-        self.__falsecolorParameters = falsecolorParam if falsecolorParam is not None \
+    def __init__(self, input_image_file=None, output_file=None,
+                 falsecolor_parameters=None):
+        RadianceCommand.__init__(self, executable_name='falsecolor.pl')
+        self.input_image_file = input_image_file
+        """The file path for which the falsecolor image is to be created."""
+
+        self.output_file = output_file
+        """The name of the output file."""
+
+        self.falsecolor_parameters = falsecolor_parameters
+        """Paramters for the falsecolor command."""
+
+    @property
+    def falsecolor_parameters(self):
+        """Get and set falsecolor_parameters."""
+        return self.__falsecolor_parameters
+
+    @falsecolor_parameters.setter
+    def falsecolor_parameters(self, falsecolor_param):
+        self.__falsecolor_parameters = falsecolor_param if falsecolor_param is not None \
             else FalsecolorParameters()
 
-        assert hasattr(self.falsecolorParameters, "isRadianceParameters"), \
-            "input falsecolorParameters is not a valid parameters type."
+        assert hasattr(self.falsecolor_parameters, "isRadianceParameters"), \
+            "input falsecolor_parameters is not a valid parameters type."
 
-    def toRadString(self, relativePath=False):
+    def to_rad_string(self, relative_path=False):
         """"Return full command as string"""
-        perlPath = self.normspace(self.perlExePath) if os.name == 'nt' else ''
-        if os.name == 'nt' and not perlPath:
+        perl_path = self.normspace(self.perl_exe_path) if os.name == 'nt' else ''
+        if os.name == 'nt' and not perl_path:
             raise IOError('Failed to find perl installation.\n'
                           'genskyvec.pl needs perl to run successfully.')
 
-        exeName = 'falsecolor.pl' if os.name == 'nt' else 'falsecolor'
-        cmdPath = self.normspace(os.path.join(self.radbinPath, exeName))
+        exe_name = 'falsecolor.pl' if os.name == 'nt' else 'falsecolor'
+        cmd_path = self.normspace(os.path.join(self.radbin_path, exe_name))
 
-        inputParams = self.falsecolorParameters.toRadString()
-        inputFile = self.inputImageFile.toRadString()
-        inputFile = "-i %s"%inputFile if inputFile else ''
-        outputFile = self.outputFile.toRadString().replace("outputFile",'')
+        input_params = self.falsecolor_parameters.to_rad_string()
+        input_file = self.input_image_file.to_rad_string()
+        input_file = "-i %s" % input_file if input_file else ''
+        output_file = self.output_file.to_rad_string().replace("output_file", '')
 
-        radString="%s %s %s > %s"%(cmdPath,inputParams,inputFile,outputFile)
+        rad_string = "%s %s %s > %s" % (cmd_path, input_params, input_file, output_file)
 
-
-
-        return radString
+        return rad_string
 
     @property
-    def inputFiles(self):
-        return self.inputImageFile,
+    def input_files(self):
+        return self.input_image_file,
 
     def execute(self):
-        self.checkInputFiles(self.toRadString())
+        self.check_input_files(self.to_rad_string())
         RadianceCommand.execute(self)

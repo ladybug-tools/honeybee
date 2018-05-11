@@ -14,17 +14,17 @@ class HBFenSurface(HBAnalysisSurface):
 
     Args:
         name: A unique string for surface name
-        sortedPoints: A list of 3 points or more as tuple or list with three items
+        sorted_points: A list of 3 points or more as tuple or list with three items
             (x, y, z). Points should be sorted. This class won't sort the points.
             If surfaces has multiple subsurfaces you can pass lists of point lists
             to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
-        isNameSetByUser: If you want the name to be changed by honeybee any case
-            set isNameSetByUser to True. Default is set to False which let Honeybee
+        is_name_set_by_user: If you want the name to be changed by honeybee any case
+            set is_name_set_by_user to True. Default is set to False which let Honeybee
             to rename the surface in cases like creating a newHBZone.
-        radProperties: Radiance properties for this surface. If empty default
+        rad_properties: Radiance properties for this surface. If empty default
             RADProperties will be assigned to surface by Honeybee.
-        epProperties: EnergyPlus properties for this surface. If empty default
-            epProperties will be assigned to surface by Honeybee.
+        ep_properties: EnergyPlus properties for this surface. If empty default
+            ep_properties will be assigned to surface by Honeybee.
 
     Usage:
 
@@ -33,36 +33,36 @@ class HBFenSurface(HBAnalysisSurface):
 
         # create a surface
         pts = [(0, 0, 0), (10, 0, 0), (0, 0, 10)]
-        hbsrf = HBSurface("001", pts, surfaceType=None, isNameSetByUser=True)
+        hbsrf = HBSurface("001", pts, surface_type=None, is_name_set_by_user=True)
 
         glzpts = [(1, 0, 1), (8, 0, 1), (1, 0, 8)]
         glzsrf = HBFenSurface("glz_001", glzpts)
 
         # add fenestration surface to hb surface
-        hbsrf.addFenestrationSurface(glzsrf)
+        hbsrf.add_fenestration_surface(glzsrf)
 
         # get full definiion of the surface including the fenestration
-        print hbsrf.toRadString(includeMaterials=True)
+        print(hbsrf.to_rad_string(include_materials=True))
 
         # save the definiion to a .rad file
-        hbsrf.radStringToFile(r"c:/ladybug/triangle.rad", includeMaterials=True)
+        hbsrf.rad_string_to_file(r"c:/ladybug/triangle.rad", include_materials=True)
     """
 
-    def __init__(self, name, sortedPoints=None, isNameSetByUser=False,
-                 radProperties=None, epProperties=None, states=None):
+    def __init__(self, name, sorted_points=None, is_name_set_by_user=False,
+                 rad_properties=None, ep_properties=None, states=None):
         """Init honeybee surface."""
-        _surfaceType = 5
-        _isTypeSetByUser = True
-        sortedPoints = sortedPoints or []
+        _surface_type = 5
+        _is_type_set_by_user = True
+        sorted_points = sorted_points or []
 
         states = states or ()
-        HBAnalysisSurface.__init__(self, name, sortedPoints, _surfaceType,
-                                   isNameSetByUser, _isTypeSetByUser)
+        HBAnalysisSurface.__init__(self, name, sorted_points, _surface_type,
+                                   is_name_set_by_user, _is_type_set_by_user)
 
-        sp = SurfaceProperties(self.surfaceType, radProperties, epProperties)
+        sp = SurfaceProperties(self.surface_type, rad_properties, ep_properties)
         self._states[0] = SurfaceState('default', sp)
         for state in states:
-            self.addSurfaceState(state)
+            self.add_surface_state(state)
 
         self.__isChildSurface = True
         # Parent will be set once the fen surface is added to a prent surface
@@ -71,14 +71,14 @@ class HBFenSurface(HBAnalysisSurface):
 
     # TODO: Parse EnergyPlus properties
     @classmethod
-    def fromEPString(cls, EPString):
-        """Init Honeybee fenestration surface from an EPString.
+    def from_ep_string(cls, ep_string):
+        """Init Honeybee fenestration surface from an ep_string.
 
         Args:
-            EPString: The full EPString for an EnergyPlus fenestration.
+            ep_string: The full ep_string for an EnergyPlus fenestration.
         """
-        # clean input EPString - split based on comma
-        _segments = EPString.replace("\t", "") \
+        # clean input ep_string - split based on comma
+        _segments = ep_string.replace("\t", "") \
             .replace(" ", "").replace(";", "").split(",")
 
         name = _segments[1]
@@ -94,16 +94,16 @@ class HBFenSurface(HBAnalysisSurface):
                 )
 
         # create the surfaceString
-        return cls(name, sortedPoints=_pts, isNameSetByUser=True)
+        return cls(name, sorted_points=_pts, is_name_set_by_user=True)
 
     @classmethod
-    def fromGeometry(cls, name, geometry, isNameSetByUser=False, radProperties=None,
-                     epProperties=None, states=None, group=False):
+    def from_geometry(cls, name, geometry, is_name_set_by_user=False,
+                      rad_properties=None, ep_properties=None, states=None, group=False):
         """Create a honeybee fenestration surface from Grasshopper geometry."""
         assert honeybee.isplus, \
             '"fromGeometries" method can only be used in [+] libraries.'
 
-        name = name or util.randomName()
+        name = name or util.random_name()
 
         if isinstance(name, basestring):
             names = (name,)
@@ -114,21 +114,21 @@ class HBFenSurface(HBAnalysisSurface):
 
         namescount = len(names) - 1
 
-        srfData = plus.extractGeometryPoints(geometry)
+        srf_data = plus.extract_geometry_points(geometry)
         cls._isCreatedFromGeo = True
 
         if not group:
             hbsrfs = []
             # create a separate surface for each geometry.
-            for gcount, srf in enumerate(srfData):
+            for gcount, srf in enumerate(srf_data):
                 for scount, (geo, pts) in enumerate(srf):
                     try:
                         _name = '%s_%d_%d' % (names[gcount], gcount, scount)
                     except IndexError:
                         _name = '%s_%d_%d' % (names[-1], gcount, scount)
 
-                    _srf = cls(_name, pts, isNameSetByUser, radProperties, epProperties,
-                               states)
+                    _srf = cls(_name, pts, is_name_set_by_user, rad_properties,
+                               ep_properties, states)
                     _srf.geometry = geo
                     hbsrfs.append(_srf)
 
@@ -147,18 +147,18 @@ class HBFenSurface(HBAnalysisSurface):
             _geos = []
             _pts = []
             # collect all the points in a single list
-            for srf in srfData:
+            for srf in srf_data:
                 for geo, pts in srf:
                     _pts.extend(pts)
                     _geos.append(geo)
 
-            _srf = cls(names[0], _pts, isNameSetByUser, radProperties, epProperties,
-                       states)
+            _srf = cls(names[0], _pts, is_name_set_by_user, rad_properties,
+                       ep_properties, states)
             _srf.geometry = _geos
             return _srf
 
     @property
-    def isCreatedFromGeometry(self):
+    def is_created_from_geometry(self):
         """Return True if the surface is created from a geometry not points."""
         return self._isCreatedFromGeo
 
@@ -168,7 +168,7 @@ class HBFenSurface(HBAnalysisSurface):
         return True
 
     @property
-    def isChildSurface(self):
+    def is_child_surface(self):
         """Return True if Honeybee surface is Fenestration Surface."""
         return self.__isChildSurface
 
@@ -182,7 +182,7 @@ class HBFenSurface(HBAnalysisSurface):
         """Return geometry."""
         assert honeybee.isplus, \
             '"geometry" property can only be used in [+] libraries.'
-        if self.isCreatedFromGeometry:
+        if self.is_created_from_geometry:
             return self._geometry
         else:
             return self.profile
@@ -203,5 +203,5 @@ class HBFenSurface(HBAnalysisSurface):
         assert honeybee.isplus, \
             '"profile" property can only be used in [+] libraries.'
         return plus.polygon(
-            tuple(plus.xyzToGeometricalPoints(self.absolutePoints))
+            tuple(plus.xyz_to_geometrical_points(self.absolute_points))
         )

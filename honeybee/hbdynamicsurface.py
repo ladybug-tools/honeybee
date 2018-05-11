@@ -7,11 +7,11 @@ class HBDynamicSurface(HBSurface):
 
     Attributes:
         name: A unique string for surface name
-        sortedPoints: A list of 3 points or more as tuple or list with three items
+        sorted_points: A list of 3 points or more as tuple or list with three items
             (x, y, z). Points should be sorted. This class won't sort the points.
             If surfaces has multiple subsurfaces you can pass lists of point lists
             to this function (e.g. ((0, 0, 0), (10, 0, 0), (0, 10, 0))).
-        surfaceType: Optional input for surface type. You can use any of the surface
+        surface_type: Optional input for surface type. You can use any of the surface
             types available from surfacetype libraries or use a float number to
             indicate the type. If not indicated it will be assigned based on normal
             angle of the surface which will be calculated from surface points.
@@ -21,13 +21,13 @@ class HBDynamicSurface(HBSurface):
                 2.5: SlabOnGrade    2.75: ExposedFloor
                 3.0: Ceiling        4.0: AirWall
                 6.0: Context
-        isNameSetByUser: If you want the name to be changed by honeybee any case
-            set isNameSetByUser to True. Default is set to False which let Honeybee
+        is_name_set_by_user: If you want the name to be changed by honeybee any case
+            set is_name_set_by_user to True. Default is set to False which let Honeybee
             to rename the surface in cases like creating a newHBZone.
-        radProperties: Radiance properties for this surface. If empty default
+        rad_properties: Radiance properties for this surface. If empty default
             RADProperties will be assigned to surface by Honeybee.
-        epProperties: EnergyPlus properties for this surface. If empty default
-            epProperties will be assigned to surface by Honeybee.
+        ep_properties: EnergyPlus properties for this surface. If empty default
+            ep_properties will be assigned to surface by Honeybee.
         states: A list of SurfaceStates for this dynamic surface.
     """
 

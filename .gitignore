@@ -3,3 +3,4 @@ test.py
 *.gh
 fullsize.py
 honeybee/plus.py
+/radiance

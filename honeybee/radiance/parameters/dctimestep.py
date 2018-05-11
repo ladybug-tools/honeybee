@@ -7,23 +7,23 @@ from ._frozen import frozen
 @frozen
 class DctimestepParameters(AdvancedRadianceParameters):
 
-    def __init__(self, numTimeSteps=None, suppressHeader=None,
-                 inputDataFormat=None, outputDataFormat=None):
+    def __init__(self, num_time_steps=None, suppress_header=None,
+                 input_data_format=None, output_data_format=None):
         """Init paramters."""
         AdvancedRadianceParameters.__init__(self)
 
-        self.addRadianceNumber('n', 'number of time steps',
-                               attributeName='numTimeSteps')
-        self.numTimeSteps = numTimeSteps
+        self.add_radiance_number('n', 'number of time steps',
+                                 attribute_name='num_time_steps')
+        self.num_time_steps = num_time_steps
 
-        self.addRadianceBoolFlag('h', 'suppress header',
-                                 attributeName='suppressHeader')
-        self.suppressHeader = suppressHeader
+        self.add_radiance_bool_flag('h', 'suppress header',
+                                    attribute_name='suppress_header')
+        self.suppress_header = suppress_header
 
-        self.addRadianceValue('i', 'input data format', isJoined=True,
-                              attributeName='inputDataFormat')
-        self.inputDataFormat = inputDataFormat
+        self.add_radiance_value('i', 'input data format', is_joined=True,
+                                attribute_name='input_data_format')
+        self.input_data_format = input_data_format
 
-        self.addRadianceValue('o', 'output data format', isJoined=True,
-                              attributeName='outputDataFormat')
-        self.outputDataFormat = outputDataFormat
+        self.add_radiance_value('o', 'output data format', is_joined=True,
+                                attribute_name='output_data_format')
+        self.output_data_format = output_data_format

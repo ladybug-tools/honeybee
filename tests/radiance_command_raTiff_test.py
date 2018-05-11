@@ -7,41 +7,37 @@ from honeybee.radiance.parameters.raTiff import RaTiffParameters
 import os
 
 
-
-
 class RaTiffTestCase(unittest.TestCase):
-    """Test for (honeybee/radiance/command/raTiff.py)."""
+    """Test for (honeybee/radiance/command/ra_tiff.py)."""
 
-    #test prep
+    # test prep
     def setUp(self):
-        raTiffPara = RaTiffParameters()
-        raTiffPara.exposure = '-4'
-        raTiffPara.compressionType = 'L'
+        ra_tiff_para = RaTiffParameters()
+        ra_tiff_para.exposure = '-4'
+        ra_tiff_para.compression_type = 'L'
 
-        self.raTiff = RaTiff()
-        self.raTiff.inputHdrFile='assets/sample.hdr'
-        self.raTiff.raTiffParameters = raTiffPara
-        self.raTiff.outputTiffFile = 'assets/sample.tiff'
+        self.ra_tiff = RaTiff()
+        self.ra_tiff.input_hdr_file = 'assets/sample.hdr'
+        self.ra_tiff.ra_tiff_parameters = ra_tiff_para
+        self.ra_tiff.output_tiff_file = 'assets/sample.tiff'
 
     def tearDown(self):
-        #cleanup
+        # cleanup
         os.remove('assets/sample.tiff')
 
-
-
     def test_default_values(self):
-        #Two tests will be conducted:
-        #   First one checks if raTiff created the file correctly.
+        # Two tests will be conducted:
+        #   First one checks if ra_tiff created the file correctly.
         #   Second one checks if the file size is greater than zero.
-        self.raTiff.execute()
+        self.ra_tiff.execute()
         self.assertTrue(os.path.exists('assets/sample.tiff'),
-                        'The file that should have been created by raTiff was not'
+                        'The file that should have been created by ra_tiff was not'
                         'found.')
 
-        fileSize = os.stat('assets/sample.tiff').st_size
+        file_size = os.stat('assets/sample.tiff').st_size
 
-        self.assertGreater(fileSize,10,
-                           'The size of the file created by raTiff does not appear to'
+        self.assertGreater(file_size, 10,
+                           'The size of the file created by ra_tiff does not appear to'
                            ' be correct')
 
 
