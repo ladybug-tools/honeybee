@@ -6,8 +6,8 @@ surface or a list of honeybee surfaces.
 """
 import surfacetype
 import utilcol as util
-from radiance.properties import RadianceProperties
-from radiance.radfile import RadFile
+from .radiance.properties import RadianceProperties
+from .radiance.radfile import RadFile
 
 
 class SurfaceProperties(object):
@@ -30,7 +30,7 @@ class SurfaceProperties(object):
     # TODO: add default ep_properties - based on surface type.
     def __init__(self, surface_type=None, rad_properties=None, ep_properties=None):
         self.surface_type = surface_type or surfacetype.Wall()
-        self.rad_properties = rad_properties
+        self.radiance_properties = rad_properties
         if ep_properties:
             raise NotImplementedError('EnergyPlus properties is not implemented yet!')
         self.ep_properties = ep_properties
@@ -54,23 +54,23 @@ class SurfaceProperties(object):
 
         # update radiance material
         try:
-            self.rad_properties.radiance_material = self.surface_type.radiance_material
+            self.radiance_properties.material = self.surface_type.radiance_material
         except AttributeError:
             pass  # surface rad properties is not set yet!
 
     @property
-    def rad_properties(self):
+    def radiance_properties(self):
         """Get and set Radiance properties."""
         return self._rad_properties
 
-    @rad_properties.setter
-    def rad_properties(self, rad_properties):
+    @radiance_properties.setter
+    def radiance_properties(self, rad_properties):
         rad_properties = rad_properties or \
             RadianceProperties(self.surface_type.radiance_material)
         assert hasattr(rad_properties, 'isRadianceProperties'), \
             "%s is not a valid RadianceProperties" % str(rad_properties)
-        if rad_properties.radiance_material is None:
-            rad_properties.radiance_material = self.surface_type.radiance_material
+        if rad_properties.material is None:
+            rad_properties.material = self.surface_type.radiance_material
         self._rad_properties = rad_properties
 
     def rad_material_from_type(self):
@@ -160,21 +160,31 @@ class SurfaceState(object):
         self._surfaces = srfs
 
     @property
-    def rad_properties(self):
+    def radiance_properties(self):
         """Get Radiance material from SurfaceProperties."""
         if not self._surface_properties:
             return None
         else:
-            return self._surface_properties.rad_properties
+            return self._surface_properties.radiance_properties
 
     @property
     def radiance_material(self):
         """Get Radiance material from SurfaceProperties."""
-        if not self._surface_properties:
+        if not self.radiance_properties:
             return None
         else:
-            return self._surface_properties.rad_properties.radiance_material
+            return self.radiance_properties.material
 
+    @property
+    def radiance_black_material(self):
+        """Get Radiance black material from SurfaceProperties."""
+        if not self.radiance_properties:
+            return None
+        else:
+            return self.radiance_properties.balck_material
+
+    # TODO(mostapha): Each surface should only have a single material. This method
+    # can be really confusing.
     def radiance_materials(self, blacked=False, to_rad_string=False):
         """Get the full list of materials for surfaces."""
         mt_base = [srf.radiance_material for srf in self.surfaces]
@@ -216,6 +226,6 @@ class SurfaceState(object):
 
 if __name__ == '__main__':
     sp = SurfaceProperties()
-    print(sp.rad_properties.radiance_material)
+    print(sp.radiance_properties.material)
 
     st = SurfaceState('newState', sp)
