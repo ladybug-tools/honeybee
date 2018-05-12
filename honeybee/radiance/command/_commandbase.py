@@ -3,7 +3,6 @@ from ... import config
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 import os
-import stat
 import subprocess
 
 
