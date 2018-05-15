@@ -36,7 +36,7 @@ class Void(object):
     @property
     def is_opaque(self):
         """False for a void."""
-        return False
+        return True
 
     def to_rad_string(self):
         """Return full radiance definition."""
@@ -270,9 +270,15 @@ class Primitive(object):
 
         This property is used to separate opaque and non-opaque surfaces.
         """
-        if self._is_opaque is None:
-            return self.modifier.is_opaque and self.type not in self.NONEOPAQUETYPES
-        return self._is_opaque
+        if self._is_opaque:
+            return self._is_opaque
+        elif self.type in self.NONEOPAQUETYPES:
+            # none opaque material
+            self._is_opaque = False
+            return self._is_opaque
+        else:
+            # check modifier for surfaces
+            return self.modifier.is_opaque
 
     @is_opaque.setter
     def is_opaque(self, is_opaque):
@@ -415,6 +421,7 @@ class Primitive(object):
         else:
             return "%s %s %s\n" % (self.modifier.name, self.type, self.name)
 
+    # add string format for float values
     def to_rad_string(self, minimal=False, include_modifier=True):
         """Return full radiance definition."""
         output = [self.head_line(minimal, include_modifier).strip()]

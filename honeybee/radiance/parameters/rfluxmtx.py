@@ -1,7 +1,7 @@
 # coding=utf-8
 """Radiance rfluxmtx parameters."""
 
-from .gridbased import RtraceParameters
+from .rtrace import RtraceParameters
 from ._frozen import frozen
 from ..datatype import RadianceNumber
 

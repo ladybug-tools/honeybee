@@ -1,6 +1,6 @@
 # coding=utf-8
 """Radiance rcontrib Parameters."""
-from gridbased import RtraceParameters
+from .rtrace import RtraceParameters
 from ._frozen import frozen
 
 

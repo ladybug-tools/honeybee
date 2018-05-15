@@ -6,7 +6,7 @@ from ..futil import write_to_file_by_name, copy_files_to_folder, preparedir
 from .geometry.polygon import Polygon
 from .material.plastic import BlackMaterial
 from .material.glow import WhiteGlow
-import radparser
+from .radparser import parse_from_file
 
 import datetime
 import os
@@ -39,7 +39,7 @@ class RadFile(object):
         geometries = []
         materials = []
         for file_path in file_paths:
-            for obj in radparser.parse_from_file(file_path):
+            for obj in parse_from_file(file_path):
                 if obj.startswith('#'):
                     continue
         return cls(geometries, materials)
