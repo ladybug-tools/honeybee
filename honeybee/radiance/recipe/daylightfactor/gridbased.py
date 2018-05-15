@@ -1,7 +1,7 @@
 """Radiance Grid-based Analysis Recipe."""
 from ..pointintime.gridbased import GridBased as PITGridBased
 from ...sky.certainIlluminance import CertainIlluminanceLevel
-from ...parameters.gridbased import GridBasedParameters
+from ...parameters.rtrace import RtraceParameters
 from ...analysisgrid import AnalysisGrid
 from ladybug.dt import DateTime
 from ladybug.legendparameters import LegendParameters
@@ -48,7 +48,7 @@ class GridBased(PITGridBased):
         """
         analysis_grids = tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
-        rad_parameters = GridBasedParameters.from_json(rec_json["rad_parameters"])
+        rad_parameters = RtraceParameters.from_json(rec_json["rad_parameters"])
 
         recipe = cls(analysis_grids=analysis_grids, rad_parameters=rad_parameters, \
             hb_objects=hb_objects)

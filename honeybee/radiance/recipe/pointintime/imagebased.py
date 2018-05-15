@@ -2,7 +2,7 @@
 
 from .._imagebasedbase import GenericImageBased
 from ..recipeutil import write_rad_files, write_extra_files
-from ...parameters.imagebased import ImageBasedParameters
+from ...parameters.rpict import RpictParameters
 from ...command.oconv import Oconv
 from ...command.rpict import Rpict
 from ....futil import write_to_file
@@ -116,7 +116,7 @@ class ImageBased(GenericImageBased):
     @radiance_parameters.setter
     def radiance_parameters(self, rad_parameters):
         if not rad_parameters:
-            rad_parameters = ImageBasedParameters.low_quality()
+            rad_parameters = RpictParameters.low_quality()
         assert hasattr(rad_parameters, "isRadianceParameters"), \
             "%s is not a radiance parameters." % type(rad_parameters)
         self._radiance_parameters = rad_parameters

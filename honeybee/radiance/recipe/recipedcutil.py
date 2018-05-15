@@ -9,7 +9,7 @@ from ..command.oconv import Oconv
 from ..command.rpict import Rpict
 from ..command.rcontrib import Rcontrib
 from ..command.vwrays import Vwrays
-from ..parameters.imagebased import ImageBasedParameters
+from ..parameters.rpict import RpictParameters
 from .recipeutil import glz_srf_to_window_group
 from .parameters import get_radiance_parameters_grid_based, \
     get_radiance_parameters_image_based
@@ -573,7 +573,7 @@ def image_based_view_sampling_commands(
 def create_reference_map_command(view, view_file, outputfolder, octree_file):
     """Create a reference map to conver illuminance to luminance."""
     # set the parameters / options
-    img_par = ImageBasedParameters()
+    img_par = RpictParameters()
     img_par.ambient_accuracy = 0
     img_par.ambient_value = [0.31831] * 3
     img_par.pixel_sampling = 1

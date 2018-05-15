@@ -484,13 +484,13 @@ class HBAnalysisSurface(HBObject):
         return go.up_vector_from_points(self.points[0])
 
     @property
-    def rad_properties(self):
+    def radiance_properties(self):
         """Get and set Radiance properties."""
-        return self.states[self.state].rad_properties
+        return self.states[self.state].radiance_properties
 
-    @rad_properties.setter
-    def rad_properties(self, rad_properties):
-        self.states[self.state].rad_properties = rad_properties
+    @radiance_properties.setter
+    def radiance_properties(self, rad_properties):
+        self.states[self.state].radiance_properties = rad_properties
 
     @property
     def radiance_material(self):
@@ -516,7 +516,7 @@ class HBAnalysisSurface(HBObject):
     @radiance_material.setter
     def radiance_material(self, value):
         try:
-            self.states[self.state].rad_properties.radiance_material = value
+            self.states[self.state].radiance_properties.material = value
         except AttributeError:
             raise AttributeError('Failed to assign new Radiance material.'
                                  ' Current state does not have a RadianceProperties!')
