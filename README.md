@@ -35,7 +35,7 @@ Here is a Python example that shows how to put a grid-based analysis together. F
 
 ```python
 from honeybee.room import Room
-from honeybee.radiance.material.glass import GlassMaterial
+from honeybee.radiance.material.glass import Glass
 from honeybee.radiance.sky.certainIlluminance import CertainIlluminanceLevel
 from honeybee.radiance.recipe.pointintime.gridbased import GridBased
 
@@ -48,7 +48,7 @@ room = Room(origin=(0, 0, 3.2), width=4.2, depth=6, height=3.2,
 room.add_fenestration_surface(wall_name='back', width=2, height=2, sill_height=0.7)
 
 # add another window with custom material. This time to the right wall
-glass_60 = GlassMaterial.by_single_trans_value('tvis_0.6', 0.6)
+glass_60 = Glass.by_single_trans_value('tvis_0.6', 0.6)
 room.add_fenestration_surface('right', 4, 1.5, 1.2, radiance_material=glass_60)
 
 # run a grid-based analysis for this room
