@@ -599,7 +599,7 @@ class AnalysisGrid(object):
 
         return sda, daylight_autonomy, problematic_points
 
-    def annual_solar_exposure(self, threshhold=None, blinds_state_ids=None,
+    def annual_sunlight_exposure(self, threshhold=None, blinds_state_ids=None,
                               occ_schedule=None, target_hours=None, target_area=None):
         """Annual Solar Exposure (ASE)
 
@@ -650,7 +650,7 @@ class AnalysisGrid(object):
             blinds_state_ids = blinds_state_ids or [[0] * len(self.sources)] * len(hoys)
 
             for sensor in self.analysis_points:
-                for c, r in enumerate(sensor.annual_solar_exposure(threshhold,
+                for c, r in enumerate(sensor.annual_sunlight_exposure(threshhold,
                                                                    blinds_state_ids,
                                                                    occ_schedule,
                                                                    target_hours
@@ -661,8 +661,8 @@ class AnalysisGrid(object):
             # which unlike the other method doesn't load all the values to the memory
             # at once.
             blinds_state_ids = [[0] * len(self.sources)] * len(hoys)
-            calculate_annual_solar_exposure = \
-                self.analysis_points[0]._calculate_annual_solar_exposure
+            calculate_annual_sunlight_exposure = \
+                self.analysis_points[0]._calculate_annual_sunlight_exposure
 
             for file_data in self.result_files[1]:
                 file_path, hoys, start_line, header, mode = file_data
@@ -691,7 +691,7 @@ class AnalysisGrid(object):
                     for count in xrange(end):
                         values = (int(float(r)) for r in inf.next().split())
                         for c, r in enumerate(
-                            calculate_annual_solar_exposure(
+                            calculate_annual_sunlight_exposure(
                                 values, hoys, threshhold, blinds_state_ids, occ_schedule,
                                 target_hours)):
 

@@ -1,6 +1,6 @@
 import os
 from ._commandbase import RadianceCommand
-from ..parameters.gridbased import LowQuality
+from ..parameters.rtrace import LowQuality
 from ..datatype import RadiancePath
 
 

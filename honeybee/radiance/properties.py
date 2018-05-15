@@ -1,25 +1,27 @@
 """Radiance Properties for HBSurfaces."""
 import copy
+from .material.plastic import BlackMaterial
+from .material.glow import WhiteGlow
 
 
 class RadianceProperties(object):
     """Radiance properties for HBSurface.
 
     Args:
-        radiance_material: Radiance material for this surfcae.Use
-            honeybee.radiace.material to create a radiance material (Default: None).
-        is_material_set_by_user: Set to True if you don't want material automatically
-            overwritten by honeybee in cases like solve adjacencies.
+        material: Radiance material. Use honeybee.radiace.material to create a
+            radiance material (Default: None).
+        black_material: A material that will be used for blacking out this surface. By
+            default black material is set to black color with no reflectance. In cases
+            such as interior glass black material should be set to the original glass
+            material.
     """
 
-    __slots__ = ('_radiance_material', '_is_material_set_by_user', '_hb_surfaces',
-                 '_radiance_black_material')
+    __slots__ = ('_material', '_black_material', '_glow_material')
 
-    def __init__(self, radiance_material=None, is_material_set_by_user=False,
-                 radiance_black_material=None):
+    def __init__(self, material=None, black_material=None):
         """Create radiance properties for surface."""
-        self.radiance_material = (radiance_material, is_material_set_by_user)
-        self.radiance_black_material = radiance_black_material
+        self.material = material
+        self.black_material = black_material
 
     @property
     def isRadianceProperties(self):
@@ -27,56 +29,71 @@ class RadianceProperties(object):
         return True
 
     @property
-    def radiance_material(self):
+    def material(self):
         """Return Radiance Material."""
-        return self._radiance_material
+        return self._material
 
-    @radiance_material.setter
-    def radiance_material(self, values):
-        """Set Radiance material and if it is set by user.
-
-        Args:
-            values: A name or a tuple as (radiance_material, isSetByUser)
-
-        Usage:
-
-            radiance_material = Plastic.by_single_reflect_value(
-                'wall_material', 0.55)
-            HBSrf.radiance_material = (radiance_material, True)
-        """
-        try:
-            # check if user passed a tuple
-            if hasattr(values, 'isRadianceMaterial'):
-                raise TypeError  # The user passed only Radiance Material
-            _newMaterial, _is_material_set_by_user = values
-        except ValueError:
-            # user is passing a list or tuple with one ValueError
-            _newMaterial = values[0]
-            # if not indicated assume it is not set by user
-            _is_material_set_by_user = False
-        except TypeError:
-            # user just passed a single value which is the material
-            _newMaterial = values
-            # if not indicated assume it is not set by user
-            _is_material_set_by_user = False
-        finally:
-
-            if _newMaterial:
-                # chek if radiance material is radiance material
-                assert hasattr(_newMaterial, 'isRadianceMaterial'), \
-                    TypeError('Expected RadianceMaterial not {}'.format(_newMaterial))
-
-                # set new material
-                self._radiance_material = _newMaterial
-                self._is_material_set_by_user = _is_material_set_by_user
-            else:
-                self._radiance_material = None
-                self._is_material_set_by_user = False
+    @material.setter
+    def material(self, material):
+        """Set Radiance material."""
+        if material:
+            # chek if radiance material is radiance material
+            assert hasattr(material, 'isRadianceMaterial'), \
+                TypeError('Expected RadianceMaterial not {}'.format(type(material)))
+            # set new material
+            self._material = material
+        else:
+            self._material = None
 
     @property
-    def is_material_set_by_user(self):
-        """Check if material is set by user."""
-        return self._is_material_set_by_user
+    def black_material(self):
+        """Radiance black material."""
+        return self._black_material
+
+    @black_material.setter
+    def black_material(self, material, rename_black_material=False):
+        """Set Radiance black_materialblack material.
+
+        Args:
+            material: A radiance material. Default material is BlackMaterial.
+            rename_black_material: Rename default black material to the same name as
+            radiance material (Default: False).
+        """
+        if material:
+            # chek if radiance material is radiance material
+            assert hasattr(material, 'isRadianceMaterial'), \
+                TypeError('Expected RadianceMaterial not {}'.format(type(material)))
+            # set new material
+            self._black_material = material
+        else:
+            self._black_material = BlackMaterial()
+            if self.material and rename_black_material:
+                self._black_material.name = self.radiance.name
+
+    @property
+    def glow_material(self):
+        """Radiance glow material."""
+        return self._glow_material
+
+    @glow_material.setter
+    def glow_material(self, material, rename_glow_material=False):
+        """Set Radiance glow_materialblack material.
+
+        Args:
+            material: A radiance material. Default material is GlowMaterial.
+            rename_glow_material: Rename default glow material to the same name as
+            radiance material (Default: False).
+        """
+        if material:
+            # chek if radiance material is radiance material
+            assert hasattr(material, 'isRadianceMaterial'), \
+                TypeError('Expected RadianceMaterial not {}'.format(type(material)))
+            # set new material
+            self._glow_material = material
+        else:
+            self._glow_material = WhiteGlow()
+            if self.material and rename_glow_material:
+                self._glow_material.name = self.radiance.name
 
     def duplicate(self):
         """Duplicate RadianceProperties."""
@@ -92,10 +109,10 @@ class RadianceProperties(object):
 
     def __repr__(self):
         """Represnt Radiance properties."""
-        if not self.radiance_material:
+        if not self.material:
             return 'RadianceProp::Material.Unset'
         else:
-            return 'RadianceProp::%s' % self.radiance_material.name
+            return 'RadianceProp::%s' % self.material.name
 
 
 if __name__ == "__main__":

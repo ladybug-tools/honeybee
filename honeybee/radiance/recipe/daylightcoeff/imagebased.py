@@ -216,7 +216,7 @@ class DaylightCoeffImageBased(GenericImageBased):
             self.glazing_rad_file, self.window_groups_rad_files
         )
         # additional radiance files added to the recipe as scene
-        extrafiles = write_extra_files(self.scene, project_folder + '/scene')
+        extrafiles = write_extra_files(self.scene, project_folder + '/scene', True)
 
         # reset self.result_files
         self._result_files = [[] for v in xrange(self.view_count)]

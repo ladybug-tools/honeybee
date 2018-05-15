@@ -2,7 +2,7 @@
 """RADIANCE rcontrib command."""
 from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath
-from ..parameters.imagebased import ImageBasedParameters
+from ..parameters.rpict import RpictParameters
 from ..view import View
 
 
@@ -66,7 +66,7 @@ class Rpict(RadianceCommand):
     @rpict_parameters.setter
     def rpict_parameters(self, parameters):
         self._rpict_parameters = parameters if parameters is not None \
-            else ImageBasedParameters()
+            else RpictParameters()
 
         assert hasattr(self.rpict_parameters, "isImageBasedRadianceParameters"), \
             "input rcontribParamters is not a valid parameters type."

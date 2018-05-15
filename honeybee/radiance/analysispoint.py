@@ -803,7 +803,7 @@ class AnalysisPoint(object):
 
         return 100 * DA / total_hour_count, 100 * cda / total_hour_count
 
-    def annual_solar_exposure(self, threshhold=None, blinds_state_ids=None,
+    def annual_sunlight_exposure(self, threshhold=None, blinds_state_ids=None,
                               occ_schedule=None, target_hours=None):
         """Annual Solar Exposure (ASE).
 
@@ -829,11 +829,11 @@ class AnalysisPoint(object):
 
         hoys = self.hoys
         values = tuple(v[1] for v in self.combined_values_by_id(hoys, blinds_state_ids))
-        return self._calculate_annual_solar_exposure(
+        return self._calculate_annual_sunlight_exposure(
             values, hoys, threshhold, blinds_state_ids, occ_schedule, target_hours)
 
     @staticmethod
-    def _calculate_annual_solar_exposure(
+    def _calculate_annual_sunlight_exposure(
             values, hoys, threshhold=None, blinds_state_ids=None, occ_schedule=None,
             target_hours=None):
         threshhold = threshhold or 1000

@@ -89,9 +89,9 @@ class DaylightCoeffGridBased(GenericGridBased):
         rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
         simulation_type = rec_json["simulation_type"]
 
-        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
-                radiance_parameters=rad_parameters, hb_objects=hb_objects, \
-                simulation_type=simulation_type)
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids,
+                   radiance_parameters=rad_parameters, hb_objects=hb_objects,
+                   simulation_type=simulation_type)
 
     @classmethod
     def from_weather_file_points_and_vectors(
@@ -259,14 +259,14 @@ class DaylightCoeffGridBased(GenericGridBased):
             }
         """
         return {
-                "id": "daylight_coeff",
-                "type": "gridbased",
-                "sky_mtx": self.sky_matrix.to_json(),
-                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
-                "surfaces": [srf.to_json() for srf in self.hb_objects],
-                "simulation_type": self.simulation_type,
-                "rad_parameters": self.radiance_parameters.to_json()
-                }
+            "id": "daylight_coeff",
+            "type": "gridbased",
+            "sky_mtx": self.sky_matrix.to_json(),
+            "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+            "surfaces": [srf.to_json() for srf in self.hb_objects],
+            "simulation_type": self.simulation_type,
+            "rad_parameters": self.radiance_parameters.to_json()
+        }
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
@@ -293,7 +293,7 @@ class DaylightCoeffGridBased(GenericGridBased):
             self.glazing_rad_file, self.window_groups_rad_files
         )
         # additional radiance files added to the recipe as scene
-        extrafiles = write_extra_files(self.scene, project_folder + '/scene')
+        extrafiles = write_extra_files(self.scene, project_folder + '/scene', True)
 
         # 0.write points
         points_file = self.write_analysis_grids(project_folder, project_name)

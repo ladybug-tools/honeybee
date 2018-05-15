@@ -250,7 +250,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
                 ' in the scene use daylight coefficient ')
 
         # additional radiance files added to the recipe as scene
-        extrafiles = write_extra_files(self.scene, project_folder + '/scene')
+        extrafiles = write_extra_files(self.scene, project_folder + '/scene', True)
 
         # 0.write points
         points_file = self.write_analysis_grids(project_folder, project_name)
