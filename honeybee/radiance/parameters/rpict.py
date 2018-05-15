@@ -401,6 +401,14 @@ class RpictParameters(AdvancedRadianceParameters):
         self.y_resolution = None
         """ Set the maximum y resolution."""
 
+        # Photon-mapping goodies start here!
+        self.add_radiance_value('ac',descriptive_name='photon cache page size',
+                                attribute_name='photon_cache_pagesize')
+        self.photon_cache_pagesize = None
+        """Place holder for comments."""
+
+
+
     @classmethod
     def low_quality(cls):
         """Radiance parmaters for a quick analysis."""
