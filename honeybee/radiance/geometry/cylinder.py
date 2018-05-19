@@ -36,8 +36,7 @@ class Cylinder(RadianceGeometry):
             radius: Cylinder start radius as a number (Default: 10).
             modifier: Geometry modifier (Default: "void").
         """
-        RadianceGeometry.__init__(self, name, type=self.__class__.__name__.lower(),
-                                  modifier=modifier)
+        RadianceGeometry.__init__(self, name, modifier=modifier)
         self.center_pt_start = center_pt_start or (0, 0, 0)
         self.center_pt_end = center_pt_end or (0, 0, 10)
         self.radius = radius or 10

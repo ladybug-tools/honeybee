@@ -46,7 +46,7 @@ class Trans(RadianceMaterial):
                 transmitted light that is not diffusely scattered.
             modifier: Material modifier (Default: "void").
         """
-        RadianceMaterial.__init__(self, name, type="trans", modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
         self.g_reflectance = g_reflectance

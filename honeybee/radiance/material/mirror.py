@@ -32,7 +32,7 @@ class Mirror(RadianceMaterial):
             mirror_material = Mirror("mirror_mat", .95, .95, .95)
             print(mirror_material)
         """
-        RadianceMaterial.__init__(self, name, type="mirror", modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
         self.g_reflectance = g_reflectance

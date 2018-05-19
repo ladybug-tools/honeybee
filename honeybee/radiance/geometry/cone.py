@@ -40,8 +40,7 @@ class Cone(RadianceGeometry):
             radius_end: Cone end radius as a number (Default: 0).
             modifier: Geometry modifier (Default: "void").
         """
-        RadianceGeometry.__init__(self, name, type=self.__class__.__name__.lower(),
-                                  modifier=modifier)
+        RadianceGeometry.__init__(self, name, modifier=modifier)
         self.center_pt_start = center_pt_start or (0, 0, 0)
         self.radius_start = radius_start or 10
         self.center_pt_end = center_pt_end or (0, 0, 10)

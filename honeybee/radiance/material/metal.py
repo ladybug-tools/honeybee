@@ -36,7 +36,7 @@ class Metal(RadianceMaterial):
                 not very realistic. (Default: 0).
             modifier: Material modifier (Default: "void").
         """
-        RadianceMaterial.__init__(self, name, type="metal", modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
         self.g_reflectance = g_reflectance
