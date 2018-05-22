@@ -25,7 +25,7 @@ class Light(RadianceMaterial):
             blue: A positive value for the Blue channel of the light (default: 0).
             modifier: Material modifier. The default value is void.
         """
-        RadianceMaterial.__init__(self, name, type='light', modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.red = red
         """A positive value for the Red channel of the light"""
         self.green = green

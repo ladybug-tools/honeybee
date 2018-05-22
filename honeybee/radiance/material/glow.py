@@ -34,7 +34,7 @@ class Glow(RadianceMaterial):
     def __init__(self, name, red=0.0, green=0.0, blue=0.0, max_radius=0.0,
                  modifier='void'):
         """Init Glow material."""
-        RadianceMaterial.__init__(self, name, type='glow', modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.red = red
         """A positive value for the Red channel of the glow"""
         self.green = green

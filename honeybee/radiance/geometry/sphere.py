@@ -31,8 +31,7 @@ class Sphere(RadianceGeometry):
             sphere = Sphere("test_sphere", (0, 0, 10), 10)
             print(sphere)
         """
-        RadianceGeometry.__init__(self, name, type=self.__class__.__name__.lower(),
-                                  modifier=modifier)
+        RadianceGeometry.__init__(self, name, modifier=modifier)
         self.center_pt = center_pt or (0, 0, 0)
         self.radius = radius or 1
 

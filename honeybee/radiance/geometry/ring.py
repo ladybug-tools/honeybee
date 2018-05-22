@@ -40,8 +40,7 @@ class Ring(RadianceGeometry):
             radius_outer: Ring outer radius as a number (Default: 10).
             modifier: Geometry modifier (Default: "void").
         """
-        RadianceGeometry.__init__(self, name, type=self.__class__.__name__.lower(),
-                                  modifier=modifier)
+        RadianceGeometry.__init__(self, name, modifier=modifier)
         self.center_pt = center_pt or (0, 0, 0)
         self.radius_inner = radius_inner or 10
         self.surface_normal = surface_normal or (0, 0, 10)

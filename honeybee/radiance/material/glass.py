@@ -39,7 +39,7 @@ class Glass(RadianceMaterial):
             glassMaterial = Glass("generic glass", .65, .65, .65)
             print(glassMaterial)
         """
-        RadianceMaterial.__init__(self, name, type="glass", modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.r_transmittance = float(r_transmittance)
         """Transmittance for red. The value should be between 0 and 1 (Default: 0)."""
         self.g_transmittance = float(g_transmittance)

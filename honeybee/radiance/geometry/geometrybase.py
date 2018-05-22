@@ -10,11 +10,15 @@ class RadianceGeometry(Primitive):
 
     Attributes:
         name: Geometry name as a string. Do not use white space and special character.
-        type: One of Radiance standard Geometry types (e.g. polygon, cone, ...).
         modifier: Modifier. It can be material, mixture, texture or pattern. Honeybee
             currently only supports materials. For other types use Generic primitive
             class (Default: "void").
     """
+
+    def __init__(self, name, modifier=None, values=None, is_opaque=None):
+        """Create primitive base."""
+        Primitive.__init__(self, name, self.__class__.__name__.lower(), modifier,
+                           values, is_opaque)
 
     @property
     def isRadianceGeometry(self):

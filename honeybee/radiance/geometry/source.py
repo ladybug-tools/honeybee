@@ -35,7 +35,7 @@ class Source(RadianceGeometry):
             source = Source("test_source", (0, 0, 10), 10)
             print(source)
         """
-        RadianceGeometry.__init__(self, name, type="source", modifier=modifier)
+        RadianceGeometry.__init__(self, name, modifier=modifier)
         self.direction = direction or (0, 0, -1)
         self.angle = angle or 0.533
 

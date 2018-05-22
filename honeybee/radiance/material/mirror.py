@@ -15,7 +15,7 @@ class Mirror(RadianceMaterial):
 
     def __init__(self, name, r_reflectance=0.95, g_reflectance=0.95, b_reflectance=0.95,
                  modifier="void"):
-        """Create metal material.
+        """Create mirror material.
 
         Attributes:
             name: Material name as a string. Do not use white space and special
@@ -32,7 +32,7 @@ class Mirror(RadianceMaterial):
             mirror_material = Mirror("mirror_mat", .95, .95, .95)
             print(mirror_material)
         """
-        RadianceMaterial.__init__(self, name, type="metal", modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
         self.g_reflectance = g_reflectance

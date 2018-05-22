@@ -38,7 +38,7 @@ class BSDF(RadianceMaterial):
 
         name = name or '.'.join(os.path.split(self.xmlfile)[-1].split('.')[:-1])
 
-        RadianceMaterial.__init__(self, name, type="BSDF", modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
 
         try:
             x, y, z = up_orientation or (0.01, 0.01, 1.00)

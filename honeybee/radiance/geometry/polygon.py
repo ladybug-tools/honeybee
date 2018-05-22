@@ -38,7 +38,7 @@ class Polygon(RadianceGeometry):
             polygon = Polygon("test_polygon", (0, 0, 10), 10)
             print(polygon)
         """
-        RadianceGeometry.__init__(self, name, type="polygon", modifier=modifier)
+        RadianceGeometry.__init__(self, name, modifier=modifier)
         self.points = tuple(tuple(float(v) for v in p) for p in points if len(p) == 3)
         self._update_values()
 

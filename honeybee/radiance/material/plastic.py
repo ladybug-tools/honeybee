@@ -40,7 +40,7 @@ class Plastic(RadianceMaterial):
             wallMaterial = Plastic("generic wall", .55, .65, .75)
             print(wallMaterial)
         """
-        RadianceMaterial.__init__(self, name, type="plastic", modifier=modifier)
+        RadianceMaterial.__init__(self, name, modifier=modifier)
         self.r_reflectance = r_reflectance
         """Reflectance for red. The value should be between 0 and 1 (Default: 0)."""
         self.g_reflectance = g_reflectance
