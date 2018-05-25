@@ -101,7 +101,12 @@ class Primitive(object):
     def __init__(self, name, type, modifier=None, values=None, is_opaque=None):
         """Create primitive base."""
         self.name = name
-        self.type = type
+        if type.lower() == 'blackmaterial':
+            self.type = 'plastic'
+        elif type.lower() == 'whiteglow':
+            self.type = 'glow'
+        else:
+            self.type = type
         self.modifier = modifier
         self.values = values or {0: [], 1: [], 2: []}
         self._is_opaque = is_opaque
