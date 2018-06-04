@@ -392,7 +392,7 @@ class AnalysisPoint(object):
 
         if hoy not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
-                             .format(dt.DateTime.fromHoy(hoy)))
+                             .format(dt.DateTime.from_hoy(hoy)))
         return self._values[sid][stateid][hoy][0]
 
     def direct_value(self, hoy, source=None, state=None):
@@ -404,7 +404,7 @@ class AnalysisPoint(object):
 
         if hoy not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
-                             .format(dt.DateTime.fromHoy(hoy)))
+                             .format(dt.DateTime.from_hoy(hoy)))
         return self._values[sid][stateid][hoy][1]
 
     def values(self, hoys=None, source=None, state=None):
@@ -418,7 +418,7 @@ class AnalysisPoint(object):
         for hoy in hoys:
             if hoy not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
-                                 .format(dt.DateTime.fromHoy(hoy)))
+                                 .format(dt.DateTime.from_hoy(hoy)))
 
         return tuple(self._values[sid][stateid][hoy][0] for hoy in hoys)
 
@@ -434,7 +434,7 @@ class AnalysisPoint(object):
         for hoy in hoys:
             if hoy not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
-                                 .format(dt.DateTime.fromHoy(hoy)))
+                                 .format(dt.DateTime.from_hoy(hoy)))
         return tuple(self._values[sid][stateid][hoy][1] for hoy in hoys)
 
     def coupled_value(self, hoy, source=None, state=None):
@@ -446,7 +446,7 @@ class AnalysisPoint(object):
 
         if hoy not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
-                             .format(dt.DateTime.fromHoy(hoy)))
+                             .format(dt.DateTime.from_hoy(hoy)))
         return self._values[sid][stateid][hoy]
 
     def coupled_values(self, hoys=None, source=None, state=None):
@@ -461,7 +461,7 @@ class AnalysisPoint(object):
         for hoy in hoys:
             if hoy not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
-                                 .format(dt.DateTime.fromHoy(hoy)))
+                                 .format(dt.DateTime.from_hoy(hoy)))
 
         return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
 
@@ -474,7 +474,7 @@ class AnalysisPoint(object):
 
         if hoy not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
-                             .format(dt.DateTime.fromHoy(hoy)))
+                             .format(dt.DateTime.from_hoy(hoy)))
 
         return self._values[sid][stateid][hoy]
 
@@ -496,7 +496,7 @@ class AnalysisPoint(object):
         for hoy in hoys:
             if hoy not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
-                                 .format(dt.DateTime.fromHoy(hoy)))
+                                 .format(dt.DateTime.from_hoy(hoy)))
 
         return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
 
@@ -529,7 +529,7 @@ class AnalysisPoint(object):
             else:
                 if hoy not in self._values[sid][stateid]:
                     raise ValueError('Hourly values are not available for {}.'
-                                     .format(dt.DateTime.fromHoy(hoy)))
+                                     .format(dt.DateTime.from_hoy(hoy)))
                 t, d = self._values[sid][stateid][hoy]
 
             try:
@@ -577,7 +577,7 @@ class AnalysisPoint(object):
                 else:
                     if hoy not in self._values[sid][stateid]:
                         raise ValueError('Hourly values are not available for {}.'
-                                         .format(dt.DateTime.fromHoy(hoy)))
+                                         .format(dt.DateTime.from_hoy(hoy)))
                     t, d = self._values[sid][stateid][hoy]
 
                 try:
@@ -804,7 +804,7 @@ class AnalysisPoint(object):
         return 100 * DA / total_hour_count, 100 * cda / total_hour_count
 
     def annual_sunlight_exposure(self, threshhold=None, blinds_state_ids=None,
-                              occ_schedule=None, target_hours=None):
+                                 occ_schedule=None, target_hours=None):
         """Annual Solar Exposure (ASE).
 
         Calculate number of hours that this point is exposed to more than 1000lux
