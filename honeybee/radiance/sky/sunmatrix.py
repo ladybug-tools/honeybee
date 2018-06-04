@@ -38,9 +38,9 @@ class SunMatrix(RadianceSky):
         self.suffix = suffix or ''
 
     @classmethod
-    def from_epw_file(cls, epw_file, north=0, hoys=None, suffix=None):
+    def from_epw_file(cls, epw_file, north=0, hoys=None, sky_type=0, suffix=None):
         """Create sun matrix from an epw file."""
-        return cls(Wea.from_epw_file(epw_file), north, hoys)
+        return cls(Wea.from_epw_file(epw_file), north, hoys, sky_type, suffix)
 
     @property
     def isSunMatrix(self):
@@ -235,7 +235,7 @@ class SunMatrix(RadianceSky):
 
     def duplicate(self):
         """Duplicate this class."""
-        return sun_matrix(self.wea, self.north, self.hoys, self.sky_type, self.suffix)
+        return SunMatrix(self.wea, self.north, self.hoys, self.sky_type, self.suffix)
 
     def to_rad_string(self, working_dir, write_hours=False):
         """Get the radiance command line as a string."""

@@ -23,6 +23,9 @@ class RadianceProperties(object):
 
     def __init__(self, material=None, black_material=None, glow_material=None):
         """Create radiance properties for surface."""
+        self._is_black_material_modified = False
+        self._is_glow_material_modified = False
+
         self.material = material
         self.black_material = black_material
         self.glow_material = glow_material
@@ -56,6 +59,20 @@ class RadianceProperties(object):
                 TypeError('Expected RadianceMaterial not {}'.format(type(material)))
             # set new material
             self._material = material
+            # update name for black and glow materials
+            if not self.is_black_material_set_by_user:
+                try:
+                    self.black_material.name = material.name
+                except AttributeError:
+                    # black material is not assigned yet
+                    pass
+
+            if not self.is_glow_material_set_by_user:
+                try:
+                    self.glow_material.name = material.name
+                except AttributeError:
+                    # glow material is not assigned yet
+                    pass
         else:
             self._material = None
 
@@ -83,7 +100,8 @@ class RadianceProperties(object):
             self._is_black_material_modified = True
         else:
             self._black_material = BlackMaterial()
-            self._black_material.name = self.radiance.name
+            if self.material:
+                self._black_material.name = self.material.name
             self._is_black_material_modified = False
 
     @property
@@ -112,7 +130,8 @@ class RadianceProperties(object):
             self._is_glow_material_modified = True
         else:
             self._glow_material = WhiteGlow()
-            self._glow_material.name = self.radiance.name
+            if self.material:
+                self._glow_material.name = self.material.name
             self._is_glow_material_modified = False
 
     def duplicate(self):
