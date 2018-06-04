@@ -101,12 +101,7 @@ class Primitive(object):
     def __init__(self, name, type, modifier=None, values=None, is_opaque=None):
         """Create primitive base."""
         self.name = name
-        if type.lower() == 'blackmaterial':
-            self.type = 'plastic'
-        elif type.lower() == 'whiteglow':
-            self.type = 'glow'
-        else:
-            self.type = type
+        self.type = type
         self.modifier = modifier
         self.values = values or {0: [], 1: [], 2: []}
         self._is_opaque = is_opaque
@@ -263,6 +258,18 @@ class Primitive(object):
 
     @type.setter
     def type(self, type):
+        _mapper = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
+
+        if type not in self.TYPES:
+            # try base classes for subclasses
+            for base in self.__class__.__mro__:
+                if base.__name__.lower() in _mapper:
+                    type = _mapper[base.__name__.lower()]
+                    break
+                if base.__name__.lower() in self.TYPES:
+                    type = base.__name__.lower()
+                    break
+
         assert type in self.TYPES, \
             "%s is not a supported primitive type." % type + \
             "Try one of these primitives:\n%s" % str(self.TYPES)
