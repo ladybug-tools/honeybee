@@ -10,11 +10,7 @@ class RadianceMaterial(Primitive):
 
     def __init__(self, name, modifier=None, values=None, is_opaque=None):
         """Create primitive base."""
-        _mapper = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
         material_type = self.__class__.__name__.lower()
-        if material_type in _mapper:
-            material_type = _mapper[material_type]
-
         Primitive.__init__(self, name, material_type, modifier, values, is_opaque)
 
     @property
