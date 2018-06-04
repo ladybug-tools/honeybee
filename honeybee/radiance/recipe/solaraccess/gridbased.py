@@ -32,7 +32,7 @@ class SolarAccessGridBased(GenericGridBased):
             should be smaller than 60 and divisible by 60. The default is set to
             1 such that one sun vector is generated for each hour (Default: 1).
         hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
-        sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+        sub_folder: Analysis subfolder for this recipe. (Default: "solaraccess")
 
     Usage:
         # initiate analysis_recipe
@@ -175,8 +175,7 @@ class SolarAccessGridBased(GenericGridBased):
     @classmethod
     def from_location_and_analysis_period(
         cls, location, analysis_period, point_groups, vector_groups=None,
-        hb_objects=None, sub_folder='sunlighthour'
-    ):
+            hb_objects=None, sub_folder='sunlighthour'):
         """Create sunlighthours recipe from Location and analysis period."""
         vector_groups = vector_groups or ()
 
