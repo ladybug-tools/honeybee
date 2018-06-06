@@ -428,8 +428,8 @@ class Primitive(object):
         if include_modifier:
             # include modifier primitive in definition
             modifier = self.modifier.to_rad_string(minimal)
-            return "%s\n\n%s %s %s\n" % (modifier, self.modifier.name,
-                                         self.type, self.name)
+            return "%s\n%s %s %s\n" % (modifier, self.modifier.name, self.type,
+                                       self.name)
         else:
             return "%s %s %s\n" % (self.modifier.name, self.type, self.name)
 
@@ -445,7 +445,7 @@ class Primitive(object):
             else:
                 count = len(self.values[line_count])
                 line = '%d %s' % (count, " ".join(values).rstrip())
-                output.append(line)
+                output.append(' '.join(line.split()))
 
         return " ".join(output) if minimal else "\n".join(output)
 

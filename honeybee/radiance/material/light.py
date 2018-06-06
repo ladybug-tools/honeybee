@@ -9,9 +9,9 @@ from .materialbase import RadianceMaterial
 
 class Light(RadianceMaterial):
 
-    red = RadianceNumber('red', num_type=float, valid_range=(0, 1))
-    blue = RadianceNumber('blue', num_type=float, valid_range=(0, 1))
-    green = RadianceNumber('green', num_type=float, valid_range=(0, 1))
+    red = RadianceNumber('red', num_type=float, check_positive=True)
+    blue = RadianceNumber('blue', num_type=float, check_positive=True)
+    green = RadianceNumber('green', num_type=float, check_positive=True)
 
     def __init__(self, name, red=0.0, green=0.0, blue=0.0, modifier='void'):
         """

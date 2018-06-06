@@ -19,7 +19,7 @@ class Source(RadianceGeometry):
     4 xdir ydir zdir angle
     """
     direction = RadianceTuple('direction', tuple_size=3, num_type=float)
-    angle = RadianceNumber('angle', check_positive=True)
+    angle = RadianceNumber('angle', num_type=float, check_positive=True)
 
     def __init__(self, name, direction=None, angle=None, modifier=None):
         """Radiance Source.

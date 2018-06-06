@@ -6,6 +6,7 @@ from ...parameters.rcontrib import RcontribParameters
 from ...command.oconv import Oconv
 from ...command.rcontrib import Rcontrib
 from ...analysisgrid import AnalysisGrid
+from ...sky.analemma import Analemma
 from ....futil import write_to_file
 from ....vectormath.euclid import Vector3
 from ....hbsurface import HBSurface
@@ -67,6 +68,7 @@ class SolarAccessGridBased(GenericGridBased):
         self._hoys = hoys
         self.timestep = timestep
 
+        # this is a bug! should be set under a setter method
         self._radiance_parameters = RcontribParameters()
         self._radiance_parameters.irradiance_calc = True
         self._radiance_parameters.ambient_bounces = 0
@@ -239,46 +241,6 @@ class SolarAccessGridBased(GenericGridBased):
         col = Colorset.ecotect()
         return LegendParameters([0, 'max'], colors=col)
 
-    def write_suns(self, target_dir, project_name, mkdir=False):
-        """Write sunlist, sun geometry and sun material files.
-
-        Args:
-            target_dir: Path to project directory (e.g. c:/ladybug)
-            project_name: Project name as string. Suns will be saved as
-                project_name.sun
-
-        Returns:
-            A tuple of paths to sunlist file, sun materials and sun geometries
-
-        Exceptions:
-            ValueError if target_dir doesn't exist and mkdir is False.
-        """
-        assert isinstance(project_name, str), "project_name should be a string."
-
-        _suns = range(len(self.sun_vectors))
-        _mat = range(len(self.sun_vectors))
-        _geo = range(len(self.sun_vectors))
-
-        # create data
-        for count, v in enumerate(self.sun_vectors):
-            _suns[count] = 'solar%d' % count
-            _mat[count] = 'void light solar%d 0 0 3 1.0 1.0 1.0' % count
-            _geo[count] = \
-                'solar{0} source sun{0} 0 0 4 {1} {2} {3} 0.533'.format(
-                    count, v.X, v.Y, v.Z)
-
-        _sunsf = write_to_file(os.path.join(target_dir, project_name + '.sun'),
-                               '\n'.join(_suns) + '\n', mkdir)
-        _matf = write_to_file(os.path.join(target_dir, project_name + '_suns.mat'),
-                              '\n'.join(_mat) + '\n', mkdir)
-        _geof = write_to_file(os.path.join(target_dir, project_name + '_suns.rad'),
-                              '\n'.join(_geo) + '\n', mkdir)
-
-        if _sunsf and _matf and _geof:
-            return _sunsf, _matf, _geof
-        else:
-            raise IOError('Failed to write sun vectors!')
-
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.
 
@@ -322,11 +284,13 @@ class SolarAccessGridBased(GenericGridBased):
         points_file = self.write_analysis_grids(project_folder, project_name)
 
         # 2.write sun files
-        sunsList, sunsMat, sunsGeo = \
-            self.write_suns(project_folder + '/sky', project_name)
+        ann = Analemma(self.sun_vectors, self.hoys)
+        ann.execute(project_folder + '/sky')
+        sun_modifiers = os.path.join(project_folder + '/sky', ann.sunlist_file)
+        suns_geo = os.path.join(project_folder + '/sky', ann.analemma_file)
 
         # 2.1.add sun list to modifiers
-        self._radiance_parameters.mod_file = self.relpath(sunsList, project_folder)
+        self._radiance_parameters.mod_file = self.relpath(sun_modifiers, project_folder)
         self._radiance_parameters.y_dimension = self.total_point_count
 
         # 3.write batch file
@@ -335,7 +299,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         # TODO(Mostapha): add window_groups here if any!
         # # 4.1.prepare oconv
-        oct_scene_files = opqfiles + glzfiles + wgsfiles + [sunsMat, sunsGeo] + \
+        oct_scene_files = opqfiles + glzfiles + wgsfiles + [suns_geo] + \
             extrafiles.fp
 
         oct_scene_files_items = []
@@ -386,6 +350,7 @@ class SolarAccessGridBased(GenericGridBased):
             if count:
                 start_line += len(self.analysis_grids[count - 1])
 
+            # TODO(): Add timestep
             analysisGrid.set_values_from_file(
                 rf, hours, start_line=start_line, header=True, check_point_count=False,
                 mode=1
