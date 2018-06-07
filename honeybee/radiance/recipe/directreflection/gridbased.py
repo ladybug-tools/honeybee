@@ -153,13 +153,13 @@ class DirectReflectionGridBased(SolarAccessGridBased):
     def update_reflective_surfaces(surfaces):
         """Update surface materials to reflective mirror."""
         reflective_material = Mirror('reflective_material', 1, 1, 1)
-
-        for surface in surfaces:
+        duplicate_surfaces = [surface.duplicate() for surface in surfaces]
+        for surface in duplicate_surfaces:
             # changing base material is for test and will be removed
             surface.radiance_properties.material = reflective_material
             surface.radiance_properties.black_material = reflective_material
 
-        return surfaces
+        return duplicate_surfaces
 
     def write(self, target_folder, project_name='untitled', header=True):
         """Write analysis files to target folder.

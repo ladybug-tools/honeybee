@@ -161,7 +161,7 @@ class SunMatrix(RadianceSky):
             'NROWS=%s\n' \
             'NCOLS=%s\n' \
             'NCOMP=3\n' \
-            'FORMAT=ascii\n\n\n' % (
+            'FORMAT=ascii\n\n' % (
                 latitude, -longitude, len(self._sun_up_hours_indices), len(self.hoys)
             )
         return file_header
@@ -195,20 +195,19 @@ class SunMatrix(RadianceSky):
 
         # use gendaylit to calculate radiation values for each hour.
         print('Calculating solar values...')
-        count = 0
         for timecount, timeStamp in enumerate(month_date_time):
-            month, day, hour = timeStamp.month, timeStamp.day, timeStamp.hour + 0.5
+            month, day, hour = timeStamp.month, timeStamp.day, timeStamp.hour
             dnr, dhr = int(wea.direct_normal_radiation[timeStamp.int_hoy]), \
                 int(wea.diffuse_horizontal_radiation[timeStamp.int_hoy])
-            if dnr == 0:
-                continue
             sun = sp.calculate_sun(month, day, hour)
             if sun.altitude < 0:
                 continue
-            x, y, z = sun.sun_vector
-            solarradiance = \
-                int(gendaylit(sun.altitude, month, day, hour, dnr, dhr, output_type))
-            count += 1  # keep track of number of suns above the horizon for naming
+            if dnr == 0:
+                solarradiance = 0
+            else:
+                solarradiance = \
+                    int(gendaylit(sun.altitude, month, day, hour, dnr, dhr, output_type))
+
             self._solar_values.append(solarradiance)
             # keep the number of hour relative to hoys in this sun matrix
             self._sun_up_hours_indices.append(timecount)
