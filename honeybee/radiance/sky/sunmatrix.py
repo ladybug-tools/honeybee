@@ -9,17 +9,28 @@ import os
 
 
 class SunMatrix(RadianceSky):
-    """Radiance sun matrix (analemma) created from weather file.
+    """Radiance direct sun matrix.
 
-    Attributes:
+    This class generates a sky matrix similar to gendaymtx -5 with the difference that
+    unlike gendaymtx that uses the approximate position of the sun it uses the exact
+    sun position for each timestep.
+
+    Args:
         wea: An instance of ladybug Wea.
         north: An angle in degrees between 0-360 to indicate north direction
             (Default: 0).
         hoys: The list of hours for generating the sky matrix (Default: 0..8759)
-        sky_type: Specify 0 for visible radiation, 1 for total solar radiation.
+        output_type: Specify 0 for visible radiation, 1 for total solar radiation.
         suffix: An optional suffix for sky name. The suffix will be added at the
             end of the standard name. Use this input to customize the new and
             avoid sky being overwritten by other skymatrix components.
+
+    Attributes:
+        solar_values: A list of radiance values for each sun_up_hour. These values
+            can be visible or total solar radiation based on output_type input.
+        sun_up_hours: List of sun up hours as hours of the year. Values will be between
+            0..8759.
+
     Usage:
 
         from honeybee.radiance.sky.sunmatrix import SunMatrix
@@ -28,19 +39,24 @@ class SunMatrix(RadianceSky):
         analemma, sunlist, sunmtxfile = sunmtx.execute('c:/ladybug')
     """
 
-    def __init__(self, wea, north=0, hoys=None, sky_type=0, suffix=None):
+    # TODO(mostapha) this is how the init should be:
+    # def __init__(self, sun_vectors, solar_values=None, sun_up_hours=None, hoys=None,
+    #              suffix=None):
+    def __init__(self, wea, north=0, hoys=None, output_type=0, suffix=None):
         """Create sun matrix."""
         RadianceSky.__init__(self)
         self.wea = wea
         self.north = north
         self.hoys = hoys or range(8760)
-        self.sky_type = sky_type  # set default to 0 for visible radiation
+        self._solar_values = []
+        self._sun_up_hours = []
+        self.output_type = output_type or 0  # set default to 0 for visible radiation
         self.suffix = suffix or ''
 
     @classmethod
-    def from_epw_file(cls, epw_file, north=0, hoys=None, sky_type=0, suffix=None):
+    def from_epw_file(cls, epw_file, north=0, hoys=None, output_type=0, suffix=None):
         """Create sun matrix from an epw file."""
-        return cls(Wea.from_epw_file(epw_file), north, hoys, sky_type, suffix)
+        return cls(Wea.from_epw_file(epw_file), north, hoys, output_type, suffix)
 
     @property
     def isSunMatrix(self):
@@ -77,7 +93,7 @@ class SunMatrix(RadianceSky):
     def name(self):
         """Sky default name."""
         return "sunmtx_{}_{}_{}_{}_{}{}".format(
-            self.sky_type_human_readable,
+            self.output_type_human_readable,
             self.wea.location.station_id,
             self.wea.location.latitude,
             self.wea.location.longitude,
@@ -86,20 +102,21 @@ class SunMatrix(RadianceSky):
         )
 
     @property
-    def sky_type(self):
+    def output_type(self):
         """Specify 0 for visible radiation, 1 for solar radiation and 2 for luminance."""
-        return self._sky_type
+        return self._output_type
 
-    @sky_type.setter
-    def sky_type(self, t):
+    @output_type.setter
+    def output_type(self, t):
         """Specify 0 for visible radiation, 1 for solar radiation and 2 for luminance."""
-        self._sky_type = t % 3
+        self._output_type = t % 3
+        self._calculate_solar_values()
 
     @property
-    def sky_type_human_readable(self):
-        """Human readable sky type."""
+    def output_type_human_readable(self):
+        """Human readable output type."""
         values = ('vis', 'sol', 'lum')
-        return values[self.sky_type]
+        return values[self.output_type]
 
     @property
     def analemmafile(self):
@@ -116,6 +133,38 @@ class SunMatrix(RadianceSky):
         """Sun matrix file."""
         return self.name + '.mtx'
 
+    @property
+    def solar_values(self):
+        """List of radiance values for each sun_up_hour.
+
+        These values can be visible or total solar radiation based on output_type input.
+        """
+        return self._solar_values
+
+    @property
+    def sun_up_hours(self):
+        """List of sun up hours as hours of the year.
+
+        Values will be between 0..8759.
+        """
+        return [self.hoys[i] for i in self._sun_up_hours]
+
+    @property
+    def output_header(self):
+        """Sun matrix file header output."""
+        # Start creating header for the sun matrix.
+        latitude, longitude = self.wea.location.latitude, -self.wea.location.longitude
+        file_header = '#?RADIANCE\n' \
+            'Sun matrix created by Honeybee\n' \
+            'LATLONG= %s %s\n' \
+            'NROWS=%s\n' \
+            'NCOLS=%s\n' \
+            'NCOMP=3\n' \
+            'FORMAT=ascii\n\n\n' % (
+                latitude, -longitude, len(self._sun_up_hours), len(self.hoys)
+            )
+        return file_header
+
     def hours_match(self, hours_file):
         """Check if hours in the hours file matches the hours of wea."""
         if not os.path.isfile(hours_file):
@@ -131,47 +180,20 @@ class SunMatrix(RadianceSky):
 
         return found
 
-    def execute(self, working_dir, reuse=True):
-        """Generate sun matrix.
+    def _calculate_solar_values(self):
+        """Calculate solar values for requested hours of the year.
 
-        Args:
-            working_dir: Folder to execute and write the output.
-            reuse: Reuse the matrix if already existed in the folder.
-
-        Returns:
-            Full path to analemma, sunlist and sun_matrix.
+        This method is called everytime that output type is set.
         """
-        fp = os.path.join(working_dir, self.analemmafile)
-        lfp = os.path.join(working_dir, self.sunlistfile)
-        mfp = os.path.join(working_dir, self.sunmtxfile)
-        hrf = os.path.join(working_dir, self.name + '.hrs')
-        output_type = self.sky_type
-
-        if reuse:
-            if self.hours_match(hrf):
-                for f in (fp, lfp, mfp):
-                    if not os.path.isfile(f):
-                        break
-                else:
-                    return fp, lfp, mfp
-
-        with open(hrf, 'wb') as outf:
-            outf.write(','.join(str(h) for h in self.hoys) + '\n')
-
         wea = self.wea
+        output_type = self.output_type
+
         month_date_time = (DateTime.from_hoy(idx) for idx in self.hoys)
-        latitude, longitude = wea.location.latitude, -wea.location.longitude
 
         sp = Sunpath.from_location(wea.location, self.north)
-        solarradiances = []
-        sun_values = []
-        sun_up_hours = []  # collect hours that sun is up
-        solarstring = \
-            'void light solar{0} 0 0 3 {1} {1} {1} ' \
-            'solar{0} source sun 0 0 4 {2:.6f} {3:.6f} {4:.6f} 0.533'
 
         # use gendaylit to calculate radiation values for each hour.
-        print('Calculating sun positions and radiation values.')
+        print('Calculating solar values...')
         count = 0
         for timecount, timeStamp in enumerate(month_date_time):
             month, day, hour = timeStamp.month, timeStamp.day, timeStamp.hour + 0.5
@@ -185,57 +207,49 @@ class SunMatrix(RadianceSky):
             x, y, z = sun.sun_vector
             solarradiance = \
                 int(gendaylit(sun.altitude, month, day, hour, dnr, dhr, output_type))
-            cur_sun_definition = solarstring.format(count, solarradiance, -x, -y, -z)
             count += 1  # keep track of number of suns above the horizon for naming
-            solarradiances.append(solarradiance)
-            sun_values.append(cur_sun_definition)
+            self._solar_values.append(solarradiance)
             # keep the number of hour relative to hoys in this sun matrix
-            sun_up_hours.append(timecount)
+            self._sun_up_hours.append(timecount)
 
-        sun_count = len(sun_up_hours)
+    def execute(self, working_dir, reuse=True):
+        """Generate sun matrix.
 
+        Args:
+            working_dir: Folder to execute and write the output.
+            reuse: Reuse the matrix if already existed in the folder.
+
+        Returns:
+            Full path to analemma, sunlist and sun_matrix.
+        """
+        mfp = os.path.join(working_dir, self.sunmtxfile)  # annual sun matrix
+        hrf = os.path.join(working_dir, self.name + '.hrs')  # list of hours
+
+        if reuse and self.hours_match(hrf) and os.path.isfile(mfp):
+            return mfp
+
+        with open(hrf, 'wb') as outf:
+            outf.write(','.join(str(h) for h in self.hoys) + '\n')
+
+        sun_count = len(self._sun_up_hours)
         assert sun_count > 0, ValueError('There is 0 sun up hours!')
-
         print('# Number of sun up hours: %d' % sun_count)
-        print('Writing sun positions and radiation values to {}'.format(fp))
-        # create solar discs.
-        with open(fp, 'w') as annfile:
-            annfile.write("\n".join(sun_values))
-            annfile.write('\n')
-
-        print('Writing list of suns to {}'.format(lfp))
-        # create list of suns.
-        with open(lfp, 'w') as sunlist:
-            sunlist.write(
-                "\n".join(("solar%s" % idx for idx in xrange(sun_count)))
-            )
-            sunlist.write('\n')
-
-        # Start creating header for the sun matrix.
-        file_header = ['#?RADIANCE']
-        file_header += ['Sun matrix created by Honeybee']
-        file_header += ['LATLONG= %s %s' % (latitude, -longitude)]
-        file_header += ['NROWS=%s' % sun_count]
-        file_header += ['NCOLS=%s' % len(self.hoys)]
-        file_header += ['NCOMP=3']
-        file_header += ['FORMAT=ascii']
-
         print('Writing sun matrix to {}'.format(mfp))
         # Write the matrix to file.
-        with open(mfp, 'w') as sunMtx:
-            sunMtx.write('\n'.join(file_header) + '\n' + '\n')
-            for idx, sunValue in enumerate(solarradiances):
+        with open(mfp, 'w') as sunmtx:
+            sunmtx.write(self.output_header)
+            for idx, sun_value in enumerate(self.solar_values):
                 sun_rad_list = ['0 0 0'] * len(self.hoys)
-                sun_rad_list[sun_up_hours[idx]] = '{0} {0} {0}'.format(sunValue)
-                sunMtx.write('\n'.join(sun_rad_list) + '\n\n')
+                sun_rad_list[self.sun_up_hours[idx]] = '{0} {0} {0}'.format(sun_value)
+                sunmtx.write('\n'.join(sun_rad_list) + '\n\n')
 
-            sunMtx.write('\n')
+            sunmtx.write('\n')
 
-        return fp, lfp, mfp
+        return mfp
 
     def duplicate(self):
         """Duplicate this class."""
-        return SunMatrix(self.wea, self.north, self.hoys, self.sky_type, self.suffix)
+        return SunMatrix(self.wea, self.north, self.hoys, self.output_type, self.suffix)
 
     def to_rad_string(self, working_dir, write_hours=False):
         """Get the radiance command line as a string."""

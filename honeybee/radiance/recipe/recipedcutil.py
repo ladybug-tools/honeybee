@@ -5,6 +5,7 @@ from ..command.dctimestep import Dctimestep
 from ..command.rmtxop import Rmtxop, RmtxopMatrix
 from ..command.gendaymtx import Gendaymtx
 from ..sky.sunmatrix import SunMatrix
+from ..sky.analemma import Analemma
 from ..command.oconv import Oconv
 from ..command.rpict import Rpict
 from ..command.rcontrib import Rcontrib
@@ -128,10 +129,14 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
     # # 2.2. Create sun matrix
     sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
                    sky_matrix.sky_type, suffix=sky_matrix.suffix)
-    analemma, sunlist, analemmaMtx = \
-        sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
 
-    of = OutputFiles(sky_mtx_total, sky_mtx_direct, analemma, sunlist, analemmaMtx)
+    analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
+    ann = Analemma.from_wea(sky_matrix.wea, sky_matrix.hoys, sky_matrix.north)
+    ann.execute(os.path.join(project_folder, 'sky'))
+    sunlist = os.path.join(project_folder + '/sky', ann.sunlist_file)
+    analemma = os.path.join(project_folder + '/sky', ann.analemma_file)
+
+    of = OutputFiles(sky_mtx_total, sky_mtx_direct, analemma, sunlist, analemma_mtx)
 
     return SkyCommands(commands, of)
 
@@ -172,10 +177,13 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
     # # 2.2. Create sun matrix
     sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
                    sky_matrix.sky_type, suffix=sky_matrix.suffix)
-    analemma, sunlist, analemmaMtx = \
-        sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
+    analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
+    ann = Analemma.from_wea(sky_matrix.wea, sky_matrix.hoys, sky_matrix.north)
+    ann.execute(os.path.join(project_folder, 'sky'))
+    sunlist = os.path.join(project_folder + '/sky', ann.sunlist_file)
+    analemma = os.path.join(project_folder + '/sky', ann.analemma_file)
 
-    of = OutputFiles(sky_mtx_diff, analemma, sunlist, analemmaMtx)
+    of = OutputFiles(sky_mtx_diff, analemma, sunlist, analemma_mtx)
 
     return SkyCommands(commands, of)
 
