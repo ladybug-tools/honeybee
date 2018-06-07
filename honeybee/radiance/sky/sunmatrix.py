@@ -49,7 +49,8 @@ class SunMatrix(RadianceSky):
         self.north = north
         self.hoys = hoys or range(8760)
         self._solar_values = []
-        self._sun_up_hours = []
+        # collection of indices for sun up hours from hoys
+        self._sun_up_hours_indices = []
         self.output_type = output_type or 0  # set default to 0 for visible radiation
         self.suffix = suffix or ''
 
@@ -147,7 +148,7 @@ class SunMatrix(RadianceSky):
 
         Values will be between 0..8759.
         """
-        return [self.hoys[i] for i in self._sun_up_hours]
+        return [self.hoys[i] for i in self._sun_up_hours_indices]
 
     @property
     def output_header(self):
@@ -161,7 +162,7 @@ class SunMatrix(RadianceSky):
             'NCOLS=%s\n' \
             'NCOMP=3\n' \
             'FORMAT=ascii\n\n\n' % (
-                latitude, -longitude, len(self._sun_up_hours), len(self.hoys)
+                latitude, -longitude, len(self._sun_up_hours_indices), len(self.hoys)
             )
         return file_header
 
@@ -210,7 +211,7 @@ class SunMatrix(RadianceSky):
             count += 1  # keep track of number of suns above the horizon for naming
             self._solar_values.append(solarradiance)
             # keep the number of hour relative to hoys in this sun matrix
-            self._sun_up_hours.append(timecount)
+            self._sun_up_hours_indices.append(timecount)
 
     def execute(self, working_dir, reuse=True):
         """Generate sun matrix.
@@ -231,7 +232,7 @@ class SunMatrix(RadianceSky):
         with open(hrf, 'wb') as outf:
             outf.write(','.join(str(h) for h in self.hoys) + '\n')
 
-        sun_count = len(self._sun_up_hours)
+        sun_count = len(self._sun_up_hours_indices)
         assert sun_count > 0, ValueError('There is 0 sun up hours!')
         print('# Number of sun up hours: %d' % sun_count)
         print('Writing sun matrix to {}'.format(mfp))
@@ -240,7 +241,8 @@ class SunMatrix(RadianceSky):
             sunmtx.write(self.output_header)
             for idx, sun_value in enumerate(self.solar_values):
                 sun_rad_list = ['0 0 0'] * len(self.hoys)
-                sun_rad_list[self.sun_up_hours[idx]] = '{0} {0} {0}'.format(sun_value)
+                sun_rad_list[self._sun_up_hours_indices[idx]] = \
+                    '{0} {0} {0}'.format(sun_value)
                 sunmtx.write('\n'.join(sun_rad_list) + '\n\n')
 
             sunmtx.write('\n')
