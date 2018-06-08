@@ -160,3 +160,37 @@ class Analemma(RadianceSky):
     def __repr__(self):
         """Analemma representation."""
         return 'Analemma: #%d' % len(self.sun_vectors)
+
+
+class AnalemmaReversed(Analemma):
+    """Generate a radiance-based analemma.
+
+    Reversed Analemma reverses direction of input sun vectors. Use reversed Analemma for
+    radiation studies.
+
+    Analemma consists of two files:
+        1. *_reversed.ann file which includes sun geometries and materials.
+        2. *_reversed.mod file includes list of modifiers that are included in
+        *_reversed.ann file.
+    """
+
+    @property
+    def analemma_file(self):
+        """Analemma file name.
+
+        Use this file to create the octree.
+        """
+        return 'analemma_reversed.rad'
+
+    def execute(self, working_dir, reuse=True):
+        fp = os.path.join(working_dir, self.analemma_file)  # analemma file (geo and mat)
+        sfp = os.path.join(working_dir, self.sunlist_file)  # modifier list
+
+        with open(fp, 'wb') as outf, open(sfp, 'wb') as outm:
+            for count, vector in enumerate(self.sun_vectors):
+                # reverse sun vector
+                r_vector = tuple(-1 * i for i in vector)
+                mat = Light('sol_%03d' % count, 1e6, 1e6, 1e6)
+                sun = Source('sun_%03d' % count, r_vector, 0.533, mat)
+                outf.write(sun.to_rad_string(True).replace('\n', ' ') + '\n')
+                outm.write('sol_%03d\n' % count)

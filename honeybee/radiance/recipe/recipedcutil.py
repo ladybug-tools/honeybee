@@ -5,7 +5,7 @@ from ..command.dctimestep import Dctimestep
 from ..command.rmtxop import Rmtxop, RmtxopMatrix
 from ..command.gendaymtx import Gendaymtx
 from ..sky.sunmatrix import SunMatrix
-from ..sky.analemma import Analemma
+from ..sky.analemma import AnalemmaReversed as Analemma
 from ..command.oconv import Oconv
 from ..command.rpict import Rpict
 from ..command.rcontrib import Rcontrib
