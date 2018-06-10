@@ -241,7 +241,8 @@ class SolarAccessGridBased(GenericGridBased):
         col = Colorset.ecotect()
         return LegendParameters([0, 'max'], colors=col)
 
-    def write(self, target_folder, project_name='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True,
+              transpose=False):
         """Write analysis files to target folder.
 
         Files for sunlight hours analysis are:
@@ -322,7 +323,8 @@ class SolarAccessGridBased(GenericGridBased):
 
         batch_file = os.path.join(project_folder, "commands.bat")
         rmtx = rgb_matrix_file_to_ill((str(rct.output_file),),
-                                      'result/{}.ill'.format(project_name))
+                                      'result/{}.ill'.format(project_name),
+                                      transpose)
         # # 4.3 write batch file
         self._commands.append(oc.to_rad_string())
         self._commands.append(rct.to_rad_string())
@@ -343,7 +345,7 @@ class SolarAccessGridBased(GenericGridBased):
         for ag in self.analysis_grids:
             ag.unload()
 
-        hours = tuple(int(self.timestep * h) for h in self.hoys)
+        hours = self.hoys
         rf = self._result_files
         start_line = 0
         for count, analysisGrid in enumerate(self.analysis_grids):

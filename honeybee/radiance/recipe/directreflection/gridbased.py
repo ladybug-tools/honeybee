@@ -161,7 +161,8 @@ class DirectReflectionGridBased(SolarAccessGridBased):
 
         return duplicate_surfaces
 
-    def write(self, target_folder, project_name='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True,
+              transpose=False):
         """Write analysis files to target folder.
 
         Files for sunlight hours analysis are:
@@ -183,6 +184,9 @@ class DirectReflectionGridBased(SolarAccessGridBased):
             target_folder: Path to parent folder. Files will be created under
                 target_folder/gridbased. use self.sub_folder to change subfolder name.
             project_name: Name of this project as a string.
+            transpose: Set to True to transpose the results matrix. By defalut each
+                row include the results for each point and each column is the results
+                for a different timestep (default: False).
 
         Returns:
             True in case of success.
@@ -241,7 +245,8 @@ class DirectReflectionGridBased(SolarAccessGridBased):
         rct.points_file = self.relpath(points_file, project_folder)
 
         rmtx = rgb_matrix_file_to_ill((str(rct.output_file),),
-                                      'result/total..{}.ill'.format(project_name))
+                                      'result/total..{}.ill'.format(project_name),
+                                      transpose)
         # # 4.3 write batch file
         self._commands.append(oc.to_rad_string())
         self._commands.append(rct.to_rad_string())
@@ -255,7 +260,8 @@ class DirectReflectionGridBased(SolarAccessGridBased):
         rct2.points_file = self.relpath(points_file, project_folder)
 
         rmtx2 = rgb_matrix_file_to_ill((str(rct2.output_file),),
-                                       'result/sun..{}.ill'.format(project_name))
+                                       'result/sun..{}.ill'.format(project_name),
+                                       transpose)
 
         # add the last two lines to batch file.
         self._commands.append(rct2.to_rad_string())
@@ -276,7 +282,7 @@ class DirectReflectionGridBased(SolarAccessGridBased):
         for ag in self.analysis_grids:
             ag.unload()
 
-        hours = tuple(int(self.timestep * h) for h in self.hoys)
+        hours = self.hoys
         rf = self._result_files
         df = rf.replace('total..', 'sun..')
         start_line = 0

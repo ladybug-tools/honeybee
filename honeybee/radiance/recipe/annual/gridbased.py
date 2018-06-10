@@ -74,7 +74,8 @@ class GridBased(DaylightCoeffGridBased):
                    radiance_parameters=rad_parameters, hb_objects=hb_objects,
                    simulation_type=simulation_type)
 
-    def write(self, target_folder, project_name='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True,
+              transpose=False):
         """Write analysis files to target folder.
 
         Args:
@@ -93,7 +94,8 @@ class GridBased(DaylightCoeffGridBased):
         if self.sub_folder == "gridbased_daylightcoeff":
             self.sub_folder == "gridbased_annual"
 
-        return super(GridBased, self).write(target_folder, project_name, header)
+        return super(GridBased, self).write(target_folder, project_name, header,
+                                            transpose)
 
     def to_json(self):
         """Create annual recipe JSON file
