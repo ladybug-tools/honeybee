@@ -66,8 +66,8 @@ class GridBased(DaylightCoeffGridBased):
 
         rad_parameters = RfluxmtxParameters.from_json(rec_json["rad_parameters"])
 
-        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
-                radiance_parameters=rad_parameters, hb_objects=hb_objects)
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids,
+                   radiance_parameters=rad_parameters, hb_objects=hb_objects)
 
     @classmethod
     def from_weather_file_points_and_vectors(
@@ -128,15 +128,16 @@ class GridBased(DaylightCoeffGridBased):
             }
         """
         return {
-                "id": "radiation",
-                "type": "gridbased",
-                "sky_mtx": self.sky_matrix.to_json(),
-                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
-                "surfaces": [srf.to_json() for srf in self.hb_objects],
-                "rad_parameters": self.radiance_parameters.to_json()
-                }
+            "id": "radiation",
+            "type": "gridbased",
+            "sky_mtx": self.sky_matrix.to_json(),
+            "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+            "surfaces": [srf.to_json() for srf in self.hb_objects],
+            "rad_parameters": self.radiance_parameters.to_json()
+        }
 
-    def write(self, target_folder, project_name='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True,
+              transpose=False):
         """Write analysis files to target folder.
 
         Args:
@@ -183,7 +184,8 @@ class GridBased(DaylightCoeffGridBased):
         commands, results = get_commands_scene_daylight_coeff(
             project_name, self.sky_matrix.sky_density, project_folder, skyfiles,
             inputfiles, points_file, self.total_point_count, self.radiance_parameters,
-            self.reuse_daylight_mtx, self.total_runs_count, radiation_only=True)
+            self.reuse_daylight_mtx, self.total_runs_count, radiation_only=True,
+            transpose=transpose)
 
         self._result_files.extend(
             os.path.join(project_folder, str(result)) for result in results
@@ -197,7 +199,8 @@ class GridBased(DaylightCoeffGridBased):
                 project_name, self.sky_matrix.sky_density, project_folder,
                 self.window_groups, skyfiles, inputfiles, points_file,
                 self.total_point_count, self.radiance_parameters,
-                self.reuse_daylight_mtx, self.total_runs_count, radiation_only=True)
+                self.reuse_daylight_mtx, self.total_runs_count, radiation_only=True,
+                transpose=transpose)
 
             self._add_commands(skycommands, commands)
             self._result_files.extend(

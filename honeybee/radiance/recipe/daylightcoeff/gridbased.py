@@ -268,7 +268,8 @@ class DaylightCoeffGridBased(GenericGridBased):
             "rad_parameters": self.radiance_parameters.to_json()
         }
 
-    def write(self, target_folder, project_name='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True,
+              transpose=False):
         """Write analysis files to target folder.
 
         Args:
@@ -315,7 +316,7 @@ class DaylightCoeffGridBased(GenericGridBased):
         commands, results = get_commands_scene_daylight_coeff(
             project_name, self.sky_matrix.sky_density, project_folder, skyfiles,
             inputfiles, points_file, self.total_point_count, self.radiance_parameters,
-            self.reuse_daylight_mtx, self.total_runs_count)
+            self.reuse_daylight_mtx, self.total_runs_count, transpose=transpose)
 
         self._result_files.extend(
             os.path.join(project_folder, str(result)) for result in results
@@ -329,7 +330,7 @@ class DaylightCoeffGridBased(GenericGridBased):
                 project_name, self.sky_matrix.sky_density, project_folder,
                 self.window_groups, skyfiles, inputfiles, points_file,
                 self.total_point_count, self.radiance_parameters,
-                self.reuse_daylight_mtx, self.total_runs_count)
+                self.reuse_daylight_mtx, self.total_runs_count, transpose=transpose)
 
             self._add_commands(skycommands, commands)
             self._result_files.extend(

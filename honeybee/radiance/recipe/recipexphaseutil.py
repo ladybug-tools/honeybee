@@ -267,7 +267,8 @@ def get_commands_direct_view_daylight_matrices(
 
 
 def matrix_calculation_three_phase(
-        project_folder, window_group, v_matrix, d_matrix, sky_mtx_total):
+        project_folder, window_group, v_matrix, d_matrix, sky_mtx_total,
+        transpose=False):
     """Three phase matrix calculation.
 
     Args:
@@ -297,7 +298,7 @@ def matrix_calculation_three_phase(
 
         # 5. convert r, g ,b values to illuminance
         final_output = r'result/{}..{}.ill'.format(window_group.name, state.name)
-        finalmtx = rgb_matrix_file_to_ill((dct.output_file,), final_output)
+        finalmtx = rgb_matrix_file_to_ill((dct.output_file,), final_output, transpose)
         commands.append(
             ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [results.ill]')
         commands.append('::')
@@ -313,7 +314,7 @@ def matrix_calculation_five_phase(
         project_name, sky_density, project_folder, window_group, skyfiles,
         inputfiles, points_file, total_point_count, rfluxmtx_parameters, v_matrix,
         d_matrix, dv_matrix, dd_matrix, window_group_count=0, reuse_view_mtx=False,
-        reuse_daylight_mtx=False, counter=None):
+        reuse_daylight_mtx=False, counter=None, transpose=False):
     """Get commands for the five phase recipe.
 
     This function takes the result_files from 3phase calculation and adds direct
@@ -361,7 +362,7 @@ def matrix_calculation_five_phase(
         # 5. convert r, g ,b values to illuminance
         final_output = r'result/3phase..{}..{}.ill'.format(
             window_group.name, state.name)
-        finalmtx = rgb_matrix_file_to_ill((dct.output_file,), final_output)
+        finalmtx = rgb_matrix_file_to_ill((dct.output_file,), final_output, transpose)
         commands.append(finalmtx.to_rad_string())
 
         results.append(os.path.join(project_folder, final_output))
@@ -378,7 +379,7 @@ def matrix_calculation_five_phase(
         # 5. convert r, g ,b values to illuminance
         final_output = r'result/direct..{}..{}.ill'.format(
             window_group.name, state.name)
-        finalmtx = rgb_matrix_file_to_ill((dct.output_file,), final_output)
+        finalmtx = rgb_matrix_file_to_ill((dct.output_file,), final_output, transpose)
         commands.append(finalmtx.to_rad_string())
 
         results.append(os.path.join(project_folder, final_output))
@@ -439,7 +440,7 @@ def matrix_calculation_five_phase(
         commands.append('::')
         finalmtx = rgb_matrix_file_to_ill(
             (dct_sun.output_file,),
-            'result/sun..{}..{}.ill'.format(window_group.name, state.name)
+            'result/sun..{}..{}.ill'.format(window_group.name, state.name), transpose
         )
         commands.append(finalmtx.to_rad_string())
 

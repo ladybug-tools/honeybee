@@ -7,6 +7,7 @@ from ladybug.dt import DateTime
 from ladybug.legendparameters import LegendParameters
 from ....hbsurface import HBSurface
 
+
 class GridBased(PITGridBased):
     """Daylight factor grid based analysis.
 
@@ -46,12 +47,13 @@ class GridBased(PITGridBased):
                 },
             }
         """
-        analysis_grids = tuple(AnalysisGrid.from_json(ag) for ag in rec_json["analysis_grids"])
+        analysis_grids = tuple(AnalysisGrid.from_json(ag)
+                               for ag in rec_json["analysis_grids"])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
         rad_parameters = RtraceParameters.from_json(rec_json["rad_parameters"])
 
-        recipe = cls(analysis_grids=analysis_grids, rad_parameters=rad_parameters, \
-            hb_objects=hb_objects)
+        recipe = cls(analysis_grids=analysis_grids, rad_parameters=rad_parameters,
+                     hb_objects=hb_objects)
 
         return recipe
 
@@ -92,12 +94,12 @@ class GridBased(PITGridBased):
             }
         """
         return {
-                "id": "daylight_factor",
-                "type": "gridbased",
-                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
-                "surfaces": [srf.to_json() for srf in self.hb_objects],
-                "rad_parameters": self.radiance_parameters.to_json()
-                }
+            "id": "daylight_factor",
+            "type": "gridbased",
+            "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+            "surfaces": [srf.to_json() for srf in self.hb_objects],
+            "rad_parameters": self.radiance_parameters.to_json()
+        }
 
     @property
     def legend_parameters(self):
