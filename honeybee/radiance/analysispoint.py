@@ -184,6 +184,14 @@ class AnalysisPoint(object):
         if not self.has_values:
             return []
         else:
+            return sorted(key / 60.0 for key in self._values[0][0].keys())
+
+    @property
+    def moys(self):
+        """Return minutes of the year for results if any."""
+        if not self.has_values:
+            return []
+        else:
             return sorted(self._values[0][0].keys())
 
     @staticmethod
@@ -280,7 +288,7 @@ class AnalysisPoint(object):
         if is_direct:
             self._is_directLoaded = True
         ind = 1 if is_direct else 0
-        self._values[sid][stateid][hoy][ind] = value
+        self._values[sid][stateid][int(hoy * 60)][ind] = value
 
     def set_values(self, values, hoys, source=None, state=None, is_direct=False):
         """Set values for several hours of the year.
@@ -312,7 +320,7 @@ class AnalysisPoint(object):
             if hoy is None:
                 continue
             try:
-                self._values[sid][stateid][hoy][ind] = value
+                self._values[sid][stateid][int(hoy * 60)][ind] = value
             except Exception as e:
                 raise ValueError(
                     'Failed to load {} results for window_group [{}], state[{}]'
@@ -336,7 +344,7 @@ class AnalysisPoint(object):
             return
 
         try:
-            self._values[sid][stateid][hoy] = value[0], value[1]
+            self._values[sid][stateid][int(hoy * 60)] = value[0], value[1]
         except TypeError:
             raise ValueError(
                 "Wrong input: {}. Input values must be of length of 2.".format(value)
@@ -372,7 +380,7 @@ class AnalysisPoint(object):
             if hoy is None:
                 continue
             try:
-                self._values[sid][stateid][hoy] = value[0], value[1]
+                self._values[sid][stateid][int(hoy * 60)] = value[0], value[1]
             except TypeError:
                 raise ValueError(
                     "Wrong input: {}. Input values must be of length of 2.".format(value)
@@ -390,10 +398,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blind_state_id(source, state)
 
-        if hoy not in self._values[sid][stateid]:
+        if int(hoy * 60) not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
                              .format(dt.DateTime.from_hoy(hoy)))
-        return self._values[sid][stateid][hoy][0]
+        return self._values[sid][stateid][int(hoy * 60)][0]
 
     def direct_value(self, hoy, source=None, state=None):
         """Get direct value for an hour of the year."""
@@ -402,10 +410,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blind_state_id(source, state)
 
-        if hoy not in self._values[sid][stateid]:
+        if int(hoy * 60) not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
                              .format(dt.DateTime.from_hoy(hoy)))
-        return self._values[sid][stateid][hoy][1]
+        return self._values[sid][stateid][int(hoy * 60)][1]
 
     def values(self, hoys=None, source=None, state=None):
         """Get values for several hours of the year."""
@@ -416,11 +424,11 @@ class AnalysisPoint(object):
 
         hoys = hoys or self.hoys
         for hoy in hoys:
-            if hoy not in self._values[sid][stateid]:
+            if int(hoy * 60) not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
                                  .format(dt.DateTime.from_hoy(hoy)))
 
-        return tuple(self._values[sid][stateid][hoy][0] for hoy in hoys)
+        return tuple(self._values[sid][stateid][int(hoy * 60)][0] for hoy in hoys)
 
     def direct_values(self, hoys=None, source=None, state=None):
         """Get direct values for several hours of the year."""
@@ -432,10 +440,10 @@ class AnalysisPoint(object):
         hoys = hoys or self.hoys
 
         for hoy in hoys:
-            if hoy not in self._values[sid][stateid]:
+            if int(hoy * 60) not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
                                  .format(dt.DateTime.from_hoy(hoy)))
-        return tuple(self._values[sid][stateid][hoy][1] for hoy in hoys)
+        return tuple(self._values[sid][stateid][int(hoy * 60)][1] for hoy in hoys)
 
     def coupled_value(self, hoy, source=None, state=None):
         """Get total and direct values for an hoy."""
@@ -444,10 +452,10 @@ class AnalysisPoint(object):
         # find the state id
         stateid = self.blind_state_id(source, state)
 
-        if hoy not in self._values[sid][stateid]:
+        if int(hoy * 60) not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
                              .format(dt.DateTime.from_hoy(hoy)))
-        return self._values[sid][stateid][hoy]
+        return self._values[sid][stateid][int(hoy * 60)]
 
     def coupled_values(self, hoys=None, source=None, state=None):
         """Get total and direct values for several hours of year."""
@@ -459,11 +467,11 @@ class AnalysisPoint(object):
         hoys = hoys or self.hoys
 
         for hoy in hoys:
-            if hoy not in self._values[sid][stateid]:
+            if int(hoy * 60) not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
                                  .format(dt.DateTime.from_hoy(hoy)))
 
-        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
+        return tuple(self._values[sid][stateid][int(hoy * 60)] for hoy in hoys)
 
     def coupled_value_by_id(self, hoy, source_id=None, state_id=None):
         """Get total and direct values for an hoy."""
@@ -472,11 +480,11 @@ class AnalysisPoint(object):
         # find the state id
         stateid = state_id or 0
 
-        if hoy not in self._values[sid][stateid]:
+        if int(hoy * 60) not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
                              .format(dt.DateTime.from_hoy(hoy)))
 
-        return self._values[sid][stateid][hoy]
+        return self._values[sid][stateid][int(hoy * 60)]
 
     def coupled_values_by_id(self, hoys=None, source_id=None, state_id=None):
         """Get total and direct values for several hours of year by source id.
@@ -494,11 +502,11 @@ class AnalysisPoint(object):
         hoys = hoys or self.hoys
 
         for hoy in hoys:
-            if hoy not in self._values[sid][stateid]:
+            if int(hoy * 60) not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
                                  .format(dt.DateTime.from_hoy(hoy)))
 
-        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
+        return tuple(self._values[sid][stateid][int(hoy * 60)] for hoy in hoys)
 
     def combined_value_by_id(self, hoy, blinds_state_ids=None):
         """Get combined value from all sources based on state_id.
@@ -527,10 +535,10 @@ class AnalysisPoint(object):
                 t = 0
                 d = 0
             else:
-                if hoy not in self._values[sid][stateid]:
+                if int(hoy * 60) not in self._values[sid][stateid]:
                     raise ValueError('Hourly values are not available for {}.'
                                      .format(dt.DateTime.from_hoy(hoy)))
-                t, d = self._values[sid][stateid][hoy]
+                t, d = self._values[sid][stateid][int(hoy * 60)]
 
             try:
                 total += t
@@ -575,10 +583,10 @@ class AnalysisPoint(object):
                     t = 0
                     d = 0
                 else:
-                    if hoy not in self._values[sid][stateid]:
+                    if int(hoy * 60) not in self._values[sid][stateid]:
                         raise ValueError('Hourly values are not available for {}.'
                                          .format(dt.DateTime.from_hoy(hoy)))
-                    t, d = self._values[sid][stateid][hoy]
+                    t, d = self._values[sid][stateid][int(hoy * 60)]
 
                 try:
                     total += t

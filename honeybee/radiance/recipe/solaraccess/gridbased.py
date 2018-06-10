@@ -345,7 +345,7 @@ class SolarAccessGridBased(GenericGridBased):
         for ag in self.analysis_grids:
             ag.unload()
 
-        hours = tuple(int(self.timestep * h) for h in self.hoys)
+        hours = self.hoys
         rf = self._result_files
         start_line = 0
         for count, analysisGrid in enumerate(self.analysis_grids):

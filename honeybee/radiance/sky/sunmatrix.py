@@ -187,18 +187,20 @@ class SunMatrix(RadianceSky):
         This method is called everytime that output type is set.
         """
         wea = self.wea
+        hoys_set = set(wea.hoys)
         output_type = self.output_type
-
         month_date_time = (DateTime.from_hoy(idx) for idx in self.hoys)
 
         sp = Sunpath.from_location(wea.location, self.north)
 
         # use gendaylit to calculate radiation values for each hour.
         print('Calculating solar values...')
-        for timecount, timeStamp in enumerate(month_date_time):
-            month, day, hour = timeStamp.month, timeStamp.day, timeStamp.hour
-            dnr, dhr = int(wea.direct_normal_radiation[timeStamp.int_hoy]), \
-                int(wea.diffuse_horizontal_radiation[timeStamp.int_hoy])
+        for timecount, dt in enumerate(month_date_time):
+            if dt.hoy not in hoys_set:
+                print('Warn: Wea data for {} is not available!'.format(dt))
+                continue
+            month, day, hour = dt.month, dt.day, dt.float_hour
+            dnr, dhr = wea.get_radiation_values(month, day, hour)
             sun = sp.calculate_sun(month, day, hour)
             if sun.altitude < 0:
                 continue
