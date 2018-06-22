@@ -10,6 +10,7 @@ from .hbsurface import HBSurface
 from .hbzone import HBZone
 from .vectormath.euclid import Point3, Vector3
 from .radiance.view import View
+from .radiance.analysisgrid import AnalysisGrid
 
 
 # TODO: Room should be re-calculated on change of origin, width, depth, height,
@@ -36,9 +37,9 @@ class Room(HBZone):
 
         self._z_axis = Vector3(0, 0, 1)
         self._x_axis = Vector3(1, 0, 0).rotate_around(
-            self._zAxis, math.radians(rotation_angle))
+            self._z_axis, math.radians(rotation_angle))
         self._y_axis = Vector3(0, 1, 0).rotate_around(
-            self._zAxis, math.radians(rotation_angle))
+            self._z_axis, math.radians(rotation_angle))
 
         # create 8 points
         self.__calculate_vertices()
@@ -106,19 +107,21 @@ class Room(HBZone):
 
         z = float(height) / self.height
 
-        return tuple(self.get_location(u, v, z)
-                     for v in v_values
-                     for u in u_values
-                     )
+        points = tuple(self.get_location(u, v, z)
+                       for v in v_values
+                       for u in u_values
+                       )
+
+        return AnalysisGrid.from_points_and_vectors(points)
 
     def get_location(self, u=0.5, v=0.5, z=0.5):
         """Get location as a point based on u, v, z.
 
         u, v, z must be between 0..1.
         """
-        x = u * self.width * self._xAxis
-        y = v * self.depth * self._yAxis
-        z = z * self.height * self._zAxis
+        x = u * self.width * self._x_axis
+        y = v * self.depth * self._y_axis
+        z = z * self.height * self._z_axis
         return self.origin + x + y + z
 
     def generate_interior_view(self, u=0.5, v=0.5, z=0.5, angle=0,
@@ -161,7 +164,7 @@ class Room(HBZone):
                 actual image will be lifted up from the specified view.
         """
         v = View(self.get_location(u, v, z),
-                 self._yAxis.rotate_around(self._zAxis, math.radians(angle)),
+                 self._y_axis.rotate_around(self._z_axis, math.radians(angle)),
                  view_up_vector, view_type, view_h_size, view_v_size,
                  x_resolution, y_resolution, view_shift, view_lift)
 
@@ -181,13 +184,13 @@ class Room(HBZone):
 
     def __calculate_vertices(self):
         self.pt0 = self.origin
-        self.pt1 = self.origin + self.width * self._xAxis
-        self.pt2 = self.pt1 + self.depth * self._yAxis
-        self.pt3 = self.origin + self.depth * self._yAxis
-        self.pt4 = self.pt0 + self.height * self._zAxis
-        self.pt5 = self.pt1 + self.height * self._zAxis
-        self.pt6 = self.pt2 + self.height * self._zAxis
-        self.pt7 = self.pt3 + self.height * self._zAxis
+        self.pt1 = self.origin + self.width * self._x_axis
+        self.pt2 = self.pt1 + self.depth * self._y_axis
+        self.pt3 = self.origin + self.depth * self._y_axis
+        self.pt4 = self.pt0 + self.height * self._z_axis
+        self.pt5 = self.pt1 + self.height * self._z_axis
+        self.pt6 = self.pt2 + self.height * self._z_axis
+        self.pt7 = self.pt3 + self.height * self._z_axis
 
     def __create_hb_surfaces(self):
         self.floor = HBSurface(

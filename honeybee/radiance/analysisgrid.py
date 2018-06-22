@@ -343,7 +343,7 @@ class AnalysisGrid(object):
                 self.analysis_points[count].set_coupled_values(
                     hourlyValues, hoys, source, state)
 
-    def combined_value_by_id(self, hoy, blinds_state_ids=None):
+    def combined_value_by_id(self, hoy=None, blinds_state_ids=None):
         """Get combined value from all sources based on state_id.
 
         Args:
@@ -356,6 +356,8 @@ class AnalysisGrid(object):
         """
         if self.digit_sign == 1:
             self.load_values_from_files()
+
+        hoy = hoy or self.hoys[0]
 
         return (p.combined_value_by_id(hoy, blinds_state_ids) for p in self)
 
