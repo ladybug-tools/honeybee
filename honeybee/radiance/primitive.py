@@ -129,8 +129,11 @@ class Primitive(object):
             else base_data[count_1 + count_2 + 3: count_1 + count_2 + count_3 + 3]
 
         values = {0: l1, 1: l2, 2: l3}
-
-        return cls(name, primitive_type, modifier, values)
+        if cls.__class__.__name__ == 'Primitive':
+            return cls(name, primitive_type, modifier, values)
+        else:
+            # subclass - type will be assigned based on name
+            return cls(name, modifier, values)
 
     @classmethod
     def from_json(cls, mat_json):
@@ -144,11 +147,16 @@ class Primitive(object):
         }
         """
         modifier = cls._analyze_json_input(cls.__name__.lower(), mat_json)
-
-        return cls(name=mat_json["name"],
-                   type=mat_json["type"],
-                   values=mat_json["values"],
-                   modifier=modifier)
+        if cls.__class__.__name__ == 'Primitive':
+            return cls(name=mat_json["name"],
+                       type=mat_json["type"],
+                       modifier=modifier,
+                       values=mat_json["values"])
+        else:
+            # subclass - type will be assigned based on name
+            return cls(name=mat_json["name"],
+                       modifier=modifier,
+                       values=mat_json["values"])
 
     @property
     def values(self):
@@ -246,6 +254,8 @@ class Primitive(object):
         if not modifier or modifier == 'void':
             self._modifier = Void()
         else:
+            if not hasattr(modifier, 'can_be_modifier'):
+                raise TypeError('Invalid modifier: %s' % modifier)
             assert modifier.can_be_modifier, \
                 'A {} cannot be a modifier. Modifiers can be Materials, mixtures, ' \
                 'textures or patterns'.format(type(modifier))
@@ -314,7 +324,7 @@ class Primitive(object):
 
         bm = input_objects[-1]
         bm_data = bm.split()
-        bm_type = bm_data[1]
+        bm_type = bm_data[0]
         return bm_type
 
     @staticmethod
