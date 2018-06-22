@@ -7,6 +7,7 @@ from ladybug.epw import EPW
 from ladybug.sunpath import Sunpath
 
 import os
+from itertools import izip
 
 
 class Analemma(RadianceSky):
@@ -133,11 +134,13 @@ class Analemma(RadianceSky):
         sfp = os.path.join(working_dir, self.sunlist_file)  # modifier list
 
         with open(fp, 'wb') as outf, open(sfp, 'wb') as outm:
-            for count, vector in enumerate(self.sun_vectors):
-                mat = Light('sol_%03d' % count, 1e6, 1e6, 1e6)
-                sun = Source('sun_%03d' % count, vector, 0.533, mat)
+            for hoy, vector in izip(self.sun_up_hours, self.sun_vectors):
+                # use minute of the year to name sun positions
+                moy = int(round(hoy * 60))
+                mat = Light('sol_%06d' % moy, 1e6, 1e6, 1e6)
+                sun = Source('sun_%06d' % moy, vector, 0.533, mat)
                 outf.write(sun.to_rad_string(True).replace('\n', ' ') + '\n')
-                outm.write('sol_%03d\n' % count)
+                outm.write('sol_%06d\n' % moy)
 
     def duplicate(self):
         """Duplicate this class."""
@@ -187,10 +190,12 @@ class AnalemmaReversed(Analemma):
         sfp = os.path.join(working_dir, self.sunlist_file)  # modifier list
 
         with open(fp, 'wb') as outf, open(sfp, 'wb') as outm:
-            for count, vector in enumerate(self.sun_vectors):
+            for hoy, vector in izip(self.sun_up_hours, self.sun_vectors):
+                # use minute of the year to name sun positions
+                moy = int(round(hoy * 60))
                 # reverse sun vector
                 r_vector = tuple(-1 * i for i in vector)
-                mat = Light('sol_%03d' % count, 1e6, 1e6, 1e6)
-                sun = Source('sun_%03d' % count, r_vector, 0.533, mat)
+                mat = Light('sol_%06d' % moy, 1e6, 1e6, 1e6)
+                sun = Source('sun_%06d' % moy, r_vector, 0.533, mat)
                 outf.write(sun.to_rad_string(True).replace('\n', ' ') + '\n')
-                outm.write('sol_%03d\n' % count)
+                outm.write('sol_%06d\n' % moy)

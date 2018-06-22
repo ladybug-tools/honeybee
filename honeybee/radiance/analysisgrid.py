@@ -325,7 +325,6 @@ class AnalysisGrid(object):
                           izip(inf.next().split(), dinf.next().split()))
                     for count in xrange(end))
             elif mode == 1:
-                print 'here! here! here!'
                 # binary 0-1
                 coupled_values = (tuple(
                     (int(float(1 if float(r) > 0 else 0)),
