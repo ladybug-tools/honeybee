@@ -202,7 +202,7 @@ class AnalysisGrid(object):
     def parse_header(self, inf, start_line, hoys, check_point_count=False):
         """Parse radiance matrix header."""
         # read the header
-        for i in xrange(10):
+        for i in xrange(40):
             line = inf.next()
             if line[:6] == 'FORMAT':
                 inf.next()  # pass empty line
