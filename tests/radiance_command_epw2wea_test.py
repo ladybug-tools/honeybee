@@ -25,7 +25,7 @@ class Epw2weaTestCase(unittest.TestCase):
 
     def test_default_values(self):
         """Test if the command correctly creates a wea file name as output."""
-        self.assertEqual(self.epw2wea.output_wea_file, self.test_wea)
+        assert self.epw2wea.output_wea_file == self.test_wea
 
 
 if __name__ == "__main__":

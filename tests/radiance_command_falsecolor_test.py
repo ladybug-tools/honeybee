@@ -29,15 +29,15 @@ class FalseColorTestCase(unittest.TestCase):
         #   First one checks if false_color created the file correctly.
         #   Second one checks if the file size is greater than zero.
         self.false_color.execute()
-        self.assertTrue(os.path.exists('assets/sampleFalse.hdr'),
-                        'The file that should have been created by false_color was not'
-                        'found.')
+        assert os.path.exists('assets/sampleFalse.hdr'), \
+                        'The file that should have been created by false_color was not' \
+                        'found.'
 
         file_size = os.stat('assets/sampleFalse.hdr').st_size
 
-        self.assertGreater(file_size, 10,
-                           'The size of the file created by false_color does not appear'
-                           ' to be correct')
+        assert file_size > 10, \
+                           'The size of the file created by false_color does not appear' \
+                           ' to be correct'
 
 
 if __name__ == "__main__":

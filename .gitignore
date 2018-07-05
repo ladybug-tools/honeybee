@@ -4,3 +4,4 @@ test.py
 fullsize.py
 honeybee/plus.py
 /radiance
+.pytest_cache
