@@ -30,15 +30,15 @@ class RaTiffTestCase(unittest.TestCase):
         #   First one checks if ra_tiff created the file correctly.
         #   Second one checks if the file size is greater than zero.
         self.ra_tiff.execute()
-        self.assertTrue(os.path.exists('assets/sample.tiff'),
-                        'The file that should have been created by ra_tiff was not'
-                        'found.')
+        assert os.path.exists('assets/sample.tiff'), \
+                        'The file that should have been created by ra_tiff was not' \
+                        'found.'
 
         file_size = os.stat('assets/sample.tiff').st_size
 
-        self.assertGreater(file_size, 10,
-                           'The size of the file created by ra_tiff does not appear to'
-                           ' be correct')
+        assert file_size > 10, \
+                           'The size of the file created by ra_tiff does not appear to' \
+                           ' be correct'
 
 
 if __name__ == "__main__":
