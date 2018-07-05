@@ -41,7 +41,7 @@ class GenskyTestCase(unittest.TestCase):
         # pop up for some reason.
 
         gensky_alt_azi_string = self.gensky_alt_azi.gensky_parameters.to_rad_string()
-        self.assertEqual(gensky_alt_azi_string, '-ang 32.0 11.0 +s')
+        assert gensky_alt_azi_string == '-ang 32.0 11.0 +s'
 
 
 if __name__ == "__main__":

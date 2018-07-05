@@ -40,7 +40,7 @@ class GendaylitTestCase(unittest.TestCase):
 
         gendaylit_alt_azi_string = self.genday_alt_azi.gendaylit_parameters \
             .to_rad_string()
-        self.assertEqual(gendaylit_alt_azi_string, '-ang 32.0 11.0')
+        assert gendaylit_alt_azi_string == '-ang 32.0 11.0'
 
 
 if __name__ == "__main__":

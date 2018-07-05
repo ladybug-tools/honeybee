@@ -31,7 +31,7 @@ class GetinfoTestCase(unittest.TestCase):
 
         with open(self.output_file1.to_rad_string()) as some_file:
             get_info_lines = some_file.readlines()[1].strip().split()[0]
-        self.assertEqual(get_info_lines, '#?RADIANCE')
+        assert get_info_lines == '#?RADIANCE'
 
 
 if __name__ == '__main__':

@@ -77,16 +77,16 @@ class DataTypeTestCase(unittest.TestCase):
     # test default values
     def test_default_values(self):
         """Make sure default values are set correctly."""
-        self.assertEqual(self.rad_with_def.to_rad_string(),
-                         "-ab 2 -ad 5  -I -C 250 250 250 -of > "
-                         "c:/ladybug/test.wea")
-        self.assertEqual(self.rad_with_def.ab, 2)
-        self.assertEqual(self.rad_with_def.ad, 5)
-        self.assertEqual(self.rad_with_def.c, (250, 250, 250))
-        self.assertEqual(self.rad_with_def.wea_file, "c:/ladybug/test.wea")
-        self.assertEqual(self.rad_with_def.i, False)
-        self.assertEqual(self.rad_with_def.d, False)
-        self.assertEqual(self.rad_with_def.o, 'f')
+        assert self.rad_with_def.to_rad_string() == \
+                         "-ab 2 -ad 5  -I -C 250 250 250 -of > " \
+                         "c:/ladybug/test.wea"
+        assert self.rad_with_def.ab == 2
+        assert self.rad_with_def.ad == 5
+        assert self.rad_with_def.c == (250, 250, 250)
+        assert self.rad_with_def.wea_file == "c:/ladybug/test.wea"
+        assert self.rad_with_def.i == False
+        assert self.rad_with_def.d == False
+        assert self.rad_with_def.o == 'f'
 
     # test for assertion and exceptions
     def test_assertions_exceptions(self):
@@ -94,93 +94,93 @@ class DataTypeTestCase(unittest.TestCase):
         try:
             self.rad_with_def.c = 200
         except ValueError as e:
-            self.assertEqual(type(e), ValueError)
-            self.assertEqual(self.rad_with_def.c, (250, 250, 250))
+            assert type(e) == ValueError
+            assert self.rad_with_def.c == (250, 250, 250)
 
         try:
             self.rad_with_def.ad = 200
         except ValueError as e:
-            self.assertEqual(type(e), ValueError)
+            assert type(e) == ValueError
             # This is quite strange!
             # self.assertEqual(self.rad_with_def.ad, 50)
 
     # test for specific cases
     def test_none_values(self):
         """Make sure values with None will return empty string as radianceString."""
-        self.assertEqual(self.rad.to_rad_string(), ">")
+        assert self.rad.to_rad_string() == ">"
 
     def test_setting_up_values(self):
         """Make sure values will be set as expected."""
         self.rad.ab = 2
-        self.assertEqual(self.rad.ab, 2)
+        assert self.rad.ab == 2
 
         self.rad.ad = 5
-        self.assertEqual(self.rad.ad, 5)
+        assert self.rad.ad == 5
 
         self.rad.c = (0, 0, 0)
-        self.assertEqual(self.rad.c, (0, 0, 0))
+        assert self.rad.c == (0, 0, 0)
 
         self.rad.wea_file = "c:/ladybug/test.wea"
-        self.assertEqual(self.rad.wea_file, "c:/ladybug/test.wea")
+        assert self.rad.wea_file == "c:/ladybug/test.wea"
 
         self.rad.d = True
-        self.assertEqual(self.rad.d, True)
+        assert self.rad.d == True
 
         self.rad.i = False
-        self.assertEqual(self.rad.i, False)
+        assert self.rad.i == False
 
         self.rad.o = 'f'
-        self.assertEqual(self.rad.o, 'f')
+        assert self.rad.o == 'f'
 
     def test_updating_values(self):
         """Make sure values will be updated as expected."""
         self.rad_with_def.ab = 12
-        self.assertEqual(self.rad_with_def.ab, 12)
+        assert self.rad_with_def.ab == 12
 
         self.rad_with_def.ad = 15
-        self.assertEqual(self.rad_with_def.ad, 15)
+        assert self.rad_with_def.ad == 15
 
         self.rad_with_def.c = (10, 10, 10)
-        self.assertEqual(self.rad_with_def.c, (10, 10, 10))
+        assert self.rad_with_def.c == (10, 10, 10)
 
         self.rad_with_def.wea_file = "c:/ladybug/test2.wea"
-        self.assertEqual(self.rad_with_def.wea_file, "c:/ladybug/test2.wea")
+        assert self.rad_with_def.wea_file == "c:/ladybug/test2.wea"
 
         self.rad_with_def.d = False
-        self.assertEqual(self.rad_with_def.d, False)
+        assert self.rad_with_def.d == False
 
         self.rad_with_def.i = True
-        self.assertEqual(self.rad_with_def.i, True)
+        assert self.rad_with_def.i == True
 
         self.rad_with_def.o = 'd'
-        self.assertEqual(self.rad_with_def.o, 'd')
+        assert self.rad_with_def.o == 'd'
 
     def test_to_rad_string_method(self):
         """Check to_rad_string method for all the types."""
-        self.assertEqual(self.rad_with_def.ab.to_rad_string(), '-ab 2')
-        self.assertEqual(self.rad_with_def.ad.to_rad_string(), '-ad 5')
-        self.assertEqual(self.rad_with_def.c.to_rad_string(), '-C 250 250 250')
-        self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
-                         "c:/ladybug/test.wea")
-        self.assertEqual(self.rad_with_def.i.to_rad_string(), '-I')
-        self.assertEqual(self.rad_with_def.d.to_rad_string(), '')
-        self.assertEqual(self.rad_with_def.o.to_rad_string(), '-of')
+        assert self.rad_with_def.ab.to_rad_string() == '-ab 2'
+        assert self.rad_with_def.ad.to_rad_string() == '-ad 5'
+        assert self.rad_with_def.c.to_rad_string() == '-C 250 250 250'
+        assert self.rad_with_def.wea_file.to_rad_string() == \
+                         "c:/ladybug/test.wea"
+        assert self.rad_with_def.i.to_rad_string() == '-I'
+        assert self.rad_with_def.d.to_rad_string() == ''
+        assert self.rad_with_def.o.to_rad_string() == '-of'
 
     def test_value_type_for_numbers(self):
         """Check float values will be converted to intger for int value type."""
         self.rad_with_def.ab = 2.45
-        self.assertEqual(self.rad_with_def.ab, 2)
+        assert self.rad_with_def.ab == 2
 
         self.rad_with_def.ab = 2.99
-        self.assertEqual(self.rad_with_def.ab, 2)
+        assert self.rad_with_def.ab == 2
 
     def test_relative_path(self):
         """Check relative path."""
-        self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
-                         "c:/ladybug/test.wea")
+        assert self.rad_with_def.wea_file.to_rad_string() == \
+                         "c:/ladybug/test.wea"
         self.rad_with_def.wea_file.relPath = "c:/ladybug/test/gridbased"
-        self.assertEqual(self.rad_with_def.wea_file.to_rad_string(),
-                         r"../../test.wea")
+        assert self.rad_with_def.wea_file.to_rad_string() == \
+                         r"../../test.wea"
 
 
 if __name__ == '__main__':
