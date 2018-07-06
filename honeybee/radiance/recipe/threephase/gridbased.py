@@ -88,14 +88,16 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json["surfaces"])
         simulation_type = rec_json["simulation_type"]
 
-        view_mtx_parameters = RfluxmtxParameters.from_json(rec_json["view_mtx_parameters"])
-        daylight_mtx_parameters = RfluxmtxParameters.from_json(rec_json["view_mtx_parameters"])
+        view_mtx_parameters = RfluxmtxParameters.from_json(
+            rec_json["view_mtx_parameters"])
+        daylight_mtx_parameters = RfluxmtxParameters.from_json(
+            rec_json["view_mtx_parameters"])
 
-        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids, \
-                view_mtx_parameters=view_mtx_parameters, \
-                daylight_mtx_parameters=daylight_mtx_parameters, \
-                hb_objects=hb_objects, \
-                simulation_type=simulation_type)
+        return cls(sky_mtx=sky_mtx, analysis_grids=analysis_grids,
+                   view_mtx_parameters=view_mtx_parameters,
+                   daylight_mtx_parameters=daylight_mtx_parameters,
+                   hb_objects=hb_objects,
+                   simulation_type=simulation_type)
 
     @classmethod
     def from_weather_file_points_and_vectors(
@@ -209,17 +211,18 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
             }
         """
         return {
-                "id": "three_phase",
-                "type": "gridbased",
-                "sky_mtx": self.sky_matrix.to_json(),
-                "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
-                "surfaces": [srf.to_json() for srf in self.hb_objects],
-                "simulation_type": self.simulation_type,
-                "view_mtx_parameters": self.view_mtx_parameters.to_json(),
-                "daylight_mtx_parameters": self.daylight_mtx_parameters.to_json()
-                }
+            "id": "three_phase",
+            "type": "gridbased",
+            "sky_mtx": self.sky_matrix.to_json(),
+            "analysis_grids": [ag.to_json() for ag in self.analysis_grids],
+            "surfaces": [srf.to_json() for srf in self.hb_objects],
+            "simulation_type": self.simulation_type,
+            "view_mtx_parameters": self.view_mtx_parameters.to_json(),
+            "daylight_mtx_parameters": self.daylight_mtx_parameters.to_json()
+        }
 
-    def write(self, target_folder, project_name='untitled', header=True):
+    def write(self, target_folder, project_name='untitled', header=True,
+              transpose=False):
         """Write analysis files to target folder.
 
         Args:
@@ -273,7 +276,7 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
         commands, results = get_commands_scene_daylight_coeff(
             project_name, self.sky_matrix.sky_density, project_folder, skyfiles,
             inputfiles, points_file, self.total_point_count, self.radiance_parameters,
-            self.reuse_daylight_mtx, self.total_runs_count)
+            self.reuse_daylight_mtx, self.total_runs_count, transpose=transpose)
 
         self._commands.extend(commands)
         self._result_files.extend(
@@ -293,7 +296,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
 
             # t_matrix
             cmd, results = matrix_calculation_three_phase(
-                project_folder, wg, v_matrix, d_matrix, skyfiles.sky_mtx_total)
+                project_folder, wg, v_matrix, d_matrix, skyfiles.sky_mtx_total,
+                transpose=transpose)
 
             self._commands.extend(cmd)
             self._result_files.extend(results)

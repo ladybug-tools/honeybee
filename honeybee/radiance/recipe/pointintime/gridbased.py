@@ -89,7 +89,8 @@ class GridBased(GenericGridBased):
             tuple(AnalysisGrid.from_json(ag) for ag in rec_json['analysis_grids'])
         hb_objects = tuple(HBSurface.from_json(srf) for srf in rec_json['surfaces'])
         rad_parameters = RtraceParameters.from_json(rec_json["rad_parameters"])
-        return cls(sky, analysis_grids, rec_json['analysis_type'], rad_parameters, hb_objects)
+        return cls(sky, analysis_grids, rec_json['analysis_type'], rad_parameters,
+                   hb_objects)
 
     @classmethod
     def from_points_and_vectors(cls, sky, point_groups, vector_groups=None,

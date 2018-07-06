@@ -183,7 +183,7 @@ class ImageCollection(object):
         if hoy is None:
             return
         sid, stateid = self._create_data_structure(source, state)
-        self._values[sid][stateid][hoy][index] = file_path
+        self._values[sid][stateid][int(hoy * 60)][index] = file_path
 
     def add_image_files(self, file_paths, hoys, source=None, state=None, index=0):
         """Set values for several hours of the year.
@@ -212,7 +212,7 @@ class ImageCollection(object):
             if hoy is None:
                 continue
             try:
-                self._values[sid][stateid][hoy][ind] = value
+                self._values[sid][stateid][int(hoy * 60)][ind] = value
             except Exception as e:
                 raise ValueError(
                     'Failed to load {} results for window_group [{}], state[{}]'
@@ -244,7 +244,7 @@ class ImageCollection(object):
             if hoy is None:
                 continue
             try:
-                self._values[sid][stateid][hoy] = \
+                self._values[sid][stateid][int(hoy * 60)] = \
                     filepathCol[0], filepathCol[1], filepathCol[2]
             except TypeError:
                 raise ValueError(
@@ -263,11 +263,11 @@ class ImageCollection(object):
         # find the state id
         stateid = self.blind_state_id(source, state)
 
-        if hoy not in self._values[sid][stateid]:
+        if int(hoy * 60) not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
-                             .format(dt.DateTime.fromHoy(hoy)))
+                             .format(dt.DateTime.from_hoy(hoy)))
 
-        return self._values[sid][stateid][hoy]
+        return self._values[sid][stateid][int(hoy * 60)]
 
     def get_images(self, hoys, source=None, state=None):
         """Get list of images for an hour in the year."""
@@ -276,28 +276,28 @@ class ImageCollection(object):
         stateid = self.blind_state_id(source, state)
 
         for hoy in hoys:
-            if hoy not in self._values[sid][stateid]:
+            if int(hoy * 60) not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
-                                 .format(dt.DateTime.fromHoy(hoy)))
+                                 .format(dt.DateTime.from_hoy(hoy)))
 
-        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
+        return tuple(self._values[sid][stateid][int(hoy * 60)] for hoy in hoys)
 
     def get_image_by_id(self, hoy, sid=None, stateid=None):
         """Get list of images for an hour in the year."""
-        if hoy not in self._values[sid][stateid]:
+        if int(hoy * 60) not in self._values[sid][stateid]:
             raise ValueError('Hourly values are not available for {}.'
-                             .format(dt.DateTime.fromHoy(hoy)))
+                             .format(dt.DateTime.from_hoy(hoy)))
 
-        return self._values[sid][stateid][hoy]
+        return self._values[sid][stateid][int(hoy * 60)]
 
     def get_images_by_id(self, hoys, sid=None, stateid=None):
         """Get list of images for an hour in the year."""
         for hoy in hoys:
-            if hoy not in self._values[sid][stateid]:
+            if int(hoy * 60) not in self._values[sid][stateid]:
                 raise ValueError('Hourly values are not available for {}.'
-                                 .format(dt.DateTime.fromHoy(hoy)))
+                                 .format(dt.DateTime.from_hoy(hoy)))
 
-        return tuple(self._values[sid][stateid][hoy] for hoy in hoys)
+        return tuple(self._values[sid][stateid][int(hoy * 60)] for hoy in hoys)
 
     def generate_image(self, hoy, source=None, state=None, mode=0, output=None):
         """Generate the image for an hour of the year for input blindStates."""
@@ -423,9 +423,6 @@ class ImageCollection(object):
             if stateid == -1:
                 pass
             else:
-                if hoy not in self._values[sid][stateid]:
-                    raise ValueError('Hourly values are not available for {}.'
-                                     .format(dt.DateTime.fromHoy(hoy)))
                 image_col.append(self.get_image_by_id(hoy, sid, stateid))
 
         if not output:
@@ -486,9 +483,6 @@ class ImageCollection(object):
                 if stateid == -1:
                     continue
                 else:
-                    if hoy not in self._values[sid][stateid]:
-                        raise ValueError('Hourly values are not available for {}.'
-                                         .format(dt.DateTime.fromHoy(hoy)))
                     image_col.append(self.get_image_by_id(hoy, sid, stateid))
             assert image_col, \
                 ValueError('All the state ids cannot be -1.')

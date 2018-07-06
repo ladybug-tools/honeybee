@@ -66,7 +66,8 @@ class AnalysisGrid(object):
         """Create an analysis grid from json objects."""
         analysis_points = tuple(AnalysisPoint.from_json(pt)
                                 for pt in ag_json["analysis_points"])
-        return cls(analysis_points=analysis_points, name=ag_json["name"], window_groups=None)
+        return cls(analysis_points=analysis_points, name=ag_json["name"],
+                   window_groups=None)
 
     @classmethod
     def from_points_and_vectors(cls, points, vectors=None,
@@ -193,8 +194,6 @@ class AnalysisGrid(object):
             self._totalFiles.append(inf)
 
     def set_values(self, hoys, values, source=None, state=None, is_direct=False):
-
-        pass
         # assign the values to points
         for count, hourlyValues in enumerate(values):
             self.analysis_points[count].set_values(
@@ -203,7 +202,7 @@ class AnalysisGrid(object):
     def parse_header(self, inf, start_line, hoys, check_point_count=False):
         """Parse radiance matrix header."""
         # read the header
-        for i in xrange(10):
+        for i in xrange(40):
             line = inf.next()
             if line[:6] == 'FORMAT':
                 inf.next()  # pass empty line
@@ -256,7 +255,7 @@ class AnalysisGrid(object):
 
         with open(file_path, 'rb') as inf:
             if header:
-                inf, hoys = self.parse_header(inf, st, hoys, check_point_count)
+                inf, _ = self.parse_header(inf, st, hoys, check_point_count)
 
             self.add_result_files(file_path, hoys, st, is_direct, header, mode)
 
@@ -308,8 +307,8 @@ class AnalysisGrid(object):
 
         with open(total_file_path, 'rb') as inf, open(direct_file_path, 'rb') as dinf:
             if header:
-                inf, hoys = self.parse_header(inf, st, hoys, check_point_count)
-                dinf, hoys = self.parse_header(dinf, st, hoys, check_point_count)
+                inf, _ = self.parse_header(inf, st, hoys, check_point_count)
+                dinf, _ = self.parse_header(dinf, st, hoys, check_point_count)
 
             self.add_result_files(total_file_path, hoys, st, False, header, mode)
             self.add_result_files(direct_file_path, hoys, st, True, header, mode)
@@ -344,7 +343,7 @@ class AnalysisGrid(object):
                 self.analysis_points[count].set_coupled_values(
                     hourlyValues, hoys, source, state)
 
-    def combined_value_by_id(self, hoy, blinds_state_ids=None):
+    def combined_value_by_id(self, hoy=None, blinds_state_ids=None):
         """Get combined value from all sources based on state_id.
 
         Args:
@@ -357,6 +356,8 @@ class AnalysisGrid(object):
         """
         if self.digit_sign == 1:
             self.load_values_from_files()
+
+        hoy = hoy or self.hoys[0]
 
         return (p.combined_value_by_id(hoy, blinds_state_ids) for p in self)
 
@@ -600,7 +601,7 @@ class AnalysisGrid(object):
         return sda, daylight_autonomy, problematic_points
 
     def annual_sunlight_exposure(self, threshhold=None, blinds_state_ids=None,
-                              occ_schedule=None, target_hours=None, target_area=None):
+                                 occ_schedule=None, target_hours=None, target_area=None):
         """Annual Solar Exposure (ASE)
 
         As per IES-LM-83-12 ase is the percent of sensors that are
@@ -651,10 +652,10 @@ class AnalysisGrid(object):
 
             for sensor in self.analysis_points:
                 for c, r in enumerate(sensor.annual_sunlight_exposure(threshhold,
-                                                                   blinds_state_ids,
-                                                                   occ_schedule,
-                                                                   target_hours
-                                                                   )):
+                                                                      blinds_state_ids,
+                                                                      occ_schedule,
+                                                                      target_hours
+                                                                      )):
                     res[c].append(r)
         else:
             # This is a method for annual recipe to load the results line by line
@@ -811,9 +812,9 @@ class AnalysisGrid(object):
         """Create json object from analysisGrid."""
         analysis_points = [ap.to_json() for ap in self.analysis_points]
         return {
-                "name": self._name,
-                "analysis_points": analysis_points
-                }
+            "name": self._name,
+            "analysis_points": analysis_points
+        }
 
     def __add__(self, other):
         """Add two analysis grids and create a new one.
