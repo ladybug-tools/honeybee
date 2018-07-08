@@ -280,29 +280,39 @@ class RtraceParameters(AdvancedRadianceParameters):
         character is missing, the input format is used.
         """
 
-        # Photon-mapping goodies start here!
-        self.add_radiance_value('ac', descriptive_name='photon cache page size',
-                                attribute_name='photon_cache_pagesize')
-        self.photon_cache_pagesize = None
-        """Place holder for comments."""
+        self.add_radiance_value('o', 'output spec',
+                                attribute_name='output_spec', is_joined=True)
+        self.output_spec = None
+        """
+        -o[spec]
 
-        # Photon-mapping goodies start here!
-        self.add_radiance_value('am', descriptive_name='maximum search radius',
-                                attribute_name='max_search_radius')
-        self.max_search_radius = None
-        """Place holder for comments."""
+        Produce output fields according to spec. Characters are interpreted as follows:
+        o - origin (input)
+        d - direction (normalized)
+        v - value (radiance)
+        V - contribution (radiance)
+        w - weight
+        W - color coefficient
+        l - effective length of ray
+        L - first intersection distance
+        c - local (u,v) coordinates
+        p - point of intersection
+        n - normal at intersection (perturbed)
+        N - normal at intersection (unperturbed)
+        s - surface name
+        m - modifier name
+        M - material name
+        ~ tilde (end of trace marker)
 
-        # Photon-mapping goodies start here!
-        self.add_radiance_value('ap', descriptive_name='photon map file and bandwidths',
-                                attribute_name='photon_map_file_bandwidth')
-        self.photon_map_file_bandwidth = None
-        """Place holder for comments."""
-
-        # Photon-mapping goodies start here!
-        self.add_radiance_value('aC', descriptive_name='photon cache size',
-                                attribute_name='photon_cache_size')
-        self.photon_cache_size = None
-        """Place holder for comments."""
+        If the letter `t` appears in spec, then the fields following will be printed for
+        every ray traced, not just the final result. If the capital letter `T` is given
+        instead of `t`, then all rays will be reported, including shadow testing rays to
+        light sources. Spawned rays are indented one tab for each level. The tilde
+        marker (`~`) is a handy way of differentiating the final ray value from daughter
+        values in a traced ray tree, and usually appears right before the `t` or `T`
+        output flags. E.g., -ov~TmW will emit a tilde followed by a tab at the end of
+        each trace, which can be easily distinguished even in binary output.
+        """
 
     @classmethod
     def from_json(cls, rec_json):

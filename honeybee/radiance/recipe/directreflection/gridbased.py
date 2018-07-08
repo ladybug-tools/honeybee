@@ -1,80 +1,58 @@
-"""Radiance Solar Access Grid-based Analysis Recipe."""
-from .._gridbasedbase import GenericGridBased
+from ..solaraccess.gridbased import SolarAccessGridBased
+from ...material.mirror import Mirror
 from ..recipeutil import write_rad_files, write_extra_files
 from ..recipedcutil import rgb_matrix_file_to_ill
-from ...parameters.rcontrib import RcontribParameters
+
 from ...command.oconv import Oconv
 from ...command.rcontrib import Rcontrib
 from ...analysisgrid import AnalysisGrid
 from ...sky.analemma import Analemma
 from ....futil import write_to_file
-from ....vectormath.euclid import Vector3
 from ....hbsurface import HBSurface
 
 from ladybug.sunpath import Sunpath
 from ladybug.location import Location
-from ladybug.legendparameters import LegendParameters
-from ladybug.color import Colorset
 
 import os
 
 
-class SolarAccessGridBased(GenericGridBased):
-    """Solar access recipe.
+class DirectReflectionGridBased(SolarAccessGridBased):
+    """Direct reflection recipe.
 
-    This class calculates number of sunlight hours for a group of test points.
-
-    Attributes:
-        sun_vectors: A list of ladybug sun vectors as (x, y, z) values. Z value
-            for sun vectors should be negative (coming from sun toward earth)
-        hoys: A list of hours of the year for each sun vector.
-        analysis_grids: List of analysis grids.
-        timestep: The number of timesteps per hour for sun vectors. This number
-            should be smaller than 60 and divisible by 60. The default is set to
-            1 such that one sun vector is generated for each hour (Default: 1).
-        hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
-        sub_folder: Analysis subfolder for this recipe. (Default: "solaraccess")
-
-    Usage:
-        # initiate analysis_recipe
-        analysis_recipe = SolarAccess(sun_vectors, analysis_grids)
-
-        # add honeybee object
-        analysis_recipe.hb_objects = HBObjs
-
-        # write analysis files to local drive
-        analysis_recipe.write_to_file(_folder_, _name_)
-
-        # run the analysis
-        analysis_recipe.run(debaug=False)
-
-        # get the results
-        print(analysis_recipe.results())
+    This recipe calculates the direct and first reflection from reflective surfaces.
     """
 
-    def __init__(self, sun_vectors, hoys, analysis_grids, timestep=1, hb_objects=None,
-                 sub_folder='solaraccess'):
-        """Create sunlighthours recipe."""
-        GenericGridBased.__init__(
-            self, analysis_grids, hb_objects, sub_folder
-        )
+    def __init__(self, sun_vectors, hoys, analysis_grids, timestep=1,
+                 reflective_surfaces=None, context_surfaces=None,
+                 sub_folder='directreflection'):
+        """
+        Args:
+            sun_vectors: A list of ladybug sun vectors as (x, y, z) values. Z value
+                for sun vectors should be negative (coming from sun toward earth)
+            hoys: A list of hours of the year for each sun vector.
+            analysis_grids: List of analysis grids.
+            timestep: The number of timesteps per hour for sun vectors. This number
+                should be smaller than 60 and divisible by 60. The default is set to
+                1 such that one sun vector is generated for each hour (Default: 1).
+            reflective_surfaces: A list of Honeybee surfaces to be modeled as reflective
+                materials (Default: None).
+            context_surfaces: A list of non-reflective Honeybee surfaces (default: None).
+            sub_folder: Analysis subfolder for this recipe. (Default: "directreflection")
+        """
+        # update materials for reflective objects and context
+        reflective_surfaces = reflective_surfaces or []
+        context_surfaces = context_surfaces or []
 
-        assert len(hoys) == len(sun_vectors), \
-            ValueError(
-                'Length of sun_vectors [] must be equall to '
-                'the length of hoys []'.format(len(sun_vectors), len(hoys))
-        )
-        self.sun_vectors = sun_vectors
-        self._hoys = hoys
-        self.timestep = timestep
+        hb_objects = self.update_reflective_surfaces(reflective_surfaces) + \
+            context_surfaces
 
-        # this is a bug! should be set under a setter method
-        self._radiance_parameters = RcontribParameters()
-        self._radiance_parameters.irradiance_calc = True
-        self._radiance_parameters.ambient_bounces = 0
-        self._radiance_parameters.direct_certainty = 1
-        self._radiance_parameters.direct_threshold = 0
-        self._radiance_parameters.direct_jitter = 0
+        # create honeybee objects
+        SolarAccessGridBased.__init__(self, sun_vectors, hoys, analysis_grids,
+                                      timestep, hb_objects, sub_folder)
+
+        # update radiance paramters
+        # set -dr to 1 to capture first reflection from mirror like surfaces.
+        self._radiance_parameters.direct_sec_relays = 1
 
     @classmethod
     def from_json(cls, rec_json):
@@ -89,6 +67,7 @@ class SolarAccessGridBased(GenericGridBased):
               "sun_vectors": [] // list of sun vectors if location is not provided
             }
         """
+        raise NotImplementedError()
         hoys = rec_json["hoys"]
         if 'sun_vectors' not in rec_json or not rec_json['sun_vectors']:
             # create sun vectors from location inputs
@@ -105,35 +84,10 @@ class SolarAccessGridBased(GenericGridBased):
         return cls(sun_vectors, hoys, analysis_grids, 1, hb_objects)
 
     @classmethod
-    def from_points_and_vectors(cls, sun_vectors, hoys, point_groups, vector_groups=[],
-                                timestep=1, hb_objects=None, sub_folder='sunlighthour'):
-        """Create sunlighthours recipe from points and vectors.
-
-        Args:
-            sun_vectors: A list of ladybug sun vectors as (x, y, z) values. Z value
-                for sun vectors should be negative (coming from sun toward earth)
-            hoys: A list of hours of the year for each sun vector.
-            point_groups: A list of (x, y, z) test points or lists of (x, y, z) test
-                points. Each list of test points will be converted to a
-                TestPointGroup. If testPts is a single flattened list only one
-                TestPointGroup will be created.
-            vector_groups: An optional list of (x, y, z) vectors. Each vector
-                represents direction of corresponding point in testPts. If the
-                vector is not provided (0, 0, 1) will be assigned.
-            timestep: The number of timesteps per hour for sun vectors. This number
-                should be smaller than 60 and divisible by 60. The default is set to
-                1 such that one sun vector is generated for each hour (Default: 1).
-            hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
-            sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
-        """
-        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
-                                                                    vector_groups)
-        return cls(sun_vectors, hoys, analysis_grids, timestep, hb_objects, sub_folder)
-
-    @classmethod
     def from_suns(cls, suns, point_groups, vector_groups=[], timestep=1,
-                  hb_objects=None, sub_folder='sunlighthour'):
-        """Create sunlighthours recipe from LB sun objects.
+                  reflective_surfaces=None, context_surfaces=None,
+                  sub_folder='directreflection'):
+        """Create direct reflection recipe from LB sun objects.
 
         Attributes:
             suns: A list of ladybug suns.
@@ -147,99 +101,65 @@ class SolarAccessGridBased(GenericGridBased):
             timestep: The number of timesteps per hour for sun vectors. This number
                 should be smaller than 60 and divisible by 60. The default is set to
                 1 such that one sun vector is generated for each hour (Default: 1).
-            hb_objects: An optional list of Honeybee surfaces or zones (Default: None).
-            sub_folder: Analysis subfolder for this recipe. (Default: "sunlighthours")
+            reflective_surfaces: A list of Honeybee surfaces to be modeled as reflective
+                materials (Default: None).
+            context_surfaces: A list of non-reflective Honeybee surfaces (default: None).
+            sub_folder: Analysis subfolder for this recipe. (Default: "directreflection")
         """
-        try:
-            sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
-            hoys = tuple(s.hoy for s in suns if s.is_during_day)
-        except AttributeError:
-            raise TypeError('The input is not a valid LBSun.')
+        # update materials for reflective objects and context
+        reflective_surfaces = reflective_surfaces or []
+        context_surfaces = context_surfaces or []
 
-        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
-                                                                    vector_groups)
-        return cls(sun_vectors, hoys, analysis_grids, timestep, hb_objects, sub_folder)
+        hb_objects = cls.update_reflective_surfaces(reflective_surfaces) + \
+            context_surfaces
+
+        return cls.from_suns(suns, point_groups, vector_groups, timestep,
+                             hb_objects, sub_folder)
 
     @classmethod
     def from_location_and_hoys(cls, location, hoys, point_groups, vector_groups=[],
-                               timestep=1, hb_objects=None, sub_folder='sunlighthour'):
-        """Create sunlighthours recipe from Location and hours of year."""
-        sp = Sunpath.from_location(location)
+                               timestep=1, reflective_surfaces=None,
+                               context_surfaces=None, sub_folder='directreflection'):
+        """Create direct reflection recipe from Location and hours of year."""
+        # update materials for reflective objects and context
+        reflective_surfaces = reflective_surfaces or []
+        context_surfaces = context_surfaces or []
 
-        suns = (sp.calculate_sun_from_hoy(hoy) for hoy in hoys)
+        hb_objects = cls.update_reflective_surfaces(reflective_surfaces) + \
+            context_surfaces
 
-        sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
-
-        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
-                                                                    vector_groups)
-        return cls(sun_vectors, hoys, analysis_grids, timestep, hb_objects, sub_folder)
+        return cls.from_location_and_hoys(
+            location, hoys, point_groups, vector_groups, timestep, hb_objects, sub_folder
+        )
 
     @classmethod
     def from_location_and_analysis_period(
         cls, location, analysis_period, point_groups, vector_groups=None,
-            hb_objects=None, sub_folder='sunlighthour'):
-        """Create sunlighthours recipe from Location and analysis period."""
-        vector_groups = vector_groups or ()
+            reflective_surfaces=None, context_surfaces=None,
+            sub_folder='directreflection'):
+        """Create direct reflection recipe from Location and analysis period."""
+        # update materials for reflective objects and context
+        reflective_surfaces = reflective_surfaces or []
+        context_surfaces = context_surfaces or []
 
-        sp = Sunpath.from_location(location)
+        hb_objects = cls.update_reflective_surfaces(reflective_surfaces) + \
+            context_surfaces
 
-        suns = (sp.calculate_sun_from_hoy(hoy) for hoy in analysis_period.float_hoys)
+        return cls.from_location_and_analysis_period(
+            location, analysis_period, point_groups, vector_groups,
+            hb_objects, sub_folder)
 
-        sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
-        hoys = tuple(s.hoy for s in suns if s.is_during_day)
+    @staticmethod
+    def update_reflective_surfaces(surfaces):
+        """Update surface materials to reflective mirror."""
+        reflective_material = Mirror('reflective_material', 1, 1, 1)
+        duplicate_surfaces = [surface.duplicate() for surface in surfaces]
+        for surface in duplicate_surfaces:
+            # changing base material is for test and will be removed
+            surface.radiance_properties.material = reflective_material
+            surface.radiance_properties.black_material = reflective_material
 
-        analysis_grids = cls.analysis_grids_from_points_and_vectors(point_groups,
-                                                                    vector_groups)
-        return cls(sun_vectors, hoys, analysis_grids, analysis_period.timestep,
-                   hb_objects, sub_folder)
-
-    @property
-    def hoys(self):
-        """Return list of hours of the year."""
-        return self._hoys
-
-    @property
-    def sun_vectors(self):
-        """A list of ladybug sun vectors as (x, y, z) values."""
-        return self._sun_vectors
-
-    @sun_vectors.setter
-    def sun_vectors(self, vectors):
-        try:
-            self._sun_vectors = tuple(Vector3(*v).flipped() for v in vectors
-                                      if v[2] < 0)
-        except TypeError:
-            self._sun_vectors = tuple(Vector3(v.X, v.Y, v.Z).flipped()
-                                      for v in vectors if v.Z < 0)
-        except IndexError:
-            raise ValueError("Failed to create the sun vectors!")
-
-        if len(self.sun_vectors) != len(vectors):
-            print('%d vectors with positive z value are found and removed '
-                  'from sun vectors' % (len(vectors) - len(self.sun_vectors)))
-
-    @property
-    def timestep(self):
-        """An intger for the number of timesteps per hour for sun vectors.
-
-        This number should be smaller than 60 and divisible by 60.
-        """
-        return self._timestep
-
-    @timestep.setter
-    def timestep(self, ts):
-        try:
-            self._timestep = int(ts)
-        except TypeError:
-            self._timestep = 1
-
-        assert self._timestep != 0, 'ValueError: TimeStep cannot be 0.'
-
-    @property
-    def legend_parameters(self):
-        """Legend parameters for solar access analysis."""
-        col = Colorset.ecotect()
-        return LegendParameters([0, 'max'], colors=col)
+        return duplicate_surfaces
 
     def write(self, target_folder, project_name='untitled', header=True,
               transpose=False):
@@ -264,6 +184,9 @@ class SolarAccessGridBased(GenericGridBased):
             target_folder: Path to parent folder. Files will be created under
                 target_folder/gridbased. use self.sub_folder to change subfolder name.
             project_name: Name of this project as a string.
+            transpose: Set to True to transpose the results matrix. By defalut each
+                row include the results for each point and each column is the results
+                for a different timestep (default: False).
 
         Returns:
             True in case of success.
@@ -271,7 +194,7 @@ class SolarAccessGridBased(GenericGridBased):
         # 0.prepare target folder
         # create main folder target_folder/project_name
         project_folder = \
-            super(GenericGridBased, self).write_content(target_folder, project_name)
+            super(SolarAccessGridBased, self).write_content(target_folder, project_name)
 
         # write geometry and material files
         opqfiles, glzfiles, wgsfiles = write_rad_files(
@@ -316,19 +239,33 @@ class SolarAccessGridBased(GenericGridBased):
                                for f in oct_scene_files_items)
 
         # # 4.2.prepare Rcontrib
-        rct = Rcontrib('result/' + project_name,
+        rct = Rcontrib('result/total..' + project_name,
                        rcontrib_parameters=self._radiance_parameters)
         rct.octree_file = str(oc.output_file)
         rct.points_file = self.relpath(points_file, project_folder)
 
-        batch_file = os.path.join(project_folder, "commands.bat")
         rmtx = rgb_matrix_file_to_ill((str(rct.output_file),),
-                                      'result/{}.ill'.format(project_name),
+                                      'result/total..{}.ill'.format(project_name),
                                       transpose)
         # # 4.3 write batch file
         self._commands.append(oc.to_rad_string())
         self._commands.append(rct.to_rad_string())
         self._commands.append(rmtx.to_rad_string())
+
+        # add rcontrib for single reflection
+        self._radiance_parameters.direct_sec_relays = 0
+        rct2 = Rcontrib('result/sun..' + project_name,
+                        rcontrib_parameters=self._radiance_parameters)
+        rct2.octree_file = str(oc.output_file)
+        rct2.points_file = self.relpath(points_file, project_folder)
+
+        rmtx2 = rgb_matrix_file_to_ill((str(rct2.output_file),),
+                                       'result/sun..{}.ill'.format(project_name),
+                                       transpose)
+
+        # add the last two lines to batch file.
+        self._commands.append(rct2.to_rad_string())
+        self._commands.append(rmtx2.to_rad_string())
 
         self._result_files = os.path.join(project_folder, str(rmtx.output_file))
 
@@ -347,15 +284,16 @@ class SolarAccessGridBased(GenericGridBased):
 
         hours = self.hoys
         rf = self._result_files
+        df = rf.replace('total..', 'sun..')
         start_line = 0
         for count, analysisGrid in enumerate(self.analysis_grids):
             if count:
                 start_line += len(self.analysis_grids[count - 1])
 
             # TODO(): Add timestep
-            analysisGrid.set_values_from_file(
-                rf, hours, start_line=start_line, header=True, check_point_count=False,
-                mode=1
+            analysisGrid.set_coupled_values_from_file(
+                rf, df, hours, start_line=start_line,
+                header=True, check_point_count=False, mode=1
             )
 
         return self.analysis_grids
@@ -372,8 +310,9 @@ class SolarAccessGridBased(GenericGridBased):
               "sun_vectors": []
             }
         """
+        raise NotImplementedError()
         return {
-            "id": "solar_access",
+            "id": "direct_reflection",
             "type": "gridbased",
             "location": None,
             "hoys": self.hoys,

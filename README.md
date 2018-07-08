@@ -56,14 +56,20 @@ room.add_fenestration_surface('right', 4, 1.5, 1.2, radiance_material=glass_60)
 sky = CertainIlluminanceLevel(illuminance_value=2000)
 
 # generate grid of test points
-test_points = room.generate_test_points(grid_size=0.5, height=0.75)
+analysis_grid = room.generate_test_points(grid_size=0.5, height=0.75)
 
 # put the recipe together
-rp = GridBased(sky=sky, point_groups=(test_points,), simulation_type=0, hb_objects=(room,))
+rp = GridBased(sky=sky, analysis_grids=(analysis_grid,), simulation_type=0,
+               hb_objects=(room,))
 
 # write and run the analysis
-rp.write_to_file(target_folder=r'c:\ladybug', project_name='room')
-rp.run(debug=False)
+batch_file = rp.write(target_folder=r'c:\ladybug', project_name='room')
+rp.run(batch_file, debug=False)
 
-results = rp.results()
+# results - in this case it will be an analysis grid
+result = rp.results()[0]
+
+# print the values for each point
+for value in result.combined_value_by_id():
+    print('illuminance value: %d lux' % value[0])
 ```
