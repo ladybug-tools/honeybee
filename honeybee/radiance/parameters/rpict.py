@@ -402,12 +402,28 @@ class RpictParameters(AdvancedRadianceParameters):
         """ Set the maximum y resolution."""
 
         # Photon-mapping goodies start here!
-        self.add_radiance_value('ac',descriptive_name='photon cache page size',
+        self.add_radiance_value('ac', descriptive_name='photon cache page size',
                                 attribute_name='photon_cache_pagesize')
         self.photon_cache_pagesize = None
         """Place holder for comments."""
 
+        # Photon-mapping goodies start here!
+        self.add_radiance_value('am', descriptive_name='maximum search radius',
+                                attribute_name='max_search_radius')
+        self.max_search_radius = None
+        """Place holder for comments."""
 
+        # Photon-mapping goodies start here!
+        self.add_radiance_value('ap', descriptive_name='photon map file and bandwidths',
+                                attribute_name='photon_map_file_bandwidth')
+        self.photon_map_file_bandwidth = None
+        """Place holder for comments."""
+
+        # Photon-mapping goodies start here!
+        self.add_radiance_value('aC', descriptive_name='photon cache size',
+                                attribute_name='photon_cache_size')
+        self.photon_cache_size = None
+        """Place holder for comments."""
 
     @classmethod
     def low_quality(cls):
