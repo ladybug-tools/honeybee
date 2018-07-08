@@ -12,15 +12,12 @@ class Mkpmap(RadianceCommand):
     Attributes:
         oct_file: Full path to input octree file (Default: None).
         mkpmap_parameters: Radiance parameters for mkpmap. If None Default
-            parameters will be set. 
-
-
+            parameters will be set.
     """
 
     def __init__(self, oct_file=None, mkpmap_parameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
-
 
         self.oct_file = oct_file
         self.mkpmap_parameters = mkpmap_parameters
@@ -37,8 +34,6 @@ class Mkpmap(RadianceCommand):
 
         assert hasattr(self.mkpmap_parameters, "isRadianceParameters"), \
             "input mkpmap_parameters is not a valid parameters type."
-
-
 
     def to_rad_string(self, relative_path=False):
         """Return full command as a string."""
