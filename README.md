@@ -1,5 +1,10 @@
 ![Honeybee](http://www.ladybug.tools/assets/img/honeybee.png)
 
+[![Build Status](https://travis-ci.org/ladybug-tools/honeybee.svg?branch=master)](https://travis-ci.org/ladybug-tools/honeybee)
+[![Coverage Status](https://coveralls.io/repos/github/ladybug-tools/honeybee/badge.svg)](https://coveralls.io/github/ladybug-tools/honeybee)
+
+[![Python 2.7](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-270/) [![IronPython](https://img.shields.io/badge/ironpython-2.7-red.svg)](https://github.com/IronLanguages/ironpython2/releases/tag/ipy-2.7.8/)
+
 # honeybee
 
 Honeybee is a Python library to create, run and visualize the results of daylight ([RADIANCE](https://radiance-online.org//)) and energy analysis ([EnergyPlus](https://energyplus.net/)/[OpenStudio](https://www.openstudio.net/)). The current version supports only Radiance integration. For energy simulation you may use the [legacy honeybee for Grasshopper](https://github.com/mostaphaRoudsari/honeybee).

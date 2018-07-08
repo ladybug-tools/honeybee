@@ -3,10 +3,9 @@ language: python
 python: "2.7"
 
 install:
- - pip install pytest pytest-cov
+ - pip install pytest pytest-cov coveralls
  - pip install git+https://github.com/ladybug-tools/ladybug.git@master
  - sudo apt-get install radiance
- # - pip install runmanager
 
 script:
   - py.test --cov=. tests/
