@@ -1,7 +1,7 @@
 import unittest
 from honeybee.radiance.recipe.solaraccess.gridbased import SolarAccessGridBased
-from honeybee.ladybug.core import AnalysisPeriod
-from honeybee.ladybug.epw import EPW
+from ladybug.analysisperiod import AnalysisPeriod
+from ladybug.epw import EPW
 
 import os
 
@@ -45,7 +45,7 @@ class SunlighthoursTestCase(unittest.TestCase):
         slh.write_to_file(self.base_folder, project_name="test")
 
         if slh.run():
-            self.assertEqual(slh.results(), [4])
+            assert slh.results() == [4]
 
     def test_cls_method_analysis_period(self):
         """Make sure default values are set correctly."""
@@ -59,7 +59,7 @@ class SunlighthoursTestCase(unittest.TestCase):
         slh.write_to_file(self.base_folder, project_name="test")
 
         if slh.run():
-            self.assertEqual(slh.results(), [475])
+            assert slh.results() == [475]
 
     def test_cls_method_hoy(self):
         """Make sure default values are set correctly."""
@@ -73,7 +73,7 @@ class SunlighthoursTestCase(unittest.TestCase):
         slh.write_to_file(self.base_folder, project_name="test")
 
         if slh.run():
-            self.assertEqual(slh.results(), [4])
+            assert slh.results() == [4]
 
 
 if __name__ == '__main__':

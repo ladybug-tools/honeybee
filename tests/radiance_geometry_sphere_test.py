@@ -16,10 +16,10 @@ class SphereTestCase(unittest.TestCase):
 
     def test_default_values(self):
         sphere = Sphere('default_sphere')
-        self.assertEquals(sphere.center_pt, (0, 0, 0))
-        self.assertEqual(sphere.radius, 1)
-        self.assertEqual(sphere.to_rad_string(True),
-                         'void sphere efault_sphere 0 0 4 0.000 0.000 0.000 1.000')
+        assert sphere.center_pt == (0, 0, 0)
+        assert sphere.radius == 1
+        assert sphere.to_rad_string(True) == \
+                         'void sphere efault_sphere 0 0 4 0.000 0.000 0.000 1.000'
 
 
 if __name__ == '__main__':

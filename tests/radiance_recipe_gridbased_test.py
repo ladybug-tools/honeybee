@@ -1,7 +1,8 @@
 import unittest
 from honeybee.radiance.sky.certainIlluminance \
-    import SkyWithCertainIlluminanceLevel as radSky
+    import CertainIlluminanceLevel as radSky
 from honeybee.radiance.recipe.pointintime.gridbased import GridBased
+import pytest
 
 
 class GridbasedTestCase(unittest.TestCase):
@@ -22,26 +23,25 @@ class GridbasedTestCase(unittest.TestCase):
     # test default values
     def test_default_values(self):
         """Make sure default values are set correctly."""
-        self.assertEqual(self.rp.simulation_type, 0,
-                         "Default simulation type is changed from 0!")
+        assert self.rp.simulation_type == 0, \
+                         "Default simulation type is changed from 0!"
         # more tests here
 
     # test for assertion and exceptions
     def test_assertions_exceptions(self):
         """Make sure the class catches wrong inputs, etc."""
         # results should not be available before the analysis is ran
-        self.assertRaises(
-            AssertionError, self.rp.results,
-            "Results should not be available unless the analysis is executed!"
-        )
+        with pytest.raises(
+            AssertionError):
+            self.rp.results("Results should not be available unless the analysis is executed!")
         # more tests here
 
     # test for specific cases
     def test_single_point_input(self):
         """A single point should be converted to a single test group."""
         self.rp.updatepoint_groups([0, 0, 0])
-        self.assertEqual(self.rp.num_of_point_groups, 1,
-                         "Failed to convert single test point to a group!")
+        assert self.rp.num_of_point_groups == 1, \
+                         "Failed to convert single test point to a group!"
 
 
 if __name__ == '__main__':
