@@ -42,13 +42,15 @@ class Analemma(RadianceSky):
         return cls(inp['sun_vectors'], inp['sun_up_hours'])
 
     @classmethod
-    def from_location(cls, location, hoys=None, north=0):
+    def from_location(cls, location, hoys=None, north=0, is_leap_year=False):
         """Generate a radiance-based analemma for a location.
 
         Args:
             location: A ladybug location.
             hoys: A list of hours of the year (default: range(8760)).
             north: North angle from Y direction (default: 0).
+            is_leap_year: A boolean to indicate if hours are for a leap year
+                (default: False).
         """
         sun_vectors = []
         sun_up_hours = []
@@ -56,6 +58,7 @@ class Analemma(RadianceSky):
         north = north or 0
 
         sp = Sunpath.from_location(location, north)
+        sp.is_leap_year = is_leap_year
         for hour in hoys:
             sun = sp.calculate_sun_from_hoy(hour)
             if sun.altitude < 0:
@@ -66,7 +69,7 @@ class Analemma(RadianceSky):
         return cls(sun_vectors, sun_up_hours)
 
     @classmethod
-    def from_wea(cls, wea, hoys=None, north=0):
+    def from_wea(cls, wea, hoys=None, north=0, is_leap_year=False):
         """Generate a radiance-based analemma from a ladybug wea.
 
         NOTE: Only the location from wea will be used for creating analemma. For
@@ -76,11 +79,13 @@ class Analemma(RadianceSky):
             wea: A ladybug Wea.
             hoys: A list of hours of the year (default: range(8760)).
             north: North angle from Y direction (default: 0).
+            is_leap_year: A boolean to indicate if hours are for a leap year
+                (default: False).
         """
-        return cls.from_location(wea.location, hoys, north)
+        return cls.from_location(wea.location, hoys, north, is_leap_year)
 
     @classmethod
-    def from_epw_file(cls, epw_file, hoys=None, north=0):
+    def from_epw_file(cls, epw_file, hoys=None, north=0, is_leap_year=False):
         """Create sun matrix from an epw file.
 
         NOTE: Only the location from epw file will be used for creating analemma. For
@@ -90,8 +95,10 @@ class Analemma(RadianceSky):
             epw_file: Full path to an epw file.
             hoys: A list of hours of the year (default: range(8760)).
             north: North angle from Y direction (default: 0).
+            is_leap_year: A boolean to indicate if hours are for a leap year
+                (default: False).
         """
-        return cls.from_location(EPW(epw_file).location, hoys, north)
+        return cls.from_location(EPW(epw_file).location, hoys, north, is_leap_year)
 
     @property
     def isAnalemma(self):
