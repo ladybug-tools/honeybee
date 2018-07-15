@@ -29,6 +29,11 @@ class SkyMatrix(RadianceSky):
         RadianceSky.__init__(self)
         self.wea = wea
         self.hoys = hoys or wea.hoys
+        if not hoys and wea.timestep == 1:
+            # adjut for half an hour so all the annual metric methods work for now
+            # this is a design issue in Honeybe and should be fixed by removing defulting
+            # values to range(8760)
+            self.hoys = [hour - 0.5 for hour in wea.hoys]
         sky_density = sky_density or 1
         self._sky_type = 0  # default to visible radiation
         self._sky_matrixParameters = GendaymtxParameters(output_type=self._sky_type)
