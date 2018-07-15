@@ -137,7 +137,7 @@ class GridBased(DaylightCoeffGridBased):
         }
 
     def write(self, target_folder, project_name='untitled', header=True,
-              transpose=False):
+              transpose=False, simplified=False):
         """Write analysis files to target folder.
 
         Args:
@@ -174,7 +174,7 @@ class GridBased(DaylightCoeffGridBased):
         # # 2.1.Create sky matrix.
         # # 2.2. Create sun matrix
         skycommands, skyfiles = get_commands_radiation_sky(
-            project_folder, self.sky_matrix, reuse=True)
+            project_folder, self.sky_matrix, reuse=True, simplified=simplified)
 
         self._commands.extend(skycommands)
 
@@ -185,7 +185,7 @@ class GridBased(DaylightCoeffGridBased):
             project_name, self.sky_matrix.sky_density, project_folder, skyfiles,
             inputfiles, points_file, self.total_point_count, self.radiance_parameters,
             self.reuse_daylight_mtx, self.total_runs_count, radiation_only=True,
-            transpose=transpose)
+            transpose=transpose, simplified=simplified)
 
         self._result_files.extend(
             os.path.join(project_folder, str(result)) for result in results

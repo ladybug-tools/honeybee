@@ -141,7 +141,7 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
     return SkyCommands(commands, of)
 
 
-def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
+def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True, simplified=False):
     """Get list of commands to generate the skies.
 
     1. sky matrix diffuse
@@ -153,9 +153,14 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
     Returns a namedtuple for (output_files, commands)
     output_files in a namedtuple itself (sky_mtx_total, sky_mtx_direct, analemma,
         sunlist, analemmaMtx).
+
+    Simplified method will only calculate radiation under patched sky.
     """
-    OutputFiles = namedtuple('OutputFiles',
-                             'sky_mtxDiff analemma sunlist analemmaMtx')
+    if not simplified:
+        OutputFiles = namedtuple('OutputFiles',
+                                 'sky_mtxDiff analemma sunlist analemmaMtx')
+    else:
+        OutputFiles = namedtuple('OutputFiles', 'sky_mtxDiff')
 
     SkyCommands = namedtuple('SkyCommands', 'output_files commands')
 
@@ -166,24 +171,27 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
         raise TypeError('You must use a SkyMatrix to generate the sky.')
 
     # # 2.1.Create sky matrix.
-    sky_matrix.mode = 2
+    sky_matrix.mode = 2 if not simplified else 0
     sky_mtx_diff = 'sky/{}.smx'.format(sky_matrix.name)
     gdm = skymtx_to_gendaymtx(sky_matrix, project_folder)
     if gdm:
-        note = ':: diffuse sky matrix'
+        note = ':: diffuse sky matrix' if not simplified else ':: total sky matrix'
         commands.extend((note, gdm))
     sky_matrix.mode = 0
 
-    # # 2.2. Create sun matrix
-    sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
-                   sky_matrix.sky_type, suffix=sky_matrix.suffix)
-    analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
-    ann = Analemma.from_wea(sky_matrix.wea, sky_matrix.hoys, sky_matrix.north)
-    ann.execute(os.path.join(project_folder, 'sky'))
-    sunlist = os.path.join(project_folder + '/sky', ann.sunlist_file)
-    analemma = os.path.join(project_folder + '/sky', ann.analemma_file)
+    if not simplified:
+        # # 2.2. Create sun matrix
+        sm = SunMatrix(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
+                       sky_matrix.sky_type, suffix=sky_matrix.suffix)
+        analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
+        ann = Analemma.from_wea(sky_matrix.wea, sky_matrix.hoys, sky_matrix.north)
+        ann.execute(os.path.join(project_folder, 'sky'))
+        sunlist = os.path.join(project_folder + '/sky', ann.sunlist_file)
+        analemma = os.path.join(project_folder + '/sky', ann.analemma_file)
 
-    of = OutputFiles(sky_mtx_diff, analemma, sunlist, analemma_mtx)
+        of = OutputFiles(sky_mtx_diff, analemma, sunlist, analemma_mtx)
+    else:
+        of = OutputFiles(sky_mtx_diff)
 
     return SkyCommands(commands, of)
 
@@ -193,7 +201,7 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True):
 def get_commands_scene_daylight_coeff(
         project_name, sky_density, project_folder, skyfiles, inputfiles,
         points_file, total_point_count, rfluxmtx_parameters, reuse_daylight_mtx=False,
-        total_count=1, radiation_only=False, transpose=False):
+        total_count=1, radiation_only=False, transpose=False, simplified=False):
     """Get commands for the static windows in the scene.
 
     Use get_commands_w_groups_daylight_coeff to get the commands for the rest of the
@@ -236,7 +244,7 @@ def get_commands_scene_daylight_coeff(
         project_name, sky_density, project_folder, window_group, skyfiles,
         inputfiles, points_file, total_point_count, blkmaterial, wgsblacked,
         rfluxmtx_parameters, 0, window_groupfiles, reuse_daylight_mtx, (1, total_count),
-        radiation_only=radiation_only, transpose=transpose)
+        radiation_only=radiation_only, transpose=transpose, simplified=simplified)
 
     return commands, results
 
@@ -300,7 +308,7 @@ def _get_commands_daylight_coeff(
         project_name, sky_density, project_folder, window_group, skyfiles, inputfiles,
         points_file, total_point_count, blkmaterial, wgsblacked, rfluxmtx_parameters,
         window_group_count=0, window_groupfiles=None, reuse_daylight_mtx=False,
-        counter=None, radiation_only=False, transpose=False):
+        counter=None, radiation_only=False, transpose=False, simplified=False):
     """Get commands for the daylight coefficient recipe.
 
     This function is used by get_commands_scene_daylight_coeff and
@@ -312,7 +320,10 @@ def _get_commands_daylight_coeff(
     # unpack inputs
     opqfiles, glzfiles, wgsfiles, extrafiles = inputfiles
     if radiation_only:
-        sky_mtxDiff, analemma, sunlist, analemmaMtx = skyfiles
+        if simplified:
+            sky_mtxDiff = skyfiles[0]
+        else:
+            sky_mtxDiff, analemma, sunlist, analemmaMtx = skyfiles
     else:
         sky_mtx_total, sky_mtx_direct, analemma, sunlist, analemmaMtx = skyfiles
 
@@ -387,52 +398,59 @@ def _get_commands_daylight_coeff(
             )
             commands.append(rflux.to_rad_string())
 
-            rad_files_blacked = tuple(os.path.relpath(f, project_folder)
-                                      for f in rflux_scene_blacked)
+            if not simplified:
+                rad_files_blacked = tuple(os.path.relpath(f, project_folder)
+                                          for f in rflux_scene_blacked)
 
-            commands.append(':: :: [2/3] black scene daylight matrix')
-            commands.append(
-                ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] '
-                '[blacked scene] ^> [black dc.mtx]'
-            )
-            commands.append('::')
+                commands.append(':: :: [2/3] black scene daylight matrix')
+                commands.append(
+                    ':: :: rfluxmtx - [sky] [points] [wgroup] [blacked wgroups] '
+                    '[blacked scene] ^> [black dc.mtx]'
+                )
+                commands.append('::')
 
-            original_value = int(rfluxmtx_parameters.ambient_bounces)
-            rfluxmtx_parameters.ambient_bounces = 1
-            rflux_direct = coeff_matrix_commands(
-                d_matrix_direct, os.path.relpath(receiver, project_folder),
-                rad_files_blacked, sender, os.path.relpath(points_file, project_folder),
-                total_point_count, rfluxmtx_parameters
-            )
-            commands.append(rflux_direct.to_rad_string())
-            rfluxmtx_parameters.ambient_bounces = original_value
+                original_value = int(rfluxmtx_parameters.ambient_bounces)
+                rfluxmtx_parameters.ambient_bounces = 1
+                rflux_direct = coeff_matrix_commands(
+                    d_matrix_direct, os.path.relpath(receiver, project_folder),
+                    rad_files_blacked, sender,
+                    os.path.relpath(points_file, project_folder),
+                    total_point_count, rfluxmtx_parameters
+                )
+                commands.append(rflux_direct.to_rad_string())
+                rfluxmtx_parameters.ambient_bounces = original_value
 
-            commands.append(':: :: [3/3] black scene analemma daylight matrix')
-            commands.append(
-                ':: :: rcontrib - [sun_matrix] [points] [wgroup] [blacked wgroups] '
-                '[blacked scene] ^> [analemma dc.mtx]'
-            )
-            commands.append('::')
-            sun_commands = sun_coeff_matrix_commands(
-                sun_matrix, os.path.relpath(points_file, project_folder),
-                rad_files_blacked, os.path.relpath(analemma, project_folder),
-                os.path.relpath(sunlist, project_folder),
-                rfluxmtx_parameters.irradiance_calc
-            )
+                commands.append(':: :: [3/3] black scene analemma daylight matrix')
+                commands.append(
+                    ':: :: rcontrib - [sun_matrix] [points] [wgroup] [blacked wgroups] '
+                    '[blacked scene] ^> [analemma dc.mtx]'
+                )
+                commands.append('::')
+                sun_commands = sun_coeff_matrix_commands(
+                    sun_matrix, os.path.relpath(points_file, project_folder),
+                    rad_files_blacked, os.path.relpath(analemma, project_folder),
+                    os.path.relpath(sunlist, project_folder),
+                    rfluxmtx_parameters.irradiance_calc
+                )
 
-            commands.extend(cmd.to_rad_string() for cmd in sun_commands)
+                commands.extend(cmd.to_rad_string() for cmd in sun_commands)
         else:
             commands.append(':: :: 1. reusing daylight matrices')
             commands.append('::')
 
         commands.append(':: :: 2. matrix multiplication')
         commands.append('::')
+        if simplified:
+            rsky_type = 'total'
+        else:
+            rsky_type = 'diffuse'
         if radiation_only:
-            commands.append(':: :: [1/2] calculating daylight mtx * diffuse sky')
+            commands.append(':: :: [1/2] calculating daylight mtx * %s sky' % rsky_type)
             commands.append(
-                ':: :: dctimestep [dc.mtx] [diffuse sky] ^> [diffuse results.rgb]')
+                ':: :: dctimestep [dc.mtx] [%s sky] ^> [%s results.rgb]' % (rsky_type,
+                                                                            rsky_type))
             dct_total = matrix_calculation(
-                'tmp/diffuse..{}..{}.rgb'.format(window_group.name, state.name),
+                'tmp/{}..{}..{}.rgb'.format(rsky_type, window_group.name, state.name),
                 d_matrix=d_matrix, sky_matrix=sky_mtxDiff
             )
         else:
@@ -449,11 +467,12 @@ def _get_commands_daylight_coeff(
 
         if radiation_only:
             commands.append(
-                ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [diffuse results.ill]'
+                ':: :: rmtxop -c 47.4 119.9 11.6 [results.rgb] ^> [%s results.ill]' %
+                rsky_type
             )
             finalmtx = rgb_matrix_file_to_ill(
                 (dct_total.output_file,),
-                'result/diffuse..{}..{}.ill'.format(window_group.name, state.name),
+                'result/{}..{}..{}.ill'.format(rsky_type, window_group.name, state.name),
                 transpose
             )
         else:
@@ -493,67 +512,74 @@ def _get_commands_daylight_coeff(
             )
             commands.append(finalmtx.to_rad_string())
 
-        if not radiation_only:
-            commands.append(':: :: [3/3] calculating black daylight mtx * analemma')
-        else:
-            commands.append(':: :: [2/2] calculating black daylight mtx * analemma')
+        if not simplified:
+            if not radiation_only:
+                commands.append(':: :: [3/3] calculating black daylight mtx * analemma')
+            else:
+                commands.append(':: :: [2/2] calculating black daylight mtx * analemma')
 
-        commands.append(
-            ':: :: dctimestep [black dc.mtx] [analemma only sky] ^> [sun results.rgb]')
-        dct_sun = sun_matrix_calculation(
-            'tmp/sun..{}..{}.rgb'.format(window_group.name, state.name),
-            dc_matrix=sun_matrix,
-            sky_matrix=os.path.relpath(analemmaMtx, project_folder)
-        )
-        commands.append(dct_sun.to_rad_string())
-
-        commands.append(
-            ':: :: rmtxop -c 47.4 119.9 11.6 [sun results.rgb] ^> '
-            '[sun results.ill]'
-        )
-        commands.append('::')
-        finalmtx = rgb_matrix_file_to_ill(
-            (dct_sun.output_file,),
-            'result/sun..{}..{}.ill'.format(window_group.name, state.name),
-            transpose
-        )
-        commands.append(finalmtx.to_rad_string())
-
-        commands.append(':: :: 3. calculating final results')
-        if radiation_only:
             commands.append(
-                ':: :: rmtxop [diff results.ill] '
-                '+ [sun results.ill] ^> [final results.ill]'
+                ':: :: dctimestep [black dc.mtx] [analemma only sky] ^> '
+                '[sun results.rgb]')
+            dct_sun = sun_matrix_calculation(
+                'tmp/sun..{}..{}.rgb'.format(window_group.name, state.name),
+                dc_matrix=sun_matrix,
+                sky_matrix=os.path.relpath(analemmaMtx, project_folder)
+            )
+            commands.append(dct_sun.to_rad_string())
+
+            commands.append(
+                ':: :: rmtxop -c 47.4 119.9 11.6 [sun results.rgb] ^> '
+                '[sun results.ill]'
             )
             commands.append('::')
-            fmtx = final_matrix_addition_radiation(
-                'result/diffuse..{}..{}.ill'.format(window_group.name, state.name),
+            finalmtx = rgb_matrix_file_to_ill(
+                (dct_sun.output_file,),
                 'result/sun..{}..{}.ill'.format(window_group.name, state.name),
-                'result/{}..{}.ill'.format(window_group.name, state.name)
+                transpose
             )
-            commands.append(fmtx.to_rad_string())
-        else:
-            commands.append(
-                ':: :: rmtxop [total results.ill] - [direct results.ill] '
-                '+ [sun results.ill] ^> [final results.ill]'
-            )
-            commands.append('::')
-            fmtx = final_matrix_addition(
-                'result/total..{}..{}.ill'.format(window_group.name, state.name),
-                'result/direct..{}..{}.ill'.format(window_group.name, state.name),
-                'result/sun..{}..{}.ill'.format(window_group.name, state.name),
-                'result/{}..{}.ill'.format(window_group.name, state.name)
-            )
-            commands.append(fmtx.to_rad_string())
+            commands.append(finalmtx.to_rad_string())
+
+            commands.append(':: :: 3. calculating final results')
+            if radiation_only:
+                commands.append(
+                    ':: :: rmtxop [diff results.ill] '
+                    '+ [sun results.ill] ^> [final results.ill]'
+                )
+                commands.append('::')
+                fmtx = final_matrix_addition_radiation(
+                    'result/diffuse..{}..{}.ill'.format(window_group.name, state.name),
+                    'result/sun..{}..{}.ill'.format(window_group.name, state.name),
+                    'result/{}..{}.ill'.format(window_group.name, state.name)
+                )
+                commands.append(fmtx.to_rad_string())
+            else:
+                commands.append(
+                    ':: :: rmtxop [total results.ill] - [direct results.ill] '
+                    '+ [sun results.ill] ^> [final results.ill]'
+                )
+                commands.append('::')
+                fmtx = final_matrix_addition(
+                    'result/total..{}..{}.ill'.format(window_group.name, state.name),
+                    'result/direct..{}..{}.ill'.format(window_group.name, state.name),
+                    'result/sun..{}..{}.ill'.format(window_group.name, state.name),
+                    'result/{}..{}.ill'.format(window_group.name, state.name)
+                )
+                commands.append(fmtx.to_rad_string())
 
         commands.append(
             ':: end of calculation for {}, {}'.format(window_group.name, state.name))
         commands.append('::')
         commands.append('::')
 
-        result_files.append(
-            os.path.join(project_folder, str(fmtx.output_file))
-        )
+        if not simplified:
+            result_files.append(
+                os.path.join(project_folder, str(fmtx.output_file))
+            )
+        else:
+            result_files.append(
+                os.path.join(project_folder, str(finalmtx.output_file))
+            )
 
     return commands, result_files
 

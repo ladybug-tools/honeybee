@@ -28,7 +28,7 @@ class SkyMatrix(RadianceSky):
         """Create sky."""
         RadianceSky.__init__(self)
         self.wea = wea
-        self.hoys = hoys or range(8760)
+        self.hoys = hoys or wea.hoys
         sky_density = sky_density or 1
         self._sky_type = 0  # default to visible radiation
         self._sky_matrixParameters = GendaymtxParameters(output_type=self._sky_type)
@@ -50,8 +50,8 @@ class SkyMatrix(RadianceSky):
             }
         """
         wea = Wea.from_json(rec_json["wea"])
-        return cls(wea, rec_json["sky_density"], rec_json["north"], \
-                rec_json["hoys"], rec_json["mode"], rec_json["suffix"])
+        return cls(wea, rec_json["sky_density"], rec_json["north"],
+                   rec_json["hoys"], rec_json["mode"], rec_json["suffix"])
 
     @classmethod
     def from_epw_file(cls, epw_file, sky_density=1, north=0,
@@ -163,13 +163,13 @@ class SkyMatrix(RadianceSky):
             }
         """
         return {
-                "wea": self.wea.to_json(),
-                "sky_density": int(self.sky_density),
-                "north": float(self.north),
-                "hoys": self.hoys,
-                "mode": self.mode,
-                "suffix": self.suffix
-                }
+            "wea": self.wea.to_json(),
+            "sky_density": int(self.sky_density),
+            "north": float(self.north),
+            "hoys": self.hoys,
+            "mode": self.mode,
+            "suffix": self.suffix
+        }
 
     def hours_match(self, hours_file):
         """Check if hours in the hours file matches the hours of wea."""
