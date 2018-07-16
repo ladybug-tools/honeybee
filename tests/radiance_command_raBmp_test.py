@@ -12,10 +12,10 @@ class RaBmpTestCase(unittest.TestCase):
 
     # test prep
     def setUp(self):
-        ra_bmp_para = ra_bmp_parameters()
+        ra_bmp_para = RaBmpParameters()
         ra_bmp_para.exposure = '-3'
 
-        self.ra_bmp = ra_bmp()
+        self.ra_bmp = RaBmp()
         self.ra_bmp.input_hdr_file = 'tests/assets/sample.hdr'
         self.ra_bmp.ra_bmp_parameters = ra_bmp_para
         self.ra_bmp.output_bmp_file = 'tests/assets/sample.bmp'

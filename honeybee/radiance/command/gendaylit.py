@@ -7,7 +7,7 @@ import os
 
 
 class Gendaylit(RadianceCommand):
-    u"""
+    """
     gendaylit - Generate an annual Perez sky matrix from a weather tape.
 
     The attributes for this class and their data descriptors are given below.
@@ -47,12 +47,11 @@ class Gendaylit(RadianceCommand):
     output_file = RadiancePath('output_file', descriptive_name='output sky file',
                                relative_path=None, check_exists=False)
 
-    def __init__(self, output_name, month_day_hour, rotation=0,
+    def __init__(self, output_name='untitled', month_day_hour=None, rotation=0,
                  gendaylit_parameters=None):
         """Init command."""
         RadianceCommand.__init__(self)
 
-        output_name = output_name or 'untitled'
         self.output_file = output_name if output_name.lower().endswith(".sky") \
             else output_name + ".sky"
         """results file for sky (Default: untitled)"""

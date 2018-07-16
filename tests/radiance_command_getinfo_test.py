@@ -27,7 +27,7 @@ class GetinfoTestCase(unittest.TestCase):
     def test_default_values(self):
         """The first test checks if Getinfo works. The script opens an image
         assets/sample.hdr and reads its header."""
-        self.getinfoTest1.execute()
+        self.getinfo_test1.execute()
 
         with open(self.output_file1.to_rad_string()) as some_file:
             get_info_lines = some_file.readlines()[1].strip().split()[0]

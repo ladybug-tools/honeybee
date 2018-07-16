@@ -29,7 +29,8 @@ class OconvTestCase(unittest.TestCase):
     def test_default_values(self):
         """Test the command runs correctly."""
         self.output_file = self.oconv.execute()
-        assert self.output_file.normpath == 'tests/room/testrun/room.oct'
+        assert self.output_file == 'tests/room/testrun/room.oct'
+        assert self.output_file.normpath == 'tests\\room\\testrun\\room.oct'
         # more tests here
 
 

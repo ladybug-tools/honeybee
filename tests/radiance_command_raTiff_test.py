@@ -34,7 +34,7 @@ class RaTiffTestCase(unittest.TestCase):
                         'The file that should have been created by ra_tiff was not' \
                         'found.'
 
-        file_size = os.stat('assets/sample.tiff').st_size
+        file_size = os.stat('tests/assets/sample.tiff').st_size
 
         assert file_size > 10, \
                            'The size of the file created by ra_tiff does not appear to' \
