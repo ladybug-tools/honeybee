@@ -14,7 +14,7 @@ class GendaylitTestCase(unittest.TestCase):
     def setUp(self):
         # instantiate gendaylit with monthdayhour
         self.genday_month_day = Gendaylit(month_day_hour=(11, 12, '11EST'))
-        self.genday_month_day.output_file = 'room/temp/genday.sky'
+        self.genday_month_day.output_file = 'tests/room/temp/genday.sky'
         # instantiate gendaylit params and add some values
         gendaylit_param1 = GendaylitParameters()
 
@@ -28,7 +28,7 @@ class GendaylitTestCase(unittest.TestCase):
 
     def tearDown(self):
         "Clean stuff created during the test"
-        os.remove('room/temp/genday.sky')
+        os.remove('tests/room/temp/genday.sky')
 
     def test_default_values(self):
         "Test the command runs correctly"

@@ -3,7 +3,7 @@ from honeybee.radiance.parameters._advancedparametersbase import \
     AdvancedRadianceParameters
 from honeybee.radiance.parameters._frozen import frozen
 
-
+# TODO: Change all 'c:/ladybug/*' to local file in tests directory
 class AdvancedParametersTestCase(unittest.TestCase):
     """Test for (honeybee/radiance/parameters/_advancedparametersbase.py)."""
 

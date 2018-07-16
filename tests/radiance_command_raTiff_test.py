@@ -17,20 +17,20 @@ class RaTiffTestCase(unittest.TestCase):
         ra_tiff_para.compression_type = 'L'
 
         self.ra_tiff = RaTiff()
-        self.ra_tiff.input_hdr_file = 'assets/sample.hdr'
+        self.ra_tiff.input_hdr_file = 'tests/assets/sample.hdr'
         self.ra_tiff.ra_tiff_parameters = ra_tiff_para
-        self.ra_tiff.output_tiff_file = 'assets/sample.tiff'
+        self.ra_tiff.output_tiff_file = 'tests/assets/sample.tiff'
 
     def tearDown(self):
         # cleanup
-        os.remove('assets/sample.tiff')
+        os.remove('tests/assets/sample.tiff')
 
     def test_default_values(self):
         # Two tests will be conducted:
         #   First one checks if ra_tiff created the file correctly.
         #   Second one checks if the file size is greater than zero.
         self.ra_tiff.execute()
-        assert os.path.exists('assets/sample.tiff'), \
+        assert os.path.exists('tests/assets/sample.tiff'), \
                         'The file that should have been created by ra_tiff was not' \
                         'found.'
 

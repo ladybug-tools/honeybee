@@ -21,9 +21,9 @@ class SunlighthoursTestCase(unittest.TestCase):
             (0.429563, 0.819156, -0.380077), (0.624703, 0.731875, -0.272221),
             (0.777301, 0.615806, -0.128788))
         self.sun_vectors = []
-        self.base_folder = os.path.abspath("./tests/room/testrun")
-        self.run_folder = os.path.abspath("./tests/room/testrun/test/sunlighthour")
-        self.epwfile = os.path.abspath("./tests/room/test.epw")
+        self.base_folder = os.path.abspath("tests/room/testrun")
+        self.run_folder = os.path.abspath("tests/room/testrun/test/sunlighthour")
+        self.epwfile = os.path.abspath("tests/room/test.epw")
 
     # ending the test
     def tearDown(self):
