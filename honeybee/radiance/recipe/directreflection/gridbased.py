@@ -210,11 +210,11 @@ class DirectReflectionGridBased(SolarAccessGridBased):
         # 2.write sun files
         ann = Analemma(self.sun_vectors, self.hoys)
         ann.execute(project_folder + '/sky')
-        sun_modifiers = os.path.join(project_folder + '/sky', ann.sunlist_file)
+        sun_modifiers = os.path.join('.', 'sky', ann.sunlist_file)
         suns_geo = os.path.join(project_folder + '/sky', ann.analemma_file)
 
         # 2.1.add sun list to modifiers
-        self._radiance_parameters.mod_file = self.relpath(sun_modifiers, project_folder)
+        self._radiance_parameters.mod_file = sun_modifiers
         self._radiance_parameters.y_dimension = self.total_point_count
 
         # 3.write batch file

@@ -56,13 +56,6 @@ class RcontribParameters(RtraceParameters):
         # add parameters
         self.add_radiance_value('M', 'modifiers file', attribute_name='mod_file')
 
-        # This is not clean or even the right way of doing this but a fix for now to
-        # handle cases in running rcontrib on docker. What is happening here is that
-        # I add ./ or .\ to the start of the path to modifier if it is located inside
-        # sky folder which is the default folder for analemma and suns in all recipes.
-        if mod_file and mod_file.startswith('sky'):
-            mod_file = '.{}{}'.format(mod_file[3], mod_file)
-
         self.mod_file = mod_file
         """[-M file] File path to a file with a list of modifiers
         (Default: None)"""

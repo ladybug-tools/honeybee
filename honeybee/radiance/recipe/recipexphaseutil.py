@@ -414,8 +414,7 @@ def matrix_calculation_five_phase(
             sun_commands = sun_coeff_matrix_commands(
                 sun_matrix, os.path.relpath(points_file, project_folder),
                 rad_files_blacked, os.path.relpath(analemma, project_folder),
-                os.path.relpath(sunlist, project_folder),
-                rfluxmtx_parameters.irradiance_calc
+                sunlist, rfluxmtx_parameters.irradiance_calc
             )
 
             commands.extend(cmd.to_rad_string() for cmd in sun_commands)

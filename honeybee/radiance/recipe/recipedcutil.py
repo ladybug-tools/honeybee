@@ -133,7 +133,7 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
     analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
     ann = Analemma.from_wea(sky_matrix.wea, sky_matrix.hoys, sky_matrix.north)
     ann.execute(os.path.join(project_folder, 'sky'))
-    sunlist = os.path.join(project_folder + '/sky', ann.sunlist_file)
+    sunlist = os.path.join('.', 'sky', ann.sunlist_file)
     analemma = os.path.join(project_folder + '/sky', ann.analemma_file)
 
     of = OutputFiles(sky_mtx_total, sky_mtx_direct, analemma, sunlist, analemma_mtx)
@@ -186,7 +186,7 @@ def get_commands_radiation_sky(project_folder, sky_matrix, reuse=True, simplifie
         analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
         ann = Analemma.from_wea(sky_matrix.wea, sky_matrix.hoys, sky_matrix.north)
         ann.execute(os.path.join(project_folder, 'sky'))
-        sunlist = os.path.join(project_folder + '/sky', ann.sunlist_file)
+        sunlist = os.path.join('.', 'sky', ann.sunlist_file)
         analemma = os.path.join(project_folder + '/sky', ann.analemma_file)
 
         of = OutputFiles(sky_mtx_diff, analemma, sunlist, analemma_mtx)
@@ -429,8 +429,7 @@ def _get_commands_daylight_coeff(
                 sun_commands = sun_coeff_matrix_commands(
                     sun_matrix, os.path.relpath(points_file, project_folder),
                     rad_files_blacked, os.path.relpath(analemma, project_folder),
-                    os.path.relpath(sunlist, project_folder),
-                    rfluxmtx_parameters.irradiance_calc
+                    sunlist, rfluxmtx_parameters.irradiance_calc
                 )
 
                 commands.extend(cmd.to_rad_string() for cmd in sun_commands)

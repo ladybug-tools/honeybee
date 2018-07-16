@@ -429,7 +429,7 @@ class DaylightCoeffImageBased(GenericImageBased):
                         sun_commands = imaged_based_sun_coeff_matrix_commands(
                             output_filename_format, view, str(vwr_samp.output_file),
                             rad_files_blacked, self.relpath(analemma, project_folder),
-                            self.relpath(sunlist, project_folder))
+                            sunlist)
 
                         # delete the files if they are already created
                         # rcontrib won't overwrite the files if they already exist
