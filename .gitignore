@@ -7,3 +7,5 @@ honeybee/plus.py
 .pytest_cache
 /__pycache__
 .coverage
+*.ipynb
+.ipynb_checkpoints

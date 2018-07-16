@@ -13,7 +13,7 @@ class FalseColorTestCase(unittest.TestCase):
     # test prep
     def setUp(self):
         false_color_para = FalsecolorParameters()
-        false_color_para.contourLines = True
+        false_color_para.contour_lines = True
 
         self.false_color = Falsecolor()
         self.false_color.inputImageFile = 'tests/assets/sample.hdr'

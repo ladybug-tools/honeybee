@@ -14,15 +14,15 @@ class GendaylitTestCase(unittest.TestCase):
     def setUp(self):
         # instantiate gendaylit with monthdayhour
         self.genday_month_day = Gendaylit(month_day_hour=(11, 12, '11EST'))
-        self.genday_month_day.output_file = 'tests/room/temp/genday.sky'
+        self.genday_month_day.output_file = os.path.abspath('tests/room/temp/genday.sky')
         # instantiate gendaylit params and add some values
         gendaylit_param1 = GendaylitParameters()
 
         # add params to gendaylit class.
-        self.gendayMonthDay.gendaylit_parameters = gendaylit_param1
+        self.genday_month_day.gendaylit_parameters = gendaylit_param1
 
         # instantiate another gendaylit, with altitude and azimuth angles.
-        self.genday_alt_azi = Gendaylit()
+        self.genday_alt_azi = Gendaylit(month_day_hour=(11, 12, '11EST'))
         genday_param2 = GendaylitParameters(altitude_azimuth=(32, 11))
         self.genday_alt_azi.gendaylit_parameters = genday_param2
 
