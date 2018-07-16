@@ -193,8 +193,7 @@ class SunMatrix(RadianceSky):
         """
         wea = self.wea
         output_type = self.output_type
-        addition = 0.5 if wea.timestep == 1 else 0
-        month_date_time = (DateTime.from_hoy(idx + addition) for idx in self.hoys)
+        month_date_time = (DateTime.from_hoy(idx) for idx in self.hoys)
 
         sp = Sunpath.from_location(wea.location, self.north)
 
