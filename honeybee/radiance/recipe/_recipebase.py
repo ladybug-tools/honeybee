@@ -232,21 +232,20 @@ class AnalysisRecipe(object):
                 bf.write("\npause\n")
 
         # FIX: Heroku Permission Patch
-        subprocess.call(command_file)
-        # print('Command RUN: {}'.format(command_file))
-        # process = subprocess.Popen(command_file,
-        #                            stdout=subprocess.PIPE,
-        #                            stderr=subprocess.PIPE,
-        #                            shell=True)
-        #
-        # proc_stdout, errmsg = process.communicate()
-        # print('Subprocess Log Results:')
-        # print(proc_stdout)
-        # print('ERRORS:\n{}'.format(errmsg))
-
-        self._isCalculated = True
-        # self.isChanged = False
-        return True
+        process = subprocess.Popen(command_file, stderr=subprocess.PIPE)
+        stdout, err = process.communicate()
+        if process.returncode != 0:
+            if str(err).strip():
+                # pass cases that the user closes the window
+                raise Exception(err)
+            else:
+                print('The process is interrupted by user!')
+            self._isCalculated = False
+            return False
+        else:
+            self._isCalculated = True
+            # self.isChanged = False
+            return True
 
     @property
     def legend_parameters(self):
