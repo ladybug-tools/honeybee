@@ -267,12 +267,12 @@ class AnalysisGrid(object):
                 values = (tuple(int(float(r)) for r in inf.next().split())
                           for count in xrange(end))
             elif mode == 1:
-                # binary 0-1
+                # binary 0-1 (useful for solaraccess studies)
                 values = (tuple(1 if float(r) > 0 else 0 for r in inf.next().split())
                           for count in xrange(end))
             else:
                 # divide values by mode (useful for daylight factor calculation)
-                values = (tuple(int(float(r) / mode) for r in inf.next().split())
+                values = (tuple(float(r) / mode for r in inf.next().split())
                           for count in xrange(end))
 
             # assign the values to points
@@ -334,7 +334,7 @@ class AnalysisGrid(object):
             else:
                 # divide values by mode (useful for daylight factor calculation)
                 coupled_values = (
-                    tuple((int(float(r) / mode), int(float(d) / mode)) for r, d in
+                    tuple((float(r) / mode, float(d) / mode) for r, d in
                           izip(inf.next().split(), dinf.next().split()))
                     for count in xrange(end))
 
