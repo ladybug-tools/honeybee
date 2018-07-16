@@ -10,10 +10,10 @@ class OconvTestCase(unittest.TestCase):
     def setUp(self):
         """Set up the test case by initiating the class."""
         self.oconv = Oconv(
-            output_name='./tests/room/testrun/room.oct',
-            scene_files=('./tests/room/room.mat',
-                         './tests/room/uniform.sky',
-                         './tests/room/room.rad')
+            output_name='tests/room/testrun/room.oct',
+            scene_files=('tests/room/room.mat',
+                         'tests/room/uniform.sky',
+                         'tests/room/room.rad')
         )
 
         self.output_file = None

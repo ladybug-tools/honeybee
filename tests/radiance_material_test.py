@@ -20,28 +20,28 @@ class MaterialTypeTestCase(unittest.TestCase):
     def setUp(self):
 
         # Checking LightMaterial.
-        light1 = LightMaterial('light1')
+        light1 = Light('light1')
         light1.red = 1e6
         self.light1 = light1
 
         # Checking GlowMaterial
-        glow1 = GlowMaterial('glow1', red=200, green=1e6, blue=200, maxRadius=5)
+        glow1 = Glow('glow1', red=200, green=1e6, blue=200, maxRadius=5)
         self.glow1 = glow1
 
         # Checking MetalMaterial
-        metal1 = MetalMaterial("aluminium", 0.5, 0.5, 0.5, 0.1, 0.001)
+        metal1 = Metal("aluminium", 0.5, 0.5, 0.5, 0.1, 0.001)
         self.metal1 = metal1
 
         # Checking PlasticMaterial
-        plastic1 = PlasticMaterial("grey", 0.1, 0.1, 0.1, 0.1, 0.001)
+        plastic1 = Plastic("grey", 0.1, 0.1, 0.1, 0.1, 0.001)
         self.plastic1 = plastic1
 
         # Checking GlassMaterial
-        glass1 = GlassMaterial('glazing', 0.5, 0.5, 0.5)
+        glass1 = Glass('glazing', 0.5, 0.5, 0.5)
         self.glass1 = glass1
 
         # checking BSDFMaterial
-        bsdf1 = BSDFMaterial('assets/clear.xml')
+        bsdf1 = BSDF('assets/clear.xml')
         self.bsdf1 = bsdf1
 
     def tearDown(self):

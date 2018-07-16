@@ -2,7 +2,7 @@ import unittest
 from honeybee.radiance.datatype import RadiancePath, RadianceNumber, \
     RadianceBoolFlag, RadianceTuple, RadianceValue
 
-
+# TODO: Change all 'c:/ladybug/*' to local file in tests directory
 class DataTypeTestCase(unittest.TestCase):
     """Test for (honeybee/radiance/view.py)."""
 
