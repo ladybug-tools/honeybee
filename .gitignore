@@ -5,3 +5,5 @@ fullsize.py
 honeybee/plus.py
 /radiance
 .pytest_cache
+/__pycache__
+.coverage
