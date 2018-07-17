@@ -12,7 +12,7 @@ class ParametersTestCase(unittest.TestCase):
         """Set up the test case by initiating the class."""
         @frozen
         class CustomRP(RadianceParameters):
-            ambient_bounces = RadianceNumber('ab', 'ambient bounces', defaultValue=15)
+            ambient_bounces = RadianceNumber('ab', 'ambient bounces', default_value=15)
             ambient_divisions = RadianceValue('ad', 'ambient divisions')
 
             def __init__(self, ab=None, ad=None):

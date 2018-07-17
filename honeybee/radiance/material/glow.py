@@ -26,9 +26,9 @@ class Glow(RadianceMaterial):
             provides a convenient way to illuminate local light fixture geometry without
             overlighting nearby objects.
     """
-    red = RadianceNumber('red', num_type=float, valid_range=(0, 1))
-    green = RadianceNumber('green', num_type=float, valid_range=(0, 1))
-    blue = RadianceNumber('blue', num_type=float, valid_range=(0, 1))
+    red = RadianceNumber('red', num_type=float, valid_range=(0, 1000000))
+    green = RadianceNumber('green', num_type=float, valid_range=(0, 1000000))
+    blue = RadianceNumber('blue', num_type=float, valid_range=(0, 1000000))
     max_radius = RadianceNumber('max_radius', num_type=float)
 
     def __init__(self, name, red=0.0, green=0.0, blue=0.0, max_radius=0.0,
