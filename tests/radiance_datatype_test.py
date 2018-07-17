@@ -26,10 +26,10 @@ class DataTypeTestCase(unittest.TestCase):
                               valid_range=[0, 255])
 
             o = RadianceValue('o', 'output format', default_value=None,
-                              accepted_inputs=('f', 'd'), isJoined=True)
+                              accepted_inputs=('f', 'd'), is_joined=True)
 
-            weaFile = RadiancePath('weaFile', 'Weather File Path', relativePath=None,
-                                   checkExists=False, extension='.wea')
+            wea_file = RadiancePath('weaFile', 'Weather File Path', relative_path=None,
+                                   check_exists=False, extension='.wea')
 
             def __init__(self):
                 pass
@@ -61,7 +61,7 @@ class DataTypeTestCase(unittest.TestCase):
                               num_type=int, valid_range=[0, 255])
 
             o = RadianceValue('o', 'output format', default_value='f',
-                              accepted_inputs=('f', 'd'), isJoined=True)
+                              accepted_inputs=('f', 'd'), is_joined=True)
 
             def __init__(self):
                 self.wea_file = "c:/ladybug/test.wea"
@@ -79,7 +79,7 @@ class DataTypeTestCase(unittest.TestCase):
         """Make sure default values are set correctly."""
         assert self.rad_with_def.to_rad_string() == \
                          "-ab 2 -ad 5  -I -C 250 250 250 -of > " \
-                         "c:/ladybug/test.wea"
+                         "c:\\ladybug\\test.wea"
         assert self.rad_with_def.ab == 2
         assert self.rad_with_def.ad == 5
         assert self.rad_with_def.c == (250, 250, 250)
@@ -161,7 +161,7 @@ class DataTypeTestCase(unittest.TestCase):
         assert self.rad_with_def.ad.to_rad_string() == '-ad 5'
         assert self.rad_with_def.c.to_rad_string() == '-C 250 250 250'
         assert self.rad_with_def.wea_file.to_rad_string() == \
-                         "c:/ladybug/test.wea"
+                         "c:\\ladybug\\test.wea"
         assert self.rad_with_def.i.to_rad_string() == '-I'
         assert self.rad_with_def.d.to_rad_string() == ''
         assert self.rad_with_def.o.to_rad_string() == '-of'
@@ -177,10 +177,10 @@ class DataTypeTestCase(unittest.TestCase):
     def test_relative_path(self):
         """Check relative path."""
         assert self.rad_with_def.wea_file.to_rad_string() == \
-                         "c:/ladybug/test.wea"
+                         "c:\\ladybug\\test.wea"
         self.rad_with_def.wea_file.relPath = "c:/ladybug/test/gridbased"
         assert self.rad_with_def.wea_file.to_rad_string() == \
-                         r"../../test.wea"
+                         "..\\..\\test.wea"
 
 
 if __name__ == '__main__':
