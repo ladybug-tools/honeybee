@@ -16,9 +16,9 @@ class FalseColorTestCase(unittest.TestCase):
         false_color_para.contour_lines = True
 
         self.false_color = Falsecolor()
-        self.false_color.inputImageFile = 'tests/assets/sample.hdr'
+        self.false_color.input_image_file = 'tests/assets/sample.hdr'
         self.false_color.false_color_parameters = false_color_para
-        self.false_color.outputFile = 'tests/assets/sampleFalse.hdr'
+        self.false_color.output_file = 'tests/assets/sampleFalse.hdr'
 
     def tearDown(self):
         # cleanup

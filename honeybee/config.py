@@ -257,14 +257,14 @@ radbin_path = f.radbin_path
 """Path to Radinace binaries folder."""
 
 # NotImplemented yet
-epPath = None
+ep_path = None
 """Path to EnergyPlus folder."""
 
-perlExePath = f.perl_exe_path
+perl_exe_path = f.perl_exe_path
 """Path to the perl executable needed for some othe Radiance Scripts."""
 
 
-pythonExePath = f.python_exe_path
+python_exe_path = f.python_exe_path
 """Path to python executable needed for some Radiance scripts from the PyRad
 library"""
 
