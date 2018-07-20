@@ -46,7 +46,7 @@ class SolarAccessGridBased(GenericGridBased):
         analysis_recipe.write_to_file(_folder_, _name_)
 
         # run the analysis
-        analysis_recipe.run(debaug=False)
+        analysis_recipe.run(debug=False)
 
         # get the results
         print(analysis_recipe.results())
@@ -61,8 +61,8 @@ class SolarAccessGridBased(GenericGridBased):
 
         assert len(hoys) == len(sun_vectors), \
             ValueError(
-                'Length of sun_vectors [] must be equall to '
-                'the length of hoys []'.format(len(sun_vectors), len(hoys))
+                'Length of sun_vectors {} must be equall to '
+                'the length of hoys {}'.format(len(sun_vectors), len(hoys))
         )
         self.sun_vectors = sun_vectors
         self._hoys = hoys
@@ -183,7 +183,7 @@ class SolarAccessGridBased(GenericGridBased):
 
         sp = Sunpath.from_location(location)
 
-        suns = (sp.calculate_sun_from_hoy(hoy) for hoy in analysis_period.float_hoys)
+        suns = (sp.calculate_sun_from_hoy(hoy) for hoy in analysis_period.hoys)
 
         sun_vectors = tuple(s.sun_vector for s in suns if s.is_during_day)
         hoys = tuple(s.hoy for s in suns if s.is_during_day)

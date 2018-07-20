@@ -32,14 +32,14 @@ class ViewTestCase(unittest.TestCase):
     # test for specific cases
     def test_fish_eye_view(self):
         """vh and vv should set to 180 for fisheye view."""
-        self.v.viewType = 1
+        self.v.view_type = 1
         assert self.v.view_h_size == 180
         assert self.v.view_v_size == 180
 
     def test_updating_view(self):
         """Change location and direction."""
-        self.v.viewPoint = (0, 0, 10)
-        self.v.viewDirection = (0, 0, -1)
+        self.v.view_point = (0, 0, 10)
+        self.v.view_direction = (0, 0, -1)
         assert self.v.view_point == (0, 0, 10)
         assert self.v.view_direction == (0, 0, -1)
 
