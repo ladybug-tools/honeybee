@@ -3,6 +3,8 @@ u"""Create a radiance view."""
 from datatype import RadianceTuple, RadianceNumber
 import math
 from copy import deepcopy
+from ..utilcol import random_name
+
 
 
 # TODO: Add a method to add paramters from string.
@@ -106,7 +108,7 @@ class View(object):
     __view_type = RadianceNumber('vt', 'view type', num_type=int, valid_range=[0, 5],
                                  default_value=0)
 
-    def __init__(self, name, view_point=None, view_direction=None, view_up_vector=None,
+    def __init__(self, name=None, view_point=None, view_direction=None, view_up_vector=None,
                  view_type=0, view_h_size=60, view_v_size=60, x_resolution=64,
                  y_resolution=64, view_shift=0, view_lift=0):
         u"""Init view."""
@@ -162,6 +164,15 @@ class View(object):
     def isView(self):
         """Return True for view."""
         return True
+        
+    @property
+    def name(self):
+        """AnalysisGrid name."""
+        return self._name
+
+    @name.setter
+    def name(self, n):
+        self._name = n or random_name()
 
     @property
     def view_type(self):
