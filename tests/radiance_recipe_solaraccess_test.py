@@ -33,7 +33,7 @@ class SunlighthoursTestCase(unittest.TestCase):
     def tearDown(self):
         """Cleaning up after the test."""
         try:
-            shutil.rmtree(self.base_folder)
+            shutil.rmtree(self.run_folder)
         except:
             print("Could not delete folder {}".format(self.base_folder))
     # test default values
