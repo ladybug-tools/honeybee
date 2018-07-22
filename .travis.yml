@@ -9,13 +9,15 @@ before_install:
  - tar -xzvf radiance-5.2.91bcc23df3-Linux.tar.gz
  - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/bin/. /usr/local/bin
  - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
+ - sudo apt-get install libtiff5
+ - cd ..
 
 install:
  - pip install pytest pytest-cov coveralls
  - pip install git+https://github.com/ladybug-tools/ladybug.git@master
 
 script:
-  - py.test --cov=. tests/
+  - py.test --cov=honeybee tests/
 
 after_success:
   - coverage report

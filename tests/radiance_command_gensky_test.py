@@ -45,7 +45,8 @@ class GenskyTestCase(unittest.TestCase):
         # This test confirm sunny_sky and solar angle are set correctly through
         # GenSkyParameters() class
         gensky_alt_azi_string = self.gensky_alt_azi.gensky_parameters.to_rad_string()
-        assert gensky_alt_azi_string == '+s -ang 32.0 11.0'
+        assert '+s' in gensky_alt_azi_string
+        assert '-ang 32.0 11.0' in gensky_alt_azi_string
 
 
 if __name__ == "__main__":
