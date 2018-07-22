@@ -19,9 +19,7 @@ class GetinfoTestCase(unittest.TestCase):
     # ending the test
     def tearDown(self):
         """Cleaning up after the test."""
-        if self.output_file1 is not None:
-            # remove the file which is just created
-            os.remove(str(self.output_file1))
+        pass
 
     # test default values
     def test_default_values(self):

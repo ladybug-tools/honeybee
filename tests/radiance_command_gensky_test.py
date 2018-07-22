@@ -37,7 +37,10 @@ class GenskyTestCase(unittest.TestCase):
         # This test confirm cloudy_sky, ground_reflect, month_day_hour and default
         # name are set correctly
         gensky_month_day_string = self.gensky_month_day.to_rad_string()
-        assert 'gensky 11 12 11EST -c -g 0.2 > untitled.sky' in gensky_month_day_string
+        assert 'gensky 11 12 11EST' in gensky_month_day_string
+        assert ' -c ' in gensky_month_day_string
+        assert ' -g 0.2 ' in gensky_month_day_string
+        assert gensky_month_day_string.endswith(' > untitled.sky')
 
         # This test confirm sunny_sky and solar angle are set correctly through
         # GenSkyParameters() class

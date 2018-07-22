@@ -21,21 +21,16 @@ class OconvTestCase(unittest.TestCase):
     # ending the test
     def tearDown(self):
         """Cleaning up after the test."""
-        if self.output_file is not None:
-            # remove the file which is just created
-            os.remove(str(self.output_file))
+        pass
 
     # test default values
     def test_default_values(self):
         """Test the command runs correctly."""
         self.output_file = self.oconv.execute()
         assert self.output_file == 'tests/room/testrun/room.oct'
-        assert self.output_file.normpath == 'tests\\room\\testrun\\room.oct'
-        # more tests here
+        assert os.path.normpath(self.output_file.normpath) == \
+            os.path.normpath('tests/room/testrun/room.oct')
 
 
 if __name__ == '__main__':
-    # You can run the test module from the root folder by running runtestunits.py
-    # Update: Nov 3 2016, We need to be one level up if running this script as __main__
-    os.chdir(os.pardir)
     unittest.main()

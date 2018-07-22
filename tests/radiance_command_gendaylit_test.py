@@ -28,7 +28,7 @@ class GendaylitTestCase(unittest.TestCase):
 
     def tearDown(self):
         "Clean stuff created during the test"
-        os.remove('tests/room/temp/genday.sky')
+        pass
 
     def test_default_values(self):
         "Test the command runs correctly"
