@@ -60,8 +60,25 @@ class MaterialTypeTestCase(unittest.TestCase):
         # bsdf with no function
         bsdf_tuple = tuple(bsdf.to_rad_string().split())
         assert tuple(map(self.safe_cast_float, bsdf_tuple)) == \
-            ('void', 'BSDF', 'clear', 5, 0.000, 'tests/assets/clear.xml',
-             0.010, 0.010, 1.000, 0, 0)
+            ('void', 'BSDF', 'clear', 6, 0.000, 'tests/assets/clear.xml',
+             0.010, 0.010, 1.000, '.', 0, 0)
+
+    def test_bsdf_from_string(self):
+        """Checking BSDF."""
+        bsdf_string = """
+        void BSDF clear
+        6 0.0 tests/assets/clear.xml 0.01 0.01 1.0 .
+        0
+        0
+        """
+
+        bsdf = BSDF.from_string(bsdf_string)
+
+        # bsdf with no function
+        bsdf_tuple = tuple(bsdf.to_rad_string().split())
+        assert tuple(map(self.safe_cast_float, bsdf_tuple)) == \
+            ('void', 'BSDF', 'clear', 6, 0.000, 'tests/assets/clear.xml',
+             0.010, 0.010, 1.000, '.', 0, 0)
 
     def test_light(self):
         """Checking Light."""

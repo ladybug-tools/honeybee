@@ -80,11 +80,7 @@ class BSDF(RadianceMaterial):
 
         modifier, name, base_material_data = cls._analyze_string_input(
             cls.__name__, material_string, modifier)
-
-        assert base_material_data[0] == '6' and base_material_data[6] == '.', \
-            'BSDF currently does not support function file and transform. ' \
-            'You can use Custom material to create this BSDF material.'
-
+        print base_material_data
         assert base_material_data[8] == '0', \
             'BSDF currently does not support additional transmissions or reflections. ' \
             'You can use Custom material to create this BSDF material.'
@@ -131,7 +127,8 @@ class BSDF(RadianceMaterial):
             os.path.normpath(self.xmlfile),
             self.up_orientation[0],
             self.up_orientation[1],
-            self.up_orientation[2]
+            self.up_orientation[2],
+            '.'
         ]
 
     def to_json(self):
