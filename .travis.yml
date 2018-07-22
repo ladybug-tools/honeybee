@@ -2,11 +2,17 @@ language: python
 
 python: "2.7"
 
+before_install:
+ # try to install radiance
+ - cd /tmp
+ - wget https://github.com/NREL/Radiance/releases/download/5.2.1/radiance-5.2.91bcc23df3-Linux.tar.gz
+ - tar -xzvf radiance-5.2.91bcc23df3-Linux.tar.gz
+ - cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/bin/. /usr/local/bin
+ - cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
+
 install:
  - pip install pytest pytest-cov
  - pip install git+https://github.com/ladybug-tools/ladybug.git@master
- - sudo apt-get install radiance
- # - pip install runmanager
 
 script:
   - py.test --cov=. tests/

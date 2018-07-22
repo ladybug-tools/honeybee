@@ -690,6 +690,13 @@ class RadianceBoolType(RadianceDataType):
     def __rpow__(self, other):
         return other ** self._value
 
+    def __nonzero__(self):
+        return bool(self._value)
+
+    def __bool__(self):
+        # python 3
+        return bool(self._value)
+
 
 class RadiancePathType(RadianceDataType):
     """Radiance path."""

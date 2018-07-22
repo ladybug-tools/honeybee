@@ -26,7 +26,6 @@ class AnalysisRecipe(object):
         """Additional Radiance files other than honeybee objects."""
 
         self._rad_file = None
-        self._hbObjs = ()
         self._radiance_materials = ()
         self._commands = []
         self._result_files = []
@@ -189,9 +188,6 @@ class AnalysisRecipe(object):
         Returns:
             Path to analysis folder.
         """
-        self._commands = []
-        self._result_files = []
-
         if not target_folder:
             target_folder = os.path.join(os.environ['USERPROFILE'], 'honeybee')
 
@@ -222,7 +218,7 @@ class AnalysisRecipe(object):
         return _basePath
 
     # TODO: Write a runmanager class to handle runs
-    def run(self, command_file, debug=False):
+    def run(self, command_file, debug=False, env=None):
         """Run the analysis."""
         assert os.path.isfile(command_file), \
             ValueError('Failed to find command file: {}'.format(command_file))
@@ -231,8 +227,7 @@ class AnalysisRecipe(object):
             with open(command_file, "a") as bf:
                 bf.write("\npause\n")
 
-        # FIX: Heroku Permission Patch
-        subprocess.call(command_file)
+        subprocess.call(command_file, env=env)
         # print('Command RUN: {}'.format(command_file))
         # process = subprocess.Popen(command_file,
         #                            stdout=subprocess.PIPE,

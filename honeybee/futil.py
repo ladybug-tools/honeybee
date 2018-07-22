@@ -25,7 +25,7 @@ def get_radiance_path_lines():
             )
         print(msg)
     if os.name == 'nt':
-        return "SET RAYPATH=.;{}\nPATH={};$PATH".format(
+        return "SET RAYPATH=.;{}\nPATH={};%PATH%".format(
             normspace(config.radlib_path),
             normspace(config.radbin_path))
     else:
