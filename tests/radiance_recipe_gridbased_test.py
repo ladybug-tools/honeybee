@@ -1,7 +1,9 @@
 import unittest
 from honeybee.radiance.sky.certainIlluminance \
     import CertainIlluminanceLevel as radSky
+from honeybee.radiance.analysisgrid import AnalysisGrid
 from honeybee.radiance.recipe.pointintime.gridbased import GridBased
+
 import pytest
 
 
@@ -13,7 +15,9 @@ class GridbasedTestCase(unittest.TestCase):
         """Set up the test case by initiating the class."""
         # create a sky to be able to initiate gridbased module
         sky = radSky(1000)
-        self.rp = GridBased(sky, point_groups=[0, 0, 0])
+        points = [(0,0,0),(1,1,0),(3,2,0)]
+        analysis_grid = AnalysisGrid.from_points_and_vectors(points)
+        self.rp = GridBased(sky, analysis_grids = [analysis_grid])
 
     # ending the test
     def tearDown(self):
@@ -32,16 +36,18 @@ class GridbasedTestCase(unittest.TestCase):
         """Make sure the class catches wrong inputs, etc."""
         # results should not be available before the analysis is ran
         with pytest.raises(
-            AssertionError):
+            TypeError):
             self.rp.results("Results should not be available unless the analysis is executed!")
         # more tests here
 
     # test for specific cases
     def test_single_point_input(self):
         """A single point should be converted to a single test group."""
-        self.rp.updatepoint_groups([0, 0, 0])
-        assert self.rp.num_of_point_groups == 1, \
-                         "Failed to convert single test point to a group!"
+        pass
+        # The methods below don't exist anymore.
+        # self.rp.updatepoint_groups([0, 0, 0])
+        # assert self.rp.num_of_point_groups == 1, \
+        #                  "Failed to convert single test point to a group!"
 
 
 if __name__ == '__main__':

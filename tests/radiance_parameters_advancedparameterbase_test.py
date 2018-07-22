@@ -19,14 +19,14 @@ class AdvancedParametersTestCase(unittest.TestCase):
         # add parameters
         self.rp.add_radiance_number('ab', 'ambient bounces')
         self.rp.ab = 20
-        self.rp.add_radiance_value('o', 'o f', isJoined=True)
+        self.rp.add_radiance_value('o', 'o f', is_joined=True)
         self.rp.o = 'f'
-        self.rp.add_radiance_tuple('c', 'color', numType=int)
+        self.rp.add_radiance_tuple('c', 'color', num_type=int)
         self.rp.c = (0, 0, 254)
-        self.rp.add_radiance_bool_flag('I', 'irradiance switch', isDualSign=True)
+        self.rp.add_radiance_bool_flag('I', 'irradiance switch', is_dual_sign=True)
         self.rp.I = True
         self.rp.add_radiance_path('wea', 'wea file')
-        self.rp.wea = 'c:/ladybug/test.wea'
+        self.rp.wea = 'tests/room/testrun/test.wea'
 
     # ending the test
     def tearDown(self):
@@ -36,7 +36,7 @@ class AdvancedParametersTestCase(unittest.TestCase):
     # test default values
     def test_default_values(self):
         """Make sure default values are set correctly."""
-        for v in ('-ab 20', '-of', '-c 0 0 254', '+I', 'c:/ladybug/test.wea'):
+        for v in ('-ab 20', '-of', '-c 0 0 254', '+I', 'tests/room/testrun/test.wea'):
             assert v in self.rp.to_rad_string()
 
     # test for assertion and exceptions
@@ -51,7 +51,7 @@ class AdvancedParametersTestCase(unittest.TestCase):
         self.rp.o = 'd'
         self.rp.c = (0, 0, 0)
         self.rp.I = False
-        for v in ('-ab 10', '-od', '-c 0 0 0', '-I', 'c:/ladybug/test.wea'):
+        for v in ('-ab 10', '-od', '-c 0 0 0', '-I', 'tests/room/testrun/test.wea'):
             assert v in self.rp.to_rad_string()
 
 

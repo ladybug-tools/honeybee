@@ -3,5 +3,12 @@ test.py
 *.gh
 fullsize.py
 honeybee/plus.py
-/radiance
+/radiance*
 .pytest_cache
+/__pycache__
+.coverage
+*.ipynb
+.ipynb_checkpoints
+.tox
+*.egg-info
+tests/room/testrun

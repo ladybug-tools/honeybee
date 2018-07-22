@@ -11,7 +11,7 @@ class Epw2weaTestCase(unittest.TestCase):
     # preparing to test.
     def setUp(self):
         # Locate the current directory and then name the test epw file.
-        test_room_folder = os.path.join(os.getcwd(), 'room')
+        test_room_folder = 'tests/room'
         test_epw = os.path.join(test_room_folder, 'test.epw')
         # Derive the wea fileName directly to test with the one derived from
         # the Epw2wea class.

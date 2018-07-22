@@ -19,15 +19,13 @@ class GetinfoTestCase(unittest.TestCase):
     # ending the test
     def tearDown(self):
         """Cleaning up after the test."""
-        if self.output_file1 is not None:
-            # remove the file which is just created
-            os.remove(str(self.output_file1))
+        pass
 
     # test default values
     def test_default_values(self):
         """The first test checks if Getinfo works. The script opens an image
         assets/sample.hdr and reads its header."""
-        self.getinfoTest1.execute()
+        self.getinfo_test1.execute()
 
         with open(self.output_file1.to_rad_string()) as some_file:
             get_info_lines = some_file.readlines()[1].strip().split()[0]

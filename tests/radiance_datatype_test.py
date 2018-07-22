@@ -26,10 +26,10 @@ class DataTypeTestCase(unittest.TestCase):
                               valid_range=[0, 255])
 
             o = RadianceValue('o', 'output format', default_value=None,
-                              accepted_inputs=('f', 'd'), isJoined=True)
+                              accepted_inputs=('f', 'd'), is_joined=True)
 
-            weaFile = RadiancePath('weaFile', 'Weather File Path', relativePath=None,
-                                   checkExists=False, extension='.wea')
+            wea_file = RadiancePath('weaFile', 'Weather File Path', relative_path=None,
+                                    check_exists=False, extension='.wea')
 
             def __init__(self):
                 pass
@@ -61,10 +61,10 @@ class DataTypeTestCase(unittest.TestCase):
                               num_type=int, valid_range=[0, 255])
 
             o = RadianceValue('o', 'output format', default_value='f',
-                              accepted_inputs=('f', 'd'), isJoined=True)
+                              accepted_inputs=('f', 'd'), is_joined=True)
 
             def __init__(self):
-                self.wea_file = "c:/ladybug/test.wea"
+                self.wea_file = "tests/room/testrun/test.wea"
 
         self.rad = RadTest()
         self.rad_with_def = RadTestWithDefaults()
@@ -78,14 +78,14 @@ class DataTypeTestCase(unittest.TestCase):
     def test_default_values(self):
         """Make sure default values are set correctly."""
         assert self.rad_with_def.to_rad_string() == \
-                         "-ab 2 -ad 5  -I -C 250 250 250 -of > " \
-                         "c:/ladybug/test.wea"
+            "-ab 2 -ad 5  -I -C 250 250 250 -of > " \
+            "tests/room/testrun/test.wea"
         assert self.rad_with_def.ab == 2
         assert self.rad_with_def.ad == 5
         assert self.rad_with_def.c == (250, 250, 250)
-        assert self.rad_with_def.wea_file == "c:/ladybug/test.wea"
-        assert self.rad_with_def.i == False
-        assert self.rad_with_def.d == False
+        assert self.rad_with_def.wea_file == "tests/room/testrun/test.wea"
+        assert bool(self.rad_with_def.i) is False
+        assert bool(self.rad_with_def.d) is False
         assert self.rad_with_def.o == 'f'
 
     # test for assertion and exceptions
@@ -120,14 +120,14 @@ class DataTypeTestCase(unittest.TestCase):
         self.rad.c = (0, 0, 0)
         assert self.rad.c == (0, 0, 0)
 
-        self.rad.wea_file = "c:/ladybug/test.wea"
-        assert self.rad.wea_file == "c:/ladybug/test.wea"
+        self.rad.wea_file = "tests/room/testrun/test.wea"
+        assert self.rad.wea_file == "tests/room/testrun/test.wea"
 
         self.rad.d = True
-        assert self.rad.d == True
+        assert bool(self.rad.d) is True
 
         self.rad.i = False
-        assert self.rad.i == False
+        assert bool(self.rad.i) is False
 
         self.rad.o = 'f'
         assert self.rad.o == 'f'
@@ -143,14 +143,14 @@ class DataTypeTestCase(unittest.TestCase):
         self.rad_with_def.c = (10, 10, 10)
         assert self.rad_with_def.c == (10, 10, 10)
 
-        self.rad_with_def.wea_file = "c:/ladybug/test2.wea"
-        assert self.rad_with_def.wea_file == "c:/ladybug/test2.wea"
+        self.rad_with_def.wea_file = "tests/room/testrun/test_2.wea"
+        assert self.rad_with_def.wea_file == "tests/room/testrun/test_2.wea"
 
         self.rad_with_def.d = False
-        assert self.rad_with_def.d == False
+        assert bool(self.rad_with_def.d) is False
 
         self.rad_with_def.i = True
-        assert self.rad_with_def.i == True
+        assert bool(self.rad_with_def.i) is True
 
         self.rad_with_def.o = 'd'
         assert self.rad_with_def.o == 'd'
@@ -161,7 +161,7 @@ class DataTypeTestCase(unittest.TestCase):
         assert self.rad_with_def.ad.to_rad_string() == '-ad 5'
         assert self.rad_with_def.c.to_rad_string() == '-C 250 250 250'
         assert self.rad_with_def.wea_file.to_rad_string() == \
-                         "c:/ladybug/test.wea"
+            "tests/room/testrun/test.wea"
         assert self.rad_with_def.i.to_rad_string() == '-I'
         assert self.rad_with_def.d.to_rad_string() == ''
         assert self.rad_with_def.o.to_rad_string() == '-of'
@@ -173,14 +173,6 @@ class DataTypeTestCase(unittest.TestCase):
 
         self.rad_with_def.ab = 2.99
         assert self.rad_with_def.ab == 2
-
-    def test_relative_path(self):
-        """Check relative path."""
-        assert self.rad_with_def.wea_file.to_rad_string() == \
-                         "c:/ladybug/test.wea"
-        self.rad_with_def.wea_file.relPath = "c:/ladybug/test/gridbased"
-        assert self.rad_with_def.wea_file.to_rad_string() == \
-                         r"../../test.wea"
 
 
 if __name__ == '__main__':
