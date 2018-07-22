@@ -3,21 +3,19 @@ language: python
 python: "2.7"
 
 before_install:
- # try to install radiance
- - cd /tmp
+ # install radiance
  - wget https://github.com/NREL/Radiance/releases/download/5.2.1/radiance-5.2.91bcc23df3-Linux.tar.gz
  - tar -xzvf radiance-5.2.91bcc23df3-Linux.tar.gz
  - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/bin/. /usr/local/bin
  - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
  - sudo apt-get install libtiff5
- - cd ..
 
 install:
  - pip install pytest pytest-cov coveralls
  - pip install git+https://github.com/ladybug-tools/ladybug.git@master
 
 script:
-  - py.test --cov=honeybee tests/
+  - py.test --cov=. ./tests/
 
 after_success:
   - coverage report
