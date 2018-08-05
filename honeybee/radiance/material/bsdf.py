@@ -54,6 +54,7 @@ class BSDF(RadianceMaterial):
 
         self.thickness = thickness or 0
 
+        max_line_count = 2000
         with open(self.xmlfile, 'rb') as inf:
             for count, line in enumerate(inf):
                 if line.strip().startswith('<AngleBasisName>'):
@@ -61,7 +62,8 @@ class BSDF(RadianceMaterial):
                         .replace('</AngleBasisName>', '').replace('LBNL/', '').strip()
                     break
 
-                assert count < 100, 'Failed to find AngleBasisName in first 100 lines.'
+                assert count < max_line_count, \
+                    'Failed to find AngleBasisName in first %d lines.' % max_line_count
 
         self._update_values()
 
