@@ -113,8 +113,14 @@ class Trans(RadianceMaterial):
             raise ValueError(msg)
 
         # calculate the material
-        a7 = ts / (td + ts)
-        a6 = (td + ts) / (rd + td + ts)
+        try:
+            a7 = ts / (td + ts)
+        except ZeroDivisionError:
+            a7 = 0
+        try:
+            a6 = (td + ts) / (rd + td + ts)
+        except ZeroDivisionError:
+            a6 = 0
         a5 = roughness
         a4 = rs
         a3 = cb / ((1 - rs) * (1 - a6))
@@ -126,7 +132,7 @@ class Trans(RadianceMaterial):
                 'This material is physically impossible to create!\n'
                 'You need to adjust the inputs for diffuse reflectance values.')
 
-        return(cls, name, a1, a2, a3, a4, a5, a6, a7, modifier)
+        return cls(name, a1, a2, a3, a4, a5, a6, a7, modifier)
 
     @classmethod
     def from_string(cls, material_string, modifier=None):
