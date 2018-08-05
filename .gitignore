@@ -12,3 +12,4 @@ honeybee/plus.py
 .tox
 *.egg-info
 tests/room/testrun
+tox.ini
