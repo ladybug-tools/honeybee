@@ -285,4 +285,4 @@ class SunMatrix(RadianceSky):
 
     def __repr__(self):
         """Sky representation."""
-        return self.name
+        return 'SunMatrix: #%d' % len(self.sun_up_hours)
