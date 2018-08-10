@@ -45,7 +45,7 @@ class HBFenSurface(HBAnalysisSurface):
         print(hbsrf.to_rad_string(include_materials=True))
 
         # save the definiion to a .rad file
-        hbsrf.rad_string_to_file(r"c:/ladybug/triangle.rad", include_materials=True)
+        hbsrf.write_rad_file(r"c:/ladybug/triangle.rad", include_materials=True)
     """
 
     def __init__(self, name, sorted_points=None, is_name_set_by_user=False,

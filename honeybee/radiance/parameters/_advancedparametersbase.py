@@ -277,5 +277,3 @@ class AdvancedRadianceParameters(RadianceParameters):
             assert len(input_values) < 2,\
                 'Only one of these inputs can be specified at any given time: ' \
                 '%s' % ", ".join(map(str, input_values))
-
-        return None

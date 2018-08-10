@@ -74,3 +74,12 @@ class RcontribParameters(RtraceParameters):
                                 attribute_name='output_filename_format')
         self.output_filename_format = output_filename_format
         """[-0 str] output format e.g. %04f.hdr."""
+
+        self.ambient_accuracy = 0.0
+
+    def adjust_limit_weight(self):
+        """Adjust lw to be 1/ad if the value is larger than 1/ad."""
+        suggested_lw = 1.0 / self.ambient_divisions
+        if self.limit_weight > suggested_lw:
+            print('-lw is set to %f.' % suggested_lw)
+            self.limit_weight = suggested_lw

@@ -3,6 +3,7 @@ from __future__ import division
 from ..utilcol import random_name
 from ..dataoperation import match_data
 from ..schedule import Schedule
+from ..futil import write_to_file_by_name
 from .analysispoint import AnalysisPoint
 
 import os
@@ -803,6 +804,11 @@ class AnalysisGrid(object):
     def to_rad_string(self):
         """Return analysis points group as a Radiance string."""
         return "\n".join((ap.to_rad_string() for ap in self._analysis_points))
+
+    def write(self, folder, filename=None, mkdir=False):
+        """write analysis grid to file."""
+        name = filename or self.name + '.pts'
+        return write_to_file_by_name(folder, name, self.to_rad_string() + '\n', mkdir)
 
     def ToString(self):
         """Overwrite ToString .NET method."""

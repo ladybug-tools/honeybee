@@ -13,8 +13,6 @@ from .radiance.view import View
 from .radiance.analysisgrid import AnalysisGrid
 
 
-# TODO: Room should be re-calculated on change of origin, width, depth, height,
-# and rotationAngle
 class Room(HBZone):
     """Honeybee room.
 
@@ -23,17 +21,16 @@ class Room(HBZone):
         width: Room width.
         depth: Room depth.
         height: Room height.
-        rotationAngle: Clock-wise rotation angle of the room from YAxis.
+        rotation_angle: Clock-wise rotation angle of the room from YAxis.
     """
 
-    def __init__(self, origin=(0, 0, 0), width=3, depth=6, height=3.2,
+    def __init__(self, name=None, origin=(0, 0, 0), width=3.0, depth=6.0, height=3.2,
                  rotation_angle=0):
         """Init room."""
-        self.origin = Point3(*tuple(origin)) if origin else Point3(0, 0, 0)
-        self.width = float(width)
-        self.depth = float(depth)
-        self.height = float(height)
-        self.rotationAngle = float(rotation_angle)
+        self._width = float(width) or 3.0
+        self._depth = float(depth) or 6.0
+        self._height = float(height) or 3.2
+        self._rotation_angle = float(rotation_angle) or 0.0
 
         self._z_axis = Vector3(0, 0, 1)
         self._x_axis = Vector3(1, 0, 0).rotate_around(
@@ -41,18 +38,67 @@ class Room(HBZone):
         self._y_axis = Vector3(0, 1, 0).rotate_around(
             self._z_axis, math.radians(rotation_angle))
 
-        # create 8 points
-        self.__calculate_vertices()
-        self.__create_hb_surfaces()
+        name = name or 'room'
+        origin = Point3(*tuple(origin)) if origin else Point3(0, 0, 0)
+        # setting up origin will initiate recalculation of room
+        HBZone.__init__(self, name, origin)
 
-        HBZone.__init__(self, name='HBRoom', origin=self.origin)
+    @property
+    def origin(self):
+        """origin of the room."""
+        return self._origin
 
-        # add honeybee surfaces
-        for surface in self.__surfaces:
-            self.add_surface(surface)
+    @origin.setter
+    def origin(self, value):
+        try:
+            self._origin = Point3(*value)
+        except Exception as e:
+            raise ValueError("Failed to set zone origin: {}".format(e))
+        else:
+            self._recalculate_room()
+
+    @property
+    def width(self):
+        """Room width."""
+        return self._width
+
+    @width.setter
+    def width(self, value):
+        self._width = float(value) or 3.0
+        self._recalculate_room()
+
+    @property
+    def depth(self):
+        """Room depth."""
+        return self._depth
+
+    @depth.setter
+    def depth(self, value):
+        self._depth = float(value) or 3.0
+        self._recalculate_room()
+
+    @property
+    def height(self):
+        """Room height."""
+        return self._width
+
+    @height.setter
+    def height(self, value):
+        self._height = float(value) or 3.0
+        self._recalculate_room()
+
+    @property
+    def rotation_angle(self):
+        """Room rotation_angle."""
+        return self._rotation_angle
+
+    @rotation_angle.setter
+    def rotation_angle(self, value):
+        self._rotation_angle = float(value) or 0.0
+        self._recalculate_room()
 
     def add_fenestration_surface(self, wall_name, width, height, sill_height,
-                                 radiance_material=None):
+                                 window_name=None, radiance_material=None):
         u"""Add rectangular fenestration surface to surface.
 
         Args:
@@ -76,12 +122,12 @@ class Room(HBZone):
         # find the wall
         try:
             wall = tuple(srf for srf in self.surfaces
-                         if srf.name == '%sWall' % wall_name.lower())[0]
+                         if srf.name == '%s_wall' % wall_name.lower())[0]
         except BaseException:
             raise ValueError('Cannot find {} wall'.format(wall_name))
 
-        name = '{}Glazing_{}'.format(wall_name.lower(),
-                                     len(wall.children_surfaces))
+        name = window_name or '{}_glazing_{}'.format(wall_name.lower(),
+                                                     len(wall.children_surfaces))
 
         wall.add_fenestration_surface_by_size(name, width, height, sill_height,
                                               radiance_material)
@@ -131,6 +177,9 @@ class Room(HBZone):
         u"""Generate an inetrior view.
 
         Args:
+            u: u value between 0 and 1.
+            v: v value between 0 and 1.
+            z: z value between 0 and 1.
             angle: Rotation angle from back wall.
             view_up_vector: Set the view up (-vu) vector (vertical direction) to
                 (x, y, z).cDefault: (0, 0, 1)
@@ -177,12 +226,17 @@ class Room(HBZone):
                 self.pt4, self.pt5, self.pt6, self.pt7)
 
     @property
-    def __surfaces(self):
+    def surfaces(self):
         """Return room surfaces."""
-        return (self.floor, self.ceiling, self.backWall, self.rightWall,
-                self.frontWall, self.leftWall)
+        return (self.floor, self.ceiling, self.back_wall, self.right_wall,
+                self.front_wall, self.left_wall)
 
-    def __calculate_vertices(self):
+    def _recalculate_room(self):
+        # create 8 points
+        self._calculate_vertices()
+        self._create_hb_surfaces()
+
+    def _calculate_vertices(self):
         self.pt0 = self.origin
         self.pt1 = self.origin + self.width * self._x_axis
         self.pt2 = self.pt1 + self.depth * self._y_axis
@@ -192,21 +246,21 @@ class Room(HBZone):
         self.pt6 = self.pt2 + self.height * self._z_axis
         self.pt7 = self.pt3 + self.height * self._z_axis
 
-    def __create_hb_surfaces(self):
+    def _create_hb_surfaces(self):
         self.floor = HBSurface(
             'floor', sorted_points=(self.pt0, self.pt3, self.pt2, self.pt1))
 
         self.ceiling = HBSurface(
             'ceiling', sorted_points=(self.pt4, self.pt5, self.pt6, self.pt7))
 
-        self.backWall = HBSurface(
-            'backWall', sorted_points=(self.pt0, self.pt1, self.pt5, self.pt4))
+        self.back_wall = HBSurface(
+            'back_wall', sorted_points=(self.pt0, self.pt1, self.pt5, self.pt4))
 
-        self.rightWall = HBSurface(
-            'rightWall', sorted_points=(self.pt1, self.pt2, self.pt6, self.pt5))
+        self.right_wall = HBSurface(
+            'right_wall', sorted_points=(self.pt1, self.pt2, self.pt6, self.pt5))
 
-        self.frontWall = HBSurface(
-            'frontWall', sorted_points=(self.pt2, self.pt3, self.pt7, self.pt6))
+        self.front_wall = HBSurface(
+            'front_wall', sorted_points=(self.pt2, self.pt3, self.pt7, self.pt6))
 
-        self.leftWall = HBSurface(
-            'leftWall', sorted_points=(self.pt0, self.pt4, self.pt7, self.pt3))
+        self.left_wall = HBSurface(
+            'left_wall', sorted_points=(self.pt0, self.pt4, self.pt7, self.pt3))
