@@ -10,8 +10,8 @@ class RadianceParameters(object):
     Usage:
 
         class CustomRP(RadianceParameters):
-            ab = RadianceNumber('ab', 'am fddf', default_value=15)
-            ad = RadianceValue('ad', 'fsfdsfds', default_value=None)
+            ab = RadianceNumber('ab', 'ambient bounces', default_value=3)
+            ad = RadianceValue('ad', 'ambient divisions', default_value=None)
 
             def __init__(self):
                 RadianceParameters.__init__(self)
@@ -32,7 +32,7 @@ class RadianceParameters(object):
         # place holder for default parameter names
         # use radiance.datatype classes to create default parameters
         # self.
-        self._defaultParameters = {}
+        self._default_parameters = {}
 
         # static parameters are the parameters which are set from a string.
         # static parameters are collected here
@@ -48,12 +48,12 @@ class RadianceParameters(object):
     @property
     def parameters(self):
         """Return list of current parameters."""
-        return set(self._defaultParameters.keys() + self._additional_parameters)
+        return set(self._default_parameters.keys() + self._additional_parameters)
 
     @property
     def default_parameters(self):
         """Return list of default parameters."""
-        return set(self._defaultParameters.keys())
+        return set(self._default_parameters.keys())
 
     @property
     def additional_parameters(self):
@@ -93,28 +93,27 @@ class RadianceParameters(object):
         """
         assert hasattr(self.__class__, alias), \
             "Can't find '%s' in %s attributes." % (alias, self.__class__.__name__)
-        self._defaultParameters[alias] = parameter
+        self._default_parameters[alias] = parameter
 
     def remove_parameters(self):
-        """Remove all t"
-        "he current parameters."""
+        """Remove all current parameters."""
         for name in self.default_parameters:
             delattr(self.__class__, name)
         for name in self.additional_parameters:
             delattr(self, name)
-        self._defaultParameters = {}
+        self._default_parameters = {}
         self._additional_parameters = []
 
     def remove_parameter(self, name):
         """Remove a single parameter by name."""
         if name in self.default_parameters:
             delattr(self.__class__, name)
-            del self._defaultParameters[name]
+            del self._default_parameters[name]
             print("Removed %s from default parameters." % str(name))
-        elif name in self._defaultParameters.values():
-            _i = self._defaultParameters.values().index(name)
-            alias_name = self._defaultParameters.keys()[_i]
-            del self._defaultParameters[alias_name]
+        elif name in self._default_parameters.values():
+            _i = self._default_parameters.values().index(name)
+            alias_name = self._default_parameters.keys()[_i]
+            del self._default_parameters[alias_name]
             print("Removed %s from default parameters." % str(alias_name))
         elif name in self.additional_parameters:
             delattr(self, name)
@@ -143,9 +142,9 @@ class RadianceParameters(object):
             raise ValueError("Invalid name {}. Name should be a string.".format(name))
 
         # check if the name is in default values change the name to the alias
-        if name in self._defaultParameters.values():
-            i = self._defaultParameters.values().index(name)
-            alias_name = self._defaultParameters.keys()[i]
+        if name in self._default_parameters.values():
+            i = self._default_parameters.values().index(name)
+            alias_name = self._default_parameters.keys()[i]
             if name != alias_name:
                 raise ValueError(
                     "'{0}' is already set as an attribute by the name of {1}. "
@@ -185,14 +184,21 @@ class RadianceParameters(object):
             except ValueError:
                 # paramter already exists under an alias name
                 # find alias name and update the value
-                _i = self._defaultParameters.values().index(key)
-                alias_name = self._defaultParameters.keys()[_i]
+                _i = self._default_parameters.values().index(key)
+                alias_name = self._default_parameters.keys()[_i]
                 setattr(self, alias_name, value)
                 print("Updated value for %s to %s" % (alias_name, value))
             except Exception:
                 # paramter already exists. just update the value
                 setattr(self, key, value)
                 print("Updated value for %s to %s" % (key, value))
+
+    def radiance_default_values(self):
+        """Use this method to remove all values assigned by Honeybee."""
+        for name in self.default_parameters:
+            setattr(self, name, None)
+        for name in self.additional_parameters:
+            setattr(self, name, None)
 
     def _parse_rad_parameters(self, parameters_string):
         """Parse radiance parameters.
@@ -245,20 +251,21 @@ class RadianceParameters(object):
 
     def to_rad_string(self):
         """Get parameters as a radiance definition."""
-        _defaultParameters = [
+        _default_parameters = [
             getattr(self, key).to_rad_string()
-            for key in self.default_parameters
-            if getattr(self, key).to_rad_string() != ""
+            for key in sorted(self.default_parameters)
+            if getattr(self, key) is not None and
+            getattr(self, key).to_rad_string() != ""
         ]
 
         _additional_parameters = [
             "-%s %s" % (key, getattr(self, key))
             if str(getattr(self, key)).strip() != ""
             else "-%s" % key
-            for key in self.additional_parameters
+            for key in sorted(self.additional_parameters)
         ]
 
-        return " ".join(_defaultParameters + _additional_parameters)
+        return " ".join(_default_parameters + _additional_parameters)
 
     def ToString(self):
         """Overwrite .NET ToString method."""

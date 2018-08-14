@@ -370,6 +370,8 @@ class RadianceNumber(RadianceDefault):
                     raise ValueError(msg)
 
             setattr(instance, self._name, RadianceNumberType(self._name, final_value))
+        else:
+            setattr(instance, self._name, RadianceNumberType(self._name, None))
 
 
 class RadianceTuple(RadianceDefault):
