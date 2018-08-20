@@ -242,10 +242,17 @@ class AnalysisGrid(object):
             is_direct: A Boolean to declare if the results is direct illuminance
                 (default: False).
             header: A Boolean to declare if the file has header (default: True).
-            mode: 0 > load the values 1 > load values as binary. Any non-zero value
-                will be 1. This is useful for studies such as sunlight hours. 2 >
-                load the values divided by mode number. Use this mode for daylight
-                factor or radiation analysis.
+            mode:
+                0 > load the values
+                1 > load values as binary. Any non-zero value
+                    will be 1. This is useful for studies such as sunlight hours.
+                2 or Greater > Load results divided by mode value, which can be 2 or
+                    any other value larger than 2. Use this mode for daylight factor or 
+                    radiation analysis.
+                    e.g. For daylight factor that you run an illuminance study under an 
+                    overcast sky with total horizontal illuminance of 10000 lux. Now to
+                    get daylight factor you should divide the values by 100 ( 10000 / 100).
+                    In that case you can use mode = 100 to get the correct values.
         """
 
         if os.path.getsize(file_path) < 2:
