@@ -24,26 +24,22 @@ class GridBasedDB(object):
 
     # sensors and analysis grids.
     sensor_table_schema = """CREATE TABLE IF NOT EXISTS Sensor (
-              id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+              id INTEGER NOT NULL,
+              grid_id INTEGER NOT NULL,
               loc_x REAL NOT NULL,
               loc_y REAL NOT NULL,
               loc_z REAL NOT NULL,
               dir_x REAL NOT NULL,
               dir_y REAL NOT NULL,
-              dir_z REAL NOT NULL
+              dir_z REAL NOT NULL,
+              FOREIGN KEY (grid_id) REFERENCES Grid(id),
+              CONSTRAINT sensor_grid_id PRIMARY KEY (id, grid_id)
               );"""
 
     grid_table_schema = """CREATE TABLE IF NOT EXISTS Grid (
               id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
               name TEXT,
               count INTEGER
-              );"""
-
-    sensor_grid_table_schema = """CREATE TABLE IF NOT EXISTS SensorGrid (
-              sensor_id INTEGER,
-              grid_id INTEGER,
-              FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
-              FOREIGN KEY (grid_id) REFERENCES Grid(id)
               );"""
 
     # light sources including outdoor
@@ -64,6 +60,7 @@ class GridBasedDB(object):
     # daylight analysis results
     result_table_schema = """CREATE TABLE IF NOT EXISTS Result (
               sensor_id INTEGER NOT NULL,
+              grid_id INTEGER NOT NULL,
               source_id INTEGER NOT NULL,
               moy INTEGER NOT NULL,
               sky_total REAL,
@@ -71,8 +68,9 @@ class GridBasedDB(object):
               sun REAL,
               total REAL,
               FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
+              FOREIGN KEY (grid_id) REFERENCES Grid(id),
               FOREIGN KEY (source_id) REFERENCES Source(id),
-              CONSTRAINT result_id PRIMARY KEY (sensor_id, source_id, moy)
+              CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id, moy)
               );"""
 
     def __init__(self, folder, filename='radout', remove_if_exist=False):
@@ -95,7 +93,6 @@ class GridBasedDB(object):
         c.execute(self.project_table_schema)
         c.execute(self.sensor_table_schema)
         c.execute(self.grid_table_schema)
-        c.execute(self.sensor_grid_table_schema)
 
         # create table for sources and place holder for results
         c.execute(self.source_table_schema)
@@ -181,9 +178,9 @@ class GridBasedDB(object):
         conn.commit()
         conn.close()
 
-    @property
-    def last_sensor_id(self):
+    def last_sensor_id(self, grid_id):
         """Get the ID for last sensor."""
+        raise NotImplementedError()
         command = """SELECT seq FROM sqlite_sequence WHERE name='Sensor';"""
         sensor_id = self.execute(command)
         if not sensor_id:
@@ -227,19 +224,33 @@ class GridBasedDB(object):
             )
         return sid[0][0]
 
+    def grid_id(self, name):
+        """Get id for an analysis grid."""
+        gid = self.execute(
+            """SELECT id FROM Grid WHERE name=?;""", (name,))
+        if not gid:
+            raise ValueError(
+                'Failed to find analysis grid with name: "{}".'.format(name)
+            )
+        return gid[0][0]
+
+    @property
+    def point_count(self):
+        """Returns a tuple of number of points for Analysis Grids.
+
+        Values are sorted by grid_id.
+        """
+        command = """SELECT count FROM Grid ORDER BY id;"""
+        return tuple(c[0] for c in self.execute(command))
+
     def add_analysis_grids(self, analysis_grids):
         """Add an analysis grids to database."""
         sensor_command = """
-        INSERT INTO Sensor (id, loc_x, loc_y, loc_z, dir_x, dir_y, dir_z)
-        VALUES (?, ?, ?, ?, ?, ?, ?);"""
+        INSERT INTO Sensor (id, grid_id, loc_x, loc_y, loc_z, dir_x, dir_y, dir_z)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
         grid_command = """INSERT INTO Grid (id, name, count) VALUES (?, ?, ?);"""
-        sensor_grid_command = \
-            """INSERT INTO SensorGrid (sensor_id, grid_id) VALUES (?, ?);"""
 
         # find the id for the last analysis grid
-        start_sensor_id = self.last_sensor_id
-        if start_sensor_id != 0:
-            start_sensor_id += 1
         start_grid_id = self.last_grid_id
         if start_grid_id != 0:
             start_grid_id += 1
@@ -251,21 +262,13 @@ class GridBasedDB(object):
                 (start_grid_id + grid_id, analysis_grid.name, len(analysis_grid))
             )
             values = (
-                (start_sensor_id + count,
+                (count, grid_id,
                  pt.location.x, pt.location.y, pt.location.z,
                  pt.direction.x, pt.direction.y, pt.direction.z)
                 for count, pt in enumerate(analysis_grid)
             )
 
             self.executemany(sensor_command, values)
-
-            # put relationship between sensors and grid
-            sensor_grid_rel = (
-                (i, grid_id) for i in range(start_sensor_id, start_sensor_id +
-                                            len(analysis_grid)))
-
-            self.executemany(sensor_grid_command, sensor_grid_rel)
-            start_sensor_id += len(analysis_grid)
 
     def add_source(self, name, source_id, state):
         """Add a light source to database.
@@ -418,13 +421,13 @@ class GridBasedDB(object):
             )
 
     def load_final_result_from_files(
-            self, tot_file, sun_file, source='sky', state='default', moys=None,
-            sensor_start_id=0):
+            self, tot_file, sun_file, source='sky', state='default', moys=None):
         """Load final and run radiance results from files to database."""
         command = \
-            """INSERT INTO Result (sensor_id, source_id, moy, sun, total)
-                VALUES (?, ?, ?, ?, ?)"""
+            """INSERT INTO Result (sensor_id, grid_id, source_id, moy, sun, total)
+                VALUES (?, ?, ?, ?, ?, ?)"""
 
+        ptc = self.point_count
         if source == 'scene':
             source = 'sky'
         source_id = self.source_id(source, state)
@@ -463,18 +466,20 @@ class GridBasedDB(object):
                     (ncols, len(moys))
 
                 values = []
-                for row_num, (tl, sl) in enumerate(izip(totf, sunf)):
-                    for count, (tv, sv) in enumerate(izip(tl.split('\t'),
-                                                          sl.split('\t'))):
-                        if count == ncols:
-                            # this is last tab in resulst.
-                            continue
-                        moy = moys[count]
-                        sensor_id = sensor_start_id + row_num
-                        values.append((sensor_id, source_id, moy, sv, tv))
-                        if row_num % 250 == 0:
-                            cursor.executemany(command, values)
-                            values = []
+                for grid_id, pt_count in enumerate(ptc):
+                    for sensor_id in range(pt_count):
+                        tl = next(totf)
+                        sl = next(sunf)
+                        for count, (tv, sv) in enumerate(izip(tl.split('\t'),
+                                                              sl.split('\t'))):
+                            if count == ncols:
+                                # this is last tab in resulst.
+                                continue
+                            moy = moys[count]
+                            values.append((sensor_id, grid_id, source_id, moy, sv, tv))
+                            if len(values) % 250 == 0:
+                                cursor.executemany(command, values)
+                                values = []
                 # the remainder of the list
                 cursor.executemany(command, values)
         except Exception as e:
@@ -486,12 +491,14 @@ class GridBasedDB(object):
             db.close()
 
     def load_result_from_files(self, tot_file, dir_file, sun_file, source='sky',
-                               state='default', moys=None, sensor_start_id=0):
+                               state='default', moys=None):
         """Load radiance results from multiple files to database."""
         command = \
-            """INSERT INTO Result (sensor_id, source_id, moy, sky_total, sky_direct, sun)
-                VALUES (?, ?, ?, ?, ?, ?)"""
+            """INSERT INTO Result
+            (sensor_id, grid_id, source_id, moy, sky_total, sky_direct, sun)
+            VALUES (?, ?, ?, ?, ?, ?, ?)"""
 
+        ptc = self.point_count
         if source == 'scene':
             source = 'sky'
         source_id = self.source_id(source, state)
@@ -530,19 +537,23 @@ class GridBasedDB(object):
                     (ncols, len(moys))
 
                 values = []
-                for row_num, (tl, dl, sl) in enumerate(izip(totf, dirf, sunf)):
-                    for count, (tv, dv, sv) in enumerate(izip(tl.split('\t'),
-                                                              dl.split('\t'),
-                                                              sl.split('\t'))):
-                        if count == ncols:
-                            # this is last tab in resulst.
-                            continue
-                        moy = moys[count]
-                        sensor_id = sensor_start_id + row_num
-                        values.append((sensor_id, source_id, moy, tv, dv, sv))
-                        if row_num % 250 == 0:
-                            cursor.executemany(command, values)
-                            values = []
+                for grid_id, pt_Count in enumerate(ptc):
+                    for sensor_id in range(pt_Count):
+                        tl = next(totf)
+                        dl = next(dirf)
+                        sl = next(sunf)
+                        for count, (tv, dv, sv) in enumerate(izip(tl.split('\t'),
+                                                                  dl.split('\t'),
+                                                                  sl.split('\t'))):
+                            if count == ncols:
+                                # this is last tab in resulst.
+                                continue
+                            moy = moys[count]
+                            values.append((sensor_id, grid_id, source_id,
+                                           moy, tv, dv, sv))
+                            if len(values) % 250 == 0:
+                                cursor.executemany(command, values)
+                                values = []
                 # the remainder of the list
                 cursor.executemany(command, values)
         except Exception as e:
@@ -554,42 +565,43 @@ class GridBasedDB(object):
             db.close()
 
     def load_result_from_file(self, res_file, source='sky', state='default', moys=None,
-                              res_type=0, sensor_start_id=0, mode=0):
+                              res_type=0, mode=0):
         """Load Radiance results file to database.
 
         The script assumes that each row represents an analysis point and number of
         coulmns is the number of timesteps.
 
         Args:
+            res_type: 0 > sky_total, 1 > sky_direct, 2 > sun, 3 > final result
             mode: 0 for "Insert" and 1 is for "Update". Use 0 only the first time after
                 creating the table.
 
         """
         dir_insert_command = \
-            """INSERT INTO Result (sky_direct, sensor_id, source_id, moy)
+            """INSERT INTO Result (sky_direct, sensor_id, grid_id, source_id, moy)
                 VALUES (?, ?, ?, ?)"""
         tot_insert_command = \
-            """INSERT INTO Result (sky_total, sensor_id, source_id, moy)
+            """INSERT INTO Result (sky_total, sensor_id, grid_id, source_id, moy)
                 VALUES (?, ?, ?, ?)"""
         sun_insert_command = \
-            """INSERT INTO Result (sun, sensor_id, source_id, moy)
+            """INSERT INTO Result (sun, sensor_id, grid_id, source_id, moy)
                 VALUES (?, ?, ?, ?)"""
         fin_insert_command = \
-            """INSERT INTO Result (total, sensor_id, source_id, moy)
+            """INSERT INTO Result (total, sensor_id, grid_id, source_id, moy)
                 VALUES (?, ?, ?, ?)"""
 
         dir_update_command = \
             """UPDATE Result SET sky_direct=?
-            WHERE sensor_id=? AND source_id=? AND moy=?"""
+            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
         tot_update_command = \
             """UPDATE Result SET sky_total=?
-            WHERE sensor_id=? AND source_id=? AND moy=?"""
+            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
         sun_update_command = \
             """UPDATE Result SET sun=?
-            WHERE sensor_id=? AND source_id=? AND moy=?"""
+            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
         fin_update_command = \
-            """UPDATE Result
-            SET total=? WHERE sensor_id=? AND source_id=? AND moy=?"""
+            """UPDATE Result SET total=?
+            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
 
         insert_commands = {
             0: tot_insert_command, 1: dir_insert_command, 2: sun_insert_command,
@@ -601,6 +613,8 @@ class GridBasedDB(object):
         }
 
         # TOD(): check inputs
+        ptc = self.point_count
+
         if source == 'scene':
             source = 'sky'
         source_id = self.source_id(source, state)
@@ -640,17 +654,19 @@ class GridBasedDB(object):
                     'Number of columns (%d) is different from number of moys (%d).' % \
                     (ncols, len(moys))
                 values = []
-                for row_num, row in enumerate(inf):
-                    for count, value in enumerate(row.split('\t')):
-                        if count == ncols:
-                            # this is last tab in resulst.
-                            continue
-                        moy = moys[count]
-                        sensor_id = sensor_start_id + row_num
-                        values.append((value, sensor_id, source_id, moy))
-                        if row_num % 250 == 0:
-                            cursor.executemany(command, values)
-                            values = []
+                for grid_id, grid_count in enumerate(ptc):
+                    for row_num in range(grid_count):
+                        row = next(inf)
+                        for count, value in enumerate(row.split('\t')):
+                            if count == ncols:
+                                # this is last tab in resulst.
+                                continue
+                            moy = moys[count]
+                            sensor_id = row_num
+                            values.append((value, sensor_id, grid_id, source_id, moy))
+                            if len(values) % 250 == 0:
+                                cursor.executemany(command, values)
+                                values = []
                 # the remainder of the list
                 cursor.executemany(command, values)
         except Exception as e:
