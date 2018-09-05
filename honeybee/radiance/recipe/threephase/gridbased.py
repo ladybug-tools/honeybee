@@ -235,6 +235,8 @@ class ThreePhaseGridBased(DaylightCoeffGridBased):
             Path yo commands file.
         """
         # 0.prepare target folder
+        self._commands = []
+
         # create main folder target_folder/project_name
         project_folder = \
             super(DaylightCoeffGridBased, self).write_content(

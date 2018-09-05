@@ -130,6 +130,8 @@ class FivePhaseGridBased(ThreePhaseGridBased):
             Path yo commands file.
         """
         # 0.prepare target folder
+        self._commands = []
+
         # create main folder target_folder/project_name
         project_folder = \
             super(ThreePhaseGridBased, self).write_content(

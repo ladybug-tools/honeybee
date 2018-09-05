@@ -198,6 +198,8 @@ class GridBased(GenericGridBased):
             Full path to command.bat
         """
         # 0.prepare target folder
+        self._commands = []
+
         # create main folder target_folder/project_name
         project_folder = \
             super(GenericGridBased, self).write_content(target_folder, project_name)
