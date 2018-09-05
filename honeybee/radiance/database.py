@@ -45,8 +45,10 @@ class GridBasedDB(object):
     # light sources including outdoor
     source_table_schema = """CREATE TABLE IF NOT EXISTS Source (
               id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-              name TEXT,
-              state TEXT
+              source TEXT,
+              src_id INTEGER,
+              state TEXT,
+              state_id INTEGER
               );"""
 
     # light sources and analysis grids relationship
@@ -103,7 +105,8 @@ class GridBasedDB(object):
 
         # add sky as the first light source
         c.execute(
-            """INSERT INTO Source (id, name, state) VALUES (0, 'sky', 'default');"""
+            """INSERT INTO Source (id, name, src_id, state, state_id)
+            VALUES (0, 'sky', 0, 'default', 0);"""
         )
         conn.commit()
         conn.close()
@@ -224,6 +227,27 @@ class GridBasedDB(object):
             )
         return sid[0][0]
 
+    @property
+    def source_mapper(self):
+        """Returna dictionary that maps src_id and state_id to global id.
+
+        {src_id: {state_id: id}, ...}
+        """
+        sources = {}
+        values = self.execute("""SELECT id, src_id, state_id FROM Source;""")
+        for (i, srid, stid) in values:
+            if srid not in sources:
+                sources[srid] = {}
+            sources[srid][stid] = i
+
+        return sources
+
+    def blind_parser(self):
+        """Parse input blind states."""
+        # also update write source to database
+        # and then finish combined results input
+        pass
+
     def grid_id(self, name):
         """Get id for an analysis grid."""
         gid = self.execute(
@@ -270,15 +294,16 @@ class GridBasedDB(object):
 
             self.executemany(sensor_command, values)
 
-    def add_source(self, name, source_id, state):
+    def add_source(self, gid, name, src_id, state, state_id):
         """Add a light source to database.
 
         In + 3-phase studies light sources are window groups. In rest of studies sky
         is considered the light source and id 0 is reserved for sky.
         """
         # add a light source
-        command = """INSERT INTO Source (id, name, state) VALUES (?, ?, ?)"""
-        self.execute(command, (source_id, name, state))
+        command = """INSERT INTO Source (id, name, src_id, state, state_id)
+            VALUES (?, ?, ?, ?, ?)"""
+        self.execute(command, (gid, name, src_id, state, state_id))
 
         # TODO(): update SourceGrid table
 
@@ -341,7 +366,13 @@ class GridBasedDB(object):
                 if key in current_sources:
                     continue
                 last_source_id += 1
-                self.add_source(source, last_source_id, state)
+                # get state id based on state name, etc.
+                # src_id, state_id = source_and_state_ids(source, state)
+                #
+                self.add_source(last_source_id, source, src_id, state, state_id)
+
+        # def source_and_state_ids(state_name, source_name):
+        #     """SELECT FROM Sources WHERE """
 
         # for each source and state upload the results
         for tf in result_files['total']:
