@@ -200,6 +200,8 @@ class DaylightCoeffImageBased(GenericImageBased):
             Full path to command.bat
         """
         # 0.prepare target folder
+        self._commands = []
+
         # create main folder target_folder/project_name
         project_folder = \
             super(GenericImageBased, self).write_content(

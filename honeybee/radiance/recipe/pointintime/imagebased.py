@@ -147,6 +147,8 @@ class ImageBased(GenericImageBased):
             Full path to command.bat
         """
         # 0.prepare target folder
+        self._commands = []
+
         # create main folder target_folder/project_name
         project_folder = \
             super(ImageBased, self).write_content(

@@ -283,6 +283,8 @@ class DaylightCoeffGridBased(GenericGridBased):
         """
         # 0.prepare target folder
         # create main folder target_folder/project_name
+        self._commands = []
+
         project_folder = \
             super(GenericGridBased, self).write_content(
                 target_folder, project_name, False, subfolders=['tmp', 'result/matrix']

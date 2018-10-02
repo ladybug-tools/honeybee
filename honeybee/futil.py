@@ -103,7 +103,7 @@ def write_to_file_by_name(folder, fname, data, mkdir=False):
 
     file_path = os.path.join(folder, fname)
 
-    with open(file_path, "w") as outf:
+    with open(file_path, "wb") as outf:
         try:
             outf.write(str(data))
             return file_path
