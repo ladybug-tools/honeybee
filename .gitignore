@@ -13,3 +13,5 @@ honeybee/plus.py
 *.egg-info
 tests/room/testrun
 tox.ini
+/.cache
+/.vscode
