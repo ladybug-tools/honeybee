@@ -1,12 +1,33 @@
-import sqlite3 as lite
 import contextlib
+import os
+import sqlite3 as lite
 
 
 class AnalysisResult(object):
 
     def __init__(self, db_file, grid_id=0):
-        self.db = db_file
-        self.grid_id = grid_id
+        """Initiate AnalysisResult class.
+
+        Args:
+            db_file: Full path to database file.
+            grid_id: Optional input for grid_id. A database can include the results for
+                several grids. This id indicates which results should be loaded to
+                AnalysisResult.
+        """
+        assert os.path.isfile(db_file), \
+            'Failed to find {}'.format(db_file)
+        self._db_file = db_file
+        self._grid_id = grid_id
+
+    @property
+    def db(self):
+        """Return path to database file."""
+        return self._db_file
+
+    @property
+    def grid_id(self):
+        """Return grid id."""
+        return self._grid_id
 
     @property
     def name(self):
@@ -82,7 +103,7 @@ class AnalysisResult(object):
     def source_id(self, name, state):
         """Get id for a light sources at a specific state."""
         sid = self.execute(
-            """SELECT id FROM Source WHERE name=? AND state=?;""", (name, state))
+            """SELECT id FROM Source WHERE source=? AND state=?;""", (name, state))
         if not sid:
             raise ValueError(
                 'Failed to find source "{}" with state "{}"'.format(name, state)
@@ -139,12 +160,17 @@ class AnalysisResult(object):
         """Get values for several hours of the year.
 
         Args:
-            group_by: 0-1. By default (0) results will be grouped for each sensor. The
-                first item in results will be a list of values for the first sensor
-                during hoys. If set to 1 the results will be grouped by timestep. In this
-                case the first item will be list of values for all the sensors at the
-                first timestep. This mode is useful to load all the hourly results for
-                points to calculate values for the whole grid. A good example is
+            hoys: List of hours of the year. Default will be all the hours available in
+                database.
+            source: Name of target light source. Default is 'sky'.
+            state: Name of the desired state for input source. Default is 'default'.
+            group_by: 0-1. Use group_by to switch how values will be grouped. By default
+                results will be grouped for each sensor. in this case the first item in
+                results will be a list of values for the first sensor during hoys. If
+                set to 1 the results will be grouped by timestep. In this case the first
+                item will be list of values for all the sensors at the first timestep.
+                This mode is useful to load all the hourly results for points at a
+                certian hour to calculate values for the whole grid. A good example is
                 calculating % area which receives more than 2000 lux at every hour
                 during the year.
 
@@ -186,17 +212,23 @@ class AnalysisResult(object):
         return self._divide_chunks(results, chunk_size, tot_len)
 
     def direct_values(self, hoys=None, source=None, state=None, group_by=0):
-        """Get values for several hours of the year.
+        """Get direct values for several hours of the year.
 
         Args:
-            group_by: 0-1. By default (0) results will be grouped for each sensor. The
-                first item in results will be a list of values for the first sensor
-                during hoys. If set to 1 the results will be grouped by timestep. In this
-                case the first item will be list of values for all the sensors at the
-                first timestep. This mode is useful to load all the hourly results for
-                points to calculate values for the whole grid. A good example is
+            hoys: List of hours of the year. Default will be all the hours available in
+                database.
+            source: Name of target light source. Default is 'sky'.
+            state: Name of the desired state for input source. Default is 'default'.
+            group_by: 0-1. Use group_by to switch how values will be grouped. By default
+                results will be grouped for each sensor. in this case the first item in
+                results will be a list of values for the first sensor during hoys. If
+                set to 1 the results will be grouped by timestep. In this case the first
+                item will be list of values for all the sensors at the first timestep.
+                This mode is useful to load all the hourly results for points at a
+                certian hour to calculate values for the whole grid. A good example is
                 calculating % area which receives more than 2000 lux at every hour
                 during the year.
+
         Return:
             A generator which will be structured based on group_by input.
         """
@@ -238,14 +270,20 @@ class AnalysisResult(object):
         """Get direct and total values for several hours of the year.
 
         Args:
-            group_by: 0-1. By default (0) results will be grouped for each sensor. The
-                first item in results will be a list of values for the first sensor
-                during hoys. If set to 1 the results will be grouped by timestep. In this
-                case the first item will be list of values for all the sensors at the
-                first timestep. This mode is useful to load all the hourly results for
-                points to calculate values for the whole grid. A good example is
+            hoys: List of hours of the year. Default will be all the hours available in
+                database.
+            source: Name of target light source. Default is 'sky'.
+            state: Name of the desired state for input source. Default is 'default'.
+            group_by: 0-1. Use group_by to switch how values will be grouped. By default
+                results will be grouped for each sensor. in this case the first item in
+                results will be a list of values for the first sensor during hoys. If
+                set to 1 the results will be grouped by timestep. In this case the first
+                item will be list of values for all the sensors at the first timestep.
+                This mode is useful to load all the hourly results for points at a
+                certian hour to calculate values for the whole grid. A good example is
                 calculating % area which receives more than 2000 lux at every hour
                 during the year.
+
         Return:
             A generator which will be structured based on group_by input.
         """
@@ -287,14 +325,20 @@ class AnalysisResult(object):
         """Get values from sky and diffuse contribution for several hours in a year.
 
         Args:
-            group_by: 0-1. By default (0) results will be grouped for each sensor. The
-                first item in results will be a list of values for the first sensor
-                during hoys. If set to 1 the results will be grouped by timestep. In this
-                case the first item will be list of values for all the sensors at the
-                first timestep. This mode is useful to load all the hourly results for
-                points to calculate values for the whole grid. A good example is
+            hoys: List of hours of the year. Default will be all the hours available in
+                database.
+            source: Name of target light source. Default is 'sky'.
+            state: Name of the desired state for input source. Default is 'default'.
+            group_by: 0-1. Use group_by to switch how values will be grouped. By default
+                results will be grouped for each sensor. in this case the first item in
+                results will be a list of values for the first sensor during hoys. If
+                set to 1 the results will be grouped by timestep. In this case the first
+                item will be list of values for all the sensors at the first timestep.
+                This mode is useful to load all the hourly results for points at a
+                certian hour to calculate values for the whole grid. A good example is
                 calculating % area which receives more than 2000 lux at every hour
                 during the year.
+
         Return:
             A generator which will be structured based on group_by input.
         """
@@ -358,6 +402,7 @@ class AnalysisResult(object):
 
     def _close_cursor(self, db, cursor):
         """Commit and close database."""
+        # put back to delete for older versions of sqlite
         db.execute('PRAGMA journal_mode=DELETE;')
         db.commit()
         db.close()

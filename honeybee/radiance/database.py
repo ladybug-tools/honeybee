@@ -1,8 +1,8 @@
 """Database to save grid-based daylight simulation recipes."""
-import sqlite3 as lite
-import os
-from itertools import izip
 import contextlib
+from itertools import izip
+import os
+import sqlite3 as lite
 
 
 class GridBasedDB(object):
@@ -10,6 +10,7 @@ class GridBasedDB(object):
 
     The database currently only supports grid-based simulations.
     """
+    BASESOURCEID = 1000000
 
     project_table_schema = """CREATE TABLE IF NOT EXISTS Project (
           name TEXT NOT NULL,
@@ -42,13 +43,11 @@ class GridBasedDB(object):
               count INTEGER
               );"""
 
-    # light sources including outdoor
+    # light sources including sky which keeps the is of 0
     source_table_schema = """CREATE TABLE IF NOT EXISTS Source (
-              id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+              id INTEGER PRIMARY KEY UNIQUE,
               source TEXT,
-              src_id INTEGER,
-              state TEXT,
-              state_id INTEGER
+              state TEXT
               );"""
 
     # light sources and analysis grids relationship
@@ -105,8 +104,7 @@ class GridBasedDB(object):
 
         # add sky as the first light source
         c.execute(
-            """INSERT INTO Source (id, name, src_id, state, state_id)
-            VALUES (0, 'sky', 0, 'default', 0);"""
+            """INSERT INTO Source (id, source, state) VALUES (0, 'sky', 'default');"""
         )
         conn.commit()
         conn.close()
@@ -192,8 +190,13 @@ class GridBasedDB(object):
 
     @property
     def last_source_id(self):
-        """Get id for the last source."""
-        command = """SELECT seq FROM sqlite_sequence WHERE name='Source';"""
+        """Get id for last source.
+
+        Id is an intger indicates global id for this source. The gid is a 7 digit
+        number. int(gid / 10^6) is the id of the source and gid % 10^6 is the
+        id for the state.
+        """
+        command = """SELECT id FROM Source ORDER BY id DESC LIMIT 1;"""
         source_id = self.execute(command)
         if not source_id:
             return 0
@@ -214,13 +217,21 @@ class GridBasedDB(object):
 
         name..state is the key and id is the value.
         """
-        sources = self.execute("""SELECT name, state, id FROM Source;""")
+        sources = self.execute("""SELECT source, state, id FROM Source;""")
         return {'..'.join((source[0], source[1])): source[2] for source in sources}
+
+    def last_state_id(self, source):
+        """Get last global id for this source."""
+        command = """SELECT id FROM Source WHERE source=? ORDER BY id DESC LIMIT 1;"""
+        sid = self.execute(command, (source,))
+        if not sid:
+            raise ValueError('Failed to find source "{}"'.format(source))
+        return sid[0][0]
 
     def source_id(self, name, state):
         """Get id for a light sources at a specific state."""
         sid = self.execute(
-            """SELECT id FROM Source WHERE name=? AND state=?;""", (name, state))
+            """SELECT id FROM Source WHERE source=? AND state=?;""", (name, state))
         if not sid:
             raise ValueError(
                 'Failed to find source "{}" with state "{}"'.format(name, state)
@@ -294,28 +305,65 @@ class GridBasedDB(object):
 
             self.executemany(sensor_command, values)
 
-    def add_source(self, gid, name, src_id, state, state_id):
+    def add_source(self, name, state):
         """Add a light source to database.
 
         In + 3-phase studies light sources are window groups. In rest of studies sky
         is considered the light source and id 0 is reserved for sky.
+
+        Args:
+            name: Name of source.
+            state: Name of state.
+
+        Returns:
+            gid: An intger indicates global id for this source. The gid is a 7 digit
+                number. int(gid / 10^6) is the id of the source and gid % 10^6 is the
+                id for the state.
         """
-        # add a light source
-        command = """INSERT INTO Source (id, name, src_id, state, state_id)
-            VALUES (?, ?, ?, ?, ?)"""
-        self.execute(command, (gid, name, src_id, state, state_id))
+        # see if it already exist
+        try:
+            gid = self.source_id(name, state)
+            print('{}..{} already exist!').format(name, state)
+            return gid
+        except ValueError:
+            # it doesn't exist so let's calculate the id and add it to database
+            pass
+        # see if the source already exist and get the highest gid for this source
+        # and add it up by 1 otherwise get the highest id number and generate a new
+        # id for this new source
+        try:
+            # check if the source is in database but not the state
+            lid = self.last_state_id(name)
+            gid = lid + 1
+        except ValueError:
+            # this is a new source
+            lid = self.last_source_id
+            gid = (int(lid / self.BASESOURCEID) + 1) * self.BASESOURCEID
+        except Exception as e:
+            raise Exception(e)
 
-        # TODO(): update SourceGrid table
+        # add source to database
+        command = """INSERT INTO Source (id, source, state) VALUES (?, ?, ?);"""
+        self.execute(command, (gid, name, state))
 
-    def load_dc_results_from_folder(self, folder, moys=None):
-        """Load the results from folder.
+    def load_dc_results_from_folder(self, folder, moys=None, source_mapping=None):
+        """Load all the results from daylight coefficient studies.
 
-        This is useful for studies with older version.
+        This method loads all the results including sun, direct, total an final
+        results. For uploading only the final results use
+        load_final_dc_results_from_folder method.
 
         This method looks for files with .ill extensions. The file should be named as
-        <data - type > .. < window - group - name > .. < state - name > .ill for instance
+        <data-type>..<window-group-name>..<state-name>.ill for instance
         total..north_facing..default.ill includes the 'total' values from 'north_facing'
         window group at 'default' state.
+
+        Args:
+            folder: Path to result folder.
+            moys: List of minutes of the year. Default is an hourly annual study.
+            source_mapping: A dictionary that includes sources and their states. Keys
+                are source names and values are list of states. If source_mapping is not
+                provided this method will sort the states based on name.
         """
         # assume it's an annual study
         moys = moys or [60 * h for h in xrange(8760)]
@@ -346,33 +394,12 @@ class GridBasedDB(object):
             raise ValueError('No result file was found in {}'.format(folder))
 
         # find window groups and number of states for each
-        sources = {}
-        for fi in result_files['total']:
-            _, source, state = fi[:-4].split('..')
-            if source == 'scene':
-                source = 'sky'
-            if source not in sources:
-                # add source
-                sources[source] = [state]
-            else:
-                sources[source].append(state)
+        if source_mapping:
+            sources = source_mapping
+        else:
+            sources = self._load_sources_from_files(result_files['total'])
 
-        # add new sources if any
-        current_sources = self.sources
-        last_source_id = self.last_source_id
-        for source, states in sources.items():
-            for state in states:
-                key = '..'.join((source, state))
-                if key in current_sources:
-                    continue
-                last_source_id += 1
-                # get state id based on state name, etc.
-                # src_id, state_id = source_and_state_ids(source, state)
-                #
-                self.add_source(last_source_id, source, src_id, state, state_id)
-
-        # def source_and_state_ids(state_name, source_name):
-        #     """SELECT FROM Sources WHERE """
+        self._add_new_sources(sources)
 
         # for each source and state upload the results
         for tf in result_files['total']:
@@ -388,15 +415,52 @@ class GridBasedDB(object):
         # calculate final value
         self._calculate_final_dc_result()
 
-    def load_final_dc_results_from_folder(self, folder, moys=None):
-        """Load the results from folder.
+    @staticmethod
+    def _load_sources_from_files(result_files):
+        sources = {}
+        for fi in result_files:
+            _, source, state = fi[:-4].split('..')
+            if source == 'scene':
+                source = 'sky'
+            if source not in sources:
+                # add source
+                sources[source] = [state]
+            else:
+                if state == 'default':
+                    sources[source].insert(0, state)
+                else:
+                    sources[source].append(state)
+        return sources
 
-        This is useful for studies with older version.
+    def _add_new_sources(self, sources):
+        """Add new sources from sources dictionary."""
+        # add new sources if any
+        current_sources = self.sources
+        for source, states in sources.items():
+            for state in states:
+                key = '..'.join((source, state))
+                if key in current_sources:
+                    continue
+                # get state id based on state name, etc.
+                self.add_source(source, state)
+
+    def load_final_dc_results_from_folder(self, folder, moys=None, source_mapping=None):
+        """Load final results from daylight coefficient studies.
+
+        This method ONLY loads final direct and total results. For uploading all the
+        result files use load_dc_results_from_folder method.
 
         This method looks for files with .ill extensions. The file should be named as
         <data - type > .. < window - group - name > .. < state - name > .ill for instance
         total..north_facing..default.ill includes the 'total' values from 'north_facing'
         window group at 'default' state.
+
+        Args:
+            folder: Path to result folder.
+            moys: List of minutes of the year. Default is an hourly annual study.
+            source_mapping: A dictionary that includes sources and their states. Keys
+                are source names and values are list of states. If source_mapping is not
+                provided this method will sort the states based on name.
         """
         # assume it's an annual study
         moys = moys or [60 * h for h in xrange(8760)]
@@ -420,27 +484,13 @@ class GridBasedDB(object):
             raise ValueError('No result file was found in {}'.format(folder))
 
         # find window groups and number of states for each
-        sources = {}
-        for fi in result_files:
-            _, source, state = fi[:-4].split('..')
-            if source == 'scene':
-                source = 'sky'
-            if source not in sources:
-                # add source
-                sources[source] = [state]
-            else:
-                sources[source].append(state)
+        if source_mapping:
+            sources = source_mapping
+        else:
+            sources = self._load_sources_from_files(result_files)
 
         # add new sources if any
-        current_sources = self.sources
-        last_source_id = self.last_source_id
-        for source, states in sources.items():
-            for state in states:
-                key = '..'.join((source, state))
-                if key in current_sources:
-                    continue
-                last_source_id += 1
-                self.add_source(source, last_source_id, state)
+        self._add_new_sources(sources)
 
         # for each source and state upload the results
         for sf in result_files:
@@ -484,10 +534,6 @@ class GridBasedDB(object):
                         if line.startswith('FORMAT='):
                             inf.next()  # empty line
                             break
-                        elif line.startswith('NCOMP='):
-                            ncomp = int(line.split('=')[-1])
-                        elif line.startswith('NROWS='):
-                            nrows = int(line.split('=')[-1])
                         elif line.startswith('NCOLS='):
                             ncols = int(line.split('=')[-1])
 
@@ -555,10 +601,6 @@ class GridBasedDB(object):
                         if line.startswith('FORMAT='):
                             inf.next()  # empty line
                             break
-                        elif line.startswith('NCOMP='):
-                            ncomp = int(line.split('=')[-1])
-                        elif line.startswith('NROWS='):
-                            nrows = int(line.split('=')[-1])
                         elif line.startswith('NCOLS='):
                             ncols = int(line.split('=')[-1])
 
@@ -673,10 +715,6 @@ class GridBasedDB(object):
                     if line.startswith('FORMAT='):
                         inf.next()  # empty line
                         break
-                    elif line.startswith('NCOMP='):
-                        ncomp = int(line.split('=')[-1])
-                    elif line.startswith('NROWS='):
-                        nrows = int(line.split('=')[-1])
                     elif line.startswith('NCOLS='):
                         ncols = int(line.split('=')[-1])
 
@@ -772,8 +810,6 @@ class GridBasedDB(object):
                     break
                 elif line.startswith('NCOMP='):
                     ncomp = int(line.split('=')[-1])
-                elif line.startswith('NROWS='):
-                    nrows = int(line.split('=')[-1])
                 elif line.startswith('NCOLS='):
                     ncols = int(line.split('=')[-1])
 
