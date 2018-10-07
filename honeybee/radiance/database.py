@@ -12,69 +12,7 @@ class GridBasedDB(object):
     """
     BASESOURCEID = 1000000
 
-    project_table_schema = """CREATE TABLE IF NOT EXISTS Project (
-          name TEXT NOT NULL,
-          recipe TEXT NOT NULL,
-          city TEXT,
-          latitude REAL,
-          longitude REAL,
-          time_zone REAL,
-          elevation REAL,
-          results_loaded_at TIMESTAMP
-          );"""
-
-    # sensors and analysis grids.
-    sensor_table_schema = """CREATE TABLE IF NOT EXISTS Sensor (
-              id INTEGER NOT NULL,
-              grid_id INTEGER NOT NULL,
-              loc_x REAL NOT NULL,
-              loc_y REAL NOT NULL,
-              loc_z REAL NOT NULL,
-              dir_x REAL NOT NULL,
-              dir_y REAL NOT NULL,
-              dir_z REAL NOT NULL,
-              FOREIGN KEY (grid_id) REFERENCES Grid(id),
-              CONSTRAINT sensor_grid_id PRIMARY KEY (id, grid_id)
-              );"""
-
-    grid_table_schema = """CREATE TABLE IF NOT EXISTS Grid (
-              id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-              name TEXT,
-              count INTEGER
-              );"""
-
-    # light sources including sky which keeps the is of 0
-    source_table_schema = """CREATE TABLE IF NOT EXISTS Source (
-              id INTEGER PRIMARY KEY UNIQUE,
-              source TEXT,
-              state TEXT
-              );"""
-
-    # light sources and analysis grids relationship
-    source_grid_table_schema = """CREATE TABLE IF NOT EXISTS SourceGrid (
-              source_id INTEGER NOT NULL,
-              grid_id INTEGER NOT NULL,
-              FOREIGN KEY (source_id) REFERENCES Source(id),
-              FOREIGN KEY (grid_id) REFERENCES Grid(id)
-              );"""
-
-    # daylight analysis results
-    result_table_schema = """CREATE TABLE IF NOT EXISTS Result (
-              sensor_id INTEGER NOT NULL,
-              grid_id INTEGER NOT NULL,
-              source_id INTEGER NOT NULL,
-              moy INTEGER NOT NULL,
-              sky_total REAL,
-              sky_direct REAL,
-              sun REAL,
-              total REAL,
-              FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
-              FOREIGN KEY (grid_id) REFERENCES Grid(id),
-              FOREIGN KEY (source_id) REFERENCES Source(id),
-              CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id, moy)
-              );"""
-
-    def __init__(self, folder, filename='radout', remove_if_exist=False):
+    def __init__(self, filepath='radout.db', remove_if_exist=False):
         """Initate database.
 
         Args:
@@ -83,37 +21,101 @@ class GridBasedDB(object):
             clean_if_exist: Clean the data in database file if the file exist
                 (default: False).
         """
-        self.filepath = os.path.join(folder, '%s.db' % filename)
-        if os.path.isfile(self.filepath) and remove_if_exist:
-            os.remove(self.filepath)
+        self._filepath = filepath
+        if os.path.isfile(filepath) and remove_if_exist:
+            os.remove(filepath)
 
-        conn = lite.connect(self.filepath)
+        project_table_schema = """CREATE TABLE IF NOT EXISTS Project (
+            name TEXT NOT NULL,
+            recipe TEXT NOT NULL,
+            city TEXT,
+            latitude REAL,
+            longitude REAL,
+            time_zone REAL,
+            elevation REAL,
+            results_loaded_at TIMESTAMP
+            );"""
+
+        # sensors and analysis grids.
+        sensor_table_schema = """CREATE TABLE IF NOT EXISTS Sensor (
+                id INTEGER NOT NULL,
+                grid_id INTEGER NOT NULL,
+                loc_x REAL NOT NULL,
+                loc_y REAL NOT NULL,
+                loc_z REAL NOT NULL,
+                dir_x REAL NOT NULL,
+                dir_y REAL NOT NULL,
+                dir_z REAL NOT NULL,
+                FOREIGN KEY (grid_id) REFERENCES Grid(id),
+                CONSTRAINT sensor_grid_id PRIMARY KEY (id, grid_id)
+                );"""
+
+        grid_table_schema = """CREATE TABLE IF NOT EXISTS Grid (
+                id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                name TEXT,
+                count INTEGER
+                );"""
+
+        # light sources including sky which keeps the is of 0
+        source_table_schema = """CREATE TABLE IF NOT EXISTS Source (
+                id INTEGER PRIMARY KEY UNIQUE,
+                source TEXT,
+                state TEXT
+                );"""
+
+        # light sources and analysis grids relationship
+        source_grid_table_schema = """CREATE TABLE IF NOT EXISTS SourceGrid (
+                source_id INTEGER NOT NULL,
+                grid_id INTEGER NOT NULL,
+                FOREIGN KEY (source_id) REFERENCES Source(id),
+                FOREIGN KEY (grid_id) REFERENCES Grid(id)
+                );"""
+
+        # daylight analysis results
+        result_table_schema = """CREATE TABLE IF NOT EXISTS Result (
+                sensor_id INTEGER NOT NULL,
+                grid_id INTEGER NOT NULL,
+                source_id INTEGER NOT NULL,
+                moy INTEGER NOT NULL,
+                sky_total REAL,
+                sky_direct REAL,
+                sun REAL,
+                total REAL,
+                FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
+                FOREIGN KEY (grid_id) REFERENCES Grid(id),
+                FOREIGN KEY (source_id) REFERENCES Source(id),
+                CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id, moy)
+                );"""
+
+        conn = lite.connect(filepath)
         conn.execute('PRAGMA synchronous=OFF')
         c = conn.cursor()
         # create table for sensors
-        c.execute(self.project_table_schema)
-        c.execute(self.sensor_table_schema)
-        c.execute(self.grid_table_schema)
+        c.execute(project_table_schema)
+        c.execute(sensor_table_schema)
+        c.execute(grid_table_schema)
 
         # create table for sources and place holder for results
-        c.execute(self.source_table_schema)
-        c.execute(self.source_grid_table_schema)
+        c.execute(source_table_schema)
+        c.execute(source_grid_table_schema)
 
         # tables for results
-        c.execute(self.result_table_schema)
+        c.execute(result_table_schema)
 
-        # add sky as the first light source
+        # add sky as the first light source if it doesn't exsit
         c.execute(
-            """INSERT INTO Source (id, source, state) VALUES (0, 'sky', 'default');"""
+            """INSERT OR IGNORE INTO Source (id, source, state)
+            VALUES (0, 'sky', 'default');"""
         )
         conn.commit()
         conn.close()
 
     @classmethod
     def from_analysis_recipe(cls, analysis_recipe, folder, filename='radout'):
-        cls_ = cls(folder, filename)
-        # TODO(mostapha): fill the data from recipe.
 
+        # TODO(mostapha): fill the data from recipe.
+        raise NotImplementedError()
+        cls_ = cls(folder, filename)
         return cls_
 
     @property
@@ -122,13 +124,9 @@ class GridBasedDB(object):
         return True
 
     @property
-    def has_values(self):
-        """A Boolean to indicate if the values are loaded."""
-        conn = lite.connect(self.filepath)
-        c = conn.cursor()
-        c.execute("SELECT values_loaded FROM Project")
-        return bool(c.fetchone()[0])
-        conn.close()
+    def filepath(self):
+        """Get path to database."""
+        return self._filepath
 
     @property
     def tables(self):
@@ -215,10 +213,27 @@ class GridBasedDB(object):
     def sources(self):
         """Get light sources as a dictionary.
 
-        name..state is the key and id is the value.
+        source_name..state is the key and id is the value.
         """
         sources = self.execute("""SELECT source, state, id FROM Source;""")
         return {'..'.join((source[0], source[1])): source[2] for source in sources}
+
+    @property
+    def sources_distinct(self):
+        """Get unique name of light sources as a tuple.
+
+        Names are sorted based on id.
+        """
+        command = """SELECT DISTINCT source FROM Source ORDER BY id;"""
+        sources = self.execute(command)
+        return tuple(src[0] for src in sources)
+
+    @property
+    def source_ids(self):
+        """Get list of source ids."""
+        command = """SELECT id FROM Source ORDER BY id;"""
+        ids = self.execute(command)
+        return tuple(i[0] for i in ids)
 
     def last_state_id(self, source):
         """Get last global id for this source."""
@@ -252,12 +267,6 @@ class GridBasedDB(object):
             sources[srid][stid] = i
 
         return sources
-
-    def blind_parser(self):
-        """Parse input blind states."""
-        # also update write source to database
-        # and then finish combined results input
-        pass
 
     def grid_id(self, name):
         """Get id for an analysis grid."""

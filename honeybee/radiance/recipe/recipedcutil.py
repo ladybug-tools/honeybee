@@ -130,7 +130,7 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
     sm = SunMatrix.from_wea(sky_matrix.wea, sky_matrix.north, sky_matrix.hoys,
                             sky_matrix.sky_type)
 
-    analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'), reuse=reuse)
+    analemma_mtx = sm.execute(os.path.join(project_folder, 'sky'))
     ann = Analemma.from_wea(sky_matrix.wea, sky_matrix.hoys, sky_matrix.north)
     ann.execute(os.path.join(project_folder, 'sky'))
     sunlist = os.path.join('.', 'sky', ann.sunlist_file)
