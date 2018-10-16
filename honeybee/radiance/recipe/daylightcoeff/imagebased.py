@@ -11,7 +11,7 @@ from ..recipedcutil import image_based_view_matrix_calculation
 from ..recipedcutil import sky_receiver, get_commands_sky
 from .._imagebasedbase import GenericImageBased
 from ...parameters.vwrays import VwraysParameters
-from ...imagecollection import ImageCollection
+from ...resultcollection.imagecollection import ImageCollection
 from ....futil import write_to_file
 
 import os

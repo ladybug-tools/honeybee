@@ -1,11 +1,15 @@
 """Database to save grid-based daylight simulation recipes."""
+from ..recipe.id import COMBINEDRECIPEIDS
+from ..recipe.id import get_id as get_recipe_id
+from ..recipe.id import get_name as get_recipe_name
+from ..recipe.id import is_point_in_time as is_recipe_pit
 import contextlib
-from itertools import izip
+from itertools import izip as zip
 import os
 import sqlite3 as lite
 
 
-class GridBasedDB(object):
+class Database(object):
     """Sqlite3 database for honeybee grid_based daylight simulation.
 
     The database currently only supports grid-based simulations.
@@ -71,22 +75,7 @@ class GridBasedDB(object):
                 FOREIGN KEY (grid_id) REFERENCES Grid(id)
                 );"""
 
-        # daylight analysis results
-        result_table_schema = """CREATE TABLE IF NOT EXISTS Result (
-                sensor_id INTEGER NOT NULL,
-                grid_id INTEGER NOT NULL,
-                source_id INTEGER NOT NULL,
-                moy INTEGER NOT NULL,
-                sky_total REAL,
-                sky_direct REAL,
-                sun REAL,
-                total REAL,
-                FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
-                FOREIGN KEY (grid_id) REFERENCES Grid(id),
-                FOREIGN KEY (source_id) REFERENCES Source(id),
-                CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id, moy)
-                );"""
-
+        print('connecting to database at: {}'.format(filepath))
         conn = lite.connect(filepath)
         conn.execute('PRAGMA synchronous=OFF')
         c = conn.cursor()
@@ -99,9 +88,6 @@ class GridBasedDB(object):
         c.execute(source_table_schema)
         c.execute(source_grid_table_schema)
 
-        # tables for results
-        c.execute(result_table_schema)
-
         # add sky as the first light source if it doesn't exsit
         c.execute(
             """INSERT OR IGNORE INTO Source (id, source, state)
@@ -111,27 +97,27 @@ class GridBasedDB(object):
         conn.close()
 
     @classmethod
-    def from_analysis_recipe(cls, analysis_recipe, folder, filename='radout'):
-
-        # TODO(mostapha): fill the data from recipe.
-        raise NotImplementedError()
-        cls_ = cls(folder, filename)
+    def from_analysis_recipe(cls, analysis_recipe, filepath='radout.db'):
+        """Initiate a database for a daylighting recipe."""
+        cls_ = cls(filepath)
+        cls_.add_analysis_grids(analysis_recipe.analysis_grids)
+        cls_.add_result_tables(analysis_recipe.id)
         return cls_
 
     @property
-    def isDataBase(self):
+    def isDatabase(self):
         """Return True for database object."""
         return True
 
     @property
-    def filepath(self):
+    def db_filepath(self):
         """Get path to database."""
         return self._filepath
 
     @property
     def tables(self):
         """Get list of tables."""
-        conn = lite.connect(self.filepath)
+        conn = lite.connect(self.db_filepath)
         tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table';")
         tables = tuple(table[0] for table in tables)
         conn.close()
@@ -139,7 +125,7 @@ class GridBasedDB(object):
 
     def execute(self, command, values=None):
         """Run sql command."""
-        with contextlib.closing(lite.connect(self.filepath)) as conn:
+        with contextlib.closing(lite.connect(self.db_filepath)) as conn:
             with conn:
                 with contextlib.closing(conn.cursor()) as cursor:
                     if values:
@@ -150,7 +136,7 @@ class GridBasedDB(object):
 
     def executemany(self, command, values=None):
         """Run sql command."""
-        with contextlib.closing(lite.connect(self.filepath)) as conn:
+        with contextlib.closing(lite.connect(self.db_filepath)) as conn:
             with conn:
                 with contextlib.closing(conn.cursor()) as cursor:
                     if values:
@@ -167,7 +153,7 @@ class GridBasedDB(object):
     def clean(self):
         """Clean the current data from the table."""
         tables = self.tables
-        conn = lite.connect(self.filepath)
+        conn = lite.connect(self.db_filepath)
         c = conn.cursor()
         # clean data in each db
         for table in tables:
@@ -177,9 +163,19 @@ class GridBasedDB(object):
         conn.commit()
         conn.close()
 
+    def clean_table(self, table_name, vaccum=True):
+        """Clean the current data from the table."""
+        conn = lite.connect(self.db_filepath)
+        c = conn.cursor()
+        # clean data in each db
+        c.execute("DELETE FROM %s" % table_name)
+        if vaccum:
+            c.execute("VACUUM")
+        conn.commit()
+        conn.close()
+
     def last_sensor_id(self, grid_id):
         """Get the ID for last sensor."""
-        raise NotImplementedError()
         command = """SELECT seq FROM sqlite_sequence WHERE name='Sensor';"""
         sensor_id = self.execute(command)
         if not sensor_id:
@@ -235,6 +231,35 @@ class GridBasedDB(object):
         ids = self.execute(command)
         return tuple(i[0] for i in ids)
 
+    @staticmethod
+    def _load_sources_from_files(result_files):
+        sources = {}
+        for fi in result_files:
+            _, source, state = fi[:-4].split('..')
+            if source == 'scene':
+                source = 'sky'
+            if source not in sources:
+                # add source
+                sources[source] = [state]
+            else:
+                if state == 'default':
+                    sources[source].insert(0, state)
+                else:
+                    sources[source].append(state)
+        return sources
+
+    def _add_new_sources(self, sources):
+        """Add new sources from sources dictionary."""
+        # add new sources if any
+        current_sources = self.sources
+        for source, states in sources.items():
+            for state in states:
+                key = '..'.join((source, state))
+                if key in current_sources:
+                    continue
+                # get state id based on state name, etc.
+                self.add_source(source, state)
+
     def last_state_id(self, source):
         """Get last global id for this source."""
         command = """SELECT id FROM Source WHERE source=? ORDER BY id DESC LIMIT 1;"""
@@ -245,6 +270,9 @@ class GridBasedDB(object):
 
     def source_id(self, name, state):
         """Get id for a light sources at a specific state."""
+        if name == 'scene':
+            name = 'sky'
+
         sid = self.execute(
             """SELECT id FROM Source WHERE source=? AND state=?;""", (name, state))
         if not sid:
@@ -286,6 +314,67 @@ class GridBasedDB(object):
         """
         command = """SELECT count FROM Grid ORDER BY id;"""
         return tuple(c[0] for c in self.execute(command))
+
+    def add_result_tables(self, recipe_id):
+        # daylight analysis results
+        timeseries_result_table_schema = """CREATE TABLE IF NOT EXISTS %s (
+                sensor_id INTEGER NOT NULL,
+                grid_id INTEGER NOT NULL,
+                source_id INTEGER NOT NULL,
+                moy INTEGER NOT NULL,
+                value REAL,
+                FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
+                FOREIGN KEY (grid_id) REFERENCES Grid(id),
+                FOREIGN KEY (source_id) REFERENCES Source(id),
+                CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id, moy)
+                );"""
+
+        timeseries_combined_result_table_schema = """CREATE TABLE IF NOT EXISTS %s (
+                sensor_id INTEGER NOT NULL,
+                grid_id INTEGER NOT NULL,
+                source_id INTEGER NOT NULL,
+                moy INTEGER NOT NULL,
+                %s REAL,
+                FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
+                FOREIGN KEY (grid_id) REFERENCES Grid(id),
+                FOREIGN KEY (source_id) REFERENCES Source(id),
+                CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id, moy)
+                );"""
+
+        point_in_time_result_table_schema = """CREATE TABLE IF NOT EXISTS %s (
+                sensor_id INTEGER NOT NULL,
+                grid_id INTEGER NOT NULL,
+                source_id INTEGER NOT NULL,
+                value REAL,
+                FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
+                FOREIGN KEY (grid_id) REFERENCES Grid(id),
+                FOREIGN KEY (source_id) REFERENCES Source(id),
+                CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id)
+                );"""
+
+        # get information to add result table(s)
+        name = get_recipe_name(recipe_id)
+        point_in_time = is_recipe_pit(recipe_id)
+
+        if point_in_time:
+            # add a single table with the same name as the recipe
+            self.execute(point_in_time_result_table_schema % name)
+            return (name,)
+        elif recipe_id not in COMBINEDRECIPEIDS:
+            # add a single table with the same name as the recipe
+            self.execute(timeseries_result_table_schema % name)
+            return (name,)
+        else:
+            #  add 4 tables for sun, sky_total, sky_direct and final results.
+            table_names = \
+                (name + '_sky_total', name + '_sky_direct', name + '_sun', name)
+            
+            column_names = ('sky_total', 'sky_direct', 'value', 'value')
+
+            for cn, tn in zip(column_names, table_names):
+                self.execute(timeseries_combined_result_table_schema % (tn, cn))
+
+            return table_names
 
     def add_analysis_grids(self, analysis_grids):
         """Add an analysis grids to database."""
@@ -355,7 +444,138 @@ class GridBasedDB(object):
         command = """INSERT INTO Source (id, source, state) VALUES (?, ?, ?);"""
         self.execute(command, (gid, name, state))
 
-    def load_dc_results_from_folder(self, folder, moys=None, source_mapping=None):
+    def load_daylight_factor_results(self, filepath, divide_by=1000,
+                                     source_mapping=None):
+        """Load daylight factor results."""
+        assert os.path.isfile(filepath), \
+            'Cannot find {}'.format(filepath)
+        table_name = self.add_result_tables(get_recipe_id('daylight_factor'))[0]
+        self.load_point_in_time_results(filepath, table_name, divide_by,
+                                        source_mapping)
+
+    def load_point_in_time_illuminance_results(self, filepath, source_mapping=None):
+        """Load daylight factor results."""
+        assert os.path.isfile(filepath), \
+            'Cannot find {}'.format(filepath)
+        divide_by = 1
+        table_name = self.add_result_tables(get_recipe_id('point_in_time'))[0]
+        self.load_point_in_time_results(filepath, table_name, divide_by,
+                                        source_mapping)
+
+    def load_point_in_time_results(self, filepath, table_name, divide_by,
+                                   source_mapping=None):
+        """Generic method to load results from a result file."""
+        command = \
+            """INSERT INTO %s
+            (sensor_id, grid_id, source_id, value)
+            VALUES (?, ?, ?, ?)""" % table_name
+
+        ptc = self.point_count
+
+        # for now there will be only sky source
+        source_id = 0
+
+        db = lite.connect(self.db_filepath, isolation_level=None)
+        # Set journal mode to WAL.
+        db.execute('PRAGMA page_size = 4096;')
+        db.execute('PRAGMA cache_size=10000;')
+        db.execute('PRAGMA locking_mode=EXCLUSIVE;')
+        db.execute('PRAGMA synchronous=OFF;')
+        db.execute('PRAGMA journal_mode=WAL;')
+
+        cursor = db.cursor()
+        cursor.execute("PRAGMA busy_timeout = 60000")
+
+        # insert results from files into database
+        try:
+            values = []
+            cursor.execute('BEGIN')
+            with open(filepath) as inf:
+                for grid_id, pt_count in enumerate(ptc):
+                    for sensor_id in range(pt_count):
+                        value = float(next(inf)) / divide_by
+                        values.append((sensor_id, grid_id, source_id, value))
+                        if len(values) % 250 == 0:
+                            cursor.executemany(command, values)
+                            values = []
+                # the remainder of the list
+                cursor.executemany(command, values)
+        except Exception as e:
+            raise e
+        finally:
+            cursor.execute('COMMIT')
+            db.execute('PRAGMA journal_mode=DELETE;')
+            db.commit()
+            db.close()
+
+    def load_solaraccess_results(self, filepath, moys, source_mapping=None):
+        assert os.path.isfile(filepath), \
+            'Cannot find {}'.format(filepath)
+
+        table_name = self.add_result_tables(get_recipe_id('solar_access'))[0]
+        command = \
+            """INSERT INTO %s
+            (sensor_id, grid_id, source_id, moy, value)
+            VALUES (?, ?, ?, ?, ?)""" % table_name
+
+        ptc = self.point_count
+
+        # for now there will be only sky source
+        source_id = 0
+
+        db = lite.connect(self.db_filepath, isolation_level=None)
+        # Set journal mode to WAL.
+        db.execute('PRAGMA page_size = 4096;')
+        db.execute('PRAGMA cache_size=10000;')
+        db.execute('PRAGMA locking_mode=EXCLUSIVE;')
+        db.execute('PRAGMA synchronous=OFF;')
+        db.execute('PRAGMA journal_mode=WAL;')
+
+        cursor = db.cursor()
+        cursor.execute("PRAGMA busy_timeout = 60000")
+
+        # insert results from files into database
+        try:
+            cursor.execute('BEGIN')
+            with open(filepath) as inf:
+                # remove header
+                for line in inf:
+                    if line.startswith('FORMAT='):
+                        inf.next()  # empty line
+                        break
+                    elif line.startswith('NCOLS='):
+                        ncols = int(line.split('=')[-1])
+
+                # ensure number of columns matches number of hours
+                assert len(moys) == ncols, \
+                    'Number of columns (%d) is different from number of moys (%d).' % \
+                    (ncols, len(moys))
+
+                values = []
+                for grid_id, pt_count in enumerate(ptc):
+                    for sensor_id in range(pt_count):
+                        tl = next(inf)
+                        for count, tv in enumerate(tl.split('\t')):
+                            if count == ncols:
+                                # this is last tab in resulst.
+                                continue
+                            moy = moys[count]
+                            value = 1 if float(tv) else 0
+                            values.append((sensor_id, grid_id, source_id, moy, value))
+                            if len(values) % 250 == 0:
+                                cursor.executemany(command, values)
+                                values = []
+                # the remainder of the list
+                cursor.executemany(command, values)
+        except Exception as e:
+            raise e
+        finally:
+            cursor.execute('COMMIT')
+            db.execute('PRAGMA journal_mode=DELETE;')
+            db.commit()
+            db.close()
+
+    def load_two_phase_results_from_folder(self, folder, moys=None, source_mapping=None):
         """Load all the results from daylight coefficient studies.
 
         This method loads all the results including sun, direct, total an final
@@ -410,244 +630,41 @@ class GridBasedDB(object):
 
         self._add_new_sources(sources)
 
+        total_sky_table_name, direct_sky_table_name, sun_table_name, table_name = \
+            self.add_result_tables(get_recipe_id('two_phase'))
+
+        total_sky_column_name, direct_sky_column_name, sun_column_name = \
+            ('sky_total', 'sky_direct', 'value')
         # for each source and state upload the results
         for tf in result_files['total']:
             _, source, state = tf[:-4].split('..')
             print('Loading results from {}..{}'.format(source, state))
             df = tf.replace('total..', 'direct..')
             sf = tf.replace('total..', 'sun..')
-            self.load_result_from_files(
-                os.path.join(folder, tf), os.path.join(folder, df),
-                os.path.join(folder, sf), source, state, moys
+            # load total sky values
+            print('\tLoading results for sky total')
+            self.load_dc_result_from_file(
+                os.path.join(folder, tf), total_sky_table_name, total_sky_column_name,
+                source, state, moys
+            )
+            print('\tLoading results for sky direct')
+            # load direct sky
+            self.load_dc_result_from_file(
+                os.path.join(folder, df), direct_sky_table_name, direct_sky_column_name,
+                source, state, moys
+            )
+            print('\tLoading results for sun')
+            # load sun
+            self.load_dc_result_from_file(
+                os.path.join(folder, sf), sun_table_name, sun_column_name,
+                source, state, moys
             )
 
         # calculate final value
-        self._calculate_final_dc_result()
+        self._calculate_final_dc_result('two_phase')
 
-    @staticmethod
-    def _load_sources_from_files(result_files):
-        sources = {}
-        for fi in result_files:
-            _, source, state = fi[:-4].split('..')
-            if source == 'scene':
-                source = 'sky'
-            if source not in sources:
-                # add source
-                sources[source] = [state]
-            else:
-                if state == 'default':
-                    sources[source].insert(0, state)
-                else:
-                    sources[source].append(state)
-        return sources
-
-    def _add_new_sources(self, sources):
-        """Add new sources from sources dictionary."""
-        # add new sources if any
-        current_sources = self.sources
-        for source, states in sources.items():
-            for state in states:
-                key = '..'.join((source, state))
-                if key in current_sources:
-                    continue
-                # get state id based on state name, etc.
-                self.add_source(source, state)
-
-    def load_final_dc_results_from_folder(self, folder, moys=None, source_mapping=None):
-        """Load final results from daylight coefficient studies.
-
-        This method ONLY loads final direct and total results. For uploading all the
-        result files use load_dc_results_from_folder method.
-
-        This method looks for files with .ill extensions. The file should be named as
-        <data - type > .. < window - group - name > .. < state - name > .ill for instance
-        total..north_facing..default.ill includes the 'total' values from 'north_facing'
-        window group at 'default' state.
-
-        Args:
-            folder: Path to result folder.
-            moys: List of minutes of the year. Default is an hourly annual study.
-            source_mapping: A dictionary that includes sources and their states. Keys
-                are source names and values are list of states. If source_mapping is not
-                provided this method will sort the states based on name.
-        """
-        # assume it's an annual study
-        moys = moys or [60 * h for h in xrange(8760)]
-
-        # collect files
-        result_files = []
-
-        for fi in os.listdir(folder):
-            if os.path.isdir(os.path.join(folder, fi)):
-                continue
-            if not fi.endswith('.ill'):
-                continue
-            if fi.startswith('sun..'):
-                result_files.append(fi)
-            elif fi.startswith('diffuse..'):
-                assert NotImplementedError(
-                    'This method currently does not support radiation studies.'
-                )
-
-        if len(result_files) == 0:
-            raise ValueError('No result file was found in {}'.format(folder))
-
-        # find window groups and number of states for each
-        if source_mapping:
-            sources = source_mapping
-        else:
-            sources = self._load_sources_from_files(result_files)
-
-        # add new sources if any
-        self._add_new_sources(sources)
-
-        # for each source and state upload the results
-        for sf in result_files:
-            _, source, state = sf[:-4].split('..')
-            print('Loading results from {}..{}'.format(source, state))
-            tf = sf.replace('sun..', '')
-            self.load_final_result_from_files(
-                os.path.join(folder, tf), os.path.join(folder, sf), source, state, moys
-            )
-
-    def load_final_result_from_files(
-            self, tot_file, sun_file, source='sky', state='default', moys=None):
-        """Load final and run radiance results from files to database."""
-        command = \
-            """INSERT INTO Result (sensor_id, grid_id, source_id, moy, sun, total)
-                VALUES (?, ?, ?, ?, ?, ?)"""
-
-        ptc = self.point_count
-        if source == 'scene':
-            source = 'sky'
-        source_id = self.source_id(source, state)
-
-        db = lite.connect(self.filepath, isolation_level=None)
-        # Set journal mode to WAL.
-        db.execute('PRAGMA page_size = 4096;')
-        db.execute('PRAGMA cache_size=10000;')
-        db.execute('PRAGMA locking_mode=EXCLUSIVE;')
-        db.execute('PRAGMA synchronous=OFF;')
-        db.execute('PRAGMA journal_mode=WAL;')
-
-        cursor = db.cursor()
-        cursor.execute("PRAGMA busy_timeout = 60000")
-
-        # insert results from files into database
-        try:
-            cursor.execute('BEGIN')
-            with open(tot_file) as totf, open(sun_file) as sunf:
-                # remove header
-                for inf in (totf, sunf):
-                    for line in inf:
-                        if line.startswith('FORMAT='):
-                            inf.next()  # empty line
-                            break
-                        elif line.startswith('NCOLS='):
-                            ncols = int(line.split('=')[-1])
-
-                # ensure number of columns matches number of hours
-                assert len(moys) == ncols, \
-                    'Number of columns (%d) is different from number of moys (%d).' % \
-                    (ncols, len(moys))
-
-                values = []
-                for grid_id, pt_count in enumerate(ptc):
-                    for sensor_id in range(pt_count):
-                        tl = next(totf)
-                        sl = next(sunf)
-                        for count, (tv, sv) in enumerate(izip(tl.split('\t'),
-                                                              sl.split('\t'))):
-                            if count == ncols:
-                                # this is last tab in resulst.
-                                continue
-                            moy = moys[count]
-                            values.append((sensor_id, grid_id, source_id, moy, sv, tv))
-                            if len(values) % 250 == 0:
-                                cursor.executemany(command, values)
-                                values = []
-                # the remainder of the list
-                cursor.executemany(command, values)
-        except Exception as e:
-            raise e
-        finally:
-            cursor.execute('COMMIT')
-            db.execute('PRAGMA journal_mode=DELETE;')
-            db.commit()
-            db.close()
-
-    def load_result_from_files(self, tot_file, dir_file, sun_file, source='sky',
-                               state='default', moys=None):
-        """Load radiance results from multiple files to database."""
-        command = \
-            """INSERT INTO Result
-            (sensor_id, grid_id, source_id, moy, sky_total, sky_direct, sun)
-            VALUES (?, ?, ?, ?, ?, ?, ?)"""
-
-        ptc = self.point_count
-        if source == 'scene':
-            source = 'sky'
-        source_id = self.source_id(source, state)
-
-        db = lite.connect(self.filepath, isolation_level=None)
-        # Set journal mode to WAL.
-        db.execute('PRAGMA page_size = 4096;')
-        db.execute('PRAGMA cache_size=10000;')
-        db.execute('PRAGMA locking_mode=EXCLUSIVE;')
-        db.execute('PRAGMA synchronous=OFF;')
-        db.execute('PRAGMA journal_mode=WAL;')
-
-        cursor = db.cursor()
-        cursor.execute("PRAGMA busy_timeout = 60000")
-
-        # insert results from files into database
-        try:
-            cursor.execute('BEGIN')
-            with open(tot_file) as totf, open(dir_file) as dirf, open(sun_file) as sunf:
-                # remove header
-                for inf in (totf, dirf, sunf):
-                    for line in inf:
-                        if line.startswith('FORMAT='):
-                            inf.next()  # empty line
-                            break
-                        elif line.startswith('NCOLS='):
-                            ncols = int(line.split('=')[-1])
-
-                # ensure number of columns matches number of hours
-                assert len(moys) == ncols, \
-                    'Number of columns (%d) is different from number of moys (%d).' % \
-                    (ncols, len(moys))
-
-                values = []
-                for grid_id, pt_Count in enumerate(ptc):
-                    for sensor_id in range(pt_Count):
-                        tl = next(totf)
-                        dl = next(dirf)
-                        sl = next(sunf)
-                        for count, (tv, dv, sv) in enumerate(izip(tl.split('\t'),
-                                                                  dl.split('\t'),
-                                                                  sl.split('\t'))):
-                            if count == ncols:
-                                # this is last tab in resulst.
-                                continue
-                            moy = moys[count]
-                            values.append((sensor_id, grid_id, source_id,
-                                           moy, tv, dv, sv))
-                            if len(values) % 250 == 0:
-                                cursor.executemany(command, values)
-                                values = []
-                # the remainder of the list
-                cursor.executemany(command, values)
-        except Exception as e:
-            raise e
-        finally:
-            cursor.execute('COMMIT')
-            db.execute('PRAGMA journal_mode=DELETE;')
-            db.commit()
-            db.close()
-
-    def load_result_from_file(self, res_file, source='sky', state='default', moys=None,
-                              res_type=0, mode=0):
+    def load_dc_result_from_file(self, filepath, table_name, column_name='value',
+                                 source='sky', state='default', moys=None):
         """Load Radiance results file to database.
 
         The script assumes that each row represents an analysis point and number of
@@ -659,53 +676,20 @@ class GridBasedDB(object):
                 creating the table.
 
         """
-        dir_insert_command = \
-            """INSERT INTO Result (sky_direct, sensor_id, grid_id, source_id, moy)
-                VALUES (?, ?, ?, ?)"""
-        tot_insert_command = \
-            """INSERT INTO Result (sky_total, sensor_id, grid_id, source_id, moy)
-                VALUES (?, ?, ?, ?)"""
-        sun_insert_command = \
-            """INSERT INTO Result (sun, sensor_id, grid_id, source_id, moy)
-                VALUES (?, ?, ?, ?)"""
-        fin_insert_command = \
-            """INSERT INTO Result (total, sensor_id, grid_id, source_id, moy)
-                VALUES (?, ?, ?, ?)"""
+        assert os.path.isfile(filepath), \
+            'Cannot find {}'.format(filepath)
 
-        dir_update_command = \
-            """UPDATE Result SET sky_direct=?
-            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
-        tot_update_command = \
-            """UPDATE Result SET sky_total=?
-            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
-        sun_update_command = \
-            """UPDATE Result SET sun=?
-            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
-        fin_update_command = \
-            """UPDATE Result SET total=?
-            WHERE sensor_id=? AND grid_id=? AND source_id=? AND moy=?"""
+        command = \
+            """INSERT INTO %s
+            (sensor_id, grid_id, source_id, moy, %s)
+            VALUES (?, ?, ?, ?, ?)""" % (table_name, column_name)
 
-        insert_commands = {
-            0: tot_insert_command, 1: dir_insert_command, 2: sun_insert_command,
-            3: fin_insert_command
-        }
-        update_commands = {
-            0: tot_update_command, 1: dir_update_command, 2: sun_update_command,
-            3: fin_update_command
-        }
-
-        # TOD(): check inputs
         ptc = self.point_count
 
-        if source == 'scene':
-            source = 'sky'
+        # for now there will be only sky source
         source_id = self.source_id(source, state)
-        if mode == 0:
-            command = insert_commands[res_type]
-        else:
-            command = update_commands[res_type]
 
-        db = lite.connect(self.filepath, isolation_level=None)
+        db = lite.connect(self.db_filepath, isolation_level=None)
         # Set journal mode to WAL.
         db.execute('PRAGMA page_size = 4096;')
         db.execute('PRAGMA cache_size=10000;')
@@ -719,7 +703,8 @@ class GridBasedDB(object):
         # insert results from files into database
         try:
             cursor.execute('BEGIN')
-            with open(res_file) as inf:
+            with open(filepath) as inf:
+                # remove header
                 for line in inf:
                     if line.startswith('FORMAT='):
                         inf.next()  # empty line
@@ -731,17 +716,18 @@ class GridBasedDB(object):
                 assert len(moys) == ncols, \
                     'Number of columns (%d) is different from number of moys (%d).' % \
                     (ncols, len(moys))
+
                 values = []
-                for grid_id, grid_count in enumerate(ptc):
-                    for row_num in range(grid_count):
-                        row = next(inf)
-                        for count, value in enumerate(row.split('\t')):
+                for grid_id, pt_count in enumerate(ptc):
+                    for sensor_id in range(pt_count):
+                        tl = next(inf)
+                        for count, tv in enumerate(tl.split('\t')):
                             if count == ncols:
                                 # this is last tab in resulst.
                                 continue
                             moy = moys[count]
-                            sensor_id = row_num
-                            values.append((value, sensor_id, grid_id, source_id, moy))
+                            values.append((sensor_id, grid_id, source_id, moy,
+                                           float(tv)))
                             if len(values) % 250 == 0:
                                 cursor.executemany(command, values)
                                 values = []
@@ -755,9 +741,10 @@ class GridBasedDB(object):
             db.commit()
             db.close()
 
-    def _calculate_final_dc_result(self):
+    def _calculate_final_dc_result(self, recipe_name):
         """SkyTotalValue - SkyDirectValue + Sun > Total"""
-        db = lite.connect(self.filepath, isolation_level=None)
+        print('Calculating final result: total - direct + sun')
+        db = lite.connect(self.db_filepath, isolation_level=None)
         # Set journal mode to WAL.
         db.execute('PRAGMA page_size = 4096;')
         db.execute('PRAGMA cache_size=10000;')
@@ -767,7 +754,15 @@ class GridBasedDB(object):
 
         cursor = db.cursor()
         cursor.execute("PRAGMA busy_timeout = 60000")
-        command = """UPDATE Result SET total = sky_total - sky_direct + sun;"""
+
+        command = """INSERT INTO {0}
+        SELECT sensor_id, grid_id, source_id, moy,
+        {0}_sky_total.sky_total - {0}_sky_direct.sky_direct
+        + {0}_sun.value as value
+
+        FROM {0}_sky_direct
+        Natural JOIN {0}_sky_total
+        Natural JOIN {0}_sun;""".format(recipe_name)
 
         # insert results from files into database
         try:
@@ -798,7 +793,7 @@ class GridBasedDB(object):
             """INSERT INTO %s (point_id, patch_id, value) VALUES (?, ?, ?);""" \
             % table_name
 
-        db = lite.connect(self.filepath, isolation_level=None)
+        db = lite.connect(self.db_filepath, isolation_level=None)
         # Set journal mode to WAL.
         db.execute('PRAGMA page_size = 4096;')
         db.execute('PRAGMA cache_size=10000;')
