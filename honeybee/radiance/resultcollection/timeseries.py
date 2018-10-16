@@ -169,7 +169,7 @@ class TimeSeries(ResultGrid):
         if direct:
             assert self.has_direct_values, \
                 '{} does not generate separate results for direct sunlight.' \
-                .find(self.recipe_name)
+                .format(self.recipe_name)
 
         static = False  # static blinds where blind states doesn't change between hours
         sources = self.sources_distinct
@@ -220,7 +220,6 @@ class TimeSeries(ResultGrid):
         group_by = group_by or 0
         hcount = len(hoys) if hoys else len(self.moys)
         chunk_size = self.point_count if group_by else hcount
-        tot_len = hcount * self.point_count
 
         if not hoys and not group_by:
             # no filter for hours so get the results for all available hours
@@ -288,8 +287,8 @@ class TimeSeries(ResultGrid):
         # TODO(@mostapha) October 15 2018: Replace divide chunks with an iterator
         # friendly solution not to create a list out of the results.
         try:
-            results = list(cursor.execute(command, (self.grid_id,)))
-            return self._divide_chunks(results, chunk_size, tot_len)
+            results = (r[0] for r in cursor.execute(command, (self.grid_id,)))
+            return list(self.grouper(results, chunk_size))
         except Exception as e:
             raise Exception(e)
         finally:
@@ -324,7 +323,7 @@ class TimeSeries(ResultGrid):
             raise ValueError(
                 'There should be a blind state for each hour. '
                 '#hours[{}] != #states[{}]'
-                .format(hcount, len(sids))
+                .format(hcount, len(sids_hourly))
             )
 
         if not hoys and not group_by:
@@ -352,7 +351,7 @@ class TimeSeries(ResultGrid):
 
         # convert state ids to expanded global source ids
         # this method returns a list of 1 and 0s for all sources
-        exp_gid = self._sids_hourly_to_expanded_gids(sids_hourly)
+        exp_gid = list(self._sids_hourly_to_expanded_gids(sids_hourly))
 
         # get the value for all sources and multiply them by exp_gid
         db, cursor = self._get_cursor()
@@ -364,31 +363,38 @@ class TimeSeries(ResultGrid):
                 # group by sensor
                 results = [[0] * hcount for i in range(pt_count)]
                 for c, v in enumerate(init_results):
+                    if not v[0]:
+                        # pass 0 values
+                        continue
                     # source index
                     si = c % source_count_total
                     # minute of the year index
-                    mi = int(c / source_count_total)
+                    mi = int(c / (source_count_total * pt_count))
                     multiplier = exp_gid[mi][si]
-                    if multiplier == 0:
+                    if not multiplier:
                         continue
                     sensor_index = int(c / (hcount * source_count_total))
-                    results[sensor_index][mi] += v
+                    results[sensor_index][mi] += v[0]
             else:
                 # group by moy
                 results = [[0] * pt_count for i in range(hcount)]
                 for c, v in enumerate(init_results):
+                    if not v[0]:
+                        # pass 0 values
+                        continue
                     # source index
                     si = c % source_count_total
                     # minute of the year index
                     mi = int(c / (pt_count * source_count_total))
                     multiplier = exp_gid[mi][si]
-                    if multiplier == 0:
+                    if not multiplier:
                         continue
-                    sensor_index = int(c / source_count_total)
-                    results[mi][sensor_index] += v
+                    sensor_index = int(c / (source_count_total * hcount))
+                    results[mi][sensor_index] += v[0]
 
-        except Exception as e:
-            raise Exception(e)
+        except Exception:
+            import traceback
+            raise Exception(traceback.format_exc())
         else:
             return results
         finally:
@@ -396,10 +402,82 @@ class TimeSeries(ResultGrid):
             self._close_cursor(db, cursor)
 
     def values_cumulative(self, hoys=None, sids_hourly=None, group_by=0, direct=False):
-        raise NotImplementedError()
+        """Get cumulative value for several hours from all sources based on state_id.
 
-    def values_range(self, hoys=None, sids_hourly=None, group_by=0, direct=False):
-        raise NotImplementedError()
+        Args:
+            hoy: hour of the year.
+            sids_hourly: List of state ids for all the sources for an hour. If you
+                want a source to be removed set the state to -1. By default states
+                will be set to 0 for all the sources during all the hours of the year.
+            group_by: 0-1. Use group_by to switch how values will be grouped. By default
+                results will be grouped for each sensor. in this case the first item in
+                results will be a list of values for the first sensor during hoys. If
+                set to 1 the results will be grouped by timestep. In this case the first
+                item will be list of values for all the sensors at the first timestep.
+                This mode is useful to load all the hourly results for points at a
+                certian hour to calculate values for the whole grid. A good example is
+                calculating % area which receives more than 2000 lux at every hour
+                during the year.
+            direct: Set to True for direct values instead of total values. If direct
+                values are not available an exption will raise (default: False).
+
+        Returns:
+            A tuple of cumulative values grouped based on group_by input.
+        """
+        values = self.values(hoys, sids_hourly, group_by, direct)
+        return tuple(sum(v) for v in values)
+
+    def values_max(self, hoys=None, sids_hourly=None, group_by=0, direct=False):
+        """Get maximum value for several hours from all sources based on state_id.
+
+        Args:
+            hoy: hour of the year.
+            sids_hourly: List of state ids for all the sources for an hour. If you
+                want a source to be removed set the state to -1. By default states
+                will be set to 0 for all the sources during all the hours of the year.
+            group_by: 0-1. Use group_by to switch how values will be grouped. By default
+                results will be grouped for each sensor. in this case the first item in
+                results will be a list of values for the first sensor during hoys. If
+                set to 1 the results will be grouped by timestep. In this case the first
+                item will be list of values for all the sensors at the first timestep.
+                This mode is useful to load all the hourly results for points at a
+                certian hour to calculate values for the whole grid. A good example is
+                calculating % area which receives more than 2000 lux at every hour
+                during the year.
+            direct: Set to True for direct values instead of total values. If direct
+                values are not available an exption will raise (default: False).
+
+        Returns:
+            A tuple of maximum values grouped based on group_by input.
+        """
+        values = self.values(hoys, sids_hourly, group_by, direct)
+        return tuple(max(v) for v in values)
+
+    def values_min(self, hoys=None, sids_hourly=None, group_by=0, direct=False):
+        """Get minimum value for several hours from all sources based on state_id.
+
+        Args:
+            hoy: hour of the year.
+            sids_hourly: List of state ids for all the sources for an hour. If you
+                want a source to be removed set the state to -1. By default states
+                will be set to 0 for all the sources during all the hours of the year.
+            group_by: 0-1. Use group_by to switch how values will be grouped. By default
+                results will be grouped for each sensor. in this case the first item in
+                results will be a list of values for the first sensor during hoys. If
+                set to 1 the results will be grouped by timestep. In this case the first
+                item will be list of values for all the sensors at the first timestep.
+                This mode is useful to load all the hourly results for points at a
+                certian hour to calculate values for the whole grid. A good example is
+                calculating % area which receives more than 2000 lux at every hour
+                during the year.
+            direct: Set to True for direct values instead of total values. If direct
+                values are not available an exption will raise (default: False).
+
+        Returns:
+            A tuple of minimum values grouped based on group_by input.
+        """
+        values = self.values(hoys, sids_hourly, group_by, direct)
+        return tuple(min(v) for v in values)
 
     def daylight_autonomy(self, threshold=300, occupancy_hours=None, sids_hourly=None):
         raise NotImplementedError()

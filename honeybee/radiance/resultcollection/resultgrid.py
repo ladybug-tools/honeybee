@@ -21,14 +21,15 @@ TimeSeriesCombined(ResultGrid):
     sunlight is calculated separately from sky daylight. In Honeybee[+]
     this is the case for 2Phase and 5Phase recipes.
     supports all the above and separate calls for direct values
-    
+
     spatial daylight autonomy (if direct data is available).
 """
 from __future__ import division
-from ..recipe.id import get_name
 from ..recipe.id import DIRECTRECIPEIDS
+from ..recipe.id import get_name
 from .database import Database
 import contextlib
+from itertools import izip_longest
 import os
 import sqlite3 as lite
 
@@ -234,6 +235,11 @@ class ResultGrid(object):
             ll = len(lst)
         for i in range(0, ll, n):
             yield lst[i:i + n]
+
+    @staticmethod
+    def grouper(iterable, n, fillvalue=None):
+        args = [iter(iterable)] * n
+        return izip_longest(*args, fillvalue=fillvalue)
 
     @staticmethod
     def average(values):
