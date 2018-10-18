@@ -16,7 +16,7 @@ class Schedule(object):
         hoys: List of hours of the year for this values.
     """
 
-    __slots__ = ('_values', '_hoys', '_occupiedHours')
+    __slots__ = ('_values', '_hoys', '_occupied_hours')
 
     def __init__(self, values, hoys=None):
         """Init Schedule."""
@@ -24,7 +24,7 @@ class Schedule(object):
         self._values = tuple(values)
         # put the hours in a set for quick look up
         self._hoys = tuple(hoys)
-        self._occupiedHours = set(
+        self._occupied_hours = set(
             h for h, v in itertools.izip(self._hoys, self._values)
             if v != 0)
 
@@ -133,7 +133,7 @@ class Schedule(object):
     @property
     def occupied_hours(self):
         """Occupied hours of the year as a set."""
-        return self._occupiedHours
+        return self._occupied_hours
 
     def write(self, file_path):
         """Write the schedule to a csv file."""
@@ -143,7 +143,7 @@ class Schedule(object):
         return len(self._values)
 
     def __contains__(self, hour):
-        return hour in self._occupiedHours
+        return hour in self._occupied_hours
 
     def ToString(self):
         """Overwrite .NET ToString."""

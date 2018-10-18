@@ -3,11 +3,13 @@
 Use this PointInTime result grid to load the results from database for daylight factor,
 vertical sky component, and point-in-time illuminance or radiation studies.
 """
+from __future__ import division
+from ...schedule import Schedule
 from ..recipe.id import get_name
 from ..recipe.id import is_point_in_time
 from .resultgrid import ResultGrid
-import contextlib
-import sqlite3 as lite
+
+from itertools import izip
 
 
 class TimeSeries(ResultGrid):
@@ -218,8 +220,10 @@ class TimeSeries(ResultGrid):
         print('source ids: {}'.format(', '.join(str(i) for i in gids)))
 
         group_by = group_by or 0
+        point_count = self.point_count
         hcount = len(hoys) if hoys else len(self.moys)
-        chunk_size = self.point_count if group_by else hcount
+        chunk_size = point_count if group_by else hcount
+        group_count = int(point_count * hcount / chunk_size)
 
         if not hoys and not group_by:
             # no filter for hours so get the results for all available hours
@@ -288,9 +292,13 @@ class TimeSeries(ResultGrid):
         # friendly solution not to create a list out of the results.
         try:
             results = (r[0] for r in cursor.execute(command, (self.grid_id,)))
-            return list(self.grouper(results, chunk_size))
-        except Exception as e:
-            raise Exception(e)
+            # separate data based on chunk_size
+            counter = range(chunk_size)
+            return tuple(tuple(next(results) for i in counter)
+                         for g in range(group_count))                   
+        except Exception:
+            import traceback
+            raise Exception(traceback.format_exc())
         finally:
             cursor.execute('COMMIT')
             self._close_cursor(db, cursor)
@@ -479,20 +487,113 @@ class TimeSeries(ResultGrid):
         values = self.values(hoys, sids_hourly, group_by, direct)
         return tuple(min(v) for v in values)
 
-    def daylight_autonomy(self, threshold=300, occupancy_hours=None, sids_hourly=None):
-        raise NotImplementedError()
+    # TODO(@mostapha) October 17 2018: Update docstring
+    def daylight_autonomy(self, threshold=300, occ_hours=None, sids_hourly=None):
+        """Calculate daylight autonomy and continious daylight autonomy.
 
-    def useful_daylight_illuminance(self):
-        raise NotImplementedError()
+        Args:
+            da_threshold: threshold for daylight autonomy in lux (default: 300).
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
+            occ_schedule: An annual occupancy schedule.
+
+        Returns:
+            Daylight autonomy
+        """
+        threshold = threshold or 300
+        occ_hours = occ_hours or Schedule.eight_am_to_six_pm().occupied_hours
+        values = self.values(hoys=occ_hours, sids_hourly=sids_hourly)
+        total_hour_count = len(occ_hours)
+        for sensor_values in values:
+            da = 0
+            cda = 0
+            for v in sensor_values:
+                if v >= threshold:
+                    da += 1
+                    cda += 1
+                else:
+                    cda += v / threshold
+           
+            yield 100 * da / total_hour_count, 100 * cda / total_hour_count
+
+    def useful_daylight_illuminance(self, udi_min_max=None, occ_hours=None,
+                                    sids_hourly=None):
+        """Calculate useful daylight illuminance.
+
+        Args:
+            udi_min_max: A tuple of min, max value for useful daylight illuminance
+                (default: (100, 2000)).
+            blinds_state_ids: List of state ids for all the sources for input hoys. If
+                you want a source to be removed set the state to -1.
+            occ_schedule: An annual occupancy schedule.
+
+        Returns:
+            Useful daylight illuminance, Less than UDI, More than UDI
+        """
+        udi_min_max = udi_min_max or (100, 2000)
+        udi_min, udi_max = udi_min_max
+        occ_hours = occ_hours or Schedule.eight_am_to_six_pm().occupied_hours
+        values = self.values(hoys=occ_hours, sids_hourly=sids_hourly)
+        total_hour_count = len(occ_hours)
+        for sensor_values in values:
+            udi = 0
+            udi_l = 0
+            udi_m = 0
+            for v in sensor_values:
+                if v < udi_min:
+                    udi_l += 1
+                elif v > udi_max:
+                    udi_m += 1
+                else:
+                    udi += 1
+
+            yield 100 * udi / total_hour_count, 100 * udi_l / total_hour_count, \
+                100 * udi_m / total_hour_count
 
     def spatial_daylight_autonomy(self):
         raise NotImplementedError()
 
-    def annual_sunlight_exposure(self):
-        raise NotImplementedError()
+    def annual_sunlight_exposure(self, threshold=1000, sids_hourly=None,
+                                 occ_hours=None, target_hours=None):
+        """Annual Solar Exposure (ASE).
 
-    def blind_schedule_based_on_ase(self, threshold=1000, percentage_area=2,
-                                    sid_combinations=None):
+        Calculate number of hours that this point is exposed to more than 1000lux
+        of direct sunlight. The point meets the traget in the number of hours is
+        less than 250 hours per year.
+
+        Args:
+            threshold: threshold for daylight autonomy in lux (default: 1000).
+            blinds_state_ids: List of state ids for all the sources for input hoys.
+                If you want a source to be removed set the state to -1. ase must
+                be calculated without dynamic blinds but you can use this option
+                to study the effect of different blind states.
+            occ_schedule: An annual occupancy schedule.
+            target_hours: Target minimum hours (default: 250).
+
+        Returns:
+            Success as a Boolean, Number of hours, Problematic hours
+        """
+        threshold = threshold or 1000
+        target_hours = target_hours or 250
+        occ_hours = occ_hours or Schedule.eight_am_to_six_pm().occupied_hours
+
+        values = self.values(hoys=occ_hours, sids_hourly=sids_hourly, direct=True)
+
+        for sensor_values in values:
+            ase = 0
+            problematic_hours = []
+            for h, v in izip(occ_hours, sensor_values):
+                if v > threshold:
+                    ase += 1
+                    problematic_hours.append(h)
+
+            yield ase < target_hours, ase, problematic_hours
+
+    def blind_schedule_based_on_ase(self, threshold=1000, target_percentage=2,
+                                    occ_hours=None, sid_combinations=None):
+        threshold = threshold or 1000
+        target_percentage = target_percentage or 2
+        occ_hours = occ_hours or Schedule.eight_am_to_six_pm().occupied_hours
         raise NotImplementedError()
 
     def percentage_area_more_than(self, threshold=1000, direct=True):

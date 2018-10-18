@@ -4,9 +4,11 @@ from ..recipe.id import get_id as get_recipe_id
 from ..recipe.id import get_name as get_recipe_name
 from ..recipe.id import is_point_in_time as is_recipe_pit
 import contextlib
+from datetime import timedelta
 from itertools import izip as zip
 import os
 import sqlite3 as lite
+import time
 
 
 class Database(object):
@@ -235,7 +237,11 @@ class Database(object):
     def _load_sources_from_files(result_files):
         sources = {}
         for fi in result_files:
-            _, source, state = fi[:-4].split('..')
+            try:
+                _, source, state = fi[:-4].split('..')
+            except ValueError:
+                source, state = fi[:-4].split('..')
+
             if source == 'scene':
                 source = 'sky'
             if source not in sources:
@@ -368,7 +374,7 @@ class Database(object):
             #  add 4 tables for sun, sky_total, sky_direct and final results.
             table_names = \
                 (name + '_sky_total', name + '_sky_direct', name + '_sun', name)
-            
+
             column_names = ('sky_total', 'sky_direct', 'value', 'value')
 
             for cn, tn in zip(column_names, table_names):
@@ -662,6 +668,142 @@ class Database(object):
 
         # calculate final value
         self._calculate_final_dc_result('two_phase')
+
+    def load_two_phase_results_final_sun_from_folder(self, folder, moys=None,
+                                                     source_mapping=None):
+        """Load final and sun results from folder.
+
+        Args:
+            folder: Path to result folder.
+            moys: List of minutes of the year. Default is an hourly annual study.
+            source_mapping: A dictionary that includes sources and their states. Keys
+                are source names and values are list of states. If source_mapping is not
+                provided this method will sort the states based on name.
+        """
+        # assume it's an annual study
+        moys = moys or [60 * h for h in xrange(8760)]
+
+        # collect files
+        result_files = {'sun': [], 'final': []}
+
+        for fi in os.listdir(folder):
+            if os.path.isdir(os.path.join(folder, fi)):
+                continue
+            if not fi.endswith('.ill'):
+                continue
+            if fi.startswith('direct..'):
+                continue
+            elif fi.startswith('sun..'):
+                result_files['sun'].append(fi)
+            elif fi.startswith('total..'):
+                continue
+            elif fi.startswith('diffuse..'):
+                continue
+            elif '..' in fi:
+                result_files['final'].append(fi)
+
+        if len(result_files['sun']) + len(result_files['final']) == 0:
+            raise ValueError('No result file was found in {}'.format(folder))
+
+        # find window groups and number of states for each
+        if source_mapping:
+            sources = source_mapping
+        else:
+            sources = self._load_sources_from_files(result_files['final'])
+
+        self._add_new_sources(sources)
+
+        total_sky_table_name, direct_sky_table_name, sun_table_name, table_name = \
+            self.add_result_tables(get_recipe_id('two_phase'))
+
+        column_name = 'value'
+
+        # for each source and state upload the results
+        for tf in result_files['final']:
+            try:
+                _, source, state = tf[:-4].split('..')
+            except ValueError:
+                source, state = tf[:-4].split('..')
+
+            print('Loading results from {}..{}'.format(source, state))
+            sf = 'sun..' + tf
+            
+            # load total sky values
+            start_time = time.time()
+            print('\tLoading total results')
+            self.load_dc_result_from_file(
+                os.path.join(folder, tf), table_name, column_name,
+                source, state, moys
+            )
+            took = time.time() - start_time
+            print('Finished in %s' % (str(timedelta(seconds=took))))
+            start_time = time.time()            
+            print('\tLoading direct sun results')
+            # load sun
+            self.load_dc_result_from_file(
+                os.path.join(folder, sf), sun_table_name, column_name,
+                source, state, moys
+            )
+            took = time.time() - start_time
+            print('Finished in %s' % (str(timedelta(seconds=took))))
+
+    def load_two_phase_results_final_from_folder(self, folder, moys=None,
+                                                 source_mapping=None):
+        """Load only final results from daylight coefficient studies.
+
+        Args:
+            folder: Path to result folder.
+            moys: List of minutes of the year. Default is an hourly annual study.
+            source_mapping: A dictionary that includes sources and their states. Keys
+                are source names and values are list of states. If source_mapping is not
+                provided this method will sort the states based on name.
+        """
+        # assume it's an annual study
+        moys = moys or [60 * h for h in xrange(8760)]
+
+        # collect files
+        result_files = []
+
+        for fi in os.listdir(folder):
+            if os.path.isdir(os.path.join(folder, fi)):
+                continue
+            if not fi.endswith('.ill'):
+                continue
+            if fi.startswith('direct..'):
+                continue
+            elif fi.startswith('sun..'):
+                continue
+            elif fi.startswith('total..'):
+                continue
+            elif fi.startswith('diffuse..'):
+                assert NotImplementedError(
+                    'This method currently does not support radiation studies.'
+                )
+            elif '..' in fi:
+                result_files.append(fi)
+
+        if len(result_files) == 0:
+            raise ValueError('No result file was found in {}'.format(folder))
+
+        # find window groups and number of states for each
+        if source_mapping:
+            sources = source_mapping
+        else:
+            sources = self._load_sources_from_files(result_files)
+
+        self._add_new_sources(sources)
+        self.add_result_tables(get_recipe_id('two_phase'))
+        
+        table_name = 'two_phase'
+        column_name = 'value'
+
+        # for each source and state upload the results
+        for tf in result_files:
+            source, state = tf[:-4].split('..')
+            print('Loading results from {}..{}'.format(source, state))
+            self.load_dc_result_from_file(
+                os.path.join(folder, tf), table_name, column_name, source, state, moys
+            )
 
     def load_dc_result_from_file(self, filepath, table_name, column_name='value',
                                  source='sky', state='default', moys=None):
