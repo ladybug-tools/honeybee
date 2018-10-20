@@ -295,7 +295,7 @@ class TimeSeries(ResultGrid):
             # separate data based on chunk_size
             counter = range(chunk_size)
             return tuple(tuple(next(results) for i in counter)
-                         for g in range(group_count))                   
+                         for g in range(group_count))
         except Exception:
             import traceback
             raise Exception(traceback.format_exc())
@@ -513,7 +513,7 @@ class TimeSeries(ResultGrid):
                     cda += 1
                 else:
                     cda += v / threshold
-           
+
             yield 100 * da / total_hour_count, 100 * cda / total_hour_count
 
     def useful_daylight_illuminance(self, udi_min_max=None, occ_hours=None,
@@ -595,6 +595,7 @@ class TimeSeries(ResultGrid):
         target_percentage = target_percentage or 2
         occ_hours = occ_hours or Schedule.eight_am_to_six_pm().occupied_hours
         raise NotImplementedError()
+        # success, final_blind_state,
 
     def percentage_area_more_than(self, threshold=1000, direct=True):
         raise NotImplementedError()
