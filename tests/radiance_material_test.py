@@ -10,7 +10,6 @@ from honeybee.radiance.material.light import Light
 from honeybee.radiance.material.glow import Glow
 from honeybee.radiance.material.metal import Metal
 from honeybee.radiance.material.glass import Glass
-from honeybee.radiance.material.bsdf import BSDF
 from honeybee.radiance.material.plastic import Plastic
 
 
@@ -52,33 +51,6 @@ class MaterialTypeTestCase(unittest.TestCase):
         assert tuple(map(self.safe_cast_float, glow_tuple)) == \
             ('void', 'glow', 'glow1', 0, 0, 4, 200.000,
              1000000.000, 200.000, 5.000)
-
-    def test_bsdf(self):
-        """Checking BSDF."""
-        bsdf = BSDF('tests/assets/clear.xml')
-
-        # bsdf with no function
-        bsdf_tuple = tuple(bsdf.to_rad_string().split())
-        assert tuple(map(self.safe_cast_float, bsdf_tuple)) == \
-            ('void', 'BSDF', 'clear', 6, 0.000, 'tests/assets/clear.xml',
-             0.010, 0.010, 1.000, '.', 0, 0)
-
-    def test_bsdf_from_string(self):
-        """Checking BSDF."""
-        bsdf_string = """
-        void BSDF clear
-        6 0.0 tests/assets/clear.xml 0.01 0.01 1.0 .
-        0
-        0
-        """
-
-        bsdf = BSDF.from_string(bsdf_string)
-
-        # bsdf with no function
-        bsdf_tuple = tuple(bsdf.to_rad_string().split())
-        assert tuple(map(self.safe_cast_float, bsdf_tuple)) == \
-            ('void', 'BSDF', 'clear', 6, 0.000, 'tests/assets/clear.xml',
-             0.010, 0.010, 1.000, '.', 0, 0)
 
     def test_light(self):
         """Checking Light."""
