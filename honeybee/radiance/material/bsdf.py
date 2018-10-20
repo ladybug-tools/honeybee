@@ -54,16 +54,36 @@ class BSDF(RadianceMaterial):
 
         self.thickness = thickness or 0
 
-        max_line_count = 2000
+        max_ln_count = 2000
         with open(self.xmlfile, 'rb') as inf:
             for count, line in enumerate(inf):
-                if line.strip().startswith('<AngleBasisName>'):
-                    self._angle_basis = line.replace('<AngleBasisName>', '') \
-                        .replace('</AngleBasisName>', '').replace('LBNL/', '').strip()
+                if line.strip().startswith('<IncidentDataStructure>'):
+                    # get data structure
+                    data_structure = line.replace('<IncidentDataStructure>', '') \
+                        .replace('</IncidentDataStructure>', '').strip()
                     break
+                assert count < max_ln_count, \
+                    'Failed to find IncidentDataStructure in first %d lines.' \
+                    % max_ln_count
 
-                assert count < max_line_count, \
-                    'Failed to find AngleBasisName in first %d lines.' % max_line_count
+        # now find the angle basis
+        if data_structure.startswith('TensorTree'):
+            self._angle_basis = 'TensorTree'
+        elif data_structure.lower() == 'columns':
+            # look for AngleBasisName
+            with open(self.xmlfile, 'rb') as inf:
+                for i in range(count):
+                    next(inf)
+                for count, line in enumerate(inf):
+                    if line.strip().startswith('<AngleBasisName>'):
+                        self._angle_basis = line.replace('<AngleBasisName>', '') \
+                            .replace('</AngleBasisName>', '').replace('LBNL/', '') \
+                            .strip()
+                        break
+                    assert count < max_ln_count, \
+                        'Failed to find AngleBasisName in first %d lines.' % max_ln_count
+        else:
+            raise ValueError('Unknown IncidentDataStructure: {}'.format(data_structure))
 
         self._update_values()
 
@@ -82,7 +102,7 @@ class BSDF(RadianceMaterial):
 
         modifier, name, base_material_data = cls._analyze_string_input(
             cls.__name__, material_string, modifier)
-        print base_material_data
+
         assert base_material_data[8] == '0', \
             'BSDF currently does not support additional transmissions or reflections. ' \
             'You can use Custom material to create this BSDF material.'
@@ -93,7 +113,8 @@ class BSDF(RadianceMaterial):
 
     @classmethod
     def from_json(cls, json_data):
-        """Make radiance material from json
+        """Make radiance material from json.
+
         {
             "modifier": "", // material modifier (Default: "void")
             "type": "custom", // Material type

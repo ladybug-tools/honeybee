@@ -1,2 +1,0 @@
-[run]
-omit = honeybee/vectormath/euclid.py , tests/*
