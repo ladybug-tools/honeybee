@@ -324,7 +324,7 @@ class Primitive(object):
 
         bm = input_objects[-1]
         bm_data = bm.split()
-        bm_type = bm_data[0]
+        bm_type = bm_data[1]
         return bm_type
 
     @staticmethod

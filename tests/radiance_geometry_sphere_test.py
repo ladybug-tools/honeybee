@@ -19,7 +19,7 @@ class SphereTestCase(unittest.TestCase):
         assert sphere.center_pt == (0, 0, 0)
         assert sphere.radius == 1
         assert sphere.to_rad_string(True) == \
-                         'void sphere default_sphere 0 0 4 0.0 0.0 0.0 1'
+            'void sphere default_sphere 0 0 4 0.0 0.0 0.0 1'
 
 
 if __name__ == '__main__':

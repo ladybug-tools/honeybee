@@ -25,6 +25,8 @@ class HBZone(HBObject):
     def __init__(self, name=None, origin=(0, 0, 0), geometry_rules=None,
                  building_program=None, zone_program=None, is_conditioned=True):
         """Init Honeybee Zone."""
+        HBObject.__init__(self)
+
         self.name = name
         """Zone name"""
 
@@ -41,7 +43,7 @@ class HBZone(HBObject):
 
     @classmethod
     def from_ep_string(cls, ep_string, geometry_rules=None, building_program=None,
-                      zone_program=None, is_conditioned=True):
+                       zone_program=None, is_conditioned=True):
         """Init Honeybee zone from an ep_string.
 
         Args:
@@ -169,7 +171,7 @@ class HBZone(HBObject):
         Use this method to get easy access to radiance geometries and materials for this
         zone. For a full definition as a string use to_rad_string method.
         """
-        return RadFile((srf for srf in self.surfaces))
+        return RadFile(self.surfaces)
 
     def to_rad_string(self, mode=1, include_materials=False,
                       flipped=False, blacked=False):
@@ -185,12 +187,13 @@ class HBZone(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         return self.to_rad_file().to_rad_string(mode, include_materials, flipped,
                                                 blacked)
 
-    def rad_string_to_file(self, file_path, mode=1, include_materials=False,
-                           flipped=False, blacked=False):
+    # TODO(mostapha): add optional input for side thickness
+    def write_rad_file(self, file_path, mode=1, include_materials=False,
+                       flipped=False, blacked=False):
         """Write Radiance definition for this surface to a file.
 
         Args:
@@ -204,17 +207,10 @@ class HBZone(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = mode or 1
-        assert os.path.isdir(os.path.split(file_path)[0]), \
-            "Cannot find %s." % os.path.split(file_path)[0]
-
-        with open(file_path, "wb") as outf:
-            try:
-                outf.write(self.to_rad_string(mode, include_materials, flipped, blacked))
-                return True
-            except Exception as e:
-                print("Failed to write %s to file:\n%s" % (self.name, e))
-                return False
+        mode = 1 if mode is None else mode
+        folder, filename = os.path.split(file_path)
+        return self.to_rad_file().write(folder, filename, mode, include_materials,
+                                        flipped, blacked, mkdir=True)
 
     @property
     def geometry(self):

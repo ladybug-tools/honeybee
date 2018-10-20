@@ -77,11 +77,11 @@ class Rcontrib(RadianceCommand):
     @property
     def rcontrib_parameters(self):
         """Get and set gendaymtx_parameters."""
-        return self.__rcontrib_parameters
+        return self._rcontrib_parameters
 
     @rcontrib_parameters.setter
     def rcontrib_parameters(self, parameters):
-        self.__rcontrib_parameters = parameters if parameters is not None \
+        self._rcontrib_parameters = parameters if parameters is not None \
             else RcontribParameters()
 
         assert hasattr(self.rcontrib_parameters, "isRadianceParameters"), \

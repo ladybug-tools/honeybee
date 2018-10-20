@@ -7,11 +7,14 @@ from ladybug.epw import EPW
 from ladybug.sunpath import Sunpath
 
 import os
-from itertools import izip
+from itertools import izip as zip
 
 
 class Analemma(RadianceSky):
     """Generate a radiance-based analemma.
+
+    Use Analemma for solar access/sunlight hours studies. For annual daylight/radiation
+    studies see AnalemmaReversed.
 
     Analemma consists of two files:
         1. *.ann file which includes sun geometries and materials.
@@ -69,6 +72,29 @@ class Analemma(RadianceSky):
         return cls(sun_vectors, sun_up_hours)
 
     @classmethod
+    def from_location_sun_up_hours(cls, location, sun_up_hours, north=0,
+                                   is_leap_year=False):
+        """Generate a radiance-based analemma for a location.
+
+        Args:
+            location: A ladybug location.
+            sun_up_hours: A list of hours of the year to be included in analemma.
+            north: North angle from Y direction (default: 0).
+            is_leap_year: A boolean to indicate if hours are for a leap year
+                (default: False).
+        """
+        sun_vectors = []
+        north = north or 0
+
+        sp = Sunpath.from_location(location, north)
+        sp.is_leap_year = is_leap_year
+        for hour in sun_up_hours:
+            sun = sp.calculate_sun_from_hoy(hour)
+            sun_vectors.append(sun.sun_vector)
+
+        return cls(sun_vectors, sun_up_hours)
+
+    @classmethod
     def from_wea(cls, wea, hoys=None, north=0, is_leap_year=False):
         """Generate a radiance-based analemma from a ladybug wea.
 
@@ -77,12 +103,29 @@ class Analemma(RadianceSky):
 
         Args:
             wea: A ladybug Wea.
-            hoys: A list of hours of the year (default: range(8760)).
+            sun_up_hours: A list of hours of the year to be included in analemma.
             north: North angle from Y direction (default: 0).
             is_leap_year: A boolean to indicate if hours are for a leap year
                 (default: False).
         """
         return cls.from_location(wea.location, hoys, north, is_leap_year)
+
+    @classmethod
+    def from_wea_sun_up_hours(cls, wea, sun_up_hours, north=0, is_leap_year=False):
+        """Generate a radiance-based analemma from a ladybug wea.
+
+        NOTE: Only the location from wea will be used for creating analemma. For
+            climate-based sun materix see SunMatrix class.
+
+        Args:
+            wea: A ladybug Wea.
+            sun_up_hours: A list of hours of the year to be included in analemma.
+            north: North angle from Y direction (default: 0).
+            is_leap_year: A boolean to indicate if hours are for a leap year
+                (default: False).
+        """
+        return cls.from_location_sun_up_hours(wea.location, sun_up_hours, north,
+                                              is_leap_year)
 
     @classmethod
     def from_epw_file(cls, epw_file, hoys=None, north=0, is_leap_year=False):
@@ -100,6 +143,24 @@ class Analemma(RadianceSky):
         """
         return cls.from_location(EPW(epw_file).location, hoys, north, is_leap_year)
 
+    @classmethod
+    def from_epw_file_sun_up_hours(cls, epw_file, sun_up_hours, north=0,
+                                   is_leap_year=False):
+        """Create sun matrix from an epw file.
+
+        NOTE: Only the location from epw file will be used for creating analemma. For
+            climate-based sun materix see SunMatrix class.
+
+        Args:
+            epw_file: Full path to an epw file.
+            sun_up_hours: A list of hours of the year to be included in analemma.
+            north: North angle from Y direction (default: 0).
+            is_leap_year: A boolean to indicate if hours are for a leap year
+                (default: False).
+        """
+        return cls.from_location_sun_up_hours(EPW(epw_file).location, sun_up_hours,
+                                              north, is_leap_year)
+
     @property
     def isAnalemma(self):
         """Return True."""
@@ -107,7 +168,7 @@ class Analemma(RadianceSky):
 
     @property
     def is_climate_based(self):
-        """Return True if the sky is generated from values from weather file."""
+        """Return True if generated based on values from weather file."""
         return False
 
     @property
@@ -136,12 +197,12 @@ class Analemma(RadianceSky):
         """Return list of hours for sun vectors."""
         return self._sun_up_hours
 
-    def execute(self, working_dir, reuse=True):
+    def execute(self, working_dir):
         fp = os.path.join(working_dir, self.analemma_file)  # analemma file (geo and mat)
         sfp = os.path.join(working_dir, self.sunlist_file)  # modifier list
 
         with open(fp, 'wb') as outf, open(sfp, 'wb') as outm:
-            for hoy, vector in izip(self.sun_up_hours, self.sun_vectors):
+            for hoy, vector in zip(self.sun_up_hours, self.sun_vectors):
                 # use minute of the year to name sun positions
                 moy = int(round(hoy * 60))
                 mat = Light('sol_%06d' % moy, 1e6, 1e6, 1e6)
@@ -176,11 +237,11 @@ class AnalemmaReversed(Analemma):
     """Generate a radiance-based analemma.
 
     Reversed Analemma reverses direction of input sun vectors. Use reversed Analemma for
-    radiation studies.
+    radiation and daylight studies.
 
     Analemma consists of two files:
         1. *_reversed.ann file which includes sun geometries and materials.
-        2. *_reversed.mod file includes list of modifiers that are included in
+        2. *.mod file includes list of modifiers that are included in
         *_reversed.ann file.
     """
 
@@ -192,12 +253,12 @@ class AnalemmaReversed(Analemma):
         """
         return 'analemma_reversed.rad'
 
-    def execute(self, working_dir, reuse=True):
+    def execute(self, working_dir):
         fp = os.path.join(working_dir, self.analemma_file)  # analemma file (geo and mat)
         sfp = os.path.join(working_dir, self.sunlist_file)  # modifier list
 
         with open(fp, 'wb') as outf, open(sfp, 'wb') as outm:
-            for hoy, vector in izip(self.sun_up_hours, self.sun_vectors):
+            for hoy, vector in zip(self.sun_up_hours, self.sun_vectors):
                 # use minute of the year to name sun positions
                 moy = int(round(hoy * 60))
                 # reverse sun vector

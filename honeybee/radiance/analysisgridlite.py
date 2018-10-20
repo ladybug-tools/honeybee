@@ -1,27 +1,11 @@
 """Honeybee PointGroup and TestPointGroup."""
 from __future__ import division
 from ..utilcol import random_name
-from ..dataoperation import match_data
-from ..schedule import Schedule
 from ..futil import write_to_file_by_name
 from .analysispointlite import AnalysisPointLite as AnalysisPoint
 
 import os
 from itertools import izip
-from collections import namedtuple, OrderedDict
-
-
-class EmptyFileError(Exception):
-    """Exception for trying to load results from an empty file."""
-
-    def __init__(self, file_path=None):
-        message = ''
-        if file_path:
-            message = 'Failed to load the results form an empty file: {}\n' \
-                'Double check inputs and outputs and make sure ' \
-                'everything is run correctly.'.format(file_path)
-
-        super(EmptyFileError, self).__init__(message)
 
 
 class AnalysisGridLite(object):
@@ -71,16 +55,31 @@ class AnalysisGridLite(object):
         return cls(aps, name)
 
     @classmethod
-    def from_file(cls, file_path):
+    def from_file(cls, file_path, start_line=None, end_line=None):
         """Create an analysis grid from a pts file.
 
         Args:
             file_path: Full path to points file
+            start_line: Start line (default: 0)
+            end_line: End line as an integer (default: last line in file)
         """
+        start_line = int(start_line) if start_line else 0
+        try:
+            end_line = int(end_line)
+        except TypeError:
+            end_line = float('+inf')
+
+        line_count = end_line - start_line + 1
         assert os.path.isfile(file_path), IOError("Can't find {}.".format(file_path))
         ap = AnalysisPoint  # load analysis point locally for better performance
+        points = []
         with open(file_path, 'rb') as inf:
-            points = tuple(ap.from_raw_values(*l.split()) for l in inf)
+            for i in range(start_line):
+                next(inf)
+            for count, l in enumerate(inf):
+                if not count < line_count:
+                    break
+                points.append(ap.from_raw_values(*l.split()))
 
         return cls(points)
 

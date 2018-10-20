@@ -44,8 +44,6 @@ class RpictParameters(AdvancedRadianceParameters):
     def __init__(self, quality=None):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
-        self.quality = quality
-        """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
         self.add_radiance_number('ab', descriptive_name='ambient bounces',
                                  attribute_name="ambient_bounces", num_type=int)
@@ -424,6 +422,11 @@ class RpictParameters(AdvancedRadianceParameters):
                                 attribute_name='photon_cache_size')
         self.photon_cache_size = None
         """Place holder for comments."""
+
+        self.try_to_unfreeze()
+        self.quality = quality or 0
+        """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
+        self.freeze()
 
     @classmethod
     def low_quality(cls):

@@ -74,3 +74,51 @@ class RcontribParameters(RtraceParameters):
                                 attribute_name='output_filename_format')
         self.output_filename_format = output_filename_format
         """[-0 str] output format e.g. %04f.hdr."""
+
+        self.ambient_accuracy = 0.0
+
+    @classmethod
+    def direct_studies(cls, mod_file=None, x=None, y=None, output_filename_format=None):
+        """Rcontrib parameters for direct studies.
+
+        In particular this classmethod will set parameters below:
+            irradiance_calc (-I) = True
+            ambient_bounces (-ab) = 0
+            direct_certainty (-dc) = 1
+            direct_threshold (-dt) = 0
+            direct_jitter (-dj) = 0
+            direct_sec_relays (-dr) = 0
+        """
+        cls_ = cls(mod_file, x, y, output_filename_format)
+        cls_.irradiance_calc = True
+        cls_.ambient_bounces = 0
+        cls_.direct_certainty = 1
+        cls_.direct_threshold = 0
+        cls_.direct_jitter = 0
+        cls_.direct_sec_relays = 0
+        return cls_
+
+    def adjust_limit_weight(self):
+        """Adjust lw to be 1/ad if the value is larger than 1/ad."""
+        try:
+            suggested_lw = 1.0 / self.ambient_divisions
+        except TypeError:
+            # ambient_divisions is not set
+            pass
+        except ZeroDivisionError:
+            # ambient_divisions is set to 0!
+            pass
+        else:
+            try:
+                lw = float(self.limit_weight)
+            except TypeError:
+                # lw is not set so let's set the value
+                print('-lw is set to %f.' % suggested_lw)
+                self.limit_weight = suggested_lw
+            else:
+                if lw > suggested_lw:
+                    print('-lw is set to %f.' % suggested_lw)
+                    self.limit_weight = suggested_lw
+                else:
+                    print('-lw ({}) is already smaller or equal to {}.'.format(
+                        self.limit_weight, suggested_lw))

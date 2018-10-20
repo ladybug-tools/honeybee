@@ -567,10 +567,10 @@ class HBAnalysisSurface(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         return RadFile((self,)).to_rad_string(mode, include_materials, flipped, blacked)
 
-    def rad_string_to_file(self, file_path, mode=1, include_materials=False,
+    def write_rad_file(self, file_path, mode=1, include_materials=False,
                            flipped=False, blacked=False):
         """Write Radiance definition for this surface to a file.
 
@@ -585,7 +585,7 @@ class HBAnalysisSurface(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         assert os.path.isdir(os.path.split(file_path)[0]), \
             "Cannot find %s." % os.path.split(file_path)[0]
 

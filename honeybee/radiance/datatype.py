@@ -318,39 +318,38 @@ class RadianceNumber(RadianceDefault):
         converting from str to float or int (if required)and checking for valid
         values.
         """
+        # if value is None use default value
+        value = self._default_value if value is None else value
+
         if value is not None:
             var_name = self._nameString
-
-            if value is None:
-                final_value = None
-            else:
-                try:
-                    # Assign type if specified.
-                    if self._type:
-                        final_value = self._type(value)
+            try:
+                # Assign type if specified.
+                if self._type:
+                    final_value = self._type(value)
+                else:
+                    if not isinstance(value, int):
+                        final_value = float(value)
                     else:
-                        if not isinstance(value, int):
-                            final_value = float(value)
-                        else:
-                            final_value = value
-                    if self._check_positive:
-                        msg = "The value for %s should be greater than 0." \
-                              " The value specified was %s" % (var_name, value)
-                        assert final_value >= 0, msg
-                # Value error will be raised if the input was anything else
-                # other than a number.
-                except ValueError:
-                    msg = "The value for %s should be a number. " \
-                          "%s was specified instead " % (var_name, value)
-                    raise ValueError(msg)
-                except TypeError:
-                    msg = "The type of input for %s should a float or int. " \
-                          "%s was specified instead" % (var_name, value)
-                    raise TypeError(msg)
-                except AttributeError:
-                    msg = "The type of input for %s should a float or int. " \
-                          "%s was specified instead" % (var_name, value)
-                    raise AttributeError(msg)
+                        final_value = value
+                if self._check_positive:
+                    msg = "The value for %s should be greater than 0." \
+                            " The value specified was %s" % (var_name, value)
+                    assert final_value >= 0, msg
+            # Value error will be raised if the input was anything else
+            # other than a number.
+            except ValueError:
+                msg = "The value for %s should be a number. " \
+                        "%s was specified instead " % (var_name, value)
+                raise ValueError(msg)
+            except TypeError:
+                msg = "The type of input for %s should a float or int. " \
+                        "%s was specified instead" % (var_name, value)
+                raise TypeError(msg)
+            except AttributeError:
+                msg = "The type of input for %s should a float or int. " \
+                        "%s was specified instead" % (var_name, value)
+                raise AttributeError(msg)
 
             # Raise a warning if the number got modified.
             if self._type and final_value != self._type(value):
@@ -370,6 +369,8 @@ class RadianceNumber(RadianceDefault):
                     raise ValueError(msg)
 
             setattr(instance, self._name, RadianceNumberType(self._name, final_value))
+        else:
+            setattr(instance, self._name, RadianceNumberType(self._name, None))
 
 
 class RadianceTuple(RadianceDefault):

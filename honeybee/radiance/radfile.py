@@ -46,7 +46,7 @@ class RadFile(object):
 
     def find_bsdf_materials(self, mode=1):
         """Return a list fo BSDF materials if any."""
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         if mode == 0:
             # do not include children surface
             mt = set(srf.radiance_material for srf in self.hb_surfaces
@@ -81,7 +81,7 @@ class RadFile(object):
                 1 - Include children surfaces.
                 2 - Only children surfaces.
         """
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         if mode == 0:
             # do not include children surface
             mt = set(srf.radiance_material.name for srf in self.hb_surfaces)
@@ -151,7 +151,7 @@ class RadFile(object):
         assert not (blacked and glowed), \
             ValueError('You can either use blacked or glowed option.')
 
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         if mode == 0:
             # do not include children surface
             if blacked:
@@ -223,7 +223,7 @@ class RadFile(object):
             join: Set to True to join the output strings (Default: False).
             flipped: Flip the surface geometry.
         """
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         get_polygon = self.get_surface_rad_string
         if mode == 0:
             # do not include children surface
@@ -256,7 +256,7 @@ class RadFile(object):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = mode or 1
+        mode = 1 if mode is None else mode
         if include_materials:
             return '\n'.join((self.materials(mode, True, blacked, glowed),
                               self.geometries(mode, True, flipped))) + '\n'

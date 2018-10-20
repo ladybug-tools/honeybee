@@ -44,9 +44,6 @@ class RtraceParameters(AdvancedRadianceParameters):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
 
-        self.quality = quality or 0
-        """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
-
         self.add_radiance_number('ab', descriptive_name='ambient bounces',
                                  attribute_name="ambient_bounces", num_type=int)
         self.ambient_bounces = None
@@ -313,6 +310,10 @@ class RtraceParameters(AdvancedRadianceParameters):
         output flags. E.g., -ov~TmW will emit a tilde followed by a tab at the end of
         each trace, which can be easily distinguished even in binary output.
         """
+        self.try_to_unfreeze()
+        self.quality = quality or 0
+        """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
+        self.freeze()
 
     @classmethod
     def from_json(cls, rec_json):
