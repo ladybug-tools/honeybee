@@ -1,5 +1,6 @@
 """Database to save grid-based daylight simulation recipes."""
-from ..recipe.id import COMBINEDRECIPEIDS
+from __future__ import division
+from ..recipe.id import COMBINEDRECIPEIDS, FLOATRECIPEIDS
 from ..recipe.id import get_id as get_recipe_id
 from ..recipe.id import get_name as get_recipe_name
 from ..recipe.id import is_point_in_time as is_recipe_pit
@@ -322,13 +323,22 @@ class Database(object):
         return tuple(c[0] for c in self.execute(command))
 
     def add_result_tables(self, recipe_id):
+        """Add result tables to database.
+
+        Args:
+            recipe_id: Recipe id as indicated in honeybee.radiance.recipe.id
+
+        Returns:
+            returns list of table names that are added to database.
+        """
+
         # daylight analysis results
         timeseries_result_table_schema = """CREATE TABLE IF NOT EXISTS %s (
                 sensor_id INTEGER NOT NULL,
                 grid_id INTEGER NOT NULL,
                 source_id INTEGER NOT NULL,
                 moy INTEGER NOT NULL,
-                value REAL,
+                value INT,
                 FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
                 FOREIGN KEY (grid_id) REFERENCES Grid(id),
                 FOREIGN KEY (source_id) REFERENCES Source(id),
@@ -340,18 +350,29 @@ class Database(object):
                 grid_id INTEGER NOT NULL,
                 source_id INTEGER NOT NULL,
                 moy INTEGER NOT NULL,
-                %s REAL,
+                %s INT,
                 FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
                 FOREIGN KEY (grid_id) REFERENCES Grid(id),
                 FOREIGN KEY (source_id) REFERENCES Source(id),
                 CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id, moy)
                 );"""
 
-        point_in_time_result_table_schema = """CREATE TABLE IF NOT EXISTS %s (
+        point_in_time_result_table_schema_float = """CREATE TABLE IF NOT EXISTS %s (
                 sensor_id INTEGER NOT NULL,
                 grid_id INTEGER NOT NULL,
                 source_id INTEGER NOT NULL,
                 value REAL,
+                FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
+                FOREIGN KEY (grid_id) REFERENCES Grid(id),
+                FOREIGN KEY (source_id) REFERENCES Source(id),
+                CONSTRAINT result_id PRIMARY KEY (sensor_id, grid_id, source_id)
+                );"""
+
+        point_in_time_result_table_schema_int = """CREATE TABLE IF NOT EXISTS %s (
+                sensor_id INTEGER NOT NULL,
+                grid_id INTEGER NOT NULL,
+                source_id INTEGER NOT NULL,
+                value INT,
                 FOREIGN KEY (sensor_id) REFERENCES Sensor(id),
                 FOREIGN KEY (grid_id) REFERENCES Grid(id),
                 FOREIGN KEY (source_id) REFERENCES Source(id),
@@ -364,7 +385,10 @@ class Database(object):
 
         if point_in_time:
             # add a single table with the same name as the recipe
-            self.execute(point_in_time_result_table_schema % name)
+            if recipe_id in FLOATRECIPEIDS:
+                self.execute(point_in_time_result_table_schema_float % name)
+            else:
+                self.execute(point_in_time_result_table_schema_int % name)
             return (name,)
         elif recipe_id not in COMBINEDRECIPEIDS:
             # add a single table with the same name as the recipe
@@ -457,7 +481,7 @@ class Database(object):
             'Cannot find {}'.format(filepath)
         table_name = self.add_result_tables(get_recipe_id('daylight_factor'))[0]
         self.load_point_in_time_results(filepath, table_name, divide_by,
-                                        source_mapping)
+                                        source_mapping, integer=False)
 
     def load_point_in_time_illuminance_results(self, filepath, source_mapping=None):
         """Load daylight factor results."""
@@ -469,13 +493,14 @@ class Database(object):
                                         source_mapping)
 
     def load_point_in_time_results(self, filepath, table_name, divide_by,
-                                   source_mapping=None):
+                                   source_mapping=None, integer=True):
         """Generic method to load results from a result file."""
         command = \
             """INSERT INTO %s
             (sensor_id, grid_id, source_id, value)
             VALUES (?, ?, ?, ?)""" % table_name
 
+        num_type = int if integer else float
         ptc = self.point_count
 
         # for now there will be only sky source
@@ -500,7 +525,7 @@ class Database(object):
                 for grid_id, pt_count in enumerate(ptc):
                     for sensor_id in range(pt_count):
                         value = float(next(inf)) / divide_by
-                        values.append((sensor_id, grid_id, source_id, value))
+                        values.append((sensor_id, grid_id, source_id, num_type(value)))
                         if len(values) % 250 == 0:
                             cursor.executemany(command, values)
                             values = []
@@ -727,7 +752,7 @@ class Database(object):
 
             print('Loading results from {}..{}'.format(source, state))
             sf = 'sun..' + tf
-            
+
             # load total sky values
             start_time = time.time()
             print('\tLoading total results')
@@ -737,7 +762,7 @@ class Database(object):
             )
             took = time.time() - start_time
             print('Finished in %s' % (str(timedelta(seconds=took))))
-            start_time = time.time()            
+            start_time = time.time()
             print('\tLoading direct sun results')
             # load sun
             self.load_dc_result_from_file(
@@ -748,7 +773,7 @@ class Database(object):
             print('Finished in %s' % (str(timedelta(seconds=took))))
 
     def load_two_phase_results_final_from_folder(self, folder, moys=None,
-                                                 source_mapping=None):
+                                                 source_mapping=None, header=True):
         """Load only final results from daylight coefficient studies.
 
         Args:
@@ -793,7 +818,7 @@ class Database(object):
 
         self._add_new_sources(sources)
         self.add_result_tables(get_recipe_id('two_phase'))
-        
+
         table_name = 'two_phase'
         column_name = 'value'
 
@@ -802,11 +827,12 @@ class Database(object):
             source, state = tf[:-4].split('..')
             print('Loading results from {}..{}'.format(source, state))
             self.load_dc_result_from_file(
-                os.path.join(folder, tf), table_name, column_name, source, state, moys
+                os.path.join(folder, tf), table_name, column_name, source, state, moys,
+                header
             )
 
     def load_dc_result_from_file(self, filepath, table_name, column_name='value',
-                                 source='sky', state='default', moys=None):
+                                 source='sky', state='default', moys=None, header=True):
         """Load Radiance results file to database.
 
         The script assumes that each row represents an analysis point and number of
@@ -827,7 +853,9 @@ class Database(object):
             VALUES (?, ?, ?, ?, ?)""" % (table_name, column_name)
 
         ptc = self.point_count
+        moys = moys or [60 * h for h in xrange(8760)]
 
+        total_rows = ptc[0] * len(moys)
         # for now there will be only sky source
         source_id = self.source_id(source, state)
 
@@ -846,32 +874,44 @@ class Database(object):
         try:
             cursor.execute('BEGIN')
             with open(filepath) as inf:
-                # remove header
-                for line in inf:
-                    if line.startswith('FORMAT='):
-                        inf.next()  # empty line
-                        break
-                    elif line.startswith('NCOLS='):
-                        ncols = int(line.split('=')[-1])
+                if header:
+                    # remove header
+                    for line in inf:
+                        if line.startswith('FORMAT='):
+                            inf.next()  # empty line
+                            break
+                        elif line.startswith('NCOLS='):
+                            ncols = int(line.split('=')[-1])
 
-                # ensure number of columns matches number of hours
-                assert len(moys) == ncols, \
-                    'Number of columns (%d) is different from number of moys (%d).' % \
-                    (ncols, len(moys))
+                    # ensure number of columns matches number of hours
+                    assert len(moys) == ncols, \
+                        'Number of columns (%d) is different from number of moys (%d).' \
+                        % (ncols, len(moys))
 
                 values = []
+                n = 0
+                pr_count = 1000000
                 for grid_id, pt_count in enumerate(ptc):
                     for sensor_id in range(pt_count):
                         tl = next(inf)
                         for count, tv in enumerate(tl.split('\t')):
-                            if count == ncols:
-                                # this is last tab in resulst.
+                            try:
+                                moy = moys[count]
+                            except IndexError:
+                                # extra tab at the end of the file.
                                 continue
-                            moy = moys[count]
-                            values.append((sensor_id, grid_id, source_id, moy,
-                                           float(tv)))
-                            if len(values) % 250 == 0:
+                            value = int(float(tv))
+                            values.append((sensor_id, grid_id, source_id, moy, value))
+
+                            if len(values) % pr_count == 0:
+                                print(
+                                    'writing {}-{} of {} (%{:.2f}).'.format(
+                                        n * pr_count, (n + 1) * pr_count, total_rows,
+                                        (n + 1) * pr_count * 100 / total_rows
+                                    ))
+                                n += 1
                                 cursor.executemany(command, values)
+                                print('...')
                                 values = []
                 # the remainder of the list
                 cursor.executemany(command, values)

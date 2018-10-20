@@ -13,6 +13,7 @@ IDS = {
     'daylight_factor': 100000,
     'point_in_time': 100001,
     'cumulative_radiation': 100002,
+    'vertical_sky_component': 100003,
     'solar_access': 200000,
     'direct_sun': 200001,
     'two_phase': 200002,
@@ -34,6 +35,8 @@ COMBINEDRECIPEIDS = (200002, 200005)
 """Recipes with values for direct sunlight."""
 DIRECTRECIPEIDS = (200001, 200002, 200005)
 
+"""Recipes which the result should be saved as float and not integer."""
+FLOATRECIPEIDS = (100000, 100003)
 
 def get_id(name, recipe_type=0):
     """Get Honeybee ID from recipe name.
