@@ -4,7 +4,7 @@ Image collection class is similar to AnalysisGrid but for image-based analysis.
 Use ImageCollection to collect the path to different images and generate their
 combinations using pcomb.
 """
-from .command.pcomb import Pcomb, PcombImage
+from ..command.pcomb import Pcomb, PcombImage
 from collections import defaultdict, OrderedDict
 import types
 from itertools import izip
