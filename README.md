@@ -13,6 +13,10 @@ This repository includes the core library which is the base for Honeybee plugins
 
 Check [this repository](https://github.com/mostaphaRoudsari/honeybee) for the legacy honeybee plugin for Grasshopper.
 
+## Installation
+
+pip install lbt-honeybee
+
 ## Tentative road map
 - [x] Basic Radiance Integration.
 - [x] Support annual daylight simulation - daylight coefficient method [Nov 2016].
