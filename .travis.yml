@@ -12,7 +12,7 @@ before_install:
 
 install:
  - pip install pytest pytest-cov coveralls
- - pip install git+https://github.com/ladybug-tools/ladybug.git@master
+ - pip install lbt-ladybug
 
 script:
   - py.test --cov=. ./tests/
@@ -20,3 +20,7 @@ script:
 after_success:
   - coverage report
   - coveralls
+  - git config --global user.name "ladybugbot"
+  - git config --global user.email "release@ladybug.tools"
+  - pip install python-semantic-release
+  - semantic-release publish
