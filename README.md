@@ -15,7 +15,9 @@ Check [this repository](https://github.com/mostaphaRoudsari/honeybee) for the le
 
 ## Installation
 
+```
 pip install lbt-honeybee
+```
 
 ## Tentative road map
 - [x] Basic Radiance Integration.
