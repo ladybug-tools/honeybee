@@ -81,14 +81,16 @@ class AnalysisGrid(object):
             start_line: Start line (default: 0)
             end_line: End line as an integer (default: last line in file)
         """
-        start_line = int(start_line) or 0
+        start_line = int(start_line) if start_line else 0
         try:
             end_line = int(end_line)
         except TypeError:
             end_line = float('+inf')
 
         line_count = end_line - start_line + 1
-        assert os.path.isfile(file_path), IOError("Can't find {}.".format(file_path))
+
+        assert os.path.isfile(file_path), "Can't find {}.".format(file_path)
+
         ap = AnalysisPoint  # load analysis point locally for better performance
         points = []
         with open(file_path, 'rb') as inf:
