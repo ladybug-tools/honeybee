@@ -365,7 +365,14 @@ class DaylightCoeffGridBased(GenericGridBased):
 
             folder, name = os.path.split(rf)
             df = os.path.join(folder, 'sun..%s' % name)
-            mode = 179 if self.simulation_type == 1 else 0
+            if self.simulation_type == 1:
+                # for grid-based radiation divide values by 179
+                # and also divide by timestep to adjust the values for each timestep
+                # to convert radiation rate to cumulative radiation in that hour.
+                mode = 179.0 * self.sky_matrix.wea.timestep
+            else:
+                mode = 0
+
             start_line = 0
             for count, analysisGrid in enumerate(self.analysis_grids):
                 if count:
