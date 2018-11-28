@@ -20,7 +20,16 @@ script:
 after_success:
   - coverage report
   - coveralls
-  - git config --global user.name "ladybugbot"
-  - git config --global user.email "release@ladybug.tools"
-  - pip install python-semantic-release
-  - semantic-release publish
+
+
+jobs:
+  include:
+    - stage: deploy
+      if: branch = master AND (NOT type IN (pull_request))
+      python: "2.7"
+      env: TRAVIS=true
+      script:
+        - git config --global user.name "ladybugbot"
+        - git config --global user.email "release@ladybug.tools"
+        - pip install python-semantic-release
+        - semantic-release publish
