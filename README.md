@@ -1,6 +1,7 @@
 ![Honeybee](http://www.ladybug.tools/assets/img/honeybee.png)
 
 [![Build Status](https://travis-ci.org/ladybug-tools/honeybee.svg?branch=master)](https://travis-ci.org/ladybug-tools/honeybee)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Coverage Status](https://coveralls.io/repos/github/ladybug-tools/honeybee/badge.svg)](https://coveralls.io/github/ladybug-tools/honeybee)
 
 [![Python 2.7](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/downloads/release/python-270/) [![IronPython](https://img.shields.io/badge/ironpython-2.7-red.svg)](https://github.com/IronLanguages/ironpython2/releases/tag/ipy-2.7.8/)
