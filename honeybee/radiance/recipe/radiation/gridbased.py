@@ -151,6 +151,7 @@ class GridBased(DaylightCoeffGridBased):
         """
         # 0.prepare target folder
         self._commands = []
+        self._result_files = []
 
         # create main folder target_folder/project_name
         project_folder = \
