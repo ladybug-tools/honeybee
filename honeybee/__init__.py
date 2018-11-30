@@ -2,7 +2,7 @@
 import sys
 import os
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 _dependencies = ('ladybug',)
 for lib in _dependencies:
