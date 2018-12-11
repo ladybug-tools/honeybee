@@ -40,7 +40,7 @@ class RtraceParameters(AdvancedRadianceParameters):
           -ar 128 -lr 8 -dt 0.15 -dr 3 -ds 0.05 -dp 512 -u
     """
 
-    def __init__(self, quality=None):
+    def __init__(self, quality=0):
         """Create Radiance paramters."""
         AdvancedRadianceParameters.__init__(self)
 
@@ -344,9 +344,9 @@ class RtraceParameters(AdvancedRadianceParameters):
         return self._quality
 
     @quality.setter
-    def quality(self, value):
+    def quality(self, value=0):
 
-        value = int(value) or 0
+        value = int(value)
 
         assert 0 <= value <= 2, \
             "Quality can only be 0:low, 1: medium or 2: high quality"

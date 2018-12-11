@@ -38,7 +38,7 @@ class PointInTimeSky(RadianceSky):
         '4\n' \
         '0 0 -1 180\n'
 
-    def __init__(self, location=None, month=9, day=21, hour=12, north=0, suffix=None):
+    def __init__(self, location=None, month=9, day=21, hour=12, north=0, suffix=''):
         """Create sky."""
         RadianceSky.__init__(self)
 
@@ -47,7 +47,7 @@ class PointInTimeSky(RadianceSky):
             '{} is not a Ladybug Location.'.format(self.location)
         self._datetime = DateTime(month, day, hour)
         self.north = float(north % 360)
-        self.suffix = suffix or ''
+        self.suffix = suffix
 
     @classmethod
     def from_lat_long(cls, city, latitude, longitude, timezone, elevation,
@@ -120,9 +120,8 @@ class PointInTimeSky(RadianceSky):
             '_{}'.format(self.suffix) if self.suffix else ''
         )
 
-    def write_sky_ground(self, folder, filename=None):
+    def write_sky_ground(self, folder, filename='groundSky.rad'):
         """Write sky and ground materials to a file."""
-        filename = filename or 'groundSky.rad'
         if not filename.lower().endswith('.rad'):
             filename += '.rad'
         return write_to_file_by_name(folder, filename, self.SKYGROUNDMATERIAL, True)

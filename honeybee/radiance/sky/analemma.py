@@ -29,14 +29,13 @@ class Analemma(RadianceSky):
             sun_up_hours: List of hours of the year that corresponds to sun_vectors.
         """
         RadianceSky.__init__(self)
-        vectors = sun_vectors or []
         # reverse sun vectors
-        self._sun_vectors = tuple(tuple(v) for v in vectors)
+        self._sun_vectors = tuple(tuple(v) for v in sun_vectors)
         self._sun_up_hours = sun_up_hours
-        assert len(sun_up_hours) == len(vectors), \
+        assert len(sun_up_hours) == len(sun_vectors), \
             ValueError(
                 'Length of vectors [%d] does not match the length of hours [%d]' %
-                (len(vectors), len(sun_up_hours))
+                (len(sun_vectors), len(sun_up_hours))
         )
 
     @classmethod
@@ -45,7 +44,7 @@ class Analemma(RadianceSky):
         return cls(inp['sun_vectors'], inp['sun_up_hours'])
 
     @classmethod
-    def from_location(cls, location, hoys=None, north=0, is_leap_year=False):
+    def from_location(cls, location, hoys=range(8760), north=0, is_leap_year=False):
         """Generate a radiance-based analemma for a location.
 
         Args:
@@ -57,8 +56,6 @@ class Analemma(RadianceSky):
         """
         sun_vectors = []
         sun_up_hours = []
-        hoys = hoys or range(8760)
-        north = north or 0
 
         sp = Sunpath.from_location(location, north)
         sp.is_leap_year = is_leap_year

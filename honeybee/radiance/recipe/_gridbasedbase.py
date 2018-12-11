@@ -98,7 +98,7 @@ class GenericGridBased(AnalysisRecipe):
         return LegendParameters([0, 3000])
 
     @staticmethod
-    def analysis_grids_from_points_and_vectors(point_groups, vector_groups=None):
+    def analysis_grids_from_points_and_vectors(point_groups, vector_groups=((),)):
         """Create analysisGrid classes from points and vectors.
 
         Args:
@@ -111,7 +111,7 @@ class GenericGridBased(AnalysisRecipe):
                 direction of corresponding point in testPts. If the vector is not
                 provided (0, 0, 1) will be assigned.
         """
-        vector_groups = vector_groups or ((),)
+        vector_groups = vector_groups
 
         vector_groups = tuple(vector_groups[i] if i < len(vector_groups)
                               else vector_groups[-1] for i in range(len(point_groups)))

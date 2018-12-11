@@ -567,7 +567,6 @@ class HBAnalysisSurface(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = 1 if mode is None else mode
         return RadFile((self,)).to_rad_string(mode, include_materials, flipped, blacked)
 
     def write_rad_file(self, file_path, mode=1, include_materials=False,
@@ -585,7 +584,6 @@ class HBAnalysisSurface(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = 1 if mode is None else mode
         assert os.path.isdir(os.path.split(file_path)[0]), \
             "Cannot find %s." % os.path.split(file_path)[0]
 

@@ -24,7 +24,7 @@ class SkyMatrix(RadianceSky):
     __slots__ = ('_wea', 'hoys', '_sky_type', '_sky_matrixParameters',
                  '_mode', 'suffix', 'north')
 
-    def __init__(self, wea, sky_density=1, north=0, hoys=None, mode=0, suffix=None):
+    def __init__(self, wea, sky_density=1, north=0, hoys=None, mode=0, suffix=''):
         """Create sky."""
         RadianceSky.__init__(self)
         self.wea = wea
@@ -34,13 +34,12 @@ class SkyMatrix(RadianceSky):
             # this is a design issue in Honeybe and should be fixed by removing defulting
             # values to range(8760)
             self.hoys = [hour - 0.5 for hour in wea.hoys]
-        sky_density = sky_density or 1
         self._sky_type = 0  # default to visible radiation
         self._sky_matrixParameters = GendaymtxParameters(output_type=self._sky_type)
         self.north = north
         self.sky_density = sky_density
         self.mode = mode
-        self.suffix = suffix or ''
+        self.suffix = suffix
 
     @classmethod
     def from_json(cls, rec_json):

@@ -28,7 +28,7 @@ class BSDF(RadianceMaterial):
 
     # TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669
     # TODO(): restructure the code to include xml data and not the file.
-    def __init__(self, xmlfile, name=None, up_orientation=None, thickness=None,
+    def __init__(self, xmlfile, name=None, up_orientation=(0.01, 0.01, 1.00), thickness=0,
                  modifier="void"):
         """Create BSDF material."""
         assert os.path.isfile(xmlfile), 'Invalid path: {}'.format(xmlfile)
@@ -41,7 +41,7 @@ class BSDF(RadianceMaterial):
         RadianceMaterial.__init__(self, name, modifier=modifier)
 
         try:
-            x, y, z = up_orientation or (0.01, 0.01, 1.00)
+            x, y, z = up_orientation
         except TypeError as e:
             try:
                 # Dynamo!
@@ -52,7 +52,7 @@ class BSDF(RadianceMaterial):
 
         self.up_orientation = float(x), float(y), float(z)
 
-        self.thickness = thickness or 0
+        self.thickness = thickness
 
         max_ln_count = 2000
         with open(self.xmlfile, 'rb') as inf:

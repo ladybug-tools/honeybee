@@ -18,9 +18,8 @@ class Schedule(object):
 
     __slots__ = ('_values', '_hoys', '_occupied_hours')
 
-    def __init__(self, values, hoys=None):
+    def __init__(self, values, hoys=xrange(8760)):
         """Init Schedule."""
-        hoys = hoys or xrange(8760)
         self._values = tuple(values)
         # put the hours in a set for quick look up
         self._hoys = tuple(hoys)
@@ -34,8 +33,8 @@ class Schedule(object):
             .format(len(self._values), len(self._hoys))
 
     @classmethod
-    def from_workday_hours(cls, occ_hours=None, off_hours=None, weekend=None,
-                           default_value=None):
+    def from_workday_hours(cls, occ_hours=(8, 17), off_hours=(12, 13), weekend=(6,7),
+                           default_value=1):
         """Create a schedule from Ladybug's AnalysisPeriod.
 
         Args:
@@ -48,10 +47,7 @@ class Schedule(object):
             default_value: Default value for occupancy hours (Default: 1).
         """
         daily_hours = [0] * 24
-        occ_hours = occ_hours or (8, 17)
-        off_hours = off_hours or (12, 13)
-        weekend = [0] if weekend == [0] else set(weekend) if weekend else set((6, 7))
-        default_value = default_value or 1
+        weekend = [0] if weekend == [0] else set(weekend)
 
         # create daily schedules
         for h in xrange(*occ_hours):
@@ -77,8 +73,8 @@ class Schedule(object):
         return cls(values, hours)
 
     @classmethod
-    def from_analysis_period(cls, occ_period=None, off_hours=None, weekend=None,
-                             default_value=None):
+    def from_analysis_period(cls, occ_period=None, off_hours=(12,13), weekend=(6,7),
+                             default_value=1):
         """Create a schedule from Ladybug's AnalysisPeriod.
 
         Args:
@@ -91,9 +87,9 @@ class Schedule(object):
             default_value: Default value for occupancy hours (Default: 1).
         """
         occ_period = occ_period or AnalysisPeriod(stHour=8, endHour=17)
-        off_hours = set(off_hours) if off_hours else set((12, 13))
-        weekend = [0] if weekend == [0] else set(weekend) if weekend else set((6, 7))
-        default_value = default_value or 1
+        off_hours = set(off_hours)
+        weekend = [0] if weekend == [0] else set(weekend)
+        default_value = default_value
 
         try:
             hours = tuple(h for h in occ_period.hoys)

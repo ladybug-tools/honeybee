@@ -178,9 +178,9 @@ class Rfluxmtx(RadianceCommand):
         return self._output_filename_format
 
     @output_filename_format.setter
-    def output_filename_format(self, value):
+    def output_filename_format(self, value=None):
         # TODO: Add testing logic for this !
-        self._output_filename_format = value or None
+        self._output_filename_format = value
 
     @property
     def view_info_file(self):

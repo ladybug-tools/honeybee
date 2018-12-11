@@ -23,7 +23,7 @@ class DirectReflectionGridBased(SolarAccessGridBased):
     """
 
     def __init__(self, sun_vectors, hoys, analysis_grids, timestep=1,
-                 reflective_surfaces=None, context_surfaces=None,
+                 reflective_surfaces=[], context_surfaces=[],
                  sub_folder='directreflection'):
         """
         Args:
@@ -40,9 +40,6 @@ class DirectReflectionGridBased(SolarAccessGridBased):
             sub_folder: Analysis subfolder for this recipe. (Default: "directreflection")
         """
         # update materials for reflective objects and context
-        reflective_surfaces = reflective_surfaces or []
-        context_surfaces = context_surfaces or []
-
         hb_objects = self.update_reflective_surfaces(reflective_surfaces) + \
             context_surfaces
 
@@ -85,7 +82,7 @@ class DirectReflectionGridBased(SolarAccessGridBased):
 
     @classmethod
     def from_suns(cls, suns, point_groups, vector_groups=[], timestep=1,
-                  reflective_surfaces=None, context_surfaces=None,
+                  reflective_surfaces=[], context_surfaces=[],
                   sub_folder='directreflection'):
         """Create direct reflection recipe from LB sun objects.
 
@@ -107,9 +104,6 @@ class DirectReflectionGridBased(SolarAccessGridBased):
             sub_folder: Analysis subfolder for this recipe. (Default: "directreflection")
         """
         # update materials for reflective objects and context
-        reflective_surfaces = reflective_surfaces or []
-        context_surfaces = context_surfaces or []
-
         hb_objects = cls.update_reflective_surfaces(reflective_surfaces) + \
             context_surfaces
 
@@ -118,13 +112,10 @@ class DirectReflectionGridBased(SolarAccessGridBased):
 
     @classmethod
     def from_location_and_hoys(cls, location, hoys, point_groups, vector_groups=[],
-                               timestep=1, reflective_surfaces=None,
-                               context_surfaces=None, sub_folder='directreflection'):
+                               timestep=1, reflective_surfaces=[],
+                               context_surfaces=[], sub_folder='directreflection'):
         """Create direct reflection recipe from Location and hours of year."""
         # update materials for reflective objects and context
-        reflective_surfaces = reflective_surfaces or []
-        context_surfaces = context_surfaces or []
-
         hb_objects = cls.update_reflective_surfaces(reflective_surfaces) + \
             context_surfaces
 
@@ -135,12 +126,12 @@ class DirectReflectionGridBased(SolarAccessGridBased):
     @classmethod
     def from_location_and_analysis_period(
         cls, location, analysis_period, point_groups, vector_groups=None,
-            reflective_surfaces=None, context_surfaces=None,
+            reflective_surfaces=[], context_surfaces=[],
             sub_folder='directreflection'):
         """Create direct reflection recipe from Location and analysis period."""
         # update materials for reflective objects and context
-        reflective_surfaces = reflective_surfaces or []
-        context_surfaces = context_surfaces or []
+        reflective_surfaces = reflective_surfaces
+        context_surfaces = context_surfaces
 
         hb_objects = cls.update_reflective_surfaces(reflective_surfaces) + \
             context_surfaces

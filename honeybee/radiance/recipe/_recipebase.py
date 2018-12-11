@@ -194,8 +194,6 @@ class AnalysisRecipe(object):
         iscreated = preparedir(target_folder, False)
         assert iscreated, "Failed to create %s. Try a different path!" % target_folder
 
-        project_name = project_name or 'untitled'
-
         _basePath = os.path.join(target_folder, project_name, self.sub_folder)
         iscreated = preparedir(_basePath, remove_content=False)
         assert iscreated, "Failed to create %s. Try a different path!" % _basePath

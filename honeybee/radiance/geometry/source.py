@@ -21,7 +21,7 @@ class Source(RadianceGeometry):
     direction = RadianceTuple('direction', tuple_size=3, num_type=float)
     angle = RadianceNumber('angle', num_type=float, check_positive=True)
 
-    def __init__(self, name, direction=None, angle=None, modifier=None):
+    def __init__(self, name, direction=(0, 0, -1), angle=0.533, modifier=None):
         """Radiance Source.
 
         Attributes:
@@ -36,8 +36,8 @@ class Source(RadianceGeometry):
             print(source)
         """
         RadianceGeometry.__init__(self, name, modifier=modifier)
-        self.direction = direction or (0, 0, -1)
-        self.angle = angle or 0.533
+        self.direction = direction
+        self.angle = angle
 
         self._update_values()
 

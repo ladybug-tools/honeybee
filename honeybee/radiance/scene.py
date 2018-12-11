@@ -82,8 +82,7 @@ class Scene(object):
         return self._opaque_surfaces
 
     @opaque_surfaces.setter
-    def opaque_surfaces(self, opaque_surfaces):
-        opaque_surfaces = opaque_surfaces or ()
+    def opaque_surfaces(self, opaque_surfaces=()):
         self._opaque_surfaces = []
 
         for srf in opaque_surfaces:
@@ -104,8 +103,7 @@ class Scene(object):
         return self._non_opaque_surfaces
 
     @non_opaque_surfaces.setter
-    def non_opaque_surfaces(self, non_opaque_surfaces):
-        non_opaque_surfaces = non_opaque_surfaces or ()
+    def non_opaque_surfaces(self, non_opaque_surfaces=()):
         self._non_opaque_surfaces = []
         for srf in non_opaque_surfaces:
             assert srf.isHBSurface, \
@@ -125,8 +123,7 @@ class Scene(object):
         return self._dynamic_surfaces
 
     @dynamic_surfaces.setter
-    def dynamic_surfaces(self, dynamic_surfaces):
-        dynamic_surfaces = dynamic_surfaces or ()
+    def dynamic_surfaces(self, dynamic_surfaces=()):
         for srf in dynamic_surfaces:
             assert srf.isHBDynamicSurface, \
                 '{} is not a valid honeybee dynamic surface.'.format(srf.name)

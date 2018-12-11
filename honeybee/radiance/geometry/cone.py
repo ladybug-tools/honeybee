@@ -27,8 +27,8 @@ class Cone(RadianceGeometry):
     center_pt_end = RadianceTuple('center_pt_end', tuple_size=3, num_type=float)
     radius_end = RadianceNumber('radius_end', check_positive=True)
 
-    def __init__(self, name, center_pt_start=None, radius_start=None,
-                 center_pt_end=None, radius_end=None, modifier=None):
+    def __init__(self, name, center_pt_start=(0, 0, 0), radius_start=10,
+                 center_pt_end=(0, 0, 10), radius_end=0, modifier=None):
         """Radiance Cone.
 
         Attributes:
@@ -41,10 +41,10 @@ class Cone(RadianceGeometry):
             modifier: Geometry modifier (Default: "void").
         """
         RadianceGeometry.__init__(self, name, modifier=modifier)
-        self.center_pt_start = center_pt_start or (0, 0, 0)
-        self.radius_start = radius_start or 10
-        self.center_pt_end = center_pt_end or (0, 0, 10)
-        self.radius_end = radius_end or 0
+        self.center_pt_start = center_pt_start
+        self.radius_start = radius_start
+        self.center_pt_end = center_pt_end
+        self.radius_end = radius_end
 
         self._update_values()
 

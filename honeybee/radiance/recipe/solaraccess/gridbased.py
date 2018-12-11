@@ -177,11 +177,9 @@ class SolarAccessGridBased(GenericGridBased):
 
     @classmethod
     def from_location_and_analysis_period(
-        cls, location, analysis_period, point_groups, vector_groups=None,
+        cls, location, analysis_period, point_groups, vector_groups=(),
             hb_objects=None, sub_folder='sunlighthour'):
         """Create sunlighthours recipe from Location and analysis period."""
-        vector_groups = vector_groups or ()
-
         sp = Sunpath.from_location(location)
 
         suns = tuple(sp.calculate_sun_from_hoy(hoy) for hoy in analysis_period.hoys)

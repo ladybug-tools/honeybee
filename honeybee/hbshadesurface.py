@@ -22,12 +22,11 @@ class HBShadingSurface(HBAnalysisSurface):
 
     # TODO: Separate Zone:Detailed:Sahding
     def __init__(self, name, sorted_points=[], is_name_set_by_user=False,
-                 rad_properties=None, ep_properties=None, states=None):
+                 rad_properties=None, ep_properties=None, states=()):
         """Init honeybee surface."""
         _surface_type = 6
         _is_type_set_by_user = True
 
-        states = states or ()
         HBAnalysisSurface.__init__(self, name, sorted_points, _surface_type,
                                    is_name_set_by_user, _is_type_set_by_user)
 

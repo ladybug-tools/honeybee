@@ -17,7 +17,7 @@ class Sphere(RadianceGeometry):
     center_pt = RadianceTuple('center_pt', tuple_size=3, num_type=float)
     radius = RadianceNumber('radius', check_positive=True)
 
-    def __init__(self, name, center_pt=None, radius=None, modifier=None):
+    def __init__(self, name, center_pt=(0, 0, 0), radius=1, modifier=None):
         """Radiance Sphere.
 
         Attributes:
@@ -32,8 +32,8 @@ class Sphere(RadianceGeometry):
             print(sphere)
         """
         RadianceGeometry.__init__(self, name, modifier=modifier)
-        self.center_pt = center_pt or (0, 0, 0)
-        self.radius = radius or 1
+        self.center_pt = center_pt
+        self.radius = radius
 
         self._update_values()
 

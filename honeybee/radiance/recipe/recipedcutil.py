@@ -682,8 +682,8 @@ def image_based_view_coeff_matrix_commands(
     return rflux
 
 
-def coeff_matrix_commands(output_name, receiver, rad_files, sender, points_file=None,
-                          number_of_points=None, rfluxmtx_parameters=None):
+def coeff_matrix_commands(output_name, receiver, rad_files=(), sender='-', points_file=None,
+                          number_of_points=0, rfluxmtx_parameters=None):
     """Returns radiance commands to create coefficient matrix.
 
     Args:
@@ -698,9 +698,6 @@ def coeff_matrix_commands(output_name, receiver, rad_files, sender, points_file=
         rfluxmtx_parameters: Radiance parameters for Rfluxmtx command using a
             RfluxmtxParameters instance (Default: None).
     """
-    sender = sender or '-'
-    rad_files = rad_files or ()
-    number_of_points = number_of_points or 0
     rfluxmtx = Rfluxmtx()
 
     if sender == '-':

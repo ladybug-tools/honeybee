@@ -23,7 +23,7 @@ class ImageCollection(object):
     combinations using pcomb.
     """
 
-    def __init__(self, name='untitled', output_folder=None):
+    def __init__(self, name='untitled', output_folder='.'):
         """Initiate an image collection."""
         # name of sources and their state. It's only meaningful in multi-phase daylight
         # analysis. In analysis for a single time it will be {None: [None]}
@@ -36,8 +36,8 @@ class ImageCollection(object):
         # in each dictionary the key is the hoy and the values are a list which
         # is [total, direct]. If the value is not available it will be None
         self._values = []
-        self.name = name or 'untitled'
-        self.output_folder = output_folder or '.'
+        self.name = name
+        self.output_folder = output_folder
 
     @property
     def sources(self):
@@ -206,13 +206,11 @@ class ImageCollection(object):
 
         sid, stateid = self._create_data_structure(source, state)
 
-        ind = index or 0
-
         for hoy, value in izip(hoys, file_paths):
             if hoy is None:
                 continue
             try:
-                self._values[sid][stateid][int(hoy * 60)][ind] = value
+                self._values[sid][stateid][int(hoy * 60)][index] = value
             except Exception as e:
                 raise ValueError(
                     'Failed to load {} results for window_group [{}], state[{}]'
@@ -452,7 +450,7 @@ class ImageCollection(object):
         return res.execute()
 
     def generate_combined_images_by_id(self, hoys=None, blinds_state_ids=None, mode=0,
-                                       outputs=None):
+                                       outputs=[]):
         """Get combined value from all sources based on state_id.
 
         Args:
@@ -475,7 +473,6 @@ class ImageCollection(object):
             'There should be a list of states for each hour. #states[{}] != #hours[{}]' \
             .format(len(blinds_state_ids), len(hoys))
 
-        outputs = outputs or []
         results = []
         for count, hoy in enumerate(hoys):
             image_col = []

@@ -23,7 +23,7 @@ class Cylinder(RadianceGeometry):
     center_pt_end = RadianceTuple('center_pt_end', tuple_size=3, num_type=float)
     radius = RadianceNumber('radius', check_positive=True)
 
-    def __init__(self, name, center_pt_start=None, center_pt_end=None, radius=None,
+    def __init__(self, name, center_pt_start=(0, 0, 0), center_pt_end=(0, 0, 10), radius=10,
                  modifier=None):
         """Radiance Cylinder.
 
@@ -37,9 +37,9 @@ class Cylinder(RadianceGeometry):
             modifier: Geometry modifier (Default: "void").
         """
         RadianceGeometry.__init__(self, name, modifier=modifier)
-        self.center_pt_start = center_pt_start or (0, 0, 0)
-        self.center_pt_end = center_pt_end or (0, 0, 10)
-        self.radius = radius or 10
+        self.center_pt_start = center_pt_start
+        self.center_pt_end = center_pt_end
+        self.radius = radius
 
         self._update_values()
 

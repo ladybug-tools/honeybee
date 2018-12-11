@@ -58,7 +58,7 @@ class AnalysisGrid(object):
                    window_groups=None)
 
     @classmethod
-    def from_points_and_vectors(cls, points, vectors=None,
+    def from_points_and_vectors(cls, points, vectors=(),
                                 name=None, window_groups=None):
         """Create an analysis grid from points and vectors.
 
@@ -67,7 +67,6 @@ class AnalysisGrid(object):
             vectors: An optional list of (x, y, z) for direction of test points.
                 If not provided a (0, 0, 1) vector will be assigned.
         """
-        vectors = vectors or ()
         points, vectors = match_data(points, vectors, (0, 0, 1))
         aps = tuple(AnalysisPoint(pt, v) for pt, v in izip(points, vectors))
         return cls(aps, name, window_groups)
@@ -233,7 +232,7 @@ class AnalysisGrid(object):
         return inf, hoys
 
     def set_values_from_file(self, file_path, hoys=None, source=None, state=None,
-                             start_line=None, is_direct=False, header=True,
+                             start_line=0, is_direct=False, header=True,
                              check_point_count=True, mode=0):
         """Load values for test points from a file.
 
@@ -263,15 +262,13 @@ class AnalysisGrid(object):
         if os.path.getsize(file_path) < 2:
             raise EmptyFileError(file_path)
 
-        st = start_line or 0
-
         with open(file_path, 'rb') as inf:
             if header:
-                inf, _ = self.parse_header(inf, st, hoys, check_point_count)
+                inf, _ = self.parse_header(inf, start_line, hoys, check_point_count)
 
-            self.add_result_files(file_path, hoys, st, is_direct, header, mode)
+            self.add_result_files(file_path, hoys, start_line, is_direct, header, mode)
 
-            for i in xrange(st):
+            for i in xrange(start_line):
                 inf.next()
 
             end = len(self._analysis_points)
@@ -294,7 +291,7 @@ class AnalysisGrid(object):
 
     def set_coupled_values_from_file(
             self, total_file_path, direct_file_path, hoys=None, source=None, state=None,
-            start_line=None, header=True, check_point_count=True, mode=0):
+            start_line=0, header=True, check_point_count=True, mode=0):
         """Load direct and total values for test points from two files.
 
         Args:
@@ -315,17 +312,15 @@ class AnalysisGrid(object):
             if os.path.getsize(file_path) < 2:
                 raise EmptyFileError(file_path)
 
-        st = start_line or 0
-
         with open(total_file_path, 'rb') as inf, open(direct_file_path, 'rb') as dinf:
             if header:
-                inf, _ = self.parse_header(inf, st, hoys, check_point_count)
-                dinf, _ = self.parse_header(dinf, st, hoys, check_point_count)
+                inf, _ = self.parse_header(inf, start_line, hoys, check_point_count)
+                dinf, _ = self.parse_header(dinf, start_line, hoys, check_point_count)
 
-            self.add_result_files(total_file_path, hoys, st, False, header, mode)
-            self.add_result_files(direct_file_path, hoys, st, True, header, mode)
+            self.add_result_files(total_file_path, hoys, start_line, False, header, mode)
+            self.add_result_files(direct_file_path, hoys, start_line, True, header, mode)
 
-            for i in xrange(st):
+            for i in xrange(start_line):
                 inf.next()
                 dinf.next()
 
@@ -423,7 +418,7 @@ class AnalysisGrid(object):
 
         return (p.max_values_by_id(hoys, blinds_state_ids) for p in self)
 
-    def annual_metrics(self, da_threshhold=None, udi_min_max=None, blinds_state_ids=None,
+    def annual_metrics(self, da_threshhold=300.0, udi_min_max=(100, 3000), blinds_state_ids=None,
                        occ_schedule=None):
         """Calculate annual metrics.
 
@@ -456,8 +451,6 @@ class AnalysisGrid(object):
 
         res = ([], [], [], [], [])
 
-        da_threshhold = da_threshhold or 300.0
-        udi_min_max = udi_min_max or (100, 3000)
         hoys = self.hoys
         occ_schedule = occ_schedule or Schedule.eight_am_to_six_pm()
 
@@ -513,7 +506,7 @@ class AnalysisGrid(object):
 
         return res
 
-    def spatial_daylight_autonomy(self, da_threshhold=None, target_da=None,
+    def spatial_daylight_autonomy(self, da_threshhold=300.0, target_da=50.0,
                                   blinds_state_ids=None, occ_schedule=None):
         """Calculate Spatial Daylight Autonomy (sDA).
 
@@ -545,8 +538,6 @@ class AnalysisGrid(object):
 
         res = ([], [])
 
-        da_threshhold = da_threshhold or 300.0
-        target_da = target_da or 50.0
         hoys = self.hoys
         occ_schedule = occ_schedule or Schedule.eight_am_to_six_pm()
 
@@ -612,8 +603,8 @@ class AnalysisGrid(object):
 
         return sda, daylight_autonomy, problematic_points
 
-    def annual_sunlight_exposure(self, threshhold=None, blinds_state_ids=None,
-                                 occ_schedule=None, target_hours=None, target_area=None):
+    def annual_sunlight_exposure(self, threshhold=1000, blinds_state_ids=None,
+                                 occ_schedule=None, target_hours=250, target_area=10):
         """Annual Solar Exposure (ASE)
 
         As per IES-LM-83-12 ase is the percent of sensors that are
@@ -653,9 +644,6 @@ class AnalysisGrid(object):
             print('Loading the results from result files.')
 
         res = ([], [], [])
-        threshhold = threshhold or 1000
-        target_hours = target_hours or 250
-        target_area = target_area or 10
         hoys = self.hoys
         occ_schedule = occ_schedule or set(hoys)
 

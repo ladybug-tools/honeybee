@@ -187,7 +187,6 @@ class HBZone(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = 1 if mode is None else mode
         return self.to_rad_file().to_rad_string(mode, include_materials, flipped,
                                                 blacked)
 
@@ -207,7 +206,6 @@ class HBZone(HBObject):
             flipped: Flip the surface geometry.
             blacked: If True materials will all be set to plastic 0 0 0 0 0.
         """
-        mode = 1 if mode is None else mode
         folder, filename = os.path.split(file_path)
         return self.to_rad_file().write(folder, filename, mode, include_materials,
                                         flipped, blacked, mkdir=True)

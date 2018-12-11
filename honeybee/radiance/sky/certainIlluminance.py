@@ -26,9 +26,8 @@ class CertainIlluminanceLevel(CIE):
             sky_type: An integer between 0..1 to indicate CIE Sky Type.
                 [0] cloudy sky, [1] uniform sky (default: 0)
         """
-        sky_type = sky_type or 0
         CIE.__init__(self, sky_type=sky_type + 4, suffix=suffix)
-        self.illuminance_value = illuminance_value or 10000
+        self.illuminance_value = illuminance_value
 
     @classmethod
     def from_json(cls, rec_json):

@@ -27,8 +27,8 @@ class Ring(RadianceGeometry):
     radius_inner = RadianceNumber('radius_inner', check_positive=True)
     radius_outer = RadianceNumber('radius_outer', check_positive=True)
 
-    def __init__(self, name, center_pt=None, radius_inner=None,
-                 surface_normal=None, radius_outer=None, modifier=None):
+    def __init__(self, name, center_pt=(0, 0, 0), radius_inner=10,
+                 surface_normal=(0, 0, 10), radius_outer=0, modifier=None):
         """Radiance Ring.
 
         Attributes:
@@ -41,10 +41,10 @@ class Ring(RadianceGeometry):
             modifier: Geometry modifier (Default: "void").
         """
         RadianceGeometry.__init__(self, name, modifier=modifier)
-        self.center_pt = center_pt or (0, 0, 0)
-        self.radius_inner = radius_inner or 10
-        self.surface_normal = surface_normal or (0, 0, 10)
-        self.radius_outer = radius_outer or 0
+        self.center_pt = center_pt
+        self.radius_inner = radius_inner
+        self.surface_normal = surface_normal
+        self.radius_outer = radius_outer
 
         self._update_values()
 

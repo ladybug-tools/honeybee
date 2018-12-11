@@ -473,20 +473,15 @@ class AnalysisPoint(object):
 
         return tuple(self._values[sid][stateid][int(hoy * 60)] for hoy in hoys)
 
-    def coupled_value_by_id(self, hoy, source_id=None, state_id=None):
+    def coupled_value_by_id(self, hoy, source_id=0, state_id=0):
         """Get total and direct values for an hoy."""
-        # find the id for source and state
-        sid = source_id or 0
-        # find the state id
-        stateid = state_id or 0
-
-        if int(hoy * 60) not in self._values[sid][stateid]:
+        if int(hoy * 60) not in self._values[source_id][state_id]:
             raise ValueError('Hourly values are not available for {}.'
                              .format(dt.DateTime.from_hoy(hoy)))
 
-        return self._values[sid][stateid][int(hoy * 60)]
+        return self._values[source_id][state_id][int(hoy * 60)]
 
-    def coupled_values_by_id(self, hoys=None, source_id=None, state_id=None):
+    def coupled_values_by_id(self, hoys=None, source_id=0, state_id=0):
         """Get total and direct values for several hours of year by source id.
 
         Use this method to load the values if you have the ids for source and state.
@@ -496,17 +491,14 @@ class AnalysisPoint(object):
             source_id: Id of source as an integer (default: 0).
             state_id: Id of state as an integer (default: 0).
         """
-        sid = source_id or 0
-        stateid = state_id or 0
-
         hoys = hoys or self.hoys
 
         for hoy in hoys:
-            if int(hoy * 60) not in self._values[sid][stateid]:
+            if int(hoy * 60) not in self._values[source_id][state_id]:
                 raise ValueError('Hourly values are not available for {}.'
                                  .format(dt.DateTime.from_hoy(hoy)))
 
-        return tuple(self._values[sid][stateid][int(hoy * 60)] for hoy in hoys)
+        return tuple(self._values[source_id][state_id][int(hoy * 60)] for hoy in hoys)
 
     def combined_value_by_id(self, hoy, blinds_state_ids=None):
         """Get combined value from all sources based on state_id.
@@ -736,7 +728,7 @@ class AnalysisPoint(object):
         return self._calculate_annual_metrics(
             values, hours, da_threshhold, udi_min_max, blinds_state_ids, occ_schedule)
 
-    def useful_daylight_illuminance(self, udi_min_max=None, blinds_state_ids=None,
+    def useful_daylight_illuminance(self, udi_min_max=(100,2000), blinds_state_ids=None,
                                     occ_schedule=None):
         """Calculate useful daylight illuminance.
 
@@ -750,7 +742,6 @@ class AnalysisPoint(object):
         Returns:
             Useful daylight illuminance, Less than UDI, More than UDI
         """
-        udi_min_max = udi_min_max or (100, 2000)
         udiMin, udiMax = udi_min_max
         hours = self.hoys
         schedule = occ_schedule or Schedule.eight_am_to_six_pm()
@@ -776,7 +767,7 @@ class AnalysisPoint(object):
         return 100 * udi / total_hour_count, 100 * udi_l / total_hour_count, \
             100 * udi_m / total_hour_count
 
-    def daylight_autonomy(self, da_threshhold=None, blinds_state_ids=None,
+    def daylight_autonomy(self, da_threshhold=300, blinds_state_ids=None,
                           occ_schedule=None):
         """Calculate daylight autonomy and continious daylight autonomy.
 
@@ -789,7 +780,6 @@ class AnalysisPoint(object):
         Returns:
             Daylight autonomy, Continious daylight autonomy
         """
-        da_threshhold = da_threshhold or 300
         hours = self.hoys
         schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         DA = 0
@@ -811,8 +801,8 @@ class AnalysisPoint(object):
 
         return 100 * DA / total_hour_count, 100 * cda / total_hour_count
 
-    def annual_sunlight_exposure(self, threshhold=None, blinds_state_ids=None,
-                                 occ_schedule=None, target_hours=None):
+    def annual_sunlight_exposure(self, threshhold=1000, blinds_state_ids=None,
+                                 occ_schedule=None, target_hours=250):
         """Annual Solar Exposure (ASE).
 
         Calculate number of hours that this point is exposed to more than 1000lux
@@ -842,10 +832,8 @@ class AnalysisPoint(object):
 
     @staticmethod
     def _calculate_annual_sunlight_exposure(
-            values, hoys, threshhold=None, blinds_state_ids=None, occ_schedule=None,
-            target_hours=None):
-        threshhold = threshhold or 1000
-        target_hours = target_hours or 250
+            values, hoys, threshhold=1000, blinds_state_ids=None, occ_schedule=None,
+            target_hours=250):
         schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         ase = 0
         problematic_hours = []
@@ -860,12 +848,10 @@ class AnalysisPoint(object):
 
     @staticmethod
     def _calculate_annual_metrics(
-        values, hours, da_threshhold=None, udi_min_max=None, blinds_state_ids=None,
+        values, hours, da_threshhold=300.0, udi_min_max=(100, 2000), blinds_state_ids=None,
             occ_schedule=None):
         total_hour_count = len(hours)
         udiMin, udiMax = udi_min_max
-        udi_min_max = udi_min_max or (100, 2000)
-        da_threshhold = da_threshhold or 300.0
         schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         DA = 0
         cda = 0
@@ -898,7 +884,7 @@ class AnalysisPoint(object):
 
     @staticmethod
     def _calculate_daylight_autonomy(
-            values, hoys, da_threshhold=None, blinds_state_ids=None, occ_schedule=None):
+            values, hoys, da_threshhold=300, blinds_state_ids=None, occ_schedule=None):
         """Calculate daylight autonomy and continious daylight autonomy.
 
         Args:
@@ -910,7 +896,6 @@ class AnalysisPoint(object):
         Returns:
             Daylight autonomy, Continious daylight autonomy
         """
-        da_threshhold = da_threshhold or 300
         hours = hoys
         schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         DA = 0

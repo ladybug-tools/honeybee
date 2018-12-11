@@ -211,7 +211,6 @@ class SurfaceState(object):
         """
         if not self.surfaces:
             return ''
-        mode = 1 if mode is None else mode
         return RadFile(self.surfaces).to_rad_string(mode, include_materials,
                                                     flipped, blacked)
 
