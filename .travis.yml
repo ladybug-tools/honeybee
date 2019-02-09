@@ -25,11 +25,15 @@ after_success:
 jobs:
   include:
     - stage: deploy
+      services:
+        - docker
       if: branch = master AND (NOT type IN (pull_request))
-      python: "2.7"
+      language: node_js
+      node_js: "8"
       env: TRAVIS=true
       script:
         - git config --global user.name "ladybugbot"
         - git config --global user.email "release@ladybug.tools"
-        - pip install python-semantic-release
-        - semantic-release publish
+        - npm install @semantic-release/exec
+        - npx semantic-release
+        
