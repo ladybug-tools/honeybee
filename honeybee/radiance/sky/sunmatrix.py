@@ -221,7 +221,7 @@ class SunMatrix(RadianceSky):
             if sun.altitude < 0:
                 continue
             else:
-                dnr, dhr = wea.get_radiation_values(month, day, hour)
+                dnr, dhr = wea.get_irradiance_value(month, day, hour)
                 if dnr == 0:
                     solarradiance = 0
                 else:

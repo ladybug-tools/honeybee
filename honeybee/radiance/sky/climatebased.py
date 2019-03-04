@@ -63,7 +63,7 @@ class ClimateBased(PointInTimeSky):
             TypeError('Expected WEA not {}.'.format(type(wea)))
 
         # get radiation values
-        direct, diffuse = wea.get_radiation_values(month, day, hour)
+        direct, diffuse = wea.get_irradiance_value(month, day, hour)
         return cls(wea.location, month, day, hour, int(direct), int(diffuse), north,
                    suffix=suffix)
 
