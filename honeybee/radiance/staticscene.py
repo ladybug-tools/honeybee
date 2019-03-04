@@ -1,5 +1,14 @@
 """Radiance scene."""
 from collections import namedtuple
+import zipfile
+import base64
+import os
+try:
+    # python 2
+    import StringIO
+except ImportError:
+    # python 3
+    from io import StringIO
 
 
 class StaticScene(object):
@@ -32,15 +41,15 @@ class StaticScene(object):
 
         keys are: (mat, oct, rad)
         """
-        return self.__files
+        return self._files
 
     @files.setter
     def files(self, fs):
         _f = namedtuple('Files', 'mat rad oct')
         if not fs:
-            self.__files = _f((), (), ())
+            self._files = _f((), (), ())
         else:
-            self.__files = _f(
+            self._files = _f(
                 tuple(f for f in fs if f.lower().endswith('.mat')),
                 tuple(f for f in fs if f.lower().endswith('.rad')),
                 tuple(f for f in fs if f.lower().endswith('.oct')))
@@ -48,6 +57,51 @@ class StaticScene(object):
     def to_rad_string(self):
         """Return list of files as single string."""
         return ''.join(fp for f in self.files for fp in f)
+
+    def to_json(self):
+        """Convert StaticModel to JSON.
+        {'type': 'StaticScene', 'content': 'zipped_file'}
+        """
+        payload = {
+            'type': self.__class__.__name__, 'content': None,
+            'copy_local': self.copy_local, 'overwrite': self.overwrite
+        }
+        
+        # TODO: Use stringIO instead of writing to disk.
+        with zipfile.ZipFile('staticscene.zip', 'w') as zipf:
+            for category in self.files:
+                for f in category:
+                    zipf.write(f)
+        
+        with open('staticscene.zip') as inf:
+            payload['content'] = base64.b64encode(inf.read())
+
+        return payload
+
+    @classmethod
+    def from_json(cls, payload, folder):
+        """Read StaticScene from a dictionary.
+        
+        This method needs to copy the files in a target folder.
+        """
+        assert 'type' in payload, \
+            'Invalid input. Expected %s.' % cls.__class__.__name__
+
+        assert payload['type'] == cls.__class__.__name__, \
+            'Invalid input. Expected %s.' % cls.__class__.__name__
+        
+        try:
+            data = payload['content']
+            file_data = base64.b64decode(data)
+        except KeyError:
+            raise KeyError('Input is missing content key.')
+        else:
+            fp = os.path.join(folder, 'staticscene.zip')
+            with open(fp, 'w') as outf:
+                outf.write(file_data)
+        # unzip the file
+
+        # return the class
 
     def ToString(self):
         """Overwrite ToString .NET method."""

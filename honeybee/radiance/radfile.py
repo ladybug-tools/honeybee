@@ -399,7 +399,7 @@ class RadFile(object):
 
         # create a place holder for each point group (face)
         # for a planar surface sub_srf_count is one
-        place_holder = range(sub_srf_count)
+        place_holder = list(range(sub_srf_count))
 
         for ptCount, pts in enumerate(points):
 
