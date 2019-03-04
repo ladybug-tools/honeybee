@@ -11,9 +11,9 @@ before_install:
  - sudo apt-get install libtiff5
 
 install:
- - pip install --upgrade pip
- - pip install pytest pytest-cov coveralls
- - pip install lbt-ladybug
+ - sudo pip install --upgrade pip
+ - sudo pip install pytest pytest-cov coveralls
+ - sudo pip install lbt-ladybug
 
 script:
   - py.test --cov=. ./tests/
