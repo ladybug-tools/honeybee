@@ -12,6 +12,7 @@ You can check the source code at:
     https://github.com/NREL/Radiance/blob/53485a7fb48727293d62f98d7bac830aa34ccba4/src/
         gen/gendaylit.c
 """
+from __future__ import division
 import math
 from datetime import datetime
 
