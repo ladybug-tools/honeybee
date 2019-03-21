@@ -1,4 +1,4 @@
-ladybug
+honeybee
 =======
 
 .. toctree::

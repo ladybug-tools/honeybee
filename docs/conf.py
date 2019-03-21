@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'ladybug'
+project = 'honeybee'
 copyright = '2019, Ladybug Tools'
 author = 'Ladybug Tools'
 
@@ -134,7 +134,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'ladybugdoc'
+htmlhelp_basename = 'honeybeedoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -161,7 +161,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'ladybug.tex', 'ladybug Documentation',
+    (master_doc, 'honeybee.tex', 'honeybee Documentation',
      'Ladybug Tools', 'manual'),
 ]
 
@@ -171,7 +171,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'ladybug', 'ladybug Documentation',
+    (master_doc, 'honeybee', 'honeybee Documentation',
      [author], 1)
 ]
 
@@ -182,8 +182,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'ladybug', 'ladybug Documentation',
-     author, 'ladybug', 'One line description of project.',
+    (master_doc, 'honeybee', 'honeybee Documentation',
+     author, 'honeybee', 'One line description of project.',
      'Miscellaneous'),
 ]
 
