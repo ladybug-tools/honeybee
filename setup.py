@@ -5,22 +5,10 @@ import sys
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open('honeybee/__init__.py', 'r') as fd:
-    version = re.search(
-        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-        fd.read(),
-        re.MULTILINE
-    ).group(1)
-
-try:
-    from semantic_release import setup_hook
-    setup_hook(sys.argv)
-except ImportError:
-    pass
-
 setuptools.setup(
     name="lbt-honeybee",
-    version=version,
+    use_scm_version = True,
+    setup_requires=['setuptools_scm'],
     author="Ladybug Tools",
     author_email="info@ladybug.tools",
     description="Honeybee is a Python library to create, run and visualize the results of daylight (RADIANCE) and energy analysis (EnergyPlus/OpenStudio). The current version supports only Radiance integration.",
