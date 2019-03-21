@@ -2,26 +2,25 @@ language: python
 
 python: "2.7"
 
-before_install:
- # install radiance
- - wget https://github.com/NREL/Radiance/releases/download/5.2.1/radiance-5.2.91bcc23df3-Linux.tar.gz
- - tar -xzvf radiance-5.2.91bcc23df3-Linux.tar.gz
- - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/bin/. /usr/local/bin
- - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
- - sudo apt-get install libtiff5
-
 install:
  - pip install -r dev-requirements.txt
 
-script:
-  - py.test --cov=. ./tests/
-
-after_success:
-  - coverage report
-  - coveralls
-
 jobs:
   include:
+  - stage: test
+    before_install:
+    # install radiance
+    - wget https://github.com/NREL/Radiance/releases/download/5.2.1/radiance-5.2.91bcc23df3-Linux.tar.gz
+    - tar -xzvf radiance-5.2.91bcc23df3-Linux.tar.gz
+    - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/bin/. /usr/local/bin
+    - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
+    - sudo apt-get install libtiff5
+    script:
+      - py.test --cov=. ./tests/
+    after_success:
+      - coverage report
+      - coveralls    
+
   - stage: deploy
     if: branch = master AND (NOT type IN (pull_request))
     before_install:
