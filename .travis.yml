@@ -11,9 +11,7 @@ before_install:
  - sudo apt-get install libtiff5
 
 install:
- - sudo pip install --upgrade pip
- - pip install pytest pytest-cov coveralls
- - pip install lbt-ladybug
+ - pip install -r dev-requirements.txt
 
 script:
   - py.test --cov=. ./tests/
@@ -22,19 +20,24 @@ after_success:
   - coverage report
   - coveralls
 
-
 jobs:
   include:
-    - stage: deploy
-      services:
-        - docker
-      if: branch = master AND (NOT type IN (pull_request))
-      language: node_js
-      node_js: "8"
-      env: TRAVIS=true
-      script:
-        - git config --global user.name "ladybugbot"
-        - git config --global user.email "release@ladybug.tools"
-        - npm install @semantic-release/exec
-        - npx semantic-release
-        
+  - stage: deploy
+    if: branch = master AND (NOT type IN (pull_request))
+    before_install:
+    - npm i -g npm@6.6.0
+    install:
+    - pip install -r dev-requirements.txt
+    - npm install @semantic-release/exec
+    script:
+    - git config --global user.email "releases@ladybug.tools"
+    - git config --global user.name "ladybugbot"
+    - npx semantic-release
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github-token: $GH_TOKEN
+      keep-history: false
+      local_dir: docs/_build/
+      on:
+        branch: master
