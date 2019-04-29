@@ -8,7 +8,11 @@ from ladybug.wea import Wea
 from ladybug.location import Location
 
 import os
-from itertools import izip as zip
+
+try:
+    from itertools import izip as zip
+except ImportError:
+    pass
 
 
 class SunMatrix(RadianceSky):

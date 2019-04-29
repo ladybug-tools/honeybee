@@ -10,6 +10,7 @@ honeybee/plus.py
 *.ipynb
 .ipynb_checkpoints
 .tox
+.eggs
 *.egg-info
 tests/room/testrun
 tox.ini

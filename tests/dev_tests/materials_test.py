@@ -22,7 +22,7 @@
 #
 #
 # db_fp = r"C:\ladybug\sample_files\gridbased_daylightcoeff\result\radout.db"
-folder = r"C:\ladybug\sample_files\gridbased_daylightcoeff\result"
+# folder = r"C:\ladybug\sample_files\gridbased_daylightcoeff\result"
 #
 # # create_db(db_fp)
 # # parse_results_from_folder(folder, db_fp)
@@ -53,8 +53,8 @@ folder = r"C:\ladybug\sample_files\gridbased_daylightcoeff\result"
 #
 # db = SqliteDB(folder, 'test')
 # db.clean()
-import sys
-sys.path.append(r"C:\Users\Mostapha\Documents\code\ladybug-tools\ladybug")
+# import sys
+# sys.path.append(r"C:\Users\Mostapha\Documents\code\ladybug-tools\ladybug")
 
 import honeybee.radiance.material.spotlight as spotlight
 from honeybee.radiance.radparser import parse_from_file
@@ -174,11 +174,11 @@ new_wall cone floor_0_0_0
 10 20
 """
 pl = Cone.from_string(cone_str)
-print pl.to_rad_string(False, False)
-print Cone.from_json(pl.to_json())
+print(pl.to_rad_string(False, False))
+print(Cone.from_json(pl.to_json()))
 
 
 from honeybee.radiance.material.transdata import Transdata
 
 m = Transdata('test', values={})
-print m
+print(m)
