@@ -1,14 +1,18 @@
-from _hbanalysissurface import HBAnalysisSurface
-from hbfensurface import HBFenSurface
-from surfaceproperties import SurfaceProperties, SurfaceState
-from vectormath.euclid import Vector3, Point3
-import utilcol as util
+from ._hbanalysissurface import HBAnalysisSurface
+from .hbfensurface import HBFenSurface
+from .surfaceproperties import SurfaceProperties, SurfaceState
+from .vectormath.euclid import Vector3, Point3
+import honeybee.utilcol as util
 import honeybee
 try:
     import plus
 except ImportError as e:
     if honeybee.isplus:
         raise ImportError(e)
+import sys
+if (sys.version_info >= (3, 0)):
+    xrange = range
+    basestring = str
 
 
 class HBSurface(HBAnalysisSurface):

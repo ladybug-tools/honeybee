@@ -1,7 +1,7 @@
 # coding=utf-8
 """falsecolor - make a falsecolor Radiance picture"""
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath
 from ..parameters.falsecolor import FalsecolorParameters
 

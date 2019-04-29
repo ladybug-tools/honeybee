@@ -3,7 +3,7 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 import os
-from materialbase import RadianceMaterial
+from .materialbase import RadianceMaterial
 
 
 # TODO(): Add function file, transform and additional diffuse reflectance front and back

@@ -1,5 +1,5 @@
 # coding=utf-8
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..parameters.mkpmap import MkpmapParameters
 
 import os

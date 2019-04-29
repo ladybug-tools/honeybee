@@ -2,6 +2,11 @@
 import sys
 import os
 
+__version__ = '0.1.4'
+
+# This is a variable to check if the library is a [+] library.
+setattr(sys.modules[__name__], 'isplus', False)
+
 _dependencies = ('ladybug',)
 for lib in _dependencies:
     if lib not in sys.modules:
@@ -11,6 +16,3 @@ for lib in _dependencies:
         __import__(lib)
     except ImportError as e:
         raise ImportError('Failed to import {}:\n\t{}'.format(lib, e))
-
-# This is a variable to check if the library is a [+] library.
-setattr(sys.modules[__name__], 'isplus', False)

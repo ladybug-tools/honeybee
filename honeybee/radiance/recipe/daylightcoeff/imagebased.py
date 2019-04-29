@@ -16,7 +16,11 @@ from ....futil import write_to_file
 
 import os
 
-from itertools import izip
+try:
+    from itertools import izip as zip
+except:
+    # python 3
+    pass
 
 
 class DaylightCoeffImageBased(GenericImageBased):
@@ -273,7 +277,7 @@ class DaylightCoeffImageBased(GenericImageBased):
         self._commands.append(oc.to_rad_string())
 
         # # 4.2.prepare vwray
-        for viewCount, (view, view_file) in enumerate(izip(self.views, view_files)):
+        for viewCount, (view, view_file) in enumerate(zip(self.views, view_files)):
             # create the reference map file
             self.commands.append(':: calculation for view: {}'.format(view.name))
             self.commands.append(':: 0 reference map')

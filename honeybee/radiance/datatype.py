@@ -3,6 +3,10 @@
 import warnings
 import os
 from collections import Iterable
+try:
+    basestring
+except NameError:
+    basestring = str
 
 __all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
            'RadianceTuple', 'RadianceValue', 'RadianceReadOnly']

@@ -1,7 +1,7 @@
 """A collection of auxiliary funtions for working with files and directories."""
 import os
 import shutil
-import config
+import honeybee.config as config
 
 
 def normspace(path):

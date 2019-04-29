@@ -1,6 +1,6 @@
-from _hbanalysissurface import HBAnalysisSurface
-from surfaceproperties import SurfaceProperties, SurfaceState
-import utilcol as util
+from ._hbanalysissurface import HBAnalysisSurface
+from .surfaceproperties import SurfaceProperties, SurfaceState
+import honeybee.utilcol as util
 import honeybee
 try:
     import plus
@@ -8,6 +8,10 @@ except ImportError as e:
     if honeybee.isplus:
         raise ImportError(e)
 
+import sys
+if (sys.version_info >= (3, 0)):
+    xrange = range
+    basestring = str
 
 class HBFenSurface(HBAnalysisSurface):
     """Honeybee fenestration surface.

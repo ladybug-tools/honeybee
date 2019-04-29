@@ -468,14 +468,14 @@ class RpictParameters(AdvancedRadianceParameters):
         """An integer between 0-2 (0:low, 1: medium or 2: high quality)"""
 
         # add all numeric parameters
-        for name, data in rpict_number_parameters.iteritems():
+        for name, data in rpict_number_parameters.items():
             self.add_radiance_number(data['name'], data['dscrip'],
                                      num_type=data['type'],
                                      attribute_name=name)
             setattr(self, name, data['values'][self.quality])
 
         # add boolean parameters
-        for name, data in rpict_boolean_parameters.iteritems():
+        for name, data in rpict_boolean_parameters.items():
             self.add_radiance_bool_flag(data['name'], data['dscrip'],
                                         attribute_name=name)
             setattr(self, name, data['values'][self.quality])

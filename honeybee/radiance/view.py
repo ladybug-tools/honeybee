@@ -1,13 +1,12 @@
 # coding=utf-8
 u"""Create a radiance view."""
-from datatype import RadianceTuple, RadianceNumber
+from .datatype import RadianceTuple, RadianceNumber
 import math
 from copy import deepcopy
 from ..utilcol import random_name
 
 
-
-# TODO: Add a method to add paramters from string.
+# TODO: Add a method to add parameters from string.
 # I want to make sure that this won't be duplicated by parameters class
 class View(object):
     u"""A radiance view.
@@ -18,7 +17,7 @@ class View(object):
             Default: (0, 0, 0)
         view_direction: Set the view direction (-vd) vector to (x, y, z). The
             length of this vector indicates the focal distance as needed by
-            the pixle depth of field (-pd) in rpict. Default: (0, 0, 1)
+            the pixel depth of field (-pd) in rpict. Default: (0, 0, 1)
         view_up_vector: Set the view up (-vu) vector (vertical direction) to
             (x, y, z) default: (0, 1, 0).
         view_type: Set view type (-vt) to one of the choices below.
@@ -164,7 +163,7 @@ class View(object):
     def isView(self):
         """Return True for view."""
         return True
-        
+
     @property
     def name(self):
         """AnalysisGrid name."""

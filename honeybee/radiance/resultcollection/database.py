@@ -6,10 +6,14 @@ from ..recipe.id import get_name as get_recipe_name
 from ..recipe.id import is_point_in_time as is_recipe_pit
 import contextlib
 from datetime import timedelta
-from itertools import izip as zip
 import os
 import sqlite3 as lite
 import time
+import sys
+if (sys.version_info >= (3, 0)):
+    xrange = range
+else:
+    from itertools import izip as zip
 
 
 class Database(object):

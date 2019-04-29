@@ -1,8 +1,8 @@
-import utilcol as util
-from hbobject import HBObject
-from vectormath.euclid import Point3
-from radiance.radfile import RadFile
-from energyplus.geometryrules import GlobalGeometryRules
+import honeybee.utilcol as util
+from .hbobject import HBObject
+from .vectormath.euclid import Point3
+from .radiance.radfile import RadFile
+from .energyplus.geometryrules import GlobalGeometryRules
 
 import os
 

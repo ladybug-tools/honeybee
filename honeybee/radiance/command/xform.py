@@ -1,10 +1,15 @@
 # coding=utf-8
 """xform - transform a RADIANCE scene description"""
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..parameters.xform import XformParameters
 
 import os
+
+try:
+    basestring
+except NameError:
+    basestring = str
 
 
 class Xform(RadianceCommand):

@@ -1,5 +1,5 @@
 # coding=utf-8
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceTuple, RadianceBoolFlag
 from ..parameters.rmtxop import RmtxopParameters
 from ... import config

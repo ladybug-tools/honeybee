@@ -115,7 +115,7 @@ def get_commands_sky(project_folder, sky_matrix, reuse=True):
 
     # add commands for total and direct sky matrix.
     if hasattr(sky_matrix, 'isSkyMatrix'):
-        for m in xrange(2):
+        for m in range(2):
             sky_matrix.mode = m
             gdm = skymtx_to_gendaymtx(sky_matrix, project_folder)
             if gdm:

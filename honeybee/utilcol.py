@@ -21,7 +21,7 @@ def check_name(name):
     A valid name can only have alphabet, digits, - and _.
     """
     name = name.encode('utf-8')
-    if re.match("^[.A-Za-z0-9_-]*$", name):
+    if re.match(b"^[.A-Za-z0-9_-]*$", name):
         return True
     else:
         raise ValueError(

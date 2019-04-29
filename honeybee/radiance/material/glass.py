@@ -3,7 +3,7 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 import math
-from materialbase import RadianceMaterial
+from .materialbase import RadianceMaterial
 from ..datatype import RadianceNumber
 
 
@@ -128,6 +128,7 @@ class Glass(RadianceMaterial):
         the material. Transmittance -- the value usually measured - is the total
         light transmitted through the pane including multiple reflections."
         """
+        transmittance = float(transmittance)
         if transmittance == 0:
             return 0
         return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -

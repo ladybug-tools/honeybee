@@ -1,5 +1,9 @@
 """Collection of functions for data operation."""
 import collections
+try:
+    basestring
+except NameError:
+    basestring = str
 
 
 def flatten_tuple_list(input_list):

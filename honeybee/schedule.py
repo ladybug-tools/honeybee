@@ -5,8 +5,11 @@ Honeybee schedule.
 Use this class to create schecules.
 """
 from ladybug.analysisperiod import AnalysisPeriod
-import itertools
-
+import sys
+if (sys.version_info >= (3, 0)):
+    xrange = range
+else:
+    from itertools import izip as zip
 
 class Schedule(object):
     """Schedule.
@@ -25,7 +28,7 @@ class Schedule(object):
         # put the hours in a set for quick look up
         self._hoys = tuple(hoys)
         self._occupied_hours = set(
-            h for h, v in itertools.izip(self._hoys, self._values)
+            h for h, v in zip(self._hoys, self._values)
             if v != 0)
 
         # check for length of data

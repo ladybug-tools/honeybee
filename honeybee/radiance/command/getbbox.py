@@ -1,9 +1,13 @@
 # coding=utf-8
 """getbbox - compute bounding box for Radiance rad."""
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceBoolFlag
 import os
+try:
+    basestring
+except NameError:
+    basestring = str
 
 
 class Getbbox(RadianceCommand):

@@ -3,7 +3,11 @@ from __future__ import division
 from ..vectormath.euclid import Point3, Vector3
 from ..schedule import Schedule
 from collections import defaultdict, OrderedDict
-from itertools import izip
+try:
+    from itertools import izip as zip
+except ImportError:
+    # python 3
+    pass
 import types
 import copy
 import ladybug.dt as dt
@@ -74,7 +78,7 @@ class AnalysisPoint(object):
             except IndexError:
                 state_res = []
             for item in state_res:
-                for k, v in item.iteritems():
+                for k, v in item.items():
                     values.append(v)
                     hoys.append(float(k))
             # set the values
@@ -134,7 +138,7 @@ class AnalysisPoint(object):
         In most of the cases light sources are window groups.
         """
         srcs = range(len(self._sources))
-        for name, d in self._sources.iteritems():
+        for name, d in self._sources.items():
             srcs[d['id']] = name
         return srcs
 
@@ -152,7 +156,7 @@ class AnalysisPoint(object):
 
         # sort sources based on ids
         sources = range(len(self._sources))
-        for s, d in self._sources.iteritems():
+        for s, d in self._sources.items():
             sources[d['id']] = (s, d)
 
         # create the string for eacj window groups
@@ -226,12 +230,12 @@ class AnalysisPoint(object):
     @property
     def states(self):
         """Get list of states names for each source."""
-        return tuple(s[1]['state'] for s in self._sources.iteritems())
+        return tuple(s[1]['state'] for s in self._sources.items())
 
     @property
     def longest_state_ids(self):
         """Get longest combination between blind states as blinds_state_ids."""
-        states = tuple(len(s[1]['state']) - 1 for s in self._sources.iteritems())
+        states = tuple(len(s[1]['state']) - 1 for s in self._sources.items())
         if not states:
             raise ValueError('This sensor is associated with no dynamic blinds.')
 
@@ -316,7 +320,7 @@ class AnalysisPoint(object):
 
         ind = 1 if is_direct else 0
 
-        for hoy, value in izip(hoys, values):
+        for hoy, value in zip(hoys, values):
             if hoy is None:
                 continue
             try:
@@ -376,7 +380,7 @@ class AnalysisPoint(object):
 
         sid, stateid = self._create_data_structure(source, state)
 
-        for hoy, value in izip(hoys, values):
+        for hoy, value in zip(hoys, values):
             if hoy is None:
                 continue
             try:
@@ -759,7 +763,7 @@ class AnalysisPoint(object):
         udi_m = 0
         total_hour_count = len(hours)
         values = tuple(v[0] for v in self.combined_values_by_id(hours, blinds_state_ids))
-        for h, v in izip(hours, values):
+        for h, v in zip(hours, values):
             if h not in schedule:
                 total_hour_count -= 1
                 continue
@@ -796,7 +800,7 @@ class AnalysisPoint(object):
         cda = 0
         total_hour_count = len(hours)
         values = tuple(v[0] for v in self.combined_values_by_id(hours, blinds_state_ids))
-        for h, v in izip(hours, values):
+        for h, v in zip(hours, values):
             if h not in schedule:
                 total_hour_count -= 1
                 continue
@@ -849,7 +853,7 @@ class AnalysisPoint(object):
         schedule = occ_schedule or Schedule.eight_am_to_six_pm()
         ase = 0
         problematic_hours = []
-        for h, v in izip(hoys, values):
+        for h, v in zip(hoys, values):
             if h not in schedule:
                 continue
             if v > threshhold:
@@ -872,7 +876,7 @@ class AnalysisPoint(object):
         udi = 0
         udi_l = 0
         udi_m = 0
-        for h, v in izip(hours, values):
+        for h, v in zip(hours, values):
             if h not in schedule:
                 total_hour_count -= 1
                 continue
@@ -916,7 +920,7 @@ class AnalysisPoint(object):
         DA = 0
         cda = 0
         total_hour_count = len(hours)
-        for h, v in izip(hours, values):
+        for h, v in zip(hours, values):
             if h not in schedule:
                 total_hour_count -= 1
                 continue

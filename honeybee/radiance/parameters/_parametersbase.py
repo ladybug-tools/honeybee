@@ -182,14 +182,14 @@ class RadianceParameters(object):
             try:
                 self.add_additional_parameter_by_name_and_value(key, value)
             except ValueError:
-                # paramter already exists under an alias name
+                # parameter already exists under an alias name
                 # find alias name and update the value
                 _i = self._default_parameters.values().index(key)
                 alias_name = self._default_parameters.keys()[_i]
                 setattr(self, alias_name, value)
                 print("Updated value for %s to %s" % (alias_name, value))
             except Exception:
-                # paramter already exists. just update the value
+                # parameter already exists. just update the value
                 setattr(self, key, value)
                 print("Updated value for %s to %s" % (key, value))
 
@@ -224,7 +224,7 @@ class RadianceParameters(object):
 
         indices.append(len(parameters_string))
 
-        for i in xrange(0, len(indices) - 2, 2):
+        for i in range(0, len(indices) - 2, 2):
             key_start = indices[i] + 1
             key_end = indices[i + 1]
             key = parameters_string[key_start:key_end]

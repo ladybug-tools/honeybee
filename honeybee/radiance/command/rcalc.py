@@ -5,6 +5,10 @@ from ._commandbase import RadianceCommand
 from ..parameters.rcalc import RcalcParameters
 
 import os
+try:
+    basestring
+except NameError:
+    basestring = str
 
 
 class Rcalc(RadianceCommand):

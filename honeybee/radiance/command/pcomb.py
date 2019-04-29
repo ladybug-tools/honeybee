@@ -1,7 +1,7 @@
 # coding=utf-8
 """pcomb - combine Radiance pictures"""
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadianceNumber, RadianceTuple, RadianceBoolFlag
 from ..datatype import RadiancePath
 from ..parameters.pcomb import PcombParameters

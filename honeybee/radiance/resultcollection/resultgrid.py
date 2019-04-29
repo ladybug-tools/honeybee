@@ -29,9 +29,14 @@ from ..recipe.id import DIRECTRECIPEIDS
 from ..recipe.id import get_name
 from .database import Database
 import contextlib
-from itertools import izip_longest
 import os
 import sqlite3 as lite
+
+try:
+    from itertools import izip_longest as zip_longest
+except ImportError:
+    # python 3
+    from itertools import zip_longest
 
 
 class ResultGrid(object):
@@ -239,7 +244,7 @@ class ResultGrid(object):
     @staticmethod
     def grouper(iterable, n, fillvalue=None):
         args = [iter(iterable)] * n
-        return izip_longest(*args, fillvalue=fillvalue)
+        return zip_longest(*args, fillvalue=fillvalue)
 
     @staticmethod
     def average(values):

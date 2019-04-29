@@ -2,7 +2,7 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Prism2
 """
-from materialbase import RadianceMaterial
+from .materialbase import RadianceMaterial
 
 
 # TODO(): Implement the class. It's currently creates this material as generic Radiance

@@ -33,6 +33,11 @@ __revision__ = '$Revision$'
 import math
 import operator
 import types
+import sys
+
+import sys
+if (sys.version_info >= (3, 0)):
+    long = int
 
 # Some magic here.  If _use_slots is True, the classes will derive from
 # object and will define a __slots__ class variable.  If _use_slots is

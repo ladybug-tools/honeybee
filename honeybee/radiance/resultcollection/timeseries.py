@@ -9,8 +9,11 @@ from ..recipe.id import get_name
 from ..recipe.id import is_point_in_time
 from .resultgrid import ResultGrid
 
-from itertools import izip
-
+try:
+    from itertools import izip as zip
+except ImportError:
+    # python 3
+    pass
 
 class TimeSeries(ResultGrid):
 
@@ -582,7 +585,7 @@ class TimeSeries(ResultGrid):
         for sensor_values in values:
             ase = 0
             problematic_hours = []
-            for h, v in izip(occ_hours, sensor_values):
+            for h, v in zip(occ_hours, sensor_values):
                 if v > threshold:
                     ase += 1
                     problematic_hours.append(h)

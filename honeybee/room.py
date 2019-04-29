@@ -143,13 +143,13 @@ class Room(HBZone):
         u_count = int(self.width / grid_size)
         u_step = 1.0 / u_count
         u_values = tuple((i * u_step) + (grid_size / (2.0 * self.width))
-                         for i in xrange(u_count))
+                         for i in range(u_count))
 
         # find number of divisions in depth
         v_count = int(self.depth / grid_size)
         v_step = 1.0 / v_count
         v_values = tuple((i * v_step) + (grid_size / (2.0 * self.depth))
-                         for i in xrange(v_count))
+                         for i in range(v_count))
 
         z = float(height) / self.height
 

@@ -1,7 +1,7 @@
 # coding=utf-8
 """ra_bmp"""
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 import os
 from ..parameters.raBmp import RaBmpParameters
 from ..datatype import RadiancePath

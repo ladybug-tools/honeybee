@@ -1,7 +1,7 @@
 # coding=utf-8
 """getinfo - get header information from a RADIANCE file"""
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceBoolFlag
 import os
 

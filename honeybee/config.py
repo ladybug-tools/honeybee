@@ -237,13 +237,13 @@ class Folders(object):
             ValueError('No such a file as {}'.format(file_path))
 
         with open(file_path, 'rb') as cfg:
-            path = cfg.read().replace('\\\\', '/').replace('\\', '/')
+            path = os.path.normpath(cfg.read())
             try:
                 paths = json.loads(path)
             except Exception:
                 print('Failed to load paths from {}.'.format(file_path))
             else:
-                for key, p in paths.iteritems():
+                for key, p in paths.items():
                     if not key.startswith('__') and p.strip():
                         self.__defaultPath[key] = p.strip()
 

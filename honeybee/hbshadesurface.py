@@ -1,5 +1,8 @@
-from _hbanalysissurface import HBAnalysisSurface
-from surfaceproperties import SurfaceProperties, SurfaceState
+from ._hbanalysissurface import HBAnalysisSurface
+from .surfaceproperties import SurfaceProperties, SurfaceState
+import sys
+if (sys.version_info >= (3, 0)):
+    xrange = range
 
 
 class HBShadingSurface(HBAnalysisSurface):

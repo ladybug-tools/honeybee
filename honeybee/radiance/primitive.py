@@ -177,7 +177,7 @@ class Primitive(object):
                 "frac(V)", "-s", "1.1667"]}
         """
         self._values = {}
-        for line_count, value in new_values.iteritems():
+        for line_count, value in new_values.items():
             assert 0 <= line_count <= 2, ValueError(
                 'Illegal input: {}. Key values must be between 0-2.'.format(line_count)
             )
@@ -447,7 +447,7 @@ class Primitive(object):
     def to_rad_string(self, minimal=False, include_modifier=True):
         """Return full radiance definition."""
         output = [self.head_line(minimal, include_modifier).strip()]
-        for line_count in xrange(3):
+        for line_count in range(3):
             try:
                 values = (str(v) for v in self.values[line_count])
             except BaseException:

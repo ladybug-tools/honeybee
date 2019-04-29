@@ -7,9 +7,16 @@ from ..futil import write_to_file_by_name
 from .analysispoint import AnalysisPoint
 from ..exception import EmptyFileError
 import os
-from itertools import izip
+try:
+    from itertools import izip as zip
+except:
+    pass
+
 from collections import namedtuple, OrderedDict
 
+import sys
+if (sys.version_info >= (3, 0)):
+    xrange = range
 
 class AnalysisGrid(object):
     """A grid of analysis points.
@@ -69,7 +76,7 @@ class AnalysisGrid(object):
         """
         vectors = vectors or ()
         points, vectors = match_data(points, vectors, (0, 0, 1))
-        aps = tuple(AnalysisPoint(pt, v) for pt, v in izip(points, vectors))
+        aps = tuple(AnalysisPoint(pt, v) for pt, v in zip(points, vectors))
         return cls(aps, name, window_groups)
 
     @classmethod
@@ -148,7 +155,7 @@ class AnalysisGrid(object):
             return self.analysis_points[0].sources
         else:
             srcs = range(len(self._sources))
-            for name, d in self._sources.iteritems():
+            for name, d in self._sources.items():
                 srcs[d['id']] = name
                 return srcs
 
@@ -334,20 +341,20 @@ class AnalysisGrid(object):
             if mode == 0:
                 coupled_values = (
                     tuple((int(float(r)), int(float(d))) for r, d in
-                          izip(inf.next().split(), dinf.next().split()))
+                          zip(inf.next().split(), dinf.next().split()))
                     for count in xrange(end))
             elif mode == 1:
                 # binary 0-1
                 coupled_values = (tuple(
                     (int(float(1 if float(r) > 0 else 0)),
                      int(float(1 if float(d) > 0 else 0)))
-                    for r, d in izip(inf.next().split(), dinf.next().split()))
+                    for r, d in zip(inf.next().split(), dinf.next().split()))
                     for count in xrange(end))
             else:
                 # divide values by mode (useful for daylight factor calculation)
                 coupled_values = (
                     tuple((float(r) / mode, float(d) / mode) for r, d in
-                          izip(inf.next().split(), dinf.next().split()))
+                          zip(inf.next().split(), dinf.next().split()))
                     for count in xrange(end))
 
             # assign the values to points
@@ -602,7 +609,7 @@ class AnalysisGrid(object):
 
         daylight_autonomy = res[0]
         problematic_points = []
-        for pt, da in izip(self.analysis_points, daylight_autonomy):
+        for pt, da in zip(self.analysis_points, daylight_autonomy):
             if da < target_da:
                 problematic_points.append(pt)
         try:
@@ -716,7 +723,7 @@ class AnalysisGrid(object):
         problematic_points = []
         problematic_hours = []
         ase_values = []
-        for i, (success, ase, pHours) in enumerate(izip(*res)):
+        for i, (success, ase, pHours) in enumerate(zip(*res)):
             ase_values.append(ase)  # collect annual ase values for each point
             if success:
                 continue
@@ -756,7 +763,7 @@ class AnalysisGrid(object):
         # pass
         if r_files and d_files:
             # both results are available
-            for rf, df in izip(r_files, d_files):
+            for rf, df in zip(r_files, d_files):
                 rfPath, hoys, start_line, header, mode = rf
                 dfPath, hoys, start_line, header, mode = df
                 fn = os.path.split(rfPath)[-1][:-4].split("..")

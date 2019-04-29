@@ -7,7 +7,12 @@ from ladybug.epw import EPW
 from ladybug.sunpath import Sunpath
 
 import os
-from itertools import izip as zip
+
+try:
+    from itertools import izip as zip
+except ImportError:
+    # python 3
+    pass
 
 
 class Analemma(RadianceSky):

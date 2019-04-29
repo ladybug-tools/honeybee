@@ -1,15 +1,15 @@
 from abc import ABCMeta, abstractproperty
-import utilcol as util
-from hbobject import HBObject
-from surfaceproperties import SurfaceProperties, SurfaceState
-import surfacetype
-import geometryoperation as go
-from surfacetype import Floor, Wall, Window, Ceiling
-from radiance.radfile import RadFile
-from radiance.material.glass import Glass
-from radiance.material.glow import Glow
-from radiance.material.plastic import Plastic
-from radiance.material.metal import Metal
+import honeybee.utilcol as util
+from .hbobject import HBObject
+from .surfaceproperties import SurfaceProperties, SurfaceState
+import honeybee.surfacetype as surfacetype
+import honeybee.geometryoperation as go
+from .surfacetype import Floor, Wall, Window, Ceiling
+from .radiance.radfile import RadFile
+from .radiance.material.glass import Glass
+from .radiance.material.glow import Glow
+from .radiance.material.plastic import Plastic
+from .radiance.material.metal import Metal
 
 import os
 import types

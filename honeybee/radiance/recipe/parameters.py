@@ -132,29 +132,29 @@ def get_radiance_parameters_grid_based(quality, rec_type):
     elif rec_type == 1:
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in DCDEFAULTS[quality].iteritems():
+        for k, v in DCDEFAULTS[quality].items():
             setattr(dmtxpar, k, v)
 
         # sun matrix
         sunmtxpar = RcontribParameters()
-        for k, v in SMDEFAULTS.iteritems():
+        for k, v in SMDEFAULTS.items():
             setattr(sunmtxpar, k, v)
 
         return Parameters(None, None, dmtxpar, sunmtxpar)
     else:
         # view matrix
         vmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in VMDEFAULTS[quality].iteritems():
+        for k, v in VMDEFAULTS[quality].items():
             setattr(vmtxpar, k, v)
 
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in DMDEFAULTS[quality].iteritems():
+        for k, v in DMDEFAULTS[quality].items():
             setattr(dmtxpar, k, v)
 
         # sun matrix
         sunmtxpar = RcontribParameters()
-        for k, v in SMDEFAULTS.iteritems():
+        for k, v in SMDEFAULTS.items():
             setattr(sunmtxpar, k, v)
 
         return Parameters(None, vmtxpar, dmtxpar, sunmtxpar)
@@ -177,29 +177,29 @@ def get_radiance_parameters_image_based(quality, rec_type):
         # this is a place holder.
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in IMGDCDEFAULTS[quality].iteritems():
+        for k, v in IMGDCDEFAULTS[quality].items():
             setattr(dmtxpar, k, v)
 
         # sun matrix
         sunmtxpar = RcontribParameters()
-        for k, v in SMDEFAULTS.iteritems():
+        for k, v in SMDEFAULTS.items():
             setattr(sunmtxpar, k, v)
 
         return Parameters(None, None, dmtxpar, sunmtxpar)
     else:
         # view matrix
         vmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in IMGVMDEFAULTS[quality].iteritems():
+        for k, v in IMGVMDEFAULTS[quality].items():
             setattr(vmtxpar, k, v)
 
         # daylight matrix
         dmtxpar = RfluxmtxParameters(quality=quality)
-        for k, v in DMDEFAULTS[quality].iteritems():
+        for k, v in DMDEFAULTS[quality].items():
             setattr(dmtxpar, k, v)
 
         # sun matrix
         sunmtxpar = RcontribParameters()
-        for k, v in SMDEFAULTS.iteritems():
+        for k, v in SMDEFAULTS.items():
             setattr(sunmtxpar, k, v)
 
         return Parameters(None, vmtxpar, dmtxpar, sunmtxpar)

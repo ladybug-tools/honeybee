@@ -1,5 +1,5 @@
 """A honeybee surface with multiple states."""
-from hbsurface import HBSurface
+from .hbsurface import HBSurface
 
 
 class HBDynamicSurface(HBSurface):

@@ -2,7 +2,7 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Metal
 """
-from materialbase import RadianceMaterial
+from .materialbase import RadianceMaterial
 from ..datatype import RadianceNumber
 
 

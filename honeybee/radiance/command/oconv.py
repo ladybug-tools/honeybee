@@ -1,6 +1,6 @@
 # coding=utf-8
 """oconv-create an octree from a RADIANCE scene description."""
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath
 from ..parameters.oconv import OconvParameters
 

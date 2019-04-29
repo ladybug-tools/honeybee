@@ -4,6 +4,10 @@ from ... import config
 from abc import ABCMeta, abstractmethod, abstractproperty
 import os
 import subprocess
+try:
+    basestring
+except NameError:
+    basestring = str
 
 
 # TODO: Implement piping as on option
@@ -177,7 +181,7 @@ class RadianceCommand(object):
 
         # In case there is only a single file and it wasn't specified as a tuple
         # or list.
-        if isinstance(self.input_files, basestring)and \
+        if isinstance(self.input_files, basestring) and \
                 os.path.exists(self.input_files):
             return
 

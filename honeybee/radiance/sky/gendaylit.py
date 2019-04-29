@@ -1,4 +1,4 @@
-"""Calculte sky values based on Radiance's gendaylit.
+"""Calculate sky values based on Radiance's gendaylit.
 
 This code is parts of genddaylit.c whic is copyrighted by:
     Copyright (c) 1994,2006 *Fraunhofer Institut for Solar Energy Systems
@@ -15,6 +15,9 @@ You can check the source code at:
 from __future__ import division
 import math
 from datetime import datetime
+import sys
+if (sys.version_info >= (3, 0)):
+    xrange = range
 
 
 def gendaylit(altitude, month, day, hour, directirradiance, diffuseirradiance,

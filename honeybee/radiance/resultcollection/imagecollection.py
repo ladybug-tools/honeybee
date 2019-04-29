@@ -7,8 +7,12 @@ combinations using pcomb.
 from ..command.pcomb import Pcomb, PcombImage
 from collections import defaultdict, OrderedDict
 import types
-from itertools import izip
 import os
+try:
+    from itertools import izip as zip
+except ImportError:
+    # python 3
+    pass
 
 import ladybug.dt as dt
 
@@ -46,7 +50,7 @@ class ImageCollection(object):
         In most of the cases light sources are window groups.
         """
         srcs = range(len(self._sources))
-        for name, d in self._sources.iteritems():
+        for name, d in self._sources.items():
             srcs[d['id']] = name
         return srcs
 
@@ -62,7 +66,7 @@ class ImageCollection(object):
 
         # sort sources based on ids
         sources = range(len(self._sources))
-        for s, d in self._sources.iteritems():
+        for s, d in self._sources.items():
             sources[d['id']] = (s, d)
 
         # create the string for eacj window groups
@@ -111,7 +115,7 @@ class ImageCollection(object):
     def source_state_name(self, sid, stateid):
         """Get source and state name based on ids."""
         source_name = None
-        for k, v in self._sources.iteritems():
+        for k, v in self._sources.items():
             if v['id'] == sid:
                 source_name = k
                 break
@@ -129,7 +133,7 @@ class ImageCollection(object):
     @property
     def states(self):
         """Get list of states names for each source."""
-        return tuple(s[1]['state'] for s in self._sources.iteritems())
+        return tuple(s[1]['state'] for s in self._sources.items())
 
     def _create_data_structure(self, source, state):
         """Create place holders for sources and states if needed.
@@ -208,7 +212,7 @@ class ImageCollection(object):
 
         ind = index or 0
 
-        for hoy, value in izip(hoys, file_paths):
+        for hoy, value in zip(hoys, file_paths):
             if hoy is None:
                 continue
             try:
@@ -240,7 +244,7 @@ class ImageCollection(object):
 
         sid, stateid = self._create_data_structure(source, state)
 
-        for hoy, filepathCol in izip(hoys, file_paths):
+        for hoy, filepathCol in zip(hoys, file_paths):
             if hoy is None:
                 continue
             try:
@@ -359,7 +363,7 @@ class ImageCollection(object):
         else:
             results = []
             # generate the image.
-            for images, hoy, output in izip(image_col, hoys, outputs):
+            for images, hoy, output in zip(image_col, hoys, outputs):
                 fpt, fpd, fps = images
                 ti = PcombImage(input_image_file=fpt)
                 di = PcombImage(input_image_file=fpd, scaling_factor=-1)
@@ -386,7 +390,7 @@ class ImageCollection(object):
         else:
             results = []
             # generate the image.
-            for images, hoy, output in izip(image_col, hoys, outputs):
+            for images, hoy, output in zip(image_col, hoys, outputs):
                 fpt, fpd, fps = images
                 ti = PcombImage(input_image_file=fpt)
                 di = PcombImage(input_image_file=fpd, scaling_factor=-1)

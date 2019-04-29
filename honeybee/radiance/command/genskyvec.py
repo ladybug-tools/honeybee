@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from _commandbase import RadianceCommand
+from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceNumber, RadianceTuple
 from ..datatype import RadianceBoolFlag
 

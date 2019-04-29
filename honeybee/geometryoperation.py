@@ -1,5 +1,5 @@
 """Collection of methods for geometrical operations."""
-from vectormath.euclid import math, Vector3
+from .vectormath.euclid import math, Vector3
 
 
 def strip_point_list(pts):

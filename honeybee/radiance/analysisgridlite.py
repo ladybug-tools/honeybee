@@ -5,8 +5,11 @@ from ..futil import write_to_file_by_name
 from .analysispointlite import AnalysisPointLite as AnalysisPoint
 
 import os
-from itertools import izip
-
+try:
+    from itertools import izip as zip
+except:
+    # python 3
+    pass
 
 class AnalysisGridLite(object):
     """A grid of analysis points.
@@ -51,7 +54,7 @@ class AnalysisGridLite(object):
             points: A flatten list of (x, y ,z) points.
             vectors: An list of (x, y, z) for direction of test points.
         """
-        aps = tuple(AnalysisPoint(pt, v) for pt, v in izip(points, vectors))
+        aps = tuple(AnalysisPoint(pt, v) for pt, v in zip(points, vectors))
         return cls(aps, name)
 
     @classmethod
