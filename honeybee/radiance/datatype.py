@@ -452,7 +452,7 @@ class RadianceTuple(RadianceDefault):
 
             try:
                 if self._test_type:
-                    final_value = map(num_type, final_value)
+                    final_value = [num_type(x) for x in final_value]
             except TypeError:
                 msg = "The specified input for %s is %s. " \
                       "The value should be a list or a tuple." \
