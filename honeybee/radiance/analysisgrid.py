@@ -17,6 +17,9 @@ from collections import namedtuple, OrderedDict
 import sys
 if (sys.version_info >= (3, 0)):
     xrange = range
+    readmode = 'r'
+else:
+    readmode = 'rb'
 
 class AnalysisGrid(object):
     """A grid of analysis points.
@@ -100,7 +103,7 @@ class AnalysisGrid(object):
 
         ap = AnalysisPoint  # load analysis point locally for better performance
         points = []
-        with open(file_path, 'rb') as inf:
+        with open(file_path, readmode) as inf:
             for i in range(start_line):
                 next(inf)
             for count, l in enumerate(inf):
@@ -215,9 +218,9 @@ class AnalysisGrid(object):
         """Parse radiance matrix header."""
         # read the header
         for i in xrange(40):
-            line = inf.next()
+            line = next(inf)
             if line[:6] == 'FORMAT':
-                inf.next()  # pass empty line
+                next(inf)  # pass empty line
                 break  # done with the header!
             elif start_line == 0 and line[:5] == 'NROWS':
                 points_count = int(line.split('=')[-1])
@@ -272,26 +275,26 @@ class AnalysisGrid(object):
 
         st = start_line or 0
 
-        with open(file_path, 'rb') as inf:
+        with open(file_path, readmode) as inf:
             if header:
                 inf, _ = self.parse_header(inf, st, hoys, check_point_count)
 
             self.add_result_files(file_path, hoys, st, is_direct, header, mode)
 
             for i in xrange(st):
-                inf.next()
+                next(inf)
 
             end = len(self._analysis_points)
             if mode == 0:
-                values = (tuple(int(float(r)) for r in inf.next().split())
+                values = (tuple(int(float(r)) for r in next(inf).split())
                           for count in xrange(end))
             elif mode == 1:
                 # binary 0-1 (useful for solaraccess studies)
-                values = (tuple(1 if float(r) > 0 else 0 for r in inf.next().split())
+                values = (tuple(1 if float(r) > 0 else 0 for r in next(inf).split())
                           for count in xrange(end))
             else:
                 # divide values by mode (useful for daylight factor calculation)
-                values = (tuple(float(r) / mode for r in inf.next().split())
+                values = (tuple(float(r) / mode for r in next(inf).split())
                           for count in xrange(end))
 
             # assign the values to points
@@ -324,7 +327,7 @@ class AnalysisGrid(object):
 
         st = start_line or 0
 
-        with open(total_file_path, 'rb') as inf, open(direct_file_path, 'rb') as dinf:
+        with open(total_file_path, readmode) as inf, open(direct_file_path, readmode) as dinf:
             if header:
                 inf, _ = self.parse_header(inf, st, hoys, check_point_count)
                 dinf, _ = self.parse_header(dinf, st, hoys, check_point_count)
@@ -333,28 +336,28 @@ class AnalysisGrid(object):
             self.add_result_files(direct_file_path, hoys, st, True, header, mode)
 
             for i in xrange(st):
-                inf.next()
-                dinf.next()
+                next(inf)
+                dnext(inf)
 
             end = len(self._analysis_points)
 
             if mode == 0:
                 coupled_values = (
                     tuple((int(float(r)), int(float(d))) for r, d in
-                          zip(inf.next().split(), dinf.next().split()))
+                          zip(next(inf).split(), dnext(inf).split()))
                     for count in xrange(end))
             elif mode == 1:
                 # binary 0-1
                 coupled_values = (tuple(
                     (int(float(1 if float(r) > 0 else 0)),
                      int(float(1 if float(d) > 0 else 0)))
-                    for r, d in zip(inf.next().split(), dinf.next().split()))
+                    for r, d in zip(next(inf).split(), dnext(inf).split()))
                     for count in xrange(end))
             else:
                 # divide values by mode (useful for daylight factor calculation)
                 coupled_values = (
                     tuple((float(r) / mode, float(d) / mode) for r, d in
-                          zip(inf.next().split(), dinf.next().split()))
+                          zip(next(inf).split(), dnext(inf).split()))
                     for count in xrange(end))
 
             # assign the values to points
@@ -499,18 +502,18 @@ class AnalysisGrid(object):
 
                 st = start_line or 0
 
-                with open(file_path, 'rb') as inf:
+                with open(file_path, readmode) as inf:
                     if header:
                         inf, _ = self.parse_header(inf, st, hoys, False)
 
                     for i in xrange(st):
-                        inf.next()
+                        next(inf)
 
                     end = len(self._analysis_points)
 
                     # load one line at a time
                     for count in xrange(end):
-                        values = (int(float(r)) for r in inf.next().split())
+                        values = (int(float(r)) for r in next(inf).split())
                         for c, r in enumerate(
                             calculate_annual_metrics(
                                 values, hoys, da_threshhold, udi_min_max,
@@ -588,18 +591,18 @@ class AnalysisGrid(object):
 
                 st = start_line or 0
 
-                with open(file_path, 'rb') as inf:
+                with open(file_path, readmode) as inf:
                     if header:
                         inf, _ = self.parse_header(inf, st, hoys, False)
 
                     for i in xrange(st):
-                        inf.next()
+                        next(inf)
 
                     end = len(self._analysis_points)
 
                     # load one line at a time
                     for count in xrange(end):
-                        values = (int(float(r)) for r in inf.next().split())
+                        values = (int(float(r)) for r in next(inf).split())
                         for c, r in enumerate(
                             calculate_daylight_autonomy(
                                 values, hoys, da_threshhold,
@@ -698,18 +701,18 @@ class AnalysisGrid(object):
 
                 st = start_line or 0
 
-                with open(file_path, 'rb') as inf:
+                with open(file_path, readmode) as inf:
                     if header:
                         inf, _ = self.parse_header(inf, st, hoys, False)
 
                     for i in xrange(st):
-                        inf.next()
+                        next(inf)
 
                     end = len(self._analysis_points)
 
                     # load one line at a time
                     for count in xrange(end):
-                        values = (int(float(r)) for r in inf.next().split())
+                        values = (int(float(r)) for r in next(inf).split())
                         for c, r in enumerate(
                             calculate_annual_sunlight_exposure(
                                 values, hoys, threshhold, blinds_state_ids, occ_schedule,

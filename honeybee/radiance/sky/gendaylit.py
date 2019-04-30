@@ -229,7 +229,7 @@ def theta_phi_to_dzeta_gamma(theta, phi, z):
 def calc_rel_lum_perez(dzeta, gamma, z, epsilon, delta, coeff_perez):
     """Sky luminance perez model."""
     x = [[], [], [], [], []]
-    c_perez = range(5)
+    c_perez = list(range(5))
 
     # limitations for the variation of the Perez parameters */
     skyclearinf = 1.0
@@ -375,7 +375,8 @@ def glob_h_diffuse_effi_perez(skyclearness, skybrightness, sunzenith):
     if category_number == -1:
         ValueError(
             "Warning: sky clearness (= %.3f) too high,"
-            " printing error sky\n".format(skyclearness))
+            " printing error sky\n" % skyclearness
+        )
 
     value = a[category_number] + b[category_number] * atm_preci_water + \
         c[category_number] * math.cos(sunzenith * math.pi / 180) + \
@@ -440,7 +441,7 @@ def check_input_values(directilluminance, diffuseilluminance, altitude):
 def coeff_lum_perez(z, epsilon, delta, coeff_perez):
     """Coefficients for the sky luminance perez model."""
     x = [[], [], [], [], []]
-    c_perez = range(5)
+    c_perez = list(range(5))
 
     # limitations for the variation of the Perez parameters */
     skyclearinf = 1.0

@@ -4,6 +4,10 @@
 from ._commandbase import RadianceCommand
 from ..datatype import RadiancePath, RadianceBoolFlag
 import os
+try:
+    basestring
+except NameError:
+    basestring = str
 
 
 class Getinfo(RadianceCommand):

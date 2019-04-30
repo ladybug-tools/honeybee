@@ -10,9 +10,10 @@ import os
 
 try:
     from itertools import izip as zip
+    writemode = 'wb'
 except ImportError:
     # python 3
-    pass
+    writemode = 'w'
 
 
 class Analemma(RadianceSky):
@@ -206,7 +207,7 @@ class Analemma(RadianceSky):
         fp = os.path.join(working_dir, self.analemma_file)  # analemma file (geo and mat)
         sfp = os.path.join(working_dir, self.sunlist_file)  # modifier list
 
-        with open(fp, 'wb') as outf, open(sfp, 'wb') as outm:
+        with open(fp, writemode) as outf, open(sfp, writemode) as outm:
             for hoy, vector in zip(self.sun_up_hours, self.sun_vectors):
                 # use minute of the year to name sun positions
                 moy = int(round(hoy * 60))
@@ -217,7 +218,7 @@ class Analemma(RadianceSky):
 
     def duplicate(self):
         """Duplicate this class."""
-        return Analemma(self.sun_vectors)
+        return Analemma(self.sun_vectors, self.sun_up_hours)
 
     def to_rad_string(self):
         """Get the radiance command line as a string."""
@@ -262,7 +263,7 @@ class AnalemmaReversed(Analemma):
         fp = os.path.join(working_dir, self.analemma_file)  # analemma file (geo and mat)
         sfp = os.path.join(working_dir, self.sunlist_file)  # modifier list
 
-        with open(fp, 'wb') as outf, open(sfp, 'wb') as outm:
+        with open(fp, writemode) as outf, open(sfp, writemode) as outm:
             for hoy, vector in zip(self.sun_up_hours, self.sun_vectors):
                 # use minute of the year to name sun positions
                 moy = int(round(hoy * 60))

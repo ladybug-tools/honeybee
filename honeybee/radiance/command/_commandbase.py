@@ -114,7 +114,7 @@ class RadianceCommand(object):
         for f in self.input_files:
             # this is for oconv where it has list of files which are not
             # RadiancePath
-            if isinstance(f, (str, unicode)):
+            if isinstance(f, (str, bytes)):
                 continue
 
             assert hasattr(f, 'normpath'), \

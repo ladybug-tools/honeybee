@@ -576,7 +576,7 @@ class Database(object):
                 # remove header
                 for line in inf:
                     if line.startswith('FORMAT='):
-                        inf.next()  # empty line
+                        next(inf)  # empty line
                         break
                     elif line.startswith('NCOLS='):
                         ncols = int(line.split('=')[-1])
@@ -882,7 +882,7 @@ class Database(object):
                     # remove header
                     for line in inf:
                         if line.startswith('FORMAT='):
-                            inf.next()  # empty line
+                            next(inf)  # empty line
                             break
                         elif line.startswith('NCOLS='):
                             ncols = int(line.split('=')[-1])
@@ -996,7 +996,7 @@ class Database(object):
         with open(mtx_file) as inf:
             for line in inf:
                 if line.startswith('FORMAT='):
-                    inf.next()  # empty line
+                    next(inf)  # empty line
                     break
                 elif line.startswith('NCOMP='):
                     ncomp = int(line.split('=')[-1])
