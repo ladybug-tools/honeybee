@@ -1,33 +1,34 @@
 language: python
 
+python:
+- "2.7"
+- "3.6"
+
+before_install:
+# install radiance
+- wget https://github.com/NREL/Radiance/releases/download/5.2.1/radiance-5.2.91bcc23df3-Linux.tar.gz
+- tar -xzvf radiance-5.2.91bcc23df3-Linux.tar.gz
+- sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/bin/. /usr/local/bin
+- sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
+- sudo apt-get install libtiff5
+
 install:
- - pip install -r dev-requirements.txt
+- pip install -r dev-requirements.txt
+
+script:
+- python -m pytest --cov=. tests/
+
+after_success:
+- coverage report
+- coveralls
 
 jobs:
   include:
-  - stage: test
-    before_install:
-    # install radiance
-    - wget https://github.com/NREL/Radiance/releases/download/5.2.1/radiance-5.2.91bcc23df3-Linux.tar.gz
-    - tar -xzvf radiance-5.2.91bcc23df3-Linux.tar.gz
-    - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/bin/. /usr/local/bin
-    - sudo cp -a radiance-5.2.91bcc23df3-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
-    - sudo apt-get install libtiff5
-    python:
-    - "2.7"
-    - "3.6"
-    script:
-    - python -m pytest --cov=. tests/
-    after_success:
-      - coverage report
-      - coveralls
-
   - stage: deploy
+    python: "3.6"
     if: branch = master AND (NOT type IN (pull_request))
     before_install:
     - npm i -g npm@6.6.0
-    python:
-    - "3.6"
     install:
     - pip install -r dev-requirements.txt
     - npm install @semantic-release/exec
