@@ -55,7 +55,7 @@ class BSDF(RadianceMaterial):
         self.thickness = thickness or 0
 
         max_ln_count = 2000
-        with open(self.xmlfile, 'rb') as inf:
+        with open(self.xmlfile, 'r') as inf:
             for count, line in enumerate(inf):
                 if line.strip().startswith('<IncidentDataStructure>'):
                     # get data structure
@@ -71,7 +71,7 @@ class BSDF(RadianceMaterial):
             self._angle_basis = 'TensorTree'
         elif data_structure.lower() == 'columns':
             # look for AngleBasisName
-            with open(self.xmlfile, 'rb') as inf:
+            with open(self.xmlfile, 'r') as inf:
                 for i in range(count):
                     next(inf)
                 for count, line in enumerate(inf):
@@ -129,7 +129,7 @@ class BSDF(RadianceMaterial):
         modifier = cls._analyze_json_input(cls.__name__.lower(), json_data)
 
         return cls(
-            xml_data=json_data["xml_data"],
+            xmlfile=json_data["xml_data"],
             name=json_data["name"],
             up_orientation=json_data["up_orientation"],
             thickness=json_data["thickness"],
@@ -159,7 +159,7 @@ class BSDF(RadianceMaterial):
             'to_json is not currently implemented for BSDF materials.')
 
         return {
-            'xml_data': self.xml_data,
+            'xml_data': self.xmlfile,
             'name': self.name,
             'up_orientation': self.up_orientation,
             'thickness': self.thickness,

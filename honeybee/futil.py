@@ -3,6 +3,15 @@ import os
 import shutil
 import honeybee.config as config
 
+import sys
+
+if (sys.version_info < (3, 0)):
+    readmode = 'rb'
+    writemode = 'wb'
+else:
+    readmode = 'r'
+    writemode = 'w'
+
 
 def normspace(path):
     """Norm white spaces in path.
@@ -103,7 +112,7 @@ def write_to_file_by_name(folder, fname, data, mkdir=False):
 
     file_path = os.path.join(folder, fname)
 
-    with open(file_path, "wb") as outf:
+    with open(file_path, writemode) as outf:
         try:
             outf.write(str(data))
             return file_path
@@ -164,7 +173,7 @@ def bat_to_sh(file_path):
     WARNING: This is a very simple function and doesn't handle any edge cases.
     """
     sh_file = file_path[:-4] + '.sh'
-    with open(file_path, 'rb') as inf, open(sh_file, 'wb') as outf:
+    with open(file_path, readmode) as inf, open(sh_file, writemode) as outf:
         outf.write('#!/usr/bin/env bash\n\n')
         for line in inf:
             # pass the path lines, etc to get to the commands

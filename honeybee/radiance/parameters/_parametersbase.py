@@ -48,7 +48,7 @@ class RadianceParameters(object):
     @property
     def parameters(self):
         """Return list of current parameters."""
-        return set(self._default_parameters.keys() + self._additional_parameters)
+        return set(list(self._default_parameters.keys()) + self._additional_parameters)
 
     @property
     def default_parameters(self):
@@ -111,8 +111,10 @@ class RadianceParameters(object):
             del self._default_parameters[name]
             print("Removed %s from default parameters." % str(name))
         elif name in self._default_parameters.values():
-            _i = self._default_parameters.values().index(name)
-            alias_name = self._default_parameters.keys()[_i]
+            for k, v in self._default_parameters.items():
+                if v == name:
+                    alias_name = k
+                    break
             del self._default_parameters[alias_name]
             print("Removed %s from default parameters." % str(alias_name))
         elif name in self.additional_parameters:
@@ -143,8 +145,10 @@ class RadianceParameters(object):
 
         # check if the name is in default values change the name to the alias
         if name in self._default_parameters.values():
-            i = self._default_parameters.values().index(name)
-            alias_name = self._default_parameters.keys()[i]
+            for k, v in self._default_parameters.items():
+                if v == name:
+                    alias_name = k
+                    break
             if name != alias_name:
                 raise ValueError(
                     "'{0}' is already set as an attribute by the name of {1}. "
@@ -184,8 +188,10 @@ class RadianceParameters(object):
             except ValueError:
                 # parameter already exists under an alias name
                 # find alias name and update the value
-                _i = self._default_parameters.values().index(key)
-                alias_name = self._default_parameters.keys()[_i]
+                for k, v in self._default_parameters.items():
+                    if v == key:
+                        alias_name = k
+                        break
                 setattr(self, alias_name, value)
                 print("Updated value for %s to %s" % (alias_name, value))
             except Exception:

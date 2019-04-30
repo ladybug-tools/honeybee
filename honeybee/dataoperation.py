@@ -55,8 +55,8 @@ def match_points_and_vectors(pts_t, vec_t):
         pts: Nested list of points
         vectors: Nested list of vectors
     """
-    pts = range(len(pts_t))
-    vec = range(len(pts_t))
+    pts = list(range(len(pts_t)))
+    vec = list(range(len(pts_t)))
 
     for i, p in enumerate(pts_t):
         try:
@@ -88,8 +88,8 @@ def match_data(guide, follower, none_value=(0, 0, 1)):
         follower: Short list.
         noneValue: Place holder for alternative values for None values in shortlist.
     """
-    temp_pts = range(len(guide))
-    temp_vectors = range(len(guide))
+    temp_pts = list(range(len(guide)))
+    temp_vectors = list(range(len(guide)))
 
     for c, dp in enumerate(guide):
         if dp is not None:
