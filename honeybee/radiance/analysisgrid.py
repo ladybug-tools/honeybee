@@ -337,27 +337,27 @@ class AnalysisGrid(object):
 
             for i in xrange(st):
                 next(inf)
-                dnext(inf)
+                next(dinf)
 
             end = len(self._analysis_points)
 
             if mode == 0:
                 coupled_values = (
                     tuple((int(float(r)), int(float(d))) for r, d in
-                          zip(next(inf).split(), dnext(inf).split()))
+                          zip(next(inf).split(), next(dinf).split()))
                     for count in xrange(end))
             elif mode == 1:
                 # binary 0-1
                 coupled_values = (tuple(
                     (int(float(1 if float(r) > 0 else 0)),
                      int(float(1 if float(d) > 0 else 0)))
-                    for r, d in zip(next(inf).split(), dnext(inf).split()))
+                    for r, d in zip(next(inf).split(), next(dinf).split()))
                     for count in xrange(end))
             else:
                 # divide values by mode (useful for daylight factor calculation)
                 coupled_values = (
                     tuple((float(r) / mode, float(d) / mode) for r, d in
-                          zip(next(inf).split(), dnext(inf).split()))
+                          zip(next(inf).split(), next(dinf).split()))
                     for count in xrange(end))
 
             # assign the values to points
