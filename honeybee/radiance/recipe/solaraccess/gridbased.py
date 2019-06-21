@@ -13,7 +13,7 @@ from ....hbsurface import HBSurface
 
 from ladybug.sunpath import Sunpath
 from ladybug.location import Location
-from ladybug.legendparameters import LegendParameters
+from ladybug.legend import LegendParameters
 from ladybug.color import Colorset
 
 import os

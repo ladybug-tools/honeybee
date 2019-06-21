@@ -2,6 +2,7 @@ import unittest
 from honeybee.radiance.parameters._advancedparametersbase import \
     AdvancedRadianceParameters
 from honeybee.radiance.parameters._frozen import frozen
+import os
 
 
 class AdvancedParametersTestCase(unittest.TestCase):
@@ -37,7 +38,7 @@ class AdvancedParametersTestCase(unittest.TestCase):
     def test_default_values(self):
         """Make sure default values are set correctly."""
         for v in ('-ab 20', '-of', '-c 0 0 254', '+I', 'tests/room/testrun/test.wea'):
-            assert v in self.rp.to_rad_string()
+            assert os.path.normpath(v) in self.rp.to_rad_string()
 
     # test for assertion and exceptions
     def test_assertions_exceptions(self):
@@ -52,7 +53,7 @@ class AdvancedParametersTestCase(unittest.TestCase):
         self.rp.c = (0, 0, 0)
         self.rp.I = False
         for v in ('-ab 10', '-od', '-c 0 0 0', '-I', 'tests/room/testrun/test.wea'):
-            assert v in self.rp.to_rad_string()
+            assert os.path.normpath(v) in self.rp.to_rad_string()
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@
 import unittest
 import ast
 import pytest
+import os
 
 from honeybee.radiance.material.bsdf import BSDF
 
@@ -27,7 +28,8 @@ class MatrialBSDFTestCase(unittest.TestCase):
         # bsdf with no function
         bsdf_tuple = tuple(bsdf.to_rad_string().split())
         assert tuple(map(self.safe_cast_float, bsdf_tuple)) == \
-            ('void', 'BSDF', 'clear', 6, 0.000, 'tests/assets/clear.xml',
+            ('void', 'BSDF', 'clear', 6, 0.000,
+            'tests{0}assets{0}clear.xml'.format(os.sep),
              0.010, 0.010, 1.000, '.', 0, 0)
 
     def test_bsdf_from_string(self):
@@ -44,7 +46,8 @@ class MatrialBSDFTestCase(unittest.TestCase):
         # bsdf with no function
         bsdf_tuple = tuple(bsdf.to_rad_string().split())
         assert tuple(map(self.safe_cast_float, bsdf_tuple)) == \
-            ('void', 'BSDF', 'clear', 6, 0.000, 'tests/assets/clear.xml',
+            ('void', 'BSDF', 'clear', 6, 0.000,
+            'tests{0}assets{0}clear.xml'.format(os.sep),
              0.010, 0.010, 1.000, '.', 0, 0)
 
     def test_tensortree_bsdf(self):
