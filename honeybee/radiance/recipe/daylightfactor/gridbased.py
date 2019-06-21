@@ -4,7 +4,7 @@ from ...sky.certainIlluminance import CertainIlluminanceLevel
 from ...parameters.rtrace import RtraceParameters
 from ...analysisgrid import AnalysisGrid
 from ladybug.dt import DateTime
-from ladybug.legendparameters import LegendParameters
+from ladybug.legend import LegendParameters
 from ....hbsurface import HBSurface
 
 

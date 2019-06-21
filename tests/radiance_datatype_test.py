@@ -1,6 +1,7 @@
 import unittest
 from honeybee.radiance.datatype import RadiancePath, RadianceNumber, \
     RadianceBoolFlag, RadianceTuple, RadianceValue
+import os
 
 
 class DataTypeTestCase(unittest.TestCase):
@@ -79,11 +80,12 @@ class DataTypeTestCase(unittest.TestCase):
         """Make sure default values are set correctly."""
         assert self.rad_with_def.to_rad_string() == \
             "-ab 2 -ad 5  -I -C 250 250 250 -of > " \
-            "tests/room/testrun/test.wea"
+            "tests{0}room{0}testrun{0}test.wea".format(os.sep)
         assert self.rad_with_def.ab == 2
         assert self.rad_with_def.ad == 5
         assert self.rad_with_def.c == (250, 250, 250)
-        assert self.rad_with_def.wea_file == "tests/room/testrun/test.wea"
+        assert os.path.normpath(str(self.rad_with_def.wea_file)) == \
+            os.path.normpath("tests/room/testrun/test.wea")
         assert bool(self.rad_with_def.i) is False
         assert bool(self.rad_with_def.d) is False
         assert self.rad_with_def.o == 'f'
@@ -121,7 +123,8 @@ class DataTypeTestCase(unittest.TestCase):
         assert self.rad.c == (0, 0, 0)
 
         self.rad.wea_file = "tests/room/testrun/test.wea"
-        assert self.rad.wea_file == "tests/room/testrun/test.wea"
+        assert os.path.normpath(str(self.rad.wea_file)) == \
+            os.path.normpath("tests/room/testrun/test.wea")
 
         self.rad.d = True
         assert bool(self.rad.d) is True
@@ -161,7 +164,7 @@ class DataTypeTestCase(unittest.TestCase):
         assert self.rad_with_def.ad.to_rad_string() == '-ad 5'
         assert self.rad_with_def.c.to_rad_string() == '-C 250 250 250'
         assert self.rad_with_def.wea_file.to_rad_string() == \
-            "tests/room/testrun/test.wea"
+            os.path.normpath("tests/room/testrun/test.wea")
         assert self.rad_with_def.i.to_rad_string() == '-I'
         assert self.rad_with_def.d.to_rad_string() == ''
         assert self.rad_with_def.o.to_rad_string() == '-of'

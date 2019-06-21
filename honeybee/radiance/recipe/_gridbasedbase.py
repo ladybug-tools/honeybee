@@ -10,7 +10,7 @@ from ...futil import write_to_file
 from ...utilcol import random_name
 from ._recipebase import AnalysisRecipe
 
-from ladybug.legendparameters import LegendParameters
+from ladybug.legend import LegendParameters
 
 import os
 
