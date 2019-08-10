@@ -2,11 +2,12 @@
 """Descriptors, factory classes etc for the Radiance library."""
 import warnings
 import os
-from collections import Iterable
 try:
     basestring
+    from collections import Iterable
 except NameError:
     basestring = str
+    from typing import Iterable
 
 __all__ = ['RadiancePath', 'RadianceNumber', 'RadianceBoolFlag',
            'RadianceTuple', 'RadianceValue', 'RadianceReadOnly']

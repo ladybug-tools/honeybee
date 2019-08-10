@@ -18,7 +18,7 @@ IDS = {
     'direct_sun': 200001,
     'two_phase': 200002,
     'three_phase': 200003,
-    'annual_radition': 200004,
+    'annual_radiation': 200004,
     'five_phase': 200005,
     'direct_reflection': 200006,
 }
