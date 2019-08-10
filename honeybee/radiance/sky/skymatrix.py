@@ -22,7 +22,7 @@ class SkyMatrix(RadianceSky):
     """
 
     __slots__ = ('_wea', 'hoys', '_sky_type', '_sky_matrixParameters',
-                 '_mode', 'suffix', 'north')
+                 '_mode', 'suffix')
 
     def __init__(self, wea, sky_density=1, north=0, hoys=None, mode=0, suffix=None):
         """Create sky."""
@@ -30,8 +30,8 @@ class SkyMatrix(RadianceSky):
         self.wea = wea
         self.hoys = hoys or wea.hoys
         if not hoys and wea.timestep == 1:
-            # adjut for half an hour so all the annual metric methods work for now
-            # this is a design issue in Honeybe and should be fixed by removing defulting
+            # adjust for half an hour so all the annual metric methods work for now
+            # this is a design issue in Honeybee and should be fixed by removing defulting
             # values to range(8760)
             self.hoys = [hour - 0.5 for hour in wea.hoys]
         sky_density = sky_density or 1
@@ -54,7 +54,7 @@ class SkyMatrix(RadianceSky):
             "suffix": string //Suffix for sky matrix
             }
         """
-        wea = Wea.from_json(rec_json["wea"])
+        wea = Wea.from_dict(rec_json["wea"])
         return cls(wea, rec_json["sky_density"], rec_json["north"],
                    rec_json["hoys"], rec_json["mode"], rec_json["suffix"])
 
