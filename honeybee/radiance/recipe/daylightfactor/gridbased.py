@@ -104,7 +104,7 @@ class GridBased(PITGridBased):
     @property
     def legend_parameters(self):
         """Legend parameters for daylight factor analysis."""
-        return LegendParameters([0, 100])
+        return LegendParameters(0, 100)
 
     def results(self):
         """Return results for this analysis."""
