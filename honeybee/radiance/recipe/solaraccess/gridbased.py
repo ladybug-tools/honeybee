@@ -240,7 +240,7 @@ class SolarAccessGridBased(GenericGridBased):
     def legend_parameters(self):
         """Legend parameters for solar access analysis."""
         col = Colorset.ecotect()
-        return LegendParameters([0, 'max'], colors=col)
+        return LegendParameters(0, None, colors=col)
 
     def write(self, target_folder, project_name='untitled', header=True,
               transpose=False):

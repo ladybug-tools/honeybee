@@ -95,7 +95,7 @@ class GenericGridBased(AnalysisRecipe):
     @property
     def legend_parameters(self):
         """Legend parameters for grid based analysis."""
-        return LegendParameters([0, 3000])
+        return LegendParameters(0, 3000)
 
     @staticmethod
     def analysis_grids_from_points_and_vectors(point_groups, vector_groups=None):
