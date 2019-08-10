@@ -157,7 +157,7 @@ class AnalysisGrid(object):
         if not self._sources:
             return self.analysis_points[0].sources
         else:
-            srcs = range(len(self._sources))
+            srcs = list(range(len(self._sources)))
             for name, d in self._sources.items():
                 srcs[d['id']] = name
                 return srcs

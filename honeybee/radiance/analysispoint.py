@@ -137,7 +137,7 @@ class AnalysisPoint(object):
 
         In most of the cases light sources are window groups.
         """
-        srcs = range(len(self._sources))
+        srcs = list(range(len(self._sources)))
         for name, d in self._sources.items():
             srcs[d['id']] = name
         return srcs
@@ -155,7 +155,7 @@ class AnalysisPoint(object):
         st = '....State {}: {}\n'
 
         # sort sources based on ids
-        sources = range(len(self._sources))
+        sources = list(range(len(self._sources)))
         for s, d in self._sources.items():
             sources[d['id']] = (s, d)
 
@@ -687,7 +687,7 @@ class AnalysisPoint(object):
               '\n'.join(str(ids) for ids in comb_ids)))
 
         # collect the results for each combination
-        results = range(len(comb_ids))
+        results = list(range(len(comb_ids)))
         for count, state in enumerate(comb_ids):
             results[count] = tuple(self.combined_values_by_id(hoys, [state] * len(hoys)))
 
@@ -731,7 +731,7 @@ class AnalysisPoint(object):
             occ_schedule: An annual occupancy schedule (default: Office Schedule).
 
         Returns:
-            Daylight autonomy, Continious daylight autonomy, Useful daylight illuminance,
+            Daylight autonomy, Continuous daylight autonomy, Useful daylight illuminance,
             Less than UDI, More than UDI
         """
         hours = self.hoys
@@ -782,7 +782,7 @@ class AnalysisPoint(object):
 
     def daylight_autonomy(self, da_threshhold=None, blinds_state_ids=None,
                           occ_schedule=None):
-        """Calculate daylight autonomy and continious daylight autonomy.
+        """Calculate daylight autonomy and continuous daylight autonomy.
 
         Args:
             da_threshhold: Threshhold for daylight autonomy in lux (default: 300).
@@ -791,7 +791,7 @@ class AnalysisPoint(object):
             occ_schedule: An annual occupancy schedule.
 
         Returns:
-            Daylight autonomy, Continious daylight autonomy
+            Daylight autonomy, Continuos daylight autonomy
         """
         da_threshhold = da_threshhold or 300
         hours = self.hoys
@@ -820,7 +820,7 @@ class AnalysisPoint(object):
         """Annual Solar Exposure (ASE).
 
         Calculate number of hours that this point is exposed to more than 1000lux
-        of direct sunlight. The point meets the traget in the number of hours is
+        of direct sunlight. The point meets the target in the number of hours is
         less than 250 hours per year.
 
         Args:
@@ -903,7 +903,7 @@ class AnalysisPoint(object):
     @staticmethod
     def _calculate_daylight_autonomy(
             values, hoys, da_threshhold=None, blinds_state_ids=None, occ_schedule=None):
-        """Calculate daylight autonomy and continious daylight autonomy.
+        """Calculate daylight autonomy and continuous daylight autonomy.
 
         Args:
             da_threshhold: Threshhold for daylight autonomy in lux (default: 300).
@@ -912,7 +912,7 @@ class AnalysisPoint(object):
             occ_schedule: An annual occupancy schedule.
 
         Returns:
-            Daylight autonomy, Continious daylight autonomy
+            Daylight autonomy, Continuous daylight autonomy
         """
         da_threshhold = da_threshhold or 300
         hours = hoys
