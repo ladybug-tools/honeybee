@@ -80,7 +80,7 @@ class Room(HBZone):
     @property
     def height(self):
         """Room height."""
-        return self._width
+        return self._height
 
     @height.setter
     def height(self, value):
@@ -263,4 +263,4 @@ class Room(HBZone):
             'front_wall', sorted_points=(self.pt2, self.pt3, self.pt7, self.pt6))
 
         self.left_wall = HBSurface(
-            'left_wall', sorted_points=(self.pt0, self.pt4, self.pt7, self.pt3))
+            'left_wall', sorted_points=(self.pt3, self.pt0, self.pt4, self.pt7))
