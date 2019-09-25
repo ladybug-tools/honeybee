@@ -68,6 +68,18 @@ projects:
             - todo
             - in progress
 
+  - name: Hacktoberfest
+    type: org
+    issue_type: issue
+    label: hacktoberfest
+    columns: 
+      - name: honeybee
+        labels:
+          - hacktoberfest
+      - name: done
+        labels:
+          - done
+
 labels:
 - name: honeybee
   color: "#FFFB00"
@@ -84,3 +96,6 @@ labels:
   color: "#EDEDED"
 - name: done
   color: "#EDEDED"
+
+- name: hacktoberfest
+  color: "#802AC1"
