@@ -85,3 +85,6 @@ result = rp.results()[0]
 for value in result.combined_value_by_id():
     print('illuminance value: %d lux' % value[0])
 ```
+
+## License
+[GNU General Publice License](https://github.com/ladybug-tools/honeybee/blob/master/LICENSE)
