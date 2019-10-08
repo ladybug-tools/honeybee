@@ -17,3 +17,6 @@ tox.ini
 /.cache
 /.vscode
 venv
+
+# for users on a Mac system
+.DS_Store
