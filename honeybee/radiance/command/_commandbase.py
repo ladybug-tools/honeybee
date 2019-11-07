@@ -53,7 +53,8 @@ class RadianceCommand(object):
 
     @radbin_path.setter
     def radbin_path(self, path):
-        self.__check_executable(radbin_path=path, raise_exception=True)
+        if os.name == 'nt':
+            self.__check_executable(radbin_path=path, raise_exception=True)
         # change the path in config so user need to set it up once in a single script
         config.radbin_path = path
 
@@ -67,7 +68,8 @@ class RadianceCommand(object):
 
     @radlib_path.setter
     def radlib_path(self, path):
-        self.__check_libs(radlib_path=path, raise_exception=True)
+        if os.name == 'nt':
+            self.__check_libs(radlib_path=path, raise_exception=True)
         # change the path in config so user need to set it up once in a single script
         config.radlib_path = path
 
