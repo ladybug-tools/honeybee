@@ -25,10 +25,10 @@ pip install lbt-honeybee
 - [x] Support annual daylight simulation - daylight coefficient method [Nov 2016].
 - [x] Support three-phase daylight simulation [Dec 2016].
 - [x] Support five-phase daylight simulation [Aug 2017].
-- [x] Fix PEP 8 issues [Dec 2017]
-- [x] Code documentation [Dec 2017]
-- [ ] Provide cloud service support for daylight simulation.
-- [ ] Basic EnergyPlus integration.
+- [x] Fix PEP 8 issues [Dec 2017].
+- [x] Code documentation [Dec 2017].
+- [ ] Provide cloud service support for daylight simulation [Under progress]
+- [x] Basic EnergyPlus integration [Nov 2019]
 - [ ] Support basic HVAC modeling.
 - [ ] Full OpenStudio integration.
 
@@ -74,8 +74,10 @@ analysis_grid = room.generate_test_points(grid_size=0.5, height=0.75)
 rp = GridBased(sky=sky, analysis_grids=(analysis_grid,), simulation_type=0,
                hb_objects=(room,))
 
-# write and run the analysis
-batch_file = rp.write(target_folder=r'c:\ladybug', project_name='room')
+# write simulation to folder
+batch_file = rp.write(target_folder='.', project_name='room')
+
+# run the simulation
 rp.run(batch_file, debug=False)
 
 # results - in this case it will be an analysis grid

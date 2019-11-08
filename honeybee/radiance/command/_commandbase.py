@@ -151,7 +151,6 @@ class RadianceCommand(object):
                     os.path.join(str(radbin_path), self.__class__.__name__.lower()))
 
         if not os.path.isfile(__executable):
-            # FIX: Heroku Permission Patch
             print('Executable: {}'.format(__executable))
             try:
                 st = os.stat(__executable)

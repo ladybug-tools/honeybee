@@ -147,7 +147,7 @@ class AnalysisRecipe(object):
                 'Scene should be an instance from the type Scene.'.format(sc)
             self._scene = sc
 
-    def header(self, target_folder, includ_rad_path=True):
+    def header(self, target_folder, include_rad_path=True):
         """Get the header for bat file.
 
         The header changes the path into project path and also add lines to set PATH and
@@ -157,15 +157,19 @@ class AnalysisRecipe(object):
 
         Args:
             target_folder: Full path to working directory.
-            includ_rad_path: At the Boolean to True to include path to radiance
+            include_rad_path: At the Boolean to True to include path to radiance
                 installation folder.
         """
-        dir_line = "%s\ncd %s\n" % (os.path.splitdrive(target_folder)[0], target_folder)
-
-        if includ_rad_path:
-            return '\n'.join((get_radiance_path_lines(), dir_line))
-        else:
+        dir_line = "%s\ncd %s\n" % (
+            os.path.splitdrive(target_folder)[0],
+            target_folder
+        )
+        if os.name == 'nt':
+            if include_rad_path:
+                return '\n'.join((get_radiance_path_lines(), dir_line))
             return dir_line
+        else:
+            return '\n'.join(('#!/usr/bin/env bash\n\n', dir_line))
 
     # TODO: Get commands without running write method.
     def to_rad_string(self):
@@ -227,18 +231,10 @@ class AnalysisRecipe(object):
             with open(command_file, "a") as bf:
                 bf.write("\npause\n")
 
+        # change chmode for exectable file
+        st = os.stat(command_file)
+        os.chmod(command_file, st.st_mode | 0o111)
         subprocess.call(command_file, env=env)
-        # print('Command RUN: {}'.format(command_file))
-        # process = subprocess.Popen(command_file,
-        #                            stdout=subprocess.PIPE,
-        #                            stderr=subprocess.PIPE,
-        #                            shell=True)
-        #
-        # proc_stdout, errmsg = process.communicate()
-        # print('Subprocess Log Results:')
-        # print(proc_stdout)
-        # print('ERRORS:\n{}'.format(errmsg))
-
         self._isCalculated = True
         return True
 
