@@ -102,7 +102,7 @@ class RadianceCommand(object):
 
         Args:
             rad_string: Current rad_string to help user better understand the
-                erorr (Default: "")
+                error (Default: "")
         """
         # make sure wea file is provided
         _msg = "To generate a valid %s command you need to specify the path" \
@@ -151,16 +151,15 @@ class RadianceCommand(object):
                     os.path.join(str(radbin_path), self.__class__.__name__.lower()))
 
         if not os.path.isfile(__executable):
-            print('Executable: {}'.format(__executable))
-            try:
-                st = os.stat(__executable)
-                os.chmod(__executable, st.st_mode | 0o111)
-            except Exception as errmsg:
-                print('Could not CHMOD executable: {}'.format(errmsg))
-                if raise_exception:
-                    raise ValueError('Could not CHMOD executable: {}'.format(errmsg))
-            else:
-                print('Added CHMOD to executable')
+            return
+
+        try:
+            st = os.stat(__executable)
+            os.chmod(__executable, st.st_mode | 0o111)
+        except Exception as errmsg:
+            print('Could not CHMOD executable: {}'.format(errmsg))
+            if raise_exception:
+                raise ValueError('Could not CHMOD executable: {}'.format(errmsg))
 
     def __check_libs(self, radlib_path=None, raise_exception=False):
         """Check if path to libraries is set correctly."""
