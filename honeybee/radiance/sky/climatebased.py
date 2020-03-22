@@ -2,6 +2,7 @@ from ._pointintimesky import PointInTimeSky
 from ..command.gendaylit import Gendaylit
 
 from ladybug.location import Location
+from ladybug.wea import Wea
 
 
 class ClimateBased(PointInTimeSky):
@@ -59,7 +60,7 @@ class ClimateBased(PointInTimeSky):
     @classmethod
     def from_wea(cls, wea, month, day, hour, north=0, suffix=None):
         """Create sky from wea file."""
-        assert hasattr(wea, 'isWea'), \
+        assert isinstance(wea, Wea), \
             TypeError('Expected WEA not {}.'.format(type(wea)))
 
         # get radiation values

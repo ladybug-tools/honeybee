@@ -20,7 +20,7 @@ class SunMatrixTestCase(unittest.TestCase):
         epw_file = r"./tests/room/epws/USA_MA_Boston-City.WSO_TMY.epw"
         sm = SunMatrix.from_epw_file(epw_file)
         assert sm.location.city == 'Boston'
-        assert len(sm.sun_up_hours) == 4426
+        assert len(sm.sun_up_hours) == 4430
 
     def test_init(self):
         location = Location()
