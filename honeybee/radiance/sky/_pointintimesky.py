@@ -43,7 +43,7 @@ class PointInTimeSky(RadianceSky):
         RadianceSky.__init__(self)
 
         self.location = location or Location()
-        assert hasattr(self.location, 'isLocation'), \
+        assert isinstance(self.location, Location), \
             '{} is not a Ladybug Location.'.format(self.location)
         self._datetime = DateTime(month, day, hour)
         self.north = float(north % 360)

@@ -77,7 +77,7 @@ class SunlighthoursTestCase(unittest.TestCase):
             ag = slh.results()[0]
             for sensor in ag:
                 value = sum(v[0] for v in sensor.combined_values_by_id(sensor.hoys))
-                assert value == 978
+                assert value == 980
 
     def test_cls_method_hoy(self):
         """Make sure default values are set correctly."""

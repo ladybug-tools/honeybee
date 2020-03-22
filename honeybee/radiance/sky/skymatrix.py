@@ -87,7 +87,7 @@ class SkyMatrix(RadianceSky):
 
     @wea.setter
     def wea(self, w):
-        assert hasattr(w, 'isWea'), \
+        assert isinstance(w, Wea), \
             TypeError('wea must be a WEA object not a {}'.format(type(w)))
         self._wea = w
 
