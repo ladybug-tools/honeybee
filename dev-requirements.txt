@@ -8,5 +8,5 @@ sphinxcontrib-fulltoc==1.2.0
 sphinxcontrib-websupport==1.1.0
 twine==1.13.0
 wheel==0.33.4
-setuptools==41.0.1
+setuptools==46.1.3
 lbt-ladybug<1.0.0
