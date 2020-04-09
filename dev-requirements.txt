@@ -4,7 +4,7 @@ coveralls==2.0.0;python_version>='3.6'
 pytest==4.6.9;python_version<'3.0'
 pytest==5.4.1;python_version>='3.6'
 pytest-cov==2.6.1
-Sphinx==1.8.5
+Sphinx==3.0.0
 sphinx-bootstrap-theme==0.7.1
 sphinxcontrib-fulltoc==1.2.0
 sphinxcontrib-websupport==1.1.0
