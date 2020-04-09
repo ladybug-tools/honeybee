@@ -2,6 +2,7 @@ language: python
 
 python:
 - "2.7"
+- "3.6"
 - "3.7"
 
 before_install:
@@ -26,18 +27,27 @@ after_success:
 jobs:
   include:
   - stage: deploy
-    python: "3.7"
     if: branch = master AND (NOT type IN (pull_request))
     before_install:
-    - nvm install lts/* --latest-npm
+    - npm i -g npm@6.6.0
+    python:
+    - "3.7"
     install:
+    - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 10
     - pip install -r dev-requirements.txt
-    - pip install -r requirements.txt
+    - pip install -r requirements.txt 
     - npm install @semantic-release/exec
     script:
     - git config --global user.email "releases@ladybug.tools"
     - git config --global user.name "ladybugbot"
     - npx semantic-release
+  - stage: docs
+    if: branch = master AND (NOT type IN (pull_request))
+    python:
+    - "3.7"
+    script:
+    - sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_radiance
+    - sphinx-build -b html ./docs ./docs/_build/docs
     deploy:
       provider: pages
       skip_cleanup: true
