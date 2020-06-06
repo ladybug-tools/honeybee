@@ -17,7 +17,7 @@ Check [this repository](https://github.com/mostaphaRoudsari/honeybee) for the le
 ## Installation
 
 ```
-pip install lbt-honeybee
+pip install lbt-honeybee==0.1.16
 ```
 
 ## Tentative road map

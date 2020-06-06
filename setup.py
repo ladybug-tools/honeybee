@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
 setuptools.setup(
-    name="lbt-honeybee",
+    name="honeybee-plus",
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     author="Ladybug Tools",
