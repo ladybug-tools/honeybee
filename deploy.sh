@@ -22,5 +22,5 @@ else
   exit 1
 fi
 
-deploy_to_pypi
+# deploy_to_pypi
 build_docs $NEXT_RELEASE_VERSION
