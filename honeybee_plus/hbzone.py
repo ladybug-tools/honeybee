@@ -1,4 +1,4 @@
-import honeybee.utilcol as util
+import honeybee_plus.utilcol as util
 from .hbobject import HBObject
 from .vectormath.euclid import Point3
 from .radiance.radfile import RadFile

@@ -49,17 +49,17 @@
 # FROM Result;
 
 
-# from honeybee.radiance.database import SqliteDB
+# from honeybee_plus.radiance.database import SqliteDB
 #
 # db = SqliteDB(folder, 'test')
 # db.clean()
 # import sys
 # sys.path.append(r"C:\Users\Mostapha\Documents\code\ladybug-tools\ladybug")
 
-import honeybee.radiance.material.spotlight as spotlight
-from honeybee.radiance.radparser import parse_from_file
+import honeybee_plus.radiance.material.spotlight as spotlight
+from honeybee_plus.radiance.radparser import parse_from_file
 
-from honeybee.radiance.factory import material_from_string, material_from_json
+from honeybee_plus.radiance.factory import material_from_string, material_from_json
 
 mat_str = """
 void glass glass_alt_mat
@@ -141,10 +141,10 @@ mat_json = {
 # mat = material_from_json(mat_json)
 # print mat
 
-# from honeybee.radiance.geometry.sphere import Sphere
-# from honeybee.radiance.geometry.bubble import Bubble
+# from honeybee_plus.radiance.geometry.sphere import Sphere
+# from honeybee_plus.radiance.geometry.bubble import Bubble
 
-# from honeybee.radiance.geometry.polygon import Polygon
+# from honeybee_plus.radiance.geometry.polygon import Polygon
 #
 #
 # pl_str = """
@@ -160,7 +160,7 @@ mat_json = {
 # pl = Polygon.from_string(pl_str)
 # print pl.to_rad_string(False, False)
 
-from honeybee.radiance.geometry.cone import Cone
+from honeybee_plus.radiance.geometry.cone import Cone
 
 
 cone_str = """
@@ -178,7 +178,7 @@ print(pl.to_rad_string(False, False))
 print(Cone.from_json(pl.to_json()))
 
 
-from honeybee.radiance.material.transdata import Transdata
+from honeybee_plus.radiance.material.transdata import Transdata
 
 m = Transdata('test', values={})
 print(m)

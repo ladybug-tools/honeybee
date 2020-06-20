@@ -1,5 +1,5 @@
 import unittest
-from honeybee.radiance.datatype import RadiancePath, RadianceNumber, \
+from honeybee_plus.radiance.datatype import RadiancePath, RadianceNumber, \
     RadianceBoolFlag, RadianceTuple, RadianceValue
 import os
 

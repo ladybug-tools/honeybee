@@ -1,8 +1,8 @@
 import unittest
-from honeybee.radiance.sky.certainIlluminance \
+from honeybee_plus.radiance.sky.certainIlluminance \
     import CertainIlluminanceLevel as radSky
-from honeybee.radiance.analysisgrid import AnalysisGrid
-from honeybee.radiance.recipe.pointintime.gridbased import GridBased
+from honeybee_plus.radiance.analysisgrid import AnalysisGrid
+from honeybee_plus.radiance.recipe.pointintime.gridbased import GridBased
 
 import pytest
 

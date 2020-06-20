@@ -23,8 +23,8 @@ class Gendaylit(RadianceCommand):
 
     Usage:
 
-        from honeybee.radiance.parameters.gendaylit import GendaylitParameters
-        from honeybee.radiance.command.gendaylit import Gendaylit
+        from honeybee_plus.radiance.parameters.gendaylit import GendaylitParameters
+        from honeybee_plus.radiance.command.gendaylit import Gendaylit
 
         # create and modify gendaylit parameters.
         gndayParam = GendaylitParameters()

@@ -330,7 +330,7 @@ class Database(object):
         """Add result tables to database.
 
         Args:
-            recipe_id: Recipe id as indicated in honeybee.radiance.recipe.id
+            recipe_id: Recipe id as indicated in honeybee_plus.radiance.recipe.id
 
         Returns:
             returns list of table names that are added to database.

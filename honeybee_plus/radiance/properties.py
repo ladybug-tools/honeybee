@@ -8,14 +8,14 @@ class RadianceProperties(object):
     """Radiance properties for HBSurface.
 
     Args:
-        material: Radiance material. Use honeybee.radiace.material to create a
+        material: Radiance material. Use honeybee_plus.radiance.material to create a
             radiance material (Default: None).
         black_material: A material that will be used for blacking out this surface or in
             direct daylight calculations. By default black material is set to black color
             with no reflectance. In cases such as interior glass black material should be
             set to the original glass material.
-        glow_material: A material that will be used for daylight coefficeint calculation.
-            By default black material is set to whitw glow.
+        glow_material: A material that will be used for daylight coefficient calculation.
+            By default black material is set to white glow.
     """
 
     __slots__ = ('_material', '_black_material', '_glow_material',

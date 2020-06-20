@@ -23,8 +23,8 @@ class Gensky(RadianceCommand):
 
     Usage:
 
-        from honeybee.radiance.parameters.gensky import GenSkyParameters
-        from honeybee.radiance.command.gensky import GenSky
+        from honeybee_plus.radiance.parameters.gensky import GenSkyParameters
+        from honeybee_plus.radiance.command.gensky import GenSky
 
         # create and modify gensky_parameters. In this case a sunny with no sun
         # will be generated.

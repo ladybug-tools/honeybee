@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from honeybee.radiance.command.gensky import Gensky
-from honeybee.radiance.parameters.gensky import GenskyParameters
+from honeybee_plus.radiance.command.gensky import Gensky
+from honeybee_plus.radiance.parameters.gensky import GenskyParameters
 
 
 class GenskyTestCase(unittest.TestCase):

@@ -3,7 +3,7 @@
 import unittest
 import pytest
 
-from honeybee.radiance.material.trans import Trans
+from honeybee_plus.radiance.material.trans import Trans
 
 
 class MatrialTransTestCase(unittest.TestCase):

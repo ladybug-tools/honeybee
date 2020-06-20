@@ -135,7 +135,7 @@ class AnalysisRecipe(object):
 
     @property
     def scene(self):
-        """A base honeybee.radiance.scene for the recipe."""
+        """A base honeybee_plus.radiance.scene for the recipe."""
         return self._scene
 
     @scene.setter

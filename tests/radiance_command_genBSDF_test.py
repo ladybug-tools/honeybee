@@ -1,6 +1,6 @@
-# from honeybee.radiance.parameters.genBsdf import GenbsdfParameters
-# from honeybee.radiance.command.genBSDF import GenBSDF, RtraceParameters
-# from honeybee.radiance.command.rmtxop import Rmtxop, RmtxopParameters
+# from honeybee_plus.radiance.parameters.genBsdf import GenbsdfParameters
+# from honeybee_plus.radiance.command.genBSDF import GenBSDF, RtraceParameters
+# from honeybee_plus.radiance.command.rmtxop import Rmtxop, RmtxopParameters
 # import os
 #
 #

@@ -1,8 +1,8 @@
 """Base class for Radiance Primitives.
 
 Unless you are a developer you most likely want to use one of the subclasses of
-Primitive instead of using this class directly. Look under honeybee.radiance.material
-and honeybee.radiance.geometry
+Primitive instead of using this class directly. Look under honeybee_plus.radiance.material
+and honeybee_plus.radiance.geometry
 
 http://radsite.lbl.gov/radiance/refer/ray.html
 """

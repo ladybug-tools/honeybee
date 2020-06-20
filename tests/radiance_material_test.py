@@ -6,11 +6,11 @@ Add more materials as the library expands.
 import unittest
 import ast
 
-from honeybee.radiance.material.light import Light
-from honeybee.radiance.material.glow import Glow
-from honeybee.radiance.material.metal import Metal
-from honeybee.radiance.material.glass import Glass
-from honeybee.radiance.material.plastic import Plastic
+from honeybee_plus.radiance.material.light import Light
+from honeybee_plus.radiance.material.glow import Glow
+from honeybee_plus.radiance.material.metal import Metal
+from honeybee_plus.radiance.material.glass import Glass
+from honeybee_plus.radiance.material.plastic import Plastic
 
 
 class MaterialTypeTestCase(unittest.TestCase):
