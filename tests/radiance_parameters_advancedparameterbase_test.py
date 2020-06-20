@@ -1,7 +1,7 @@
 import unittest
-from honeybee.radiance.parameters._advancedparametersbase import \
+from honeybee_plus.radiance.parameters._advancedparametersbase import \
     AdvancedRadianceParameters
-from honeybee.radiance.parameters._frozen import frozen
+from honeybee_plus.radiance.parameters._frozen import frozen
 import os
 
 

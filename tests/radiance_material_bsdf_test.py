@@ -5,7 +5,7 @@ import ast
 import pytest
 import os
 
-from honeybee.radiance.material.bsdf import BSDF
+from honeybee_plus.radiance.material.bsdf import BSDF
 
 
 class MatrialBSDFTestCase(unittest.TestCase):

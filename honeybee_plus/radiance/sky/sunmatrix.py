@@ -46,7 +46,7 @@ class SunMatrix(RadianceSky):
 
     Usage:
 
-        from honeybee.radiance.sky.sunmatrix import SunMatrix
+        from honeybee_plus.radiance.sky.sunmatrix import SunMatrix
         working_dir = "."
         epwfile = r"./USA_CA_San.Francisco.Intl.AP.724940_TMY3.epw"
         sunmtx = sun_matrix.from_epw_file(epwfile, north=20)

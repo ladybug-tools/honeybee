@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from honeybee.radiance.command.raTiff import RaTiff
-from honeybee.radiance.parameters.raTiff import RaTiffParameters
+from honeybee_plus.radiance.command.raTiff import RaTiff
+from honeybee_plus.radiance.parameters.raTiff import RaTiffParameters
 import os
 
 

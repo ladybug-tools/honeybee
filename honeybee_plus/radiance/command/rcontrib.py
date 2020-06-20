@@ -25,7 +25,7 @@ class Rcontrib(RadianceCommand):
 
     Usage:
 
-        from honeybee.radiance.command.rcontrib import Rcontrib
+        from honeybee_plus.radiance.command.rcontrib import Rcontrib
 
         rcontrib = Rcontrib(output_name="test3",
                             octree_file=r"C:/ladybug/test3/gridbased/test3.oct",

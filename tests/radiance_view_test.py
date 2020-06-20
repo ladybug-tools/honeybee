@@ -1,5 +1,5 @@
 import unittest
-from honeybee.radiance.view import View
+from honeybee_plus.radiance.view import View
 
 
 class ViewTestCase(unittest.TestCase):

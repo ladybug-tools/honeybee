@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from honeybee.radiance.command.falsecolor import Falsecolor
-from honeybee.radiance.parameters.falsecolor import FalsecolorParameters
+from honeybee_plus.radiance.command.falsecolor import Falsecolor
+from honeybee_plus.radiance.parameters.falsecolor import FalsecolorParameters
 import os
 
 

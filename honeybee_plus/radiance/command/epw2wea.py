@@ -15,7 +15,7 @@ class Epw2wea(RadianceCommand):
             format.
 
     Usage:
-    from honeybee.radiance.command.epw2wea import Epw2wea.
+    from honeybee_plus.radiance.command.epw2wea import Epw2wea.
 
     #create an epw2wea command.
     epwWea = Epw2wea(epw_fileName='c:/ladybug/test.epw')

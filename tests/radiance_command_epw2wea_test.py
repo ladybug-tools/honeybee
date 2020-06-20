@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import unittest
-from honeybee.radiance.command.epw2wea import Epw2wea
+from honeybee_plus.radiance.command.epw2wea import Epw2wea
 import os
 
 

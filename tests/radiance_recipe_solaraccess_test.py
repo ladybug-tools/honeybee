@@ -1,9 +1,9 @@
 import unittest
-from honeybee.radiance.analysisgrid import AnalysisGrid
-from honeybee.radiance.recipe.solaraccess.gridbased import SolarAccessGridBased
+from honeybee_plus.radiance.analysisgrid import AnalysisGrid
+from honeybee_plus.radiance.recipe.solaraccess.gridbased import SolarAccessGridBased
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.epw import EPW
-from honeybee.futil import bat_to_sh
+from honeybee_plus.futil import bat_to_sh
 
 import os
 

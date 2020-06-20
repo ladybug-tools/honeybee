@@ -1,7 +1,7 @@
 import unittest
-from honeybee.radiance.parameters._parametersbase import RadianceParameters
-from honeybee.radiance.parameters._frozen import frozen
-from honeybee.radiance.datatype import RadianceNumber, RadianceValue
+from honeybee_plus.radiance.parameters._parametersbase import RadianceParameters
+from honeybee_plus.radiance.parameters._frozen import frozen
+from honeybee_plus.radiance.datatype import RadianceNumber, RadianceValue
 
 
 class ParametersTestCase(unittest.TestCase):

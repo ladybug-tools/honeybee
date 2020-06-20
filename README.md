@@ -46,10 +46,10 @@ For the daylighting library cite this presentation:
 Here is a Python example that shows how to put a grid-based analysis together. For more examples check one of the plugins repository.
 
 ```python
-from honeybee.room import Room
-from honeybee.radiance.material.glass import Glass
-from honeybee.radiance.sky.certainIlluminance import CertainIlluminanceLevel
-from honeybee.radiance.recipe.pointintime.gridbased import GridBased
+from honeybee_plus.room import Room
+from honeybee_plus.radiance.material.glass import Glass
+from honeybee_plus.radiance.sky.certainIlluminance import CertainIlluminanceLevel
+from honeybee_plus.radiance.recipe.pointintime.gridbased import GridBased
 
 # create a test room
 room = Room(origin=(0, 0, 3.2), width=4.2, depth=6, height=3.2,

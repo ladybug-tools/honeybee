@@ -27,7 +27,7 @@ NAMES = {value: key for key, value in IDS.items()}
 
 """Combined recipes are recipes that combine direct sunlight and sky calculations.
 
-These ids are used by honeybee.radiance.resultcollection.database.Database class to
+These ids are used by honeybee_plus.radiance.resultcollection.database.Database class to
 add extra tables for results.
 """
 COMBINEDRECIPEIDS = (200002, 200005)

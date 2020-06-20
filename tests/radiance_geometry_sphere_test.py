@@ -2,7 +2,7 @@
 
 import unittest
 
-from honeybee.radiance.geometry.sphere import Sphere
+from honeybee_plus.radiance.geometry.sphere import Sphere
 
 
 class SphereTestCase(unittest.TestCase):

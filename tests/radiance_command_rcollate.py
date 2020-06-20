@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 import unittest
-from honeybee.radiance.command.rcollate import Rcollate
+from honeybee_plus.radiance.command.rcollate import Rcollate
 
 
 class RcollateTestCase(unittest.TestCase):

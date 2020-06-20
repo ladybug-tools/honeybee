@@ -3,7 +3,7 @@
 import unittest
 import pytest
 
-from honeybee.radiance.sky.sunmatrix import SunMatrix
+from honeybee_plus.radiance.sky.sunmatrix import SunMatrix
 from ladybug.location import Location
 
 

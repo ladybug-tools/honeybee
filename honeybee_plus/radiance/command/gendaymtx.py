@@ -19,8 +19,8 @@ class Gendaymtx(RadianceCommand):
 
     Usage:
 
-        from honeybee.radiance.parameters.gendaymtx import GendaymtxParameters
-        from honeybee.radiance.command.gendaymtx import Gendaymtx
+        from honeybee_plus.radiance.parameters.gendaymtx import GendaymtxParameters
+        from honeybee_plus.radiance.command.gendaymtx import Gendaymtx
 
         # create and modify gendaymtx_parameters
         # generate sky matrix with default values

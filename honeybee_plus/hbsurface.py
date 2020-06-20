@@ -2,12 +2,12 @@ from ._hbanalysissurface import HBAnalysisSurface
 from .hbfensurface import HBFenSurface
 from .surfaceproperties import SurfaceProperties, SurfaceState
 from .vectormath.euclid import Vector3, Point3
-import honeybee.utilcol as util
-import honeybee
+import honeybee_plus.utilcol as util
+import honeybee_plus
 try:
     import plus
 except ImportError as e:
-    if honeybee.isplus:
+    if honeybee_plus.isplus:
         raise ImportError(e)
 import sys
 if (sys.version_info >= (3, 0)):
@@ -120,7 +120,7 @@ class HBSurface(HBAnalysisSurface):
 
         If group is False it will return a list of HBSurfaces.
         """
-        assert honeybee.isplus, \
+        assert honeybee_plus.isplus, \
             '"fromGeometries" method can only be used in [+] libraries.'
 
         name = name or util.random_name()
@@ -218,7 +218,7 @@ class HBSurface(HBAnalysisSurface):
     @property
     def geometry(self):
         """Return geometry."""
-        assert honeybee.isplus, \
+        assert honeybee_plus.isplus, \
             '"geometry" property can only be used in [+] libraries.'
         if self.is_created_from_geometry:
             return self._geometry
@@ -228,14 +228,14 @@ class HBSurface(HBAnalysisSurface):
     @geometry.setter
     def geometry(self, geo):
         """Set geometry."""
-        assert honeybee.isplus, \
+        assert honeybee_plus.isplus, \
             '"geometry" property can only be used in [+] libraries.'
         self._geometry = geo
 
     @property
     def profile(self):
         """Get profile curve of this surface."""
-        assert honeybee.isplus, \
+        assert honeybee_plus.isplus, \
             '"profile" property can only be used in [+] libraries.'
         return plus.polygon(
             tuple(plus.xyz_to_geometrical_points(self.absolute_points))

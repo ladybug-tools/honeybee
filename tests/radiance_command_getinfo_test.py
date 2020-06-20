@@ -1,5 +1,5 @@
 import unittest
-from honeybee.radiance.command.getinfo import Getinfo
+from honeybee_plus.radiance.command.getinfo import Getinfo
 import os
 import tempfile
 

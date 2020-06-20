@@ -1,7 +1,7 @@
-"""A collection of auxiliary funtions for working with files and directories."""
+"""A collection of auxiliary functions for working with files and directories."""
 import os
 import shutil
-import honeybee.config as config
+import honeybee_plus.config as config
 
 import sys
 

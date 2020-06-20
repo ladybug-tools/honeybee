@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from honeybee.radiance.command.raBmp import RaBmp
-from honeybee.radiance.parameters.raBmp import RaBmpParameters
+from honeybee_plus.radiance.command.raBmp import RaBmp
+from honeybee_plus.radiance.parameters.raBmp import RaBmpParameters
 import os
 
 
