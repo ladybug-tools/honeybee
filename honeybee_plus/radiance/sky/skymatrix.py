@@ -195,14 +195,17 @@ class SkyMatrix(RadianceSky):
             write_hours: Write hours in a separate file in folder.
         """
         weafilepath = os.path.join(target_dir, '{}.wea'.format(self.name))
-        return self.wea.write(weafilepath, self.hoys, write_hours)
+        wea = self.wea.filter_by_hoys(self.hoys)
+        return wea.write(weafilepath, write_hours)
 
     def to_rad_string(self, working_dir, write_hours=False):
         """Get the radiance command line as a string."""
         # check if wea file in available otherwise include the line
         outfilepath = os.path.join(working_dir, '{}.smx'.format(self.name))
         weafilepath = os.path.join(working_dir, '{}.wea'.format(self.name))
-        weafilepath = self.wea.write(weafilepath, self.hoys, write_hours)
+        # filter hours
+        wea = self.wea.filter_by_hoys(self.hoys)
+        weafilepath = wea.write(weafilepath, write_hours)
         genday = Gendaymtx(wea_file=weafilepath, output_name=outfilepath)
         genday.gendaymtx_parameters = self._sky_matrixParameters
         genday.gendaymtx_parameters.output_type = self.sky_type
