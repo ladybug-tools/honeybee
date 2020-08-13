@@ -46,7 +46,7 @@ jobs:
     python:
     - "3.7"
     script:
-    - sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee
+    - sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_plus
     - sphinx-build -b html ./docs ./docs/_build/docs
     deploy:
       provider: pages
