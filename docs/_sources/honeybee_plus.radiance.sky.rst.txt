@@ -1,0 +1,25 @@
+honeybee\_plus.radiance.sky package
+===================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.sky.analemma
+   honeybee_plus.radiance.sky.certainIlluminance
+   honeybee_plus.radiance.sky.cie
+   honeybee_plus.radiance.sky.climatebased
+   honeybee_plus.radiance.sky.gendaylit
+   honeybee_plus.radiance.sky.skymatrix
+   honeybee_plus.radiance.sky.skyvector
+   honeybee_plus.radiance.sky.sunmatrix
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.radiance.sky
+   :members:
+   :undoc-members:
+   :show-inheritance:

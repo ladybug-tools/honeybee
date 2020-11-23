@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.geometry.mesh module
+============================================
+
+.. automodule:: honeybee_plus.radiance.geometry.mesh
+   :members:
+   :undoc-members:
+   :show-inheritance:

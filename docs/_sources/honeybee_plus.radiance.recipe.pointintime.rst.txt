@@ -1,0 +1,19 @@
+honeybee\_plus.radiance.recipe.pointintime package
+==================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.recipe.pointintime.gridbased
+   honeybee_plus.radiance.recipe.pointintime.imagebased
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.radiance.recipe.pointintime
+   :members:
+   :undoc-members:
+   :show-inheritance:

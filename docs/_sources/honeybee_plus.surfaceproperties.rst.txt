@@ -1,0 +1,7 @@
+honeybee\_plus.surfaceproperties module
+=======================================
+
+.. automodule:: honeybee_plus.surfaceproperties
+   :members:
+   :undoc-members:
+   :show-inheritance:

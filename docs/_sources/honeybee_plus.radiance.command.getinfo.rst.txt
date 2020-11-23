@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.command.getinfo module
+==============================================
+
+.. automodule:: honeybee_plus.radiance.command.getinfo
+   :members:
+   :undoc-members:
+   :show-inheritance:

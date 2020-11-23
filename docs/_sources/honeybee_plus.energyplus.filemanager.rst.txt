@@ -1,0 +1,7 @@
+honeybee\_plus.energyplus.filemanager module
+============================================
+
+.. automodule:: honeybee_plus.energyplus.filemanager
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_plus.radiance.sky.gendaylit &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../honeybee_plus.html">honeybee_plus package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_plus.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.energyplus.html">honeybee_plus.energyplus package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.energyplus.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.energyplus.filemanager.html">honeybee_plus.energyplus.filemanager module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.energyplus.geometryrules.html">honeybee_plus.energyplus.geometryrules module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.energyplus.html#module-honeybee_plus.energyplus">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.radiance.html">honeybee_plus.radiance package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.radiance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html">honeybee_plus.radiance.command package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html">honeybee_plus.radiance.command.pyRad package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html">honeybee_plus.radiance.command.pyRad.pyRadLib package</a><ul>
+<li class="toctree-l10"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html#submodules">Submodules</a><ul>
+<li class="toctree-l11"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.pyrad_proc.html">honeybee_plus.radiance.command.pyRad.pyRadLib.pyrad_proc module</a></li>
+</ul>
+</li>
+<li class="toctree-l10"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html#module-honeybee_plus.radiance.command.pyRad.pyRadLib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.objview.html">honeybee_plus.radiance.command.pyRad.objview module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html#module-honeybee_plus.radiance.command.pyRad">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.dctimestep.html">honeybee_plus.radiance.command.dctimestep module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.epw2wea.html">honeybee_plus.radiance.command.epw2wea module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.falsecolor.html">honeybee_plus.radiance.command.falsecolor module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.genBSDF.html">honeybee_plus.radiance.command.genBSDF module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.gendaylit.html">honeybee_plus.radiance.command.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.gendaymtx.html">honeybee_plus.radiance.command.gendaymtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.gensky.html">honeybee_plus.radiance.command.gensky module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.genskyvec.html">honeybee_plus.radiance.command.genskyvec module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.getbbox.html">honeybee_plus.radiance.command.getbbox module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.getinfo.html">honeybee_plus.radiance.command.getinfo module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.mkpmap.html">honeybee_plus.radiance.command.mkpmap module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.objview.html">honeybee_plus.radiance.command.objview module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.oconv.html">honeybee_plus.radiance.command.oconv module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pcomb.html">honeybee_plus.radiance.command.pcomb module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.raBmp.html">honeybee_plus.radiance.command.raBmp module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.raTiff.html">honeybee_plus.radiance.command.raTiff module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rcalc.html">honeybee_plus.radiance.command.rcalc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rcollate.html">honeybee_plus.radiance.command.rcollate module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rcontrib.html">honeybee_plus.radiance.command.rcontrib module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rfluxmtx.html">honeybee_plus.radiance.command.rfluxmtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rmtxop.html">honeybee_plus.radiance.command.rmtxop module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rpict.html">honeybee_plus.radiance.command.rpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rtrace.html">honeybee_plus.radiance.command.rtrace module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.vwrays.html">honeybee_plus.radiance.command.vwrays module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.xform.html">honeybee_plus.radiance.command.xform module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html#module-honeybee_plus.radiance.command">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.html">honeybee_plus.radiance.geometry package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.bubble.html">honeybee_plus.radiance.geometry.bubble module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.cone.html">honeybee_plus.radiance.geometry.cone module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.cup.html">honeybee_plus.radiance.geometry.cup module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.cylinder.html">honeybee_plus.radiance.geometry.cylinder module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.geometrybase.html">honeybee_plus.radiance.geometry.geometrybase module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.instance.html">honeybee_plus.radiance.geometry.instance module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.mesh.html">honeybee_plus.radiance.geometry.mesh module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.polygon.html">honeybee_plus.radiance.geometry.polygon module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.ring.html">honeybee_plus.radiance.geometry.ring module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.source.html">honeybee_plus.radiance.geometry.source module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.sphere.html">honeybee_plus.radiance.geometry.sphere module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.tube.html">honeybee_plus.radiance.geometry.tube module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.html#module-honeybee_plus.radiance.geometry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.html">honeybee_plus.radiance.material package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.antimatter.html">honeybee_plus.radiance.material.antimatter module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.ashik2.html">honeybee_plus.radiance.material.ashik2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.brtdfunc.html">honeybee_plus.radiance.material.brtdfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.bsdf.html">honeybee_plus.radiance.material.bsdf module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.dielectric.html">honeybee_plus.radiance.material.dielectric module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.glass.html">honeybee_plus.radiance.material.glass module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.glow.html">honeybee_plus.radiance.material.glow module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.illum.html">honeybee_plus.radiance.material.illum module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.interface.html">honeybee_plus.radiance.material.interface module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.light.html">honeybee_plus.radiance.material.light module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.materialbase.html">honeybee_plus.radiance.material.materialbase module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metal.html">honeybee_plus.radiance.material.metal module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metal2.html">honeybee_plus.radiance.material.metal2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metdata.html">honeybee_plus.radiance.material.metdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metfunc.html">honeybee_plus.radiance.material.metfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.mirror.html">honeybee_plus.radiance.material.mirror module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.mist.html">honeybee_plus.radiance.material.mist module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plasdata.html">honeybee_plus.radiance.material.plasdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plasfunc.html">honeybee_plus.radiance.material.plasfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plastic.html">honeybee_plus.radiance.material.plastic module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plastic2.html">honeybee_plus.radiance.material.plastic2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.prism1.html">honeybee_plus.radiance.material.prism1 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.prism2.html">honeybee_plus.radiance.material.prism2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.spotlight.html">honeybee_plus.radiance.material.spotlight module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.trans.html">honeybee_plus.radiance.material.trans module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.trans2.html">honeybee_plus.radiance.material.trans2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.transdata.html">honeybee_plus.radiance.material.transdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.transfunc.html">honeybee_plus.radiance.material.transfunc module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.html#module-honeybee_plus.radiance.material">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.html">honeybee_plus.radiance.mixture package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixdata.html">honeybee_plus.radiance.mixture.mixdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixfunc.html">honeybee_plus.radiance.mixture.mixfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixpict.html">honeybee_plus.radiance.mixture.mixpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixtext.html">honeybee_plus.radiance.mixture.mixtext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixturebase.html">honeybee_plus.radiance.mixture.mixturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.html#module-honeybee_plus.radiance.mixture">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.html">honeybee_plus.radiance.parameters package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.dctimestep.html">honeybee_plus.radiance.parameters.dctimestep module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.falsecolor.html">honeybee_plus.radiance.parameters.falsecolor module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.genBsdf.html">honeybee_plus.radiance.parameters.genBsdf module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.gendaylit.html">honeybee_plus.radiance.parameters.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.gendaymtx.html">honeybee_plus.radiance.parameters.gendaymtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.gensky.html">honeybee_plus.radiance.parameters.gensky module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.mkpmap.html">honeybee_plus.radiance.parameters.mkpmap module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.oconv.html">honeybee_plus.radiance.parameters.oconv module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.pcomb.html">honeybee_plus.radiance.parameters.pcomb module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.raBmp.html">honeybee_plus.radiance.parameters.raBmp module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.raTiff.html">honeybee_plus.radiance.parameters.raTiff module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rcalc.html">honeybee_plus.radiance.parameters.rcalc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rcollate.html">honeybee_plus.radiance.parameters.rcollate module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rcontrib.html">honeybee_plus.radiance.parameters.rcontrib module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rfluxmtx.html">honeybee_plus.radiance.parameters.rfluxmtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rmtxop.html">honeybee_plus.radiance.parameters.rmtxop module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rpict.html">honeybee_plus.radiance.parameters.rpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rtrace.html">honeybee_plus.radiance.parameters.rtrace module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.vwrays.html">honeybee_plus.radiance.parameters.vwrays module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.xform.html">honeybee_plus.radiance.parameters.xform module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.html#module-honeybee_plus.radiance.parameters">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.html">honeybee_plus.radiance.pattern package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.brightdata.html">honeybee_plus.radiance.pattern.brightdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.brightfunc.html">honeybee_plus.radiance.pattern.brightfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.brighttext.html">honeybee_plus.radiance.pattern.brighttext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colordata.html">honeybee_plus.radiance.pattern.colordata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colorfunc.html">honeybee_plus.radiance.pattern.colorfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colorpict.html">honeybee_plus.radiance.pattern.colorpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colortext.html">honeybee_plus.radiance.pattern.colortext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.patternbase.html">honeybee_plus.radiance.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.html#module-honeybee_plus.radiance.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html">honeybee_plus.radiance.recipe package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.html">honeybee_plus.radiance.recipe.annual package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.gridbased.html">honeybee_plus.radiance.recipe.annual.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.html#module-honeybee_plus.radiance.recipe.annual">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.html">honeybee_plus.radiance.recipe.daylightcoeff package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.gridbased.html">honeybee_plus.radiance.recipe.daylightcoeff.gridbased module</a></li>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.imagebased.html">honeybee_plus.radiance.recipe.daylightcoeff.imagebased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.html#module-honeybee_plus.radiance.recipe.daylightcoeff">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.html">honeybee_plus.radiance.recipe.daylightfactor package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.gridbased.html">honeybee_plus.radiance.recipe.daylightfactor.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.html#module-honeybee_plus.radiance.recipe.daylightfactor">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.html">honeybee_plus.radiance.recipe.directreflection package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.gridbased.html">honeybee_plus.radiance.recipe.directreflection.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.html#module-honeybee_plus.radiance.recipe.directreflection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.html">honeybee_plus.radiance.recipe.fivephase package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.gridbased.html">honeybee_plus.radiance.recipe.fivephase.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.html#module-honeybee_plus.radiance.recipe.fivephase">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.html">honeybee_plus.radiance.recipe.pointintime package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.gridbased.html">honeybee_plus.radiance.recipe.pointintime.gridbased module</a></li>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.imagebased.html">honeybee_plus.radiance.recipe.pointintime.imagebased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.html#module-honeybee_plus.radiance.recipe.pointintime">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.html">honeybee_plus.radiance.recipe.radiation package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.gridbased.html">honeybee_plus.radiance.recipe.radiation.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.html#module-honeybee_plus.radiance.recipe.radiation">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.html">honeybee_plus.radiance.recipe.solaraccess package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.gridbased.html">honeybee_plus.radiance.recipe.solaraccess.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.html#module-honeybee_plus.radiance.recipe.solaraccess">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.html">honeybee_plus.radiance.recipe.threephase package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.gridbased.html">honeybee_plus.radiance.recipe.threephase.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.html#module-honeybee_plus.radiance.recipe.threephase">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.id.html">honeybee_plus.radiance.recipe.id module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.parameters.html">honeybee_plus.radiance.recipe.parameters module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.recipedcutil.html">honeybee_plus.radiance.recipe.recipedcutil module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.recipeutil.html">honeybee_plus.radiance.recipe.recipeutil module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.recipexphaseutil.html">honeybee_plus.radiance.recipe.recipexphaseutil module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html#module-honeybee_plus.radiance.recipe">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.html">honeybee_plus.radiance.resultcollection package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.database.html">honeybee_plus.radiance.resultcollection.database module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.imagecollection.html">honeybee_plus.radiance.resultcollection.imagecollection module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.pointintime.html">honeybee_plus.radiance.resultcollection.pointintime module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.resultgrid.html">honeybee_plus.radiance.resultcollection.resultgrid module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.timeseries.html">honeybee_plus.radiance.resultcollection.timeseries module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.html#module-honeybee_plus.radiance.resultcollection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.html">honeybee_plus.radiance.sky package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.analemma.html">honeybee_plus.radiance.sky.analemma module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.certainIlluminance.html">honeybee_plus.radiance.sky.certainIlluminance module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.cie.html">honeybee_plus.radiance.sky.cie module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.climatebased.html">honeybee_plus.radiance.sky.climatebased module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.gendaylit.html">honeybee_plus.radiance.sky.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.skymatrix.html">honeybee_plus.radiance.sky.skymatrix module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.skyvector.html">honeybee_plus.radiance.sky.skyvector module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html">honeybee_plus.radiance.sky.sunmatrix module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.html#module-honeybee_plus.radiance.sky">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.html">honeybee_plus.radiance.texture package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.texdata.html">honeybee_plus.radiance.texture.texdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.texfunc.html">honeybee_plus.radiance.texture.texfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.texturebase.html">honeybee_plus.radiance.texture.texturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.html#module-honeybee_plus.radiance.texture">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.radiance.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysisgrid.html">honeybee_plus.radiance.analysisgrid module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysisgridlite.html">honeybee_plus.radiance.analysisgridlite module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysispoint.html">honeybee_plus.radiance.analysispoint module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysispointlite.html">honeybee_plus.radiance.analysispointlite module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.datatype.html">honeybee_plus.radiance.datatype module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.factory.html">honeybee_plus.radiance.factory module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.primitive.html">honeybee_plus.radiance.primitive module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.properties.html">honeybee_plus.radiance.properties module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.radfile.html">honeybee_plus.radiance.radfile module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.radparser.html">honeybee_plus.radiance.radparser module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.scene.html">honeybee_plus.radiance.scene module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.staticscene.html">honeybee_plus.radiance.staticscene module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.view.html">honeybee_plus.radiance.view module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.radiance.html#module-honeybee_plus.radiance">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.server.html">honeybee_plus.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.server.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.server.client.html">honeybee_plus.server.client module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.server.mpupload.html">honeybee_plus.server.mpupload module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.server.html#module-honeybee_plus.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.vectormath.html">honeybee_plus.vectormath package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.vectormath.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.vectormath.euclid.html">honeybee_plus.vectormath.euclid module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.vectormath.html#module-honeybee_plus.vectormath">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_plus.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.config.html">honeybee_plus.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.dataoperation.html">honeybee_plus.dataoperation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.exception.html">honeybee_plus.exception module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.futil.html">honeybee_plus.futil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.geometryoperation.html">honeybee_plus.geometryoperation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbdynamicsurface.html">honeybee_plus.hbdynamicsurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbfensurface.html">honeybee_plus.hbfensurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbobject.html">honeybee_plus.hbobject module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbshadesurface.html">honeybee_plus.hbshadesurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbsurface.html">honeybee_plus.hbsurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbzone.html">honeybee_plus.hbzone module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.room.html">honeybee_plus.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.schedule.html">honeybee_plus.schedule module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.surfaceproperties.html">honeybee_plus.surfaceproperties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.surfacetype.html">honeybee_plus.surfacetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.utilcol.html">honeybee_plus.utilcol module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.windowgroup.html">honeybee_plus.windowgroup module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_plus.html#module-honeybee_plus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../honeybee_plus.html">honeybee_plus package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../honeybee_plus.html">honeybee_plus package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <h1>Source code for honeybee_plus.radiance.sky.gendaylit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Calculate sky values based on Radiance&#39;s gendaylit.</span>
+
+<span class="sd">This code is parts of genddaylit.c whic is copyrighted by:</span>
+<span class="sd">    Copyright (c) 1994,2006 *Fraunhofer Institut for Solar Energy Systems</span>
+<span class="sd">        Heidenhofstr. 2, D-79110 Freiburg, Germany</span>
+<span class="sd">        Agence de l&#39;Environnement et de la Maitrise de l&#39;Energie</span>
+<span class="sd">        Centre de Valbonne, 500 route des Lucioles, 06565 Sophia Antipolis Cedex, France</span>
+<span class="sd">        *BOUYGUES</span>
+<span class="sd">        1 Avenue Eugene Freyssinet, Saint-Quentin-Yvelines, France</span>
+
+<span class="sd">You can check the source code at:</span>
+<span class="sd">    https://github.com/NREL/Radiance/blob/53485a7fb48727293d62f98d7bac830aa34ccba4/src/</span>
+<span class="sd">        gen/gendaylit.c</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+    <span class="n">xrange</span> <span class="o">=</span> <span class="nb">range</span>
+
+
+<div class="viewcode-block" id="gendaylit"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.gendaylit">[docs]</a><span class="k">def</span> <span class="nf">gendaylit</span><span class="p">(</span><span class="n">altitude</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">directirradiance</span><span class="p">,</span> <span class="n">diffuseirradiance</span><span class="p">,</span>
+              <span class="n">output_type</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get solar irradiance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        altitude: Sun altitude in degrees.</span>
+<span class="sd">        month: A value for month between 1-12.</span>
+<span class="sd">        day: A value for day between 1-31.</span>
+<span class="sd">        hour: A value for hour between 0-23.</span>
+<span class="sd">        directirradiance: Direct irradiance value.</span>
+<span class="sd">        diffuseirradiance: Diffuse irradiance value.</span>
+<span class="sd">        output_type: An integer between 0-2. 0=output in W/m^2/sr visible,</span>
+<span class="sd">            1=output in W/m^2/sr solar, 2=output in candela/m^2 (default: 0).</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        solarradiance: solar irradiance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+    <span class="n">coeff_perez</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mf">1.3525</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2576</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2690</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4366</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.7670</span><span class="p">,</span> <span class="mf">0.0007</span><span class="p">,</span> <span class="mf">1.2734</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1233</span><span class="p">,</span> <span class="mf">2.8000</span><span class="p">,</span>
+        <span class="mf">0.6004</span><span class="p">,</span> <span class="mf">1.2375</span><span class="p">,</span> <span class="mf">1.000</span><span class="p">,</span> <span class="mf">1.8734</span><span class="p">,</span> <span class="mf">0.6297</span><span class="p">,</span> <span class="mf">0.9738</span><span class="p">,</span> <span class="mf">0.2809</span><span class="p">,</span> <span class="mf">0.0356</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1246</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.5718</span><span class="p">,</span> <span class="mf">0.9938</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2219</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.7730</span><span class="p">,</span> <span class="mf">1.4148</span><span class="p">,</span> <span class="mf">1.1016</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2054</span><span class="p">,</span> <span class="mf">0.0367</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.9128</span><span class="p">,</span>
+        <span class="mf">0.9156</span><span class="p">,</span> <span class="mf">6.9750</span><span class="p">,</span> <span class="mf">0.1774</span><span class="p">,</span> <span class="mf">6.4477</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1239</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5798</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5081</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.7812</span><span class="p">,</span> <span class="mf">0.1080</span><span class="p">,</span>
+        <span class="mf">0.2624</span><span class="p">,</span> <span class="mf">0.0672</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2190</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4285</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.1000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2515</span><span class="p">,</span> <span class="mf">0.8952</span><span class="p">,</span> <span class="mf">0.0156</span><span class="p">,</span> <span class="mf">0.2782</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.1812</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.5000</span><span class="p">,</span> <span class="mf">1.1766</span><span class="p">,</span> <span class="mf">24.7219</span><span class="p">,</span> <span class="o">-</span><span class="mf">13.0812</span><span class="p">,</span> <span class="o">-</span><span class="mf">37.7000</span><span class="p">,</span> <span class="mf">34.8438</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0000</span><span class="p">,</span> <span class="mf">1.5218</span><span class="p">,</span>
+        <span class="mf">3.9229</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.6204</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0156</span><span class="p">,</span> <span class="mf">0.1597</span><span class="p">,</span> <span class="mf">0.4199</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5562</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5484</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6654</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2672</span><span class="p">,</span>
+        <span class="mf">0.7117</span><span class="p">,</span> <span class="mf">0.7234</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6219</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.6812</span><span class="p">,</span> <span class="mf">2.6297</span><span class="p">,</span> <span class="mf">33.3389</span><span class="p">,</span> <span class="o">-</span><span class="mf">18.3000</span><span class="p">,</span> <span class="o">-</span><span class="mf">62.2500</span><span class="p">,</span> <span class="mf">52.0781</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">3.5000</span><span class="p">,</span> <span class="mf">0.0016</span><span class="p">,</span> <span class="mf">1.1477</span><span class="p">,</span> <span class="mf">0.1062</span><span class="p">,</span> <span class="mf">0.4659</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3296</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0876</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0329</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6000</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.3566</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5000</span><span class="p">,</span> <span class="mf">2.3250</span><span class="p">,</span> <span class="mf">0.2937</span><span class="p">,</span> <span class="mf">0.0496</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.6812</span><span class="p">,</span> <span class="mf">1.8415</span><span class="p">,</span> <span class="mf">21.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.7656</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">21.5906</span><span class="p">,</span> <span class="mf">7.2492</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.5000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1554</span><span class="p">,</span> <span class="mf">1.4062</span><span class="p">,</span> <span class="mf">0.3988</span><span class="p">,</span> <span class="mf">0.0032</span><span class="p">,</span> <span class="mf">0.0766</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0656</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.1294</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0156</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3670</span><span class="p">,</span> <span class="mf">1.0078</span><span class="p">,</span> <span class="mf">1.4051</span><span class="p">,</span> <span class="mf">0.2875</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5328</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.8500</span><span class="p">,</span> <span class="mf">3.3750</span><span class="p">,</span>
+        <span class="mf">14.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9999</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.1406</span><span class="p">,</span> <span class="mf">7.5469</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1078</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0750</span><span class="p">,</span> <span class="mf">1.5702</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0672</span><span class="p">,</span>
+        <span class="mf">0.4016</span><span class="p">,</span> <span class="mf">0.3017</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4844</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0000</span><span class="p">,</span> <span class="mf">0.0211</span><span class="p">,</span> <span class="mf">0.5025</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5119</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3000</span><span class="p">,</span> <span class="mf">0.1922</span><span class="p">,</span>
+        <span class="mf">0.7023</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.6317</span><span class="p">,</span> <span class="mf">19.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0000</span><span class="p">,</span> <span class="mf">1.2438</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.9094</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0000</span><span class="p">,</span> <span class="mf">0.0250</span><span class="p">,</span> <span class="mf">0.3844</span><span class="p">,</span>
+        <span class="mf">0.2656</span><span class="p">,</span> <span class="mf">1.0468</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3788</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4517</span><span class="p">,</span> <span class="mf">1.4656</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0500</span><span class="p">,</span> <span class="mf">0.0289</span><span class="p">,</span> <span class="mf">0.4260</span><span class="p">,</span> <span class="mf">0.3590</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.3250</span><span class="p">,</span> <span class="mf">0.1156</span><span class="p">,</span> <span class="mf">0.7781</span><span class="p">,</span> <span class="mf">0.0025</span><span class="p">,</span> <span class="mf">31.0625</span><span class="p">,</span> <span class="o">-</span><span class="mf">14.5000</span><span class="p">,</span> <span class="o">-</span><span class="mf">46.1148</span><span class="p">,</span> <span class="mf">55.3750</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.2312</span><span class="p">,</span>
+        <span class="mf">0.4050</span><span class="p">,</span> <span class="mf">13.3500</span><span class="p">,</span> <span class="mf">0.6234</span><span class="p">,</span> <span class="mf">1.5000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6426</span><span class="p">,</span> <span class="mf">1.8564</span><span class="p">,</span> <span class="mf">0.5636</span><span class="p">]</span>
+
+    <span class="n">defangle_theta</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span>
+        <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span>
+        <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span>
+        <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span>
+        <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span>
+        <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">defangle_phi</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="mi">156</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">204</span><span class="p">,</span>
+        <span class="mi">216</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">252</span><span class="p">,</span> <span class="mi">264</span><span class="p">,</span> <span class="mi">276</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">312</span><span class="p">,</span> <span class="mi">324</span><span class="p">,</span> <span class="mi">336</span><span class="p">,</span> <span class="mi">348</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span>
+        <span class="mi">60</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="mi">156</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">204</span><span class="p">,</span> <span class="mi">216</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">252</span><span class="p">,</span>
+        <span class="mi">264</span><span class="p">,</span> <span class="mi">276</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">312</span><span class="p">,</span> <span class="mi">324</span><span class="p">,</span> <span class="mi">336</span><span class="p">,</span> <span class="mi">348</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span>
+        <span class="mi">150</span><span class="p">,</span> <span class="mi">165</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">195</span><span class="p">,</span> <span class="mi">210</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">285</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">315</span><span class="p">,</span> <span class="mi">330</span><span class="p">,</span> <span class="mi">345</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">165</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">195</span><span class="p">,</span> <span class="mi">210</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">285</span><span class="p">,</span>
+        <span class="mi">300</span><span class="p">,</span> <span class="mi">315</span><span class="p">,</span> <span class="mi">330</span><span class="p">,</span> <span class="mi">345</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span>
+        <span class="mi">260</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">340</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">210</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">330</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">WHTEFFICACY</span> <span class="o">=</span> <span class="mf">179.0</span>  <span class="c1"># luminous efficacy of uniform white light</span>
+
+    <span class="c1"># calculate solar direction</span>
+    <span class="n">daynumber</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">))</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span>
+
+    <span class="c1"># print &#39;# Solar altitude and azimuth: %.2f %.2f&#39; % (sun.altitude, sun.azimuth - 180)</span>
+    <span class="c1"># print &#39;# Day number: %d&#39; % daynumber</span>
+    <span class="c1"># print -1 * sun.sun_vector</span>
+
+    <span class="n">day_angle</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">daynumber</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">365</span>
+
+    <span class="c1"># altitude correction if too close to zenith</span>
+    <span class="k">if</span> <span class="n">altitude</span> <span class="o">&gt;</span> <span class="mf">87.0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning - sun too close to zenith, reducing altitude to 87 degrees.&quot;</span><span class="p">)</span>
+        <span class="n">altitude</span> <span class="o">=</span> <span class="mf">87.0</span>
+
+    <span class="n">sunzenith</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">-</span> <span class="n">altitude</span>
+
+    <span class="c1"># print &#39;#Zenith: %f&#39; % sunzenith</span>
+    <span class="k">if</span> <span class="n">directirradiance</span> <span class="o">+</span> <span class="n">diffuseirradiance</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">altitude</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="n">directirradiance</span><span class="p">,</span> <span class="n">diffuseirradiance</span> <span class="o">=</span> \
+        <span class="n">check_input_values</span><span class="p">(</span><span class="n">directirradiance</span><span class="p">,</span> <span class="n">diffuseirradiance</span><span class="p">,</span> <span class="n">altitude</span><span class="p">)</span>
+
+    <span class="n">skybrightness</span> <span class="o">=</span> <span class="n">sky_brightness</span><span class="p">(</span><span class="n">diffuseirradiance</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">,</span> <span class="n">day_angle</span><span class="p">)</span>
+    <span class="n">skyclearness</span> <span class="o">=</span> <span class="n">sky_clearness</span><span class="p">(</span><span class="n">diffuseirradiance</span><span class="p">,</span> <span class="n">directirradiance</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">)</span>
+
+    <span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span> <span class="o">=</span> <span class="n">check_parametrization</span><span class="p">(</span><span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">)</span>
+
+    <span class="c1"># print &#39;# clearness: %f, brighness: %f&#39; % (skyclearness, skybrightness)</span>
+
+    <span class="c1"># diffuse horizontal illuminance</span>
+    <span class="n">diffuseilluminance</span> <span class="o">=</span> <span class="n">diffuseirradiance</span> <span class="o">*</span> \
+        <span class="n">glob_h_diffuse_effi_perez</span><span class="p">(</span><span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">)</span>
+
+    <span class="n">directilluminance</span> <span class="o">=</span> <span class="n">directirradiance</span> <span class="o">*</span> \
+        <span class="n">direct_n_effi_perez</span><span class="p">(</span><span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">)</span>
+
+    <span class="n">directilluminance</span><span class="p">,</span> <span class="n">diffuseilluminance</span> <span class="o">=</span> \
+        <span class="n">check_input_values</span><span class="p">(</span><span class="n">directilluminance</span><span class="p">,</span> <span class="n">diffuseilluminance</span><span class="p">,</span> <span class="n">altitude</span><span class="p">)</span>
+
+    <span class="c1"># print &#39;# Illuminance direct %f, diffuse %f&#39; \</span>
+    <span class="c1"># % (directilluminance, diffuseilluminance)</span>
+
+    <span class="c1"># calculate sky</span>
+    <span class="c1">#  read the angles * \</span>
+    <span class="n">half_sun_angle</span> <span class="o">=</span> <span class="mf">0.2665</span>
+    <span class="n">theta_o</span> <span class="o">=</span> <span class="n">defangle_theta</span>
+    <span class="n">phi_o</span> <span class="o">=</span> <span class="n">defangle_phi</span>
+    <span class="n">lv_mod</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 145 illuminance values</span>
+
+    <span class="c1">#  parameters for the perez model * \</span>
+    <span class="n">skybrightness</span> <span class="o">=</span> \
+        <span class="n">coeff_lum_perez</span><span class="p">(</span><span class="n">radians</span><span class="p">(</span><span class="n">sunzenith</span><span class="p">),</span> <span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">,</span> <span class="n">coeff_perez</span><span class="p">)</span>
+
+    <span class="c1"># calculation of the modelled luminance * \</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">145</span><span class="p">):</span>
+        <span class="n">dzeta</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">theta_phi_to_dzeta_gamma</span><span class="p">(</span>
+            <span class="n">radians</span><span class="p">(</span><span class="n">theta_o</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span> <span class="n">radians</span><span class="p">(</span><span class="n">phi_o</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span> <span class="n">radians</span><span class="p">(</span><span class="n">sunzenith</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">calc_rel_lum_perez</span><span class="p">(</span>
+            <span class="n">dzeta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">radians</span><span class="p">(</span><span class="n">sunzenith</span><span class="p">),</span> <span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">,</span> <span class="n">coeff_perez</span>
+        <span class="p">)</span>
+
+        <span class="n">lv_mod</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="c1"># print &quot;theta, phi, lv_mod %f\t %f\t %f\n&quot; % (theta_o[j], phi_o[j], lv_mod[j])</span>
+
+    <span class="c1">#   integration of luminance for the normalization factor, diffuse part of the sky</span>
+    <span class="n">diffnormalization</span> <span class="o">=</span> <span class="n">integ_lv</span><span class="p">(</span><span class="n">lv_mod</span><span class="p">,</span> <span class="n">theta_o</span><span class="p">)</span>
+
+    <span class="c1"># normalization coefficient in lumen or in watt * \</span>
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">diffnormalization</span> <span class="o">=</span> <span class="n">diffuseilluminance</span> <span class="o">/</span> <span class="n">diffnormalization</span> <span class="o">/</span> <span class="n">WHTEFFICACY</span>
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">diffnormalization</span> <span class="o">=</span> <span class="n">diffuseirradiance</span> <span class="o">/</span> <span class="n">diffnormalization</span>
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">diffnormalization</span> <span class="o">=</span> <span class="n">diffuseilluminance</span> <span class="o">/</span> <span class="n">diffnormalization</span>
+
+    <span class="c1">#  calculation for the solar source * \</span>
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">solarradiance</span> <span class="o">=</span> <span class="n">directilluminance</span> <span class="o">/</span> \
+            <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">half_sun_angle</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)))</span> <span class="o">/</span> <span class="n">WHTEFFICACY</span>
+
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">solarradiance</span> <span class="o">=</span> <span class="n">directirradiance</span> <span class="o">/</span> \
+            <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">half_sun_angle</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">solarradiance</span> <span class="o">=</span> <span class="n">directilluminance</span> <span class="o">/</span> \
+            <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">half_sun_angle</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">solarradiance</span></div>
+
+
+<div class="viewcode-block" id="radians"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.radians">[docs]</a><span class="k">def</span> <span class="nf">radians</span><span class="p">(</span><span class="n">degres</span><span class="p">):</span>
+    <span class="c1"># /* degrees into radians */</span>
+    <span class="k">return</span> <span class="n">degres</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span></div>
+
+
+<div class="viewcode-block" id="integ_lv"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.integ_lv">[docs]</a><span class="k">def</span> <span class="nf">integ_lv</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+    <span class="c1"># int i</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">145</span><span class="p">):</span>
+        <span class="n">buffer</span> <span class="o">+=</span> <span class="n">lv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">buffer</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">144</span></div>
+
+
+<div class="viewcode-block" id="get_numlin"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.get_numlin">[docs]</a><span class="k">def</span> <span class="nf">get_numlin</span><span class="p">(</span><span class="n">epsilon</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">1.065</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">1.230</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">1.500</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">1.950</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">2.800</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">4</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">4.500</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">5</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">6.200</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">6</span>
+    <span class="k">return</span> <span class="mi">7</span></div>
+
+
+<div class="viewcode-block" id="theta_phi_to_dzeta_gamma"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.theta_phi_to_dzeta_gamma">[docs]</a><span class="k">def</span> <span class="nf">theta_phi_to_dzeta_gamma</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculation of the angles dzeta and gamma.&quot;&quot;&quot;</span>
+    <span class="n">dzeta</span> <span class="o">=</span> <span class="n">theta</span>
+
+    <span class="k">if</span> <span class="p">((</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span>
+         <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span>
+                                 <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.1</span><span class="p">)):</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;error in calculation of gamma (angle between point and sun)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span>
+                          <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">dzeta</span><span class="p">,</span> <span class="n">gamma</span></div>
+
+
+<div class="viewcode-block" id="calc_rel_lum_perez"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.calc_rel_lum_perez">[docs]</a><span class="k">def</span> <span class="nf">calc_rel_lum_perez</span><span class="p">(</span><span class="n">dzeta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">coeff_perez</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sky luminance perez model.&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]]</span>
+    <span class="n">c_perez</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+
+    <span class="c1"># limitations for the variation of the Perez parameters */</span>
+    <span class="n">skyclearinf</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">skyclearsup</span> <span class="o">=</span> <span class="mf">12.01</span>
+
+    <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">skyclearinf</span> <span class="ow">or</span> <span class="n">epsilon</span> <span class="o">&gt;=</span> <span class="n">skyclearsup</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error: epsilon out of range in function calc_rel_lum_perez!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1">#  correction de modele de Perez solar energy ...* \</span>
+    <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&gt;</span> <span class="mf">1.065</span> <span class="ow">and</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">2.8</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">delta</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">):</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+    <span class="n">num_lin</span> <span class="o">=</span> <span class="n">get_numlin</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)</span>
+    <span class="c1"># print &quot;nline %d epsilon %f\n&quot; % (num_lin, epsilon)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff_perez</span><span class="p">[</span><span class="mi">20</span> <span class="o">*</span> <span class="n">num_lin</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">%</span> <span class="mi">60</span><span class="p">])</span>
+            <span class="c1"># print &quot;inside_loop %d %d vaut %f\n&quot; % (i, j, x[i][j])</span>
+
+    <span class="k">if</span> <span class="n">num_lin</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">c_perez</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]))</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">))</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">c_perez</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c_perez</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dzeta</span><span class="p">)))</span> <span class="o">*</span> \
+        <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">c_perez</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c_perez</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">+</span>
+         <span class="n">c_perez</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">gamma</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="sky_clearness"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.sky_clearness">[docs]</a><span class="k">def</span> <span class="nf">sky_clearness</span><span class="p">(</span><span class="n">diffuseirradiance</span><span class="p">,</span> <span class="n">directirradiance</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perez sky&#39;s clearness.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">diffuseirradiance</span> <span class="o">+</span> <span class="n">directirradiance</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">diffuseirradiance</span><span class="p">)</span> <span class="o">+</span>
+            <span class="mf">1.041</span> <span class="o">*</span> <span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span>
+            <span class="mi">180</span> <span class="o">*</span> <span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.041</span> <span class="o">*</span> <span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span>
+                                                <span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">sunzenith</span> <span class="o">*</span>
+                                                <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;diff: </span><span class="si">{}</span><span class="s1">, dir: </span><span class="si">{}</span><span class="s1">, zenith: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diffuseirradiance</span><span class="p">,</span>
+                                                     <span class="n">directirradiance</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ZeroDivisionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="sky_brightness"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.sky_brightness">[docs]</a><span class="k">def</span> <span class="nf">sky_brightness</span><span class="p">(</span><span class="n">diffuseirradiance</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">,</span> <span class="n">day_angle</span><span class="p">):</span>
+    <span class="n">solar_constant_e</span> <span class="o">=</span> <span class="mi">1367</span>    <span class="c1"># solar constant W/m^2</span>
+    <span class="sd">&quot;&quot;&quot;Perez sky&#39;s brightness&quot;&quot;&quot;</span>
+    <span class="n">brighness</span> <span class="o">=</span> <span class="n">diffuseirradiance</span> <span class="o">*</span> \
+        <span class="n">air_mass</span><span class="p">(</span><span class="n">sunzenith</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">solar_constant_e</span> <span class="o">*</span> <span class="n">get_eccentricity</span><span class="p">(</span><span class="n">day_angle</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">brighness</span></div>
+
+
+<div class="viewcode-block" id="get_eccentricity"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.get_eccentricity">[docs]</a><span class="k">def</span> <span class="nf">get_eccentricity</span><span class="p">(</span><span class="n">day_angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enter day number, return E0 = square(R0/R): eccentricity correction factor.&quot;&quot;&quot;</span>
+    <span class="n">e0</span> <span class="o">=</span> <span class="mf">1.00011</span> <span class="o">+</span> <span class="mf">0.034221</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">day_angle</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.00128</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">day_angle</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="mf">0.000719</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">day_angle</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.000077</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">day_angle</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">e0</span></div>
+
+
+<div class="viewcode-block" id="air_mass"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.air_mass">[docs]</a><span class="k">def</span> <span class="nf">air_mass</span><span class="p">(</span><span class="n">sunzenith</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enter sunzenith angle (degrees) return relative air mass (double).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sunzenith</span> <span class="o">&gt;</span> <span class="mi">90</span><span class="p">:</span>
+        <span class="c1"># print(&quot;Warning: air mass has reached the maximal value: %f \n&quot; % sunzenith)</span>
+        <span class="n">sunzenith</span> <span class="o">=</span> <span class="mi">90</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.15</span> <span class="o">*</span>
+             <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">93.885</span> <span class="o">-</span> <span class="n">sunzenith</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.253</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">m</span></div>
+
+
+<div class="viewcode-block" id="check_parametrization"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.check_parametrization">[docs]</a><span class="k">def</span> <span class="nf">check_parametrization</span><span class="p">(</span><span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check the range of epsilon and delta indexes of the perez parametrization.&quot;&quot;&quot;</span>
+    <span class="c1"># #  limitations for the variation of the Perez parameters * \</span>
+    <span class="n">skyclearinf</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">skyclearsup</span> <span class="o">=</span> <span class="mf">12.01</span>
+    <span class="n">skybriginf</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">skybrigsup</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="n">skyclearness</span> <span class="o">&lt;</span> <span class="n">skyclearinf</span> <span class="ow">or</span> <span class="n">skyclearness</span> <span class="o">&gt;</span> <span class="n">skyclearsup</span> \
+            <span class="ow">or</span> <span class="n">skybrightness</span> <span class="o">&lt;</span> <span class="n">skybriginf</span> <span class="ow">or</span> <span class="n">skybrightness</span> <span class="o">&gt;</span> <span class="n">skybrigsup</span><span class="p">:</span>
+        <span class="c1"># #   limit sky clearness or sky brightness, 2009 11 13 by J. Wienold */</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">skyclearness</span> <span class="o">&lt;</span> <span class="n">skyclearinf</span><span class="p">):</span>
+            <span class="c1"># #  if (suppress_warnings==0)</span>
+                    <span class="c1"># print(stderr,&quot;Range warning: sky clearness too low (%lf)\n&quot;,</span>
+                    <span class="c1"># skyclearness) */</span>
+            <span class="n">skyclearness</span> <span class="o">=</span> <span class="n">skyclearinf</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">skyclearness</span> <span class="o">&gt;</span> <span class="n">skyclearsup</span><span class="p">):</span>
+            <span class="c1"># #  if (suppress_warnings==0)</span>
+            <span class="c1">#     print(stderr,&quot;Range warning: sky clearness too high (%lf)\n&quot;,</span>
+            <span class="c1"># skyclearness) */</span>
+            <span class="n">skyclearness</span> <span class="o">=</span> <span class="n">skyclearsup</span> <span class="o">-</span> <span class="mf">0.001</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">skybrightness</span> <span class="o">&lt;</span> <span class="n">skybriginf</span><span class="p">):</span>
+            <span class="c1"># #  if (suppress_warnings==0)</span>
+            <span class="c1">#     print(stderr,&quot;Range warning: sky brightness too low (%lf)\n&quot;,</span>
+            <span class="c1"># skybrightness) */</span>
+            <span class="n">skybrightness</span> <span class="o">=</span> <span class="n">skybriginf</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">skybrightness</span> <span class="o">&gt;</span> <span class="n">skybrigsup</span><span class="p">):</span>
+            <span class="c1"># #  if (suppress_warnings==0)</span>
+            <span class="c1"># print(stderr,&quot;Range warning: sky brightness too high (%lf)\n&quot;,</span>
+            <span class="c1"># skybrightness) */</span>
+            <span class="n">skybrightness</span> <span class="o">=</span> <span class="n">skybrigsup</span>
+
+    <span class="k">return</span> <span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span></div>
+
+
+<div class="viewcode-block" id="glob_h_diffuse_effi_perez"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.glob_h_diffuse_effi_perez">[docs]</a><span class="k">def</span> <span class="nf">glob_h_diffuse_effi_perez</span><span class="p">(</span><span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Global horizontal diffuse efficacy model, according to PEREZ.&quot;&quot;&quot;</span>
+    <span class="c1"># #  initialize category bounds (clearness index bounds) */</span>
+    <span class="n">atm_preci_water</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="c1"># //XXX:  category_bounds &gt; 0.1 started from 1!</span>
+    <span class="n">category_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.065</span><span class="p">,</span> <span class="mf">1.230</span><span class="p">,</span> <span class="mf">1.500</span><span class="p">,</span> <span class="mf">1.950</span><span class="p">,</span> <span class="mf">2.800</span><span class="p">,</span> <span class="mf">4.500</span><span class="p">,</span> <span class="mf">6.200</span><span class="p">,</span> <span class="mf">12.01</span><span class="p">)</span>
+
+    <span class="c1"># #  initialize model coefficients * \</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mf">97.24</span><span class="p">,</span> <span class="mf">107.22</span><span class="p">,</span> <span class="mf">104.97</span><span class="p">,</span> <span class="mf">102.39</span><span class="p">,</span> <span class="mf">100.71</span><span class="p">,</span> <span class="mf">106.42</span><span class="p">,</span> <span class="mf">141.88</span><span class="p">,</span> <span class="mf">152.23</span><span class="p">)</span>
+
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.46</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">,</span> <span class="mf">2.96</span><span class="p">,</span> <span class="mf">5.59</span><span class="p">,</span> <span class="mf">5.94</span><span class="p">,</span> <span class="mf">3.83</span><span class="p">,</span> <span class="mf">1.90</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">)</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mf">12.00</span><span class="p">,</span> <span class="mf">0.59</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.53</span><span class="p">,</span> <span class="o">-</span><span class="mf">13.95</span><span class="p">,</span> <span class="o">-</span><span class="mf">22.75</span><span class="p">,</span> <span class="o">-</span><span class="mf">36.15</span><span class="p">,</span> <span class="o">-</span><span class="mf">53.24</span><span class="p">,</span> <span class="o">-</span><span class="mf">45.27</span><span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">8.91</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.95</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">13.90</span><span class="p">,</span> <span class="o">-</span><span class="mf">23.74</span><span class="p">,</span> <span class="o">-</span><span class="mf">28.83</span><span class="p">,</span> <span class="o">-</span><span class="mf">14.03</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.98</span><span class="p">)</span>
+
+    <span class="n">category_number</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">category_bounds</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">skyclearness</span> <span class="o">&lt;</span> <span class="n">category_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">category_number</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">category_number</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Warning: sky clearness (= </span><span class="si">%.3f</span><span class="s2">) too high,&quot;</span>
+            <span class="s2">&quot; printing error sky</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">skyclearness</span>
+        <span class="p">)</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">*</span> <span class="n">atm_preci_water</span> <span class="o">+</span> \
+        <span class="n">c</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="n">d</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">skybrightness</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="direct_n_effi_perez"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.direct_n_effi_perez">[docs]</a><span class="k">def</span> <span class="nf">direct_n_effi_perez</span><span class="p">(</span><span class="n">skyclearness</span><span class="p">,</span> <span class="n">skybrightness</span><span class="p">,</span> <span class="n">sunzenith</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Direct normal efficacy model, according to PEREZ.&quot;&quot;&quot;</span>
+    <span class="n">atm_preci_water</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="c1"># #  initialize category bounds(clearness index bounds) * \</span>
+    <span class="n">category_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.065</span><span class="p">,</span> <span class="mf">1.230</span><span class="p">,</span> <span class="mf">1.500</span><span class="p">,</span> <span class="mf">1.950</span><span class="p">,</span> <span class="mf">2.800</span><span class="p">,</span> <span class="mf">4.500</span><span class="p">,</span> <span class="mf">6.200</span><span class="p">,</span> <span class="mf">12.01</span><span class="p">)</span>
+
+    <span class="c1"># #  initialize model coefficients * \</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mf">57.20</span><span class="p">,</span> <span class="mf">98.99</span><span class="p">,</span> <span class="mf">109.83</span><span class="p">,</span> <span class="mf">110.34</span><span class="p">,</span> <span class="mf">106.36</span><span class="p">,</span> <span class="mf">107.19</span><span class="p">,</span> <span class="mf">105.75</span><span class="p">,</span> <span class="mf">101.18</span><span class="p">)</span>
+
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">4.55</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.46</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.90</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.84</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.97</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.77</span><span class="p">,</span> <span class="mf">1.58</span><span class="p">)</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.98</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.21</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.71</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.99</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.75</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.51</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.26</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.10</span><span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="mf">117.12</span><span class="p">,</span> <span class="mf">12.38</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.81</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.56</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.16</span><span class="p">,</span> <span class="o">-</span><span class="mf">26.73</span><span class="p">,</span> <span class="o">-</span><span class="mf">34.44</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.29</span><span class="p">)</span>
+
+    <span class="n">category_number</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">category_bounds</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">skyclearness</span> <span class="o">&lt;</span> <span class="n">category_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">category_number</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">*</span> <span class="n">atm_preci_water</span> <span class="o">+</span> \
+        <span class="n">c</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">5.73</span> <span class="o">*</span> <span class="n">sunzenith</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="n">d</span><span class="p">[</span><span class="n">category_number</span><span class="p">]</span> <span class="o">*</span> <span class="n">skybrightness</span>
+
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="check_input_values"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.check_input_values">[docs]</a><span class="k">def</span> <span class="nf">check_input_values</span><span class="p">(</span><span class="n">directilluminance</span><span class="p">,</span> <span class="n">diffuseilluminance</span><span class="p">,</span> <span class="n">altitude</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Validity of the direct and diffuse components.&quot;&quot;&quot;</span>
+    <span class="n">solar_constant_l</span> <span class="o">=</span> <span class="mi">127500</span>   <span class="c1"># solar constant lux</span>
+    <span class="k">if</span> <span class="n">directilluminance</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: direct illuminance &lt; 0. Using 0.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">directilluminance</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">diffuseilluminance</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: diffuse illuminance &lt; 0. Using 0.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">diffuseilluminance</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">directilluminance</span> <span class="o">+</span> <span class="n">diffuseilluminance</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">altitude</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Warning: zero illuminance at sun altitude &gt; 0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">directilluminance</span> <span class="o">&gt;</span> <span class="n">solar_constant_l</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Warning: direct illuminance exceeds solar constant</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">directilluminance</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">diffuseilluminance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">diffuseilluminance</span> <span class="o">=</span> <span class="mf">0.00000001</span>
+
+    <span class="k">return</span> <span class="n">directilluminance</span><span class="p">,</span> <span class="n">diffuseilluminance</span></div>
+
+
+<div class="viewcode-block" id="coeff_lum_perez"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.gendaylit.html#honeybee_plus.radiance.sky.gendaylit.coeff_lum_perez">[docs]</a><span class="k">def</span> <span class="nf">coeff_lum_perez</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">coeff_perez</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Coefficients for the sky luminance perez model.&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]]</span>
+    <span class="n">c_perez</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+
+    <span class="c1"># limitations for the variation of the Perez parameters */</span>
+    <span class="n">skyclearinf</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">skyclearsup</span> <span class="o">=</span> <span class="mf">12.01</span>
+
+    <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">skyclearinf</span> <span class="ow">or</span> <span class="n">epsilon</span> <span class="o">&gt;=</span> <span class="n">skyclearsup</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error: epsilon out of range in function coeff_lum_perez!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># /* correction du modele de Perez solar energy ...*/</span>
+    <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&gt;</span> <span class="mf">1.065</span> <span class="ow">and</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="mf">2.8</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+    <span class="k">return</span> <span class="n">delta</span>
+
+    <span class="c1"># This part of the code won&#39;t be executed and is only important for prez sky</span>
+    <span class="n">num_lin</span> <span class="o">=</span> <span class="n">get_numlin</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)</span>
+
+    <span class="c1"># /*fprintf(stderr,&quot;numlin %d\n&quot;, num_lin)*/</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff_perez</span><span class="p">[(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">num_lin</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="o">%</span> <span class="mi">60</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">num_lin</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">c_perez</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]))</span> \
+            <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">c_perez</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="p">))</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> \
+            <span class="n">delta</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

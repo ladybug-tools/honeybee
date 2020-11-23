@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.geometry.ring module
+============================================
+
+.. automodule:: honeybee_plus.radiance.geometry.ring
+   :members:
+   :undoc-members:
+   :show-inheritance:

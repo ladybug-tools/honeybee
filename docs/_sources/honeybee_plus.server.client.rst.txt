@@ -1,0 +1,7 @@
+honeybee\_plus.server.client module
+===================================
+
+.. automodule:: honeybee_plus.server.client
+   :members:
+   :undoc-members:
+   :show-inheritance:

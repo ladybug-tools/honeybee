@@ -1,0 +1,26 @@
+honeybee\_plus.radiance.command.pyRad package
+=============================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.command.pyRad.pyRadLib
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.command.pyRad.objview
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.radiance.command.pyRad
+   :members:
+   :undoc-members:
+   :show-inheritance:

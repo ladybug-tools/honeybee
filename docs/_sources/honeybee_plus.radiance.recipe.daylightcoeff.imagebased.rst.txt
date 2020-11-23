@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.recipe.daylightcoeff.imagebased module
+==============================================================
+
+.. automodule:: honeybee_plus.radiance.recipe.daylightcoeff.imagebased
+   :members:
+   :undoc-members:
+   :show-inheritance:

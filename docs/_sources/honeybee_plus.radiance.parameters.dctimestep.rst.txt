@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.parameters.dctimestep module
+====================================================
+
+.. automodule:: honeybee_plus.radiance.parameters.dctimestep
+   :members:
+   :undoc-members:
+   :show-inheritance:

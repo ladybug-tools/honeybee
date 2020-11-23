@@ -1,0 +1,22 @@
+honeybee\_plus.radiance.resultcollection package
+================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.resultcollection.database
+   honeybee_plus.radiance.resultcollection.imagecollection
+   honeybee_plus.radiance.resultcollection.pointintime
+   honeybee_plus.radiance.resultcollection.resultgrid
+   honeybee_plus.radiance.resultcollection.timeseries
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.radiance.resultcollection
+   :members:
+   :undoc-members:
+   :show-inheritance:

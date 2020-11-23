@@ -1,0 +1,45 @@
+honeybee\_plus.radiance.material package
+========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.material.antimatter
+   honeybee_plus.radiance.material.ashik2
+   honeybee_plus.radiance.material.brtdfunc
+   honeybee_plus.radiance.material.bsdf
+   honeybee_plus.radiance.material.dielectric
+   honeybee_plus.radiance.material.glass
+   honeybee_plus.radiance.material.glow
+   honeybee_plus.radiance.material.illum
+   honeybee_plus.radiance.material.interface
+   honeybee_plus.radiance.material.light
+   honeybee_plus.radiance.material.materialbase
+   honeybee_plus.radiance.material.metal
+   honeybee_plus.radiance.material.metal2
+   honeybee_plus.radiance.material.metdata
+   honeybee_plus.radiance.material.metfunc
+   honeybee_plus.radiance.material.mirror
+   honeybee_plus.radiance.material.mist
+   honeybee_plus.radiance.material.plasdata
+   honeybee_plus.radiance.material.plasfunc
+   honeybee_plus.radiance.material.plastic
+   honeybee_plus.radiance.material.plastic2
+   honeybee_plus.radiance.material.prism1
+   honeybee_plus.radiance.material.prism2
+   honeybee_plus.radiance.material.spotlight
+   honeybee_plus.radiance.material.trans
+   honeybee_plus.radiance.material.trans2
+   honeybee_plus.radiance.material.transdata
+   honeybee_plus.radiance.material.transfunc
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.radiance.material
+   :members:
+   :undoc-members:
+   :show-inheritance:

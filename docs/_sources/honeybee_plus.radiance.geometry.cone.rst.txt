@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.geometry.cone module
+============================================
+
+.. automodule:: honeybee_plus.radiance.geometry.cone
+   :members:
+   :undoc-members:
+   :show-inheritance:

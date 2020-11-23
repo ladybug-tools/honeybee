@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.analysispointlite module
+================================================
+
+.. automodule:: honeybee_plus.radiance.analysispointlite
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,18 @@
+honeybee\_plus.vectormath package
+=================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.vectormath.euclid
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.vectormath
+   :members:
+   :undoc-members:
+   :show-inheritance:

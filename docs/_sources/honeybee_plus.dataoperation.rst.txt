@@ -1,0 +1,7 @@
+honeybee\_plus.dataoperation module
+===================================
+
+.. automodule:: honeybee_plus.dataoperation
+   :members:
+   :undoc-members:
+   :show-inheritance:

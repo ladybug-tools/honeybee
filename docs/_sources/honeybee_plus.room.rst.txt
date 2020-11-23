@@ -1,0 +1,7 @@
+honeybee\_plus.room module
+==========================
+
+.. automodule:: honeybee_plus.room
+   :members:
+   :undoc-members:
+   :show-inheritance:

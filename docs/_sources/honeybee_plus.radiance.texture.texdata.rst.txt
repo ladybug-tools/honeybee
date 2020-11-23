@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.texture.texdata module
+==============================================
+
+.. automodule:: honeybee_plus.radiance.texture.texdata
+   :members:
+   :undoc-members:
+   :show-inheritance:

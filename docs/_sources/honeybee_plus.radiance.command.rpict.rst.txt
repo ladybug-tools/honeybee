@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.command.rpict module
+============================================
+
+.. automodule:: honeybee_plus.radiance.command.rpict
+   :members:
+   :undoc-members:
+   :show-inheritance:

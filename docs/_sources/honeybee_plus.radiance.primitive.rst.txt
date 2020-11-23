@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.primitive module
+========================================
+
+.. automodule:: honeybee_plus.radiance.primitive
+   :members:
+   :undoc-members:
+   :show-inheritance:

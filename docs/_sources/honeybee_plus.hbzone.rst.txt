@@ -1,0 +1,7 @@
+honeybee\_plus.hbzone module
+============================
+
+.. automodule:: honeybee_plus.hbzone
+   :members:
+   :undoc-members:
+   :show-inheritance:

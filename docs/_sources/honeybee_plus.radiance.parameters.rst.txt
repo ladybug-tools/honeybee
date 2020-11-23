@@ -1,0 +1,37 @@
+honeybee\_plus.radiance.parameters package
+==========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.parameters.dctimestep
+   honeybee_plus.radiance.parameters.falsecolor
+   honeybee_plus.radiance.parameters.genBsdf
+   honeybee_plus.radiance.parameters.gendaylit
+   honeybee_plus.radiance.parameters.gendaymtx
+   honeybee_plus.radiance.parameters.gensky
+   honeybee_plus.radiance.parameters.mkpmap
+   honeybee_plus.radiance.parameters.oconv
+   honeybee_plus.radiance.parameters.pcomb
+   honeybee_plus.radiance.parameters.raBmp
+   honeybee_plus.radiance.parameters.raTiff
+   honeybee_plus.radiance.parameters.rcalc
+   honeybee_plus.radiance.parameters.rcollate
+   honeybee_plus.radiance.parameters.rcontrib
+   honeybee_plus.radiance.parameters.rfluxmtx
+   honeybee_plus.radiance.parameters.rmtxop
+   honeybee_plus.radiance.parameters.rpict
+   honeybee_plus.radiance.parameters.rtrace
+   honeybee_plus.radiance.parameters.vwrays
+   honeybee_plus.radiance.parameters.xform
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.radiance.parameters
+   :members:
+   :undoc-members:
+   :show-inheritance:

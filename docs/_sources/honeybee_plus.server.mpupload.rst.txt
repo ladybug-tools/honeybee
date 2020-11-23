@@ -1,0 +1,7 @@
+honeybee\_plus.server.mpupload module
+=====================================
+
+.. automodule:: honeybee_plus.server.mpupload
+   :members:
+   :undoc-members:
+   :show-inheritance:

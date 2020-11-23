@@ -1,0 +1,19 @@
+honeybee\_plus.server package
+=============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.server.client
+   honeybee_plus.server.mpupload
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.server
+   :members:
+   :undoc-members:
+   :show-inheritance:

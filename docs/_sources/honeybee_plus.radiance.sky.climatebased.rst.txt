@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.sky.climatebased module
+===============================================
+
+.. automodule:: honeybee_plus.radiance.sky.climatebased
+   :members:
+   :undoc-members:
+   :show-inheritance:

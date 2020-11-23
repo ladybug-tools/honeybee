@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.recipe.threephase.gridbased module
+==========================================================
+
+.. automodule:: honeybee_plus.radiance.recipe.threephase.gridbased
+   :members:
+   :undoc-members:
+   :show-inheritance:

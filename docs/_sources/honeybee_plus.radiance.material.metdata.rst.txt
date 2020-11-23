@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.material.metdata module
+===============================================
+
+.. automodule:: honeybee_plus.radiance.material.metdata
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.resultcollection.database module
+========================================================
+
+.. automodule:: honeybee_plus.radiance.resultcollection.database
+   :members:
+   :undoc-members:
+   :show-inheritance:

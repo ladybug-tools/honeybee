@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.command.genBSDF module
+==============================================
+
+.. automodule:: honeybee_plus.radiance.command.genBSDF
+   :members:
+   :undoc-members:
+   :show-inheritance:

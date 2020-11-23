@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_plus.radiance.sky.sunmatrix &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../honeybee_plus.html">honeybee_plus package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_plus.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.energyplus.html">honeybee_plus.energyplus package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.energyplus.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.energyplus.filemanager.html">honeybee_plus.energyplus.filemanager module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.energyplus.geometryrules.html">honeybee_plus.energyplus.geometryrules module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.energyplus.html#module-honeybee_plus.energyplus">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.radiance.html">honeybee_plus.radiance package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.radiance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html">honeybee_plus.radiance.command package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html">honeybee_plus.radiance.command.pyRad package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html">honeybee_plus.radiance.command.pyRad.pyRadLib package</a><ul>
+<li class="toctree-l10"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html#submodules">Submodules</a><ul>
+<li class="toctree-l11"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.pyrad_proc.html">honeybee_plus.radiance.command.pyRad.pyRadLib.pyrad_proc module</a></li>
+</ul>
+</li>
+<li class="toctree-l10"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html#module-honeybee_plus.radiance.command.pyRad.pyRadLib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.objview.html">honeybee_plus.radiance.command.pyRad.objview module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pyRad.html#module-honeybee_plus.radiance.command.pyRad">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.dctimestep.html">honeybee_plus.radiance.command.dctimestep module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.epw2wea.html">honeybee_plus.radiance.command.epw2wea module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.falsecolor.html">honeybee_plus.radiance.command.falsecolor module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.genBSDF.html">honeybee_plus.radiance.command.genBSDF module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.gendaylit.html">honeybee_plus.radiance.command.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.gendaymtx.html">honeybee_plus.radiance.command.gendaymtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.gensky.html">honeybee_plus.radiance.command.gensky module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.genskyvec.html">honeybee_plus.radiance.command.genskyvec module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.getbbox.html">honeybee_plus.radiance.command.getbbox module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.getinfo.html">honeybee_plus.radiance.command.getinfo module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.mkpmap.html">honeybee_plus.radiance.command.mkpmap module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.objview.html">honeybee_plus.radiance.command.objview module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.oconv.html">honeybee_plus.radiance.command.oconv module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.pcomb.html">honeybee_plus.radiance.command.pcomb module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.raBmp.html">honeybee_plus.radiance.command.raBmp module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.raTiff.html">honeybee_plus.radiance.command.raTiff module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rcalc.html">honeybee_plus.radiance.command.rcalc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rcollate.html">honeybee_plus.radiance.command.rcollate module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rcontrib.html">honeybee_plus.radiance.command.rcontrib module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rfluxmtx.html">honeybee_plus.radiance.command.rfluxmtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rmtxop.html">honeybee_plus.radiance.command.rmtxop module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rpict.html">honeybee_plus.radiance.command.rpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.rtrace.html">honeybee_plus.radiance.command.rtrace module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.vwrays.html">honeybee_plus.radiance.command.vwrays module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.xform.html">honeybee_plus.radiance.command.xform module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.command.html#module-honeybee_plus.radiance.command">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.html">honeybee_plus.radiance.geometry package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.bubble.html">honeybee_plus.radiance.geometry.bubble module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.cone.html">honeybee_plus.radiance.geometry.cone module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.cup.html">honeybee_plus.radiance.geometry.cup module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.cylinder.html">honeybee_plus.radiance.geometry.cylinder module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.geometrybase.html">honeybee_plus.radiance.geometry.geometrybase module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.instance.html">honeybee_plus.radiance.geometry.instance module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.mesh.html">honeybee_plus.radiance.geometry.mesh module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.polygon.html">honeybee_plus.radiance.geometry.polygon module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.ring.html">honeybee_plus.radiance.geometry.ring module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.source.html">honeybee_plus.radiance.geometry.source module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.sphere.html">honeybee_plus.radiance.geometry.sphere module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.tube.html">honeybee_plus.radiance.geometry.tube module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.geometry.html#module-honeybee_plus.radiance.geometry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.html">honeybee_plus.radiance.material package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.antimatter.html">honeybee_plus.radiance.material.antimatter module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.ashik2.html">honeybee_plus.radiance.material.ashik2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.brtdfunc.html">honeybee_plus.radiance.material.brtdfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.bsdf.html">honeybee_plus.radiance.material.bsdf module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.dielectric.html">honeybee_plus.radiance.material.dielectric module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.glass.html">honeybee_plus.radiance.material.glass module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.glow.html">honeybee_plus.radiance.material.glow module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.illum.html">honeybee_plus.radiance.material.illum module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.interface.html">honeybee_plus.radiance.material.interface module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.light.html">honeybee_plus.radiance.material.light module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.materialbase.html">honeybee_plus.radiance.material.materialbase module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metal.html">honeybee_plus.radiance.material.metal module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metal2.html">honeybee_plus.radiance.material.metal2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metdata.html">honeybee_plus.radiance.material.metdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.metfunc.html">honeybee_plus.radiance.material.metfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.mirror.html">honeybee_plus.radiance.material.mirror module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.mist.html">honeybee_plus.radiance.material.mist module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plasdata.html">honeybee_plus.radiance.material.plasdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plasfunc.html">honeybee_plus.radiance.material.plasfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plastic.html">honeybee_plus.radiance.material.plastic module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.plastic2.html">honeybee_plus.radiance.material.plastic2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.prism1.html">honeybee_plus.radiance.material.prism1 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.prism2.html">honeybee_plus.radiance.material.prism2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.spotlight.html">honeybee_plus.radiance.material.spotlight module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.trans.html">honeybee_plus.radiance.material.trans module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.trans2.html">honeybee_plus.radiance.material.trans2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.transdata.html">honeybee_plus.radiance.material.transdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.transfunc.html">honeybee_plus.radiance.material.transfunc module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.material.html#module-honeybee_plus.radiance.material">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.html">honeybee_plus.radiance.mixture package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixdata.html">honeybee_plus.radiance.mixture.mixdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixfunc.html">honeybee_plus.radiance.mixture.mixfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixpict.html">honeybee_plus.radiance.mixture.mixpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixtext.html">honeybee_plus.radiance.mixture.mixtext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.mixturebase.html">honeybee_plus.radiance.mixture.mixturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.mixture.html#module-honeybee_plus.radiance.mixture">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.html">honeybee_plus.radiance.parameters package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.dctimestep.html">honeybee_plus.radiance.parameters.dctimestep module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.falsecolor.html">honeybee_plus.radiance.parameters.falsecolor module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.genBsdf.html">honeybee_plus.radiance.parameters.genBsdf module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.gendaylit.html">honeybee_plus.radiance.parameters.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.gendaymtx.html">honeybee_plus.radiance.parameters.gendaymtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.gensky.html">honeybee_plus.radiance.parameters.gensky module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.mkpmap.html">honeybee_plus.radiance.parameters.mkpmap module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.oconv.html">honeybee_plus.radiance.parameters.oconv module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.pcomb.html">honeybee_plus.radiance.parameters.pcomb module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.raBmp.html">honeybee_plus.radiance.parameters.raBmp module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.raTiff.html">honeybee_plus.radiance.parameters.raTiff module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rcalc.html">honeybee_plus.radiance.parameters.rcalc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rcollate.html">honeybee_plus.radiance.parameters.rcollate module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rcontrib.html">honeybee_plus.radiance.parameters.rcontrib module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rfluxmtx.html">honeybee_plus.radiance.parameters.rfluxmtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rmtxop.html">honeybee_plus.radiance.parameters.rmtxop module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rpict.html">honeybee_plus.radiance.parameters.rpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.rtrace.html">honeybee_plus.radiance.parameters.rtrace module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.vwrays.html">honeybee_plus.radiance.parameters.vwrays module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.xform.html">honeybee_plus.radiance.parameters.xform module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.parameters.html#module-honeybee_plus.radiance.parameters">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.html">honeybee_plus.radiance.pattern package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.brightdata.html">honeybee_plus.radiance.pattern.brightdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.brightfunc.html">honeybee_plus.radiance.pattern.brightfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.brighttext.html">honeybee_plus.radiance.pattern.brighttext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colordata.html">honeybee_plus.radiance.pattern.colordata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colorfunc.html">honeybee_plus.radiance.pattern.colorfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colorpict.html">honeybee_plus.radiance.pattern.colorpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.colortext.html">honeybee_plus.radiance.pattern.colortext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.patternbase.html">honeybee_plus.radiance.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.pattern.html#module-honeybee_plus.radiance.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html">honeybee_plus.radiance.recipe package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.html">honeybee_plus.radiance.recipe.annual package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.gridbased.html">honeybee_plus.radiance.recipe.annual.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.annual.html#module-honeybee_plus.radiance.recipe.annual">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.html">honeybee_plus.radiance.recipe.daylightcoeff package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.gridbased.html">honeybee_plus.radiance.recipe.daylightcoeff.gridbased module</a></li>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.imagebased.html">honeybee_plus.radiance.recipe.daylightcoeff.imagebased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightcoeff.html#module-honeybee_plus.radiance.recipe.daylightcoeff">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.html">honeybee_plus.radiance.recipe.daylightfactor package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.gridbased.html">honeybee_plus.radiance.recipe.daylightfactor.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.daylightfactor.html#module-honeybee_plus.radiance.recipe.daylightfactor">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.html">honeybee_plus.radiance.recipe.directreflection package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.gridbased.html">honeybee_plus.radiance.recipe.directreflection.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.directreflection.html#module-honeybee_plus.radiance.recipe.directreflection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.html">honeybee_plus.radiance.recipe.fivephase package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.gridbased.html">honeybee_plus.radiance.recipe.fivephase.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.fivephase.html#module-honeybee_plus.radiance.recipe.fivephase">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.html">honeybee_plus.radiance.recipe.pointintime package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.gridbased.html">honeybee_plus.radiance.recipe.pointintime.gridbased module</a></li>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.imagebased.html">honeybee_plus.radiance.recipe.pointintime.imagebased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.pointintime.html#module-honeybee_plus.radiance.recipe.pointintime">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.html">honeybee_plus.radiance.recipe.radiation package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.gridbased.html">honeybee_plus.radiance.recipe.radiation.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.radiation.html#module-honeybee_plus.radiance.recipe.radiation">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.html">honeybee_plus.radiance.recipe.solaraccess package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.gridbased.html">honeybee_plus.radiance.recipe.solaraccess.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.solaraccess.html#module-honeybee_plus.radiance.recipe.solaraccess">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.html">honeybee_plus.radiance.recipe.threephase package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.gridbased.html">honeybee_plus.radiance.recipe.threephase.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.threephase.html#module-honeybee_plus.radiance.recipe.threephase">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.id.html">honeybee_plus.radiance.recipe.id module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.parameters.html">honeybee_plus.radiance.recipe.parameters module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.recipedcutil.html">honeybee_plus.radiance.recipe.recipedcutil module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.recipeutil.html">honeybee_plus.radiance.recipe.recipeutil module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.recipexphaseutil.html">honeybee_plus.radiance.recipe.recipexphaseutil module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.recipe.html#module-honeybee_plus.radiance.recipe">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.html">honeybee_plus.radiance.resultcollection package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.database.html">honeybee_plus.radiance.resultcollection.database module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.imagecollection.html">honeybee_plus.radiance.resultcollection.imagecollection module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.pointintime.html">honeybee_plus.radiance.resultcollection.pointintime module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.resultgrid.html">honeybee_plus.radiance.resultcollection.resultgrid module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.timeseries.html">honeybee_plus.radiance.resultcollection.timeseries module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.resultcollection.html#module-honeybee_plus.radiance.resultcollection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.html">honeybee_plus.radiance.sky package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.analemma.html">honeybee_plus.radiance.sky.analemma module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.certainIlluminance.html">honeybee_plus.radiance.sky.certainIlluminance module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.cie.html">honeybee_plus.radiance.sky.cie module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.climatebased.html">honeybee_plus.radiance.sky.climatebased module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.gendaylit.html">honeybee_plus.radiance.sky.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.skymatrix.html">honeybee_plus.radiance.sky.skymatrix module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.skyvector.html">honeybee_plus.radiance.sky.skyvector module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html">honeybee_plus.radiance.sky.sunmatrix module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.sky.html#module-honeybee_plus.radiance.sky">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.html">honeybee_plus.radiance.texture package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.texdata.html">honeybee_plus.radiance.texture.texdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.texfunc.html">honeybee_plus.radiance.texture.texfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.texturebase.html">honeybee_plus.radiance.texture.texturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_plus.radiance.texture.html#module-honeybee_plus.radiance.texture">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.radiance.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysisgrid.html">honeybee_plus.radiance.analysisgrid module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysisgridlite.html">honeybee_plus.radiance.analysisgridlite module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysispoint.html">honeybee_plus.radiance.analysispoint module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.analysispointlite.html">honeybee_plus.radiance.analysispointlite module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.datatype.html">honeybee_plus.radiance.datatype module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.factory.html">honeybee_plus.radiance.factory module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.primitive.html">honeybee_plus.radiance.primitive module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.properties.html">honeybee_plus.radiance.properties module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.radfile.html">honeybee_plus.radiance.radfile module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.radparser.html">honeybee_plus.radiance.radparser module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.scene.html">honeybee_plus.radiance.scene module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.staticscene.html">honeybee_plus.radiance.staticscene module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.radiance.view.html">honeybee_plus.radiance.view module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.radiance.html#module-honeybee_plus.radiance">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.server.html">honeybee_plus.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.server.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.server.client.html">honeybee_plus.server.client module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.server.mpupload.html">honeybee_plus.server.mpupload module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.server.html#module-honeybee_plus.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.vectormath.html">honeybee_plus.vectormath package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.vectormath.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_plus.vectormath.euclid.html">honeybee_plus.vectormath.euclid module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_plus.vectormath.html#module-honeybee_plus.vectormath">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_plus.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.config.html">honeybee_plus.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.dataoperation.html">honeybee_plus.dataoperation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.exception.html">honeybee_plus.exception module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.futil.html">honeybee_plus.futil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.geometryoperation.html">honeybee_plus.geometryoperation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbdynamicsurface.html">honeybee_plus.hbdynamicsurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbfensurface.html">honeybee_plus.hbfensurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbobject.html">honeybee_plus.hbobject module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbshadesurface.html">honeybee_plus.hbshadesurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbsurface.html">honeybee_plus.hbsurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.hbzone.html">honeybee_plus.hbzone module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.room.html">honeybee_plus.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.schedule.html">honeybee_plus.schedule module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.surfaceproperties.html">honeybee_plus.surfaceproperties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.surfacetype.html">honeybee_plus.surfacetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.utilcol.html">honeybee_plus.utilcol module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_plus.windowgroup.html">honeybee_plus.windowgroup module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_plus.html#module-honeybee_plus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../honeybee_plus.html">honeybee_plus package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../honeybee_plus.html">honeybee_plus package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <h1>Source code for honeybee_plus.radiance.sky.sunmatrix</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">._skyBase</span> <span class="kn">import</span> <span class="n">RadianceSky</span>
+<span class="kn">from</span> <span class="nn">.gendaylit</span> <span class="kn">import</span> <span class="n">gendaylit</span>
+<span class="kn">from</span> <span class="nn">.analemma</span> <span class="kn">import</span> <span class="n">AnalemmaReversed</span>
+
+<span class="kn">from</span> <span class="nn">ladybug.dt</span> <span class="kn">import</span> <span class="n">DateTime</span>
+<span class="kn">from</span> <span class="nn">ladybug.sunpath</span> <span class="kn">import</span> <span class="n">Sunpath</span>
+<span class="kn">from</span> <span class="nn">ladybug.wea</span> <span class="kn">import</span> <span class="n">Wea</span>
+<span class="kn">from</span> <span class="nn">ladybug.location</span> <span class="kn">import</span> <span class="n">Location</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span> <span class="k">as</span> <span class="nb">zip</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="SunMatrix"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix">[docs]</a><span class="k">class</span> <span class="nc">SunMatrix</span><span class="p">(</span><span class="n">RadianceSky</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Radiance direct sun matrix.</span>
+
+<span class="sd">    This class generates a sky matrix similar to gendaymtx -5 with the difference that</span>
+<span class="sd">    unlike gendaymtx that uses the approximate position of the sun it uses the exact</span>
+<span class="sd">    sun position for each timestep.</span>
+
+<span class="sd">    A SunMatrix is climate-based and is generated based on radiation values from wea</span>
+<span class="sd">    or epw file.</span>
+
+<span class="sd">    It is useful to calculate accurate direct sunlight for an annual study and is usually</span>
+<span class="sd">    used in combination with Analemma. See usage for a sample use case.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        wea: An instance of ladybug Wea.</span>
+<span class="sd">        north: An angle in degrees between 0-360 to indicate north direction</span>
+<span class="sd">            (Default: 0).</span>
+<span class="sd">        hoys: The list of hours for generating the sky matrix (Default: 0..8759)</span>
+<span class="sd">        output_type: Specify 0 for visible radiation, 1 for total solar radiation.</span>
+<span class="sd">        suffix: An optional suffix for sky name. The suffix will be added at the</span>
+<span class="sd">            end of the standard name. Use this input to customize the new and</span>
+<span class="sd">            avoid sky being overwritten by other skymatrix components.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        solar_values: A list of radiance values for each sun_up_hour. These values</span>
+<span class="sd">            can be visible or total solar radiation based on output_type input.</span>
+<span class="sd">        sun_up_hours: List of sun up hours as hours of the year. Values will be between</span>
+<span class="sd">            0..8759.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">        from honeybee_plus.radiance.sky.sunmatrix import SunMatrix</span>
+<span class="sd">        working_dir = &quot;.&quot;</span>
+<span class="sd">        epwfile = r&quot;./USA_CA_San.Francisco.Intl.AP.724940_TMY3.epw&quot;</span>
+<span class="sd">        sunmtx = sun_matrix.from_epw_file(epwfile, north=20)</span>
+<span class="sd">        # write SunMatrix file</span>
+<span class="sd">        sunmtx.execute(working_dir)</span>
+
+<span class="sd">        analemma = sun_matrix.analemma(north=20)</span>
+<span class="sd">        #  write analemma</span>
+<span class="sd">        analemma.execute(working_dir)</span>
+<span class="sd">        ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">solar_values</span><span class="p">,</span> <span class="n">sun_up_hours</span><span class="p">,</span> <span class="n">hoys</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Args:</span>
+<span class="sd">                location: Location data as a ladybug Location object. Location data will</span>
+<span class="sd">                    only be used to create the header.</span>
+<span class="sd">                solar_values: A list of solar i/rradiance values for every sun up hour.</span>
+<span class="sd">                sun_up_hours: A list of hoys for hours that sun is not below the horizon.</span>
+<span class="sd">                hoys: The list of total hours to be included in SunMatrix. List of hours</span>
+<span class="sd">                    can be subhourly and doesn&#39;t need to be continuous but it must</span>
+<span class="sd">                    include all the hours in sun_up_hours.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">RadianceSky</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sun_up_hours</span> <span class="o">=</span> <span class="n">sun_up_hours</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solar_values</span> <span class="o">=</span> <span class="n">solar_values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hoys</span> <span class="o">=</span> <span class="n">hoys</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sun_up_hours</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">solar_values</span><span class="p">),</span> \
+            <span class="s1">&#39;Number of sun_up_hours (</span><span class="si">%d</span><span class="s1">) is not equal to number of solar_values (</span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> \
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sun_up_hours</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">solar_values</span><span class="p">))</span>
+
+        <span class="c1"># ensure all sun up hours are included in hoys</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">sun_up_hours</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hoys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Hour </span><span class="si">{}</span><span class="s1"> is not included in hoys.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+
+        <span class="c1"># create solar valus for all hoys</span>
+        <span class="c1"># create place holder</span>
+        <span class="n">total_solar_values</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;0 0 0&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span> <span class="k">for</span> <span class="n">sv</span> <span class="ow">in</span> <span class="n">sun_up_hours</span><span class="p">]</span>
+
+        <span class="c1"># replace the solar value for each sun up hour</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">sun_value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">solar_values</span><span class="p">)):</span>
+            <span class="n">total_solar_values</span><span class="p">[</span><span class="n">count</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> </span><span class="si">{0}</span><span class="s1"> </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sun_value</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_solar_values</span> <span class="o">=</span> <span class="n">total_solar_values</span>
+
+<div class="viewcode-block" id="SunMatrix.from_wea"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.from_wea">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_wea</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wea</span><span class="p">,</span> <span class="n">north</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hoys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_leap_year</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create sun matrix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            wea: An instance of ladybug Wea.</span>
+<span class="sd">            north: An angle in degrees between 0-360 to indicate north direction</span>
+<span class="sd">                (Default: 0).</span>
+<span class="sd">            hoys: The list of hours for generating the sky matrix (Default: 0..8759)</span>
+<span class="sd">            output_type: Specify 0 for visible radiation, 1 for total solar radiation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output_type</span> <span class="o">=</span> <span class="n">output_type</span> <span class="ow">or</span> <span class="mi">0</span>  <span class="c1"># set default to 0 for visible radiation</span>
+        <span class="n">hoys</span> <span class="o">=</span> <span class="n">hoys</span> <span class="ow">or</span> <span class="n">wea</span><span class="o">.</span><span class="n">hoys</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">hoys</span> <span class="ow">and</span> <span class="n">wea</span><span class="o">.</span><span class="n">timestep</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># adjut for half an hour so all the annual metric methods work for now</span>
+            <span class="c1"># this is a design issue in Honeybee and should be fixed by removing</span>
+            <span class="c1"># defulting values to range(8760)</span>
+            <span class="n">hoys</span> <span class="o">=</span> <span class="p">[</span><span class="n">hour</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="n">wea</span><span class="o">.</span><span class="n">hoys</span><span class="p">]</span>
+
+        <span class="n">solar_values</span><span class="p">,</span> <span class="n">sun_up_hours</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_calculate_solar_values</span><span class="p">(</span><span class="n">wea</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">output_type</span><span class="p">,</span>
+                                                                 <span class="n">north</span><span class="p">,</span> <span class="n">is_leap_year</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">wea</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">solar_values</span><span class="p">,</span> <span class="n">sun_up_hours</span><span class="p">,</span> <span class="n">hoys</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SunMatrix.from_epw_file"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.from_epw_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_epw_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">epw_file</span><span class="p">,</span> <span class="n">north</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hoys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create sun matrix from an epw file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_wea</span><span class="p">(</span><span class="n">Wea</span><span class="o">.</span><span class="n">from_epw_file</span><span class="p">(</span><span class="n">epw_file</span><span class="p">),</span> <span class="n">north</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">output_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SunMatrix.from_json"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.from_json">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a SunMatrix from a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;solar_values&#39;</span><span class="p">,</span> <span class="s1">&#39;sun_up_hours&#39;</span><span class="p">,</span> <span class="s1">&#39;hoys&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> is missing from input dictionary&#39;</span> <span class="o">%</span> <span class="n">key</span>
+
+        <span class="n">location</span> <span class="o">=</span> <span class="n">Location</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">])</span>
+        <span class="n">solar_values</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="s1">&#39;solar_values&#39;</span><span class="p">]</span>
+        <span class="n">sun_up_hours</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="s1">&#39;sun_up_hours&#39;</span><span class="p">]</span>
+        <span class="n">hoys</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="s1">&#39;hoys&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">solar_values</span><span class="p">,</span> <span class="n">sun_up_hours</span><span class="p">,</span> <span class="n">hoys</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">isSunMatrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_climate_based</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if the sky is generated from values from weather file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sunmtx_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sun matrix file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;sunmtx.smx&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;SunMatrix location.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_location</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">solar_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List of radiance values for each sun_up_hour.</span>
+
+<span class="sd">        These values can be visible or total solar radiation based on output_type input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solar_values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sun_up_hours</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List of sun up hours as hours of the year.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sun_up_hours</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hoys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List of all hours in SunMatrix as hours of the year.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hoys</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sun matrix file header output.&quot;&quot;&quot;</span>
+        <span class="c1"># Start creating header for the sun matrix.</span>
+        <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">longitude</span>
+        <span class="n">file_header</span> <span class="o">=</span> <span class="s1">&#39;#?RADIANCE</span><span class="se">\n</span><span class="s1">&#39;</span> \
+            <span class="s1">&#39;Sun matrix created by Honeybee</span><span class="se">\n</span><span class="s1">&#39;</span> \
+            <span class="s1">&#39;LATLONG= </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> \
+            <span class="s1">&#39;NROWS=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> \
+            <span class="s1">&#39;NCOLS=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> \
+            <span class="s1">&#39;NCOMP=3</span><span class="se">\n</span><span class="s1">&#39;</span> \
+            <span class="s1">&#39;FORMAT=ascii</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoys</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">file_header</span>
+
+<div class="viewcode-block" id="SunMatrix.analemma"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.analemma">[docs]</a>    <span class="k">def</span> <span class="nf">analemma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">north</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_leap_year</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an Analemma based on this SunMatrix.</span>
+
+<span class="sd">        Analemma is a static representation of SunMatrix. You can use Analemma to</span>
+<span class="sd">        generate two files which works hand in hand with SunMatrix for annual simulation.</span>
+<span class="sd">            1. *.ann file which includes sun geometries and materials.</span>
+<span class="sd">            2. *.mod file includes list of modifiers that are included in *.ann file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">AnalemmaReversed</span><span class="o">.</span><span class="n">from_location_sun_up_hours</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">,</span> <span class="n">north</span><span class="p">,</span> <span class="n">is_leap_year</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_calculate_solar_values</span><span class="p">(</span><span class="n">wea</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">output_type</span><span class="p">,</span> <span class="n">north</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_leap_year</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate solar values for requested hours of the year.</span>
+
+<span class="sd">        This method is called everytime that output type is set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">month_date_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">DateTime</span><span class="o">.</span><span class="n">from_hoy</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">is_leap_year</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">hoys</span><span class="p">)</span>
+
+        <span class="n">sp</span> <span class="o">=</span> <span class="n">Sunpath</span><span class="o">.</span><span class="n">from_location</span><span class="p">(</span><span class="n">wea</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">north</span><span class="p">)</span>
+        <span class="n">sp</span><span class="o">.</span><span class="n">is_leap_year</span> <span class="o">=</span> <span class="n">is_leap_year</span>
+        <span class="n">solar_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sun_up_hours</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># use gendaylit to calculate radiation values for each hour.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Calculating solar values...&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">timecount</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">month_date_time</span><span class="p">):</span>
+            <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">float_hour</span>
+            <span class="n">sun</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">calculate_sun</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sun</span><span class="o">.</span><span class="n">altitude</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dnr</span><span class="p">,</span> <span class="n">dhr</span> <span class="o">=</span> <span class="n">wea</span><span class="o">.</span><span class="n">get_irradiance_value</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dnr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">solarradiance</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">solarradiance</span> <span class="o">=</span> \
+                        <span class="nb">int</span><span class="p">(</span><span class="n">gendaylit</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">altitude</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">dnr</span><span class="p">,</span> <span class="n">dhr</span><span class="p">,</span>
+                                      <span class="n">output_type</span><span class="p">))</span>
+
+                <span class="n">solar_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">solarradiance</span><span class="p">)</span>
+                <span class="c1"># keep the number of hour relative to hoys in this sun matrix</span>
+                <span class="n">sun_up_hours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">hoy</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">solar_values</span><span class="p">,</span> <span class="n">sun_up_hours</span>
+
+<div class="viewcode-block" id="SunMatrix.execute"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate sun matrix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            working_dir: Folder to execute and write the output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Full path to sun_matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># annual sun matrix</span>
+        <span class="n">mfp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sunmtx_file</span><span class="p">))</span>
+
+        <span class="n">sun_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">sun_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;There is 0 sun up hours!&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;# Number of sun up hours: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">sun_count</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Writing sun matrix to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mfp</span><span class="p">))</span>
+        <span class="c1"># Write the matrix to file.</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mfp</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sunmtx</span><span class="p">:</span>
+            <span class="n">sunmtx</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_header</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sun_rad_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_solar_values</span><span class="p">:</span>
+                <span class="n">sunmtx</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sun_rad_list</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">sunmtx</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mfp</span></div>
+
+<div class="viewcode-block" id="SunMatrix.duplicate"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Duplicate this class.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SunMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solar_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SunMatrix.to_rad_string"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.to_rad_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">,</span> <span class="n">write_hours</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the radiance command line as a string.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="s1">&#39;SunMatrix does not have a single line command. Try execute method.&#39;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SunMatrix.to_json"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+            <span class="s1">&#39;solar_values&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">solar_values</span><span class="p">,</span>
+            <span class="s1">&#39;sun_up_hours&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">,</span>
+            <span class="s1">&#39;hoys&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="SunMatrix.ToString"><a class="viewcode-back" href="../../../../honeybee_plus.radiance.sky.sunmatrix.html#honeybee_plus.radiance.sky.sunmatrix.SunMatrix.ToString">[docs]</a>    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sky representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;SunMatrix: #</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sun_up_hours</span><span class="p">)</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

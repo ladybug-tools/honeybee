@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.geometry.sphere module
+==============================================
+
+.. automodule:: honeybee_plus.radiance.geometry.sphere
+   :members:
+   :undoc-members:
+   :show-inheritance:

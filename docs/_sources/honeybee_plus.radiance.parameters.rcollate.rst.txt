@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.parameters.rcollate module
+==================================================
+
+.. automodule:: honeybee_plus.radiance.parameters.rcollate
+   :members:
+   :undoc-members:
+   :show-inheritance:

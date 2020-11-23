@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.command.falsecolor module
+=================================================
+
+.. automodule:: honeybee_plus.radiance.command.falsecolor
+   :members:
+   :undoc-members:
+   :show-inheritance:

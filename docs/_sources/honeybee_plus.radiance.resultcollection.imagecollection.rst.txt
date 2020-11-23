@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.resultcollection.imagecollection module
+===============================================================
+
+.. automodule:: honeybee_plus.radiance.resultcollection.imagecollection
+   :members:
+   :undoc-members:
+   :show-inheritance:

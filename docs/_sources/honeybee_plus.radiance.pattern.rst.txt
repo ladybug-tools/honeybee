@@ -1,0 +1,25 @@
+honeybee\_plus.radiance.pattern package
+=======================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_plus.radiance.pattern.brightdata
+   honeybee_plus.radiance.pattern.brightfunc
+   honeybee_plus.radiance.pattern.brighttext
+   honeybee_plus.radiance.pattern.colordata
+   honeybee_plus.radiance.pattern.colorfunc
+   honeybee_plus.radiance.pattern.colorpict
+   honeybee_plus.radiance.pattern.colortext
+   honeybee_plus.radiance.pattern.patternbase
+
+Module contents
+---------------
+
+.. automodule:: honeybee_plus.radiance.pattern
+   :members:
+   :undoc-members:
+   :show-inheritance:

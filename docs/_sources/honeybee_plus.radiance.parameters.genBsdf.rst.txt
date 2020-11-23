@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.parameters.genBsdf module
+=================================================
+
+.. automodule:: honeybee_plus.radiance.parameters.genBsdf
+   :members:
+   :undoc-members:
+   :show-inheritance:

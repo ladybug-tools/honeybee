@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.geometry.tube module
+============================================
+
+.. automodule:: honeybee_plus.radiance.geometry.tube
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.geometry.bubble module
+==============================================
+
+.. automodule:: honeybee_plus.radiance.geometry.bubble
+   :members:
+   :undoc-members:
+   :show-inheritance:

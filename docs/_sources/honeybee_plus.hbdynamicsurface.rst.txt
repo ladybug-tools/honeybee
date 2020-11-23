@@ -1,0 +1,7 @@
+honeybee\_plus.hbdynamicsurface module
+======================================
+
+.. automodule:: honeybee_plus.hbdynamicsurface
+   :members:
+   :undoc-members:
+   :show-inheritance:

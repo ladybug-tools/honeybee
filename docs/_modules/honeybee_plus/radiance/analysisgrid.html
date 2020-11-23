@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_plus.radiance.analysisgrid &#8212; honeybee  documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          honeybee</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../honeybee_plus.html">honeybee_plus package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../honeybee_plus.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.energyplus.html">honeybee_plus.energyplus package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.energyplus.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.energyplus.filemanager.html">honeybee_plus.energyplus.filemanager module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.energyplus.geometryrules.html">honeybee_plus.energyplus.geometryrules module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.energyplus.html#module-honeybee_plus.energyplus">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.radiance.html">honeybee_plus.radiance package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.radiance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.command.html">honeybee_plus.radiance.command package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.command.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.html">honeybee_plus.radiance.command.pyRad package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html">honeybee_plus.radiance.command.pyRad.pyRadLib package</a><ul>
+<li class="toctree-l10"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html#submodules">Submodules</a><ul>
+<li class="toctree-l11"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.pyRadLib.pyrad_proc.html">honeybee_plus.radiance.command.pyRad.pyRadLib.pyrad_proc module</a></li>
+</ul>
+</li>
+<li class="toctree-l10"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.pyRadLib.html#module-honeybee_plus.radiance.command.pyRad.pyRadLib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.objview.html">honeybee_plus.radiance.command.pyRad.objview module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pyRad.html#module-honeybee_plus.radiance.command.pyRad">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.command.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.dctimestep.html">honeybee_plus.radiance.command.dctimestep module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.epw2wea.html">honeybee_plus.radiance.command.epw2wea module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.falsecolor.html">honeybee_plus.radiance.command.falsecolor module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.genBSDF.html">honeybee_plus.radiance.command.genBSDF module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.gendaylit.html">honeybee_plus.radiance.command.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.gendaymtx.html">honeybee_plus.radiance.command.gendaymtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.gensky.html">honeybee_plus.radiance.command.gensky module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.genskyvec.html">honeybee_plus.radiance.command.genskyvec module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.getbbox.html">honeybee_plus.radiance.command.getbbox module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.getinfo.html">honeybee_plus.radiance.command.getinfo module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.mkpmap.html">honeybee_plus.radiance.command.mkpmap module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.objview.html">honeybee_plus.radiance.command.objview module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.oconv.html">honeybee_plus.radiance.command.oconv module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.pcomb.html">honeybee_plus.radiance.command.pcomb module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.raBmp.html">honeybee_plus.radiance.command.raBmp module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.raTiff.html">honeybee_plus.radiance.command.raTiff module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.rcalc.html">honeybee_plus.radiance.command.rcalc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.rcollate.html">honeybee_plus.radiance.command.rcollate module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.rcontrib.html">honeybee_plus.radiance.command.rcontrib module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.rfluxmtx.html">honeybee_plus.radiance.command.rfluxmtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.rmtxop.html">honeybee_plus.radiance.command.rmtxop module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.rpict.html">honeybee_plus.radiance.command.rpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.rtrace.html">honeybee_plus.radiance.command.rtrace module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.vwrays.html">honeybee_plus.radiance.command.vwrays module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.command.xform.html">honeybee_plus.radiance.command.xform module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.command.html#module-honeybee_plus.radiance.command">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.html">honeybee_plus.radiance.geometry package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.bubble.html">honeybee_plus.radiance.geometry.bubble module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.cone.html">honeybee_plus.radiance.geometry.cone module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.cup.html">honeybee_plus.radiance.geometry.cup module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.cylinder.html">honeybee_plus.radiance.geometry.cylinder module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.geometrybase.html">honeybee_plus.radiance.geometry.geometrybase module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.instance.html">honeybee_plus.radiance.geometry.instance module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.mesh.html">honeybee_plus.radiance.geometry.mesh module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.polygon.html">honeybee_plus.radiance.geometry.polygon module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.ring.html">honeybee_plus.radiance.geometry.ring module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.source.html">honeybee_plus.radiance.geometry.source module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.sphere.html">honeybee_plus.radiance.geometry.sphere module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.tube.html">honeybee_plus.radiance.geometry.tube module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.geometry.html#module-honeybee_plus.radiance.geometry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.material.html">honeybee_plus.radiance.material package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.material.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.antimatter.html">honeybee_plus.radiance.material.antimatter module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.ashik2.html">honeybee_plus.radiance.material.ashik2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.brtdfunc.html">honeybee_plus.radiance.material.brtdfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.bsdf.html">honeybee_plus.radiance.material.bsdf module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.dielectric.html">honeybee_plus.radiance.material.dielectric module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.glass.html">honeybee_plus.radiance.material.glass module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.glow.html">honeybee_plus.radiance.material.glow module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.illum.html">honeybee_plus.radiance.material.illum module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.interface.html">honeybee_plus.radiance.material.interface module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.light.html">honeybee_plus.radiance.material.light module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.materialbase.html">honeybee_plus.radiance.material.materialbase module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.metal.html">honeybee_plus.radiance.material.metal module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.metal2.html">honeybee_plus.radiance.material.metal2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.metdata.html">honeybee_plus.radiance.material.metdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.metfunc.html">honeybee_plus.radiance.material.metfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.mirror.html">honeybee_plus.radiance.material.mirror module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.mist.html">honeybee_plus.radiance.material.mist module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.plasdata.html">honeybee_plus.radiance.material.plasdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.plasfunc.html">honeybee_plus.radiance.material.plasfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.plastic.html">honeybee_plus.radiance.material.plastic module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.plastic2.html">honeybee_plus.radiance.material.plastic2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.prism1.html">honeybee_plus.radiance.material.prism1 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.prism2.html">honeybee_plus.radiance.material.prism2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.spotlight.html">honeybee_plus.radiance.material.spotlight module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.trans.html">honeybee_plus.radiance.material.trans module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.trans2.html">honeybee_plus.radiance.material.trans2 module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.transdata.html">honeybee_plus.radiance.material.transdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.material.transfunc.html">honeybee_plus.radiance.material.transfunc module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.material.html#module-honeybee_plus.radiance.material">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.html">honeybee_plus.radiance.mixture package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.mixdata.html">honeybee_plus.radiance.mixture.mixdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.mixfunc.html">honeybee_plus.radiance.mixture.mixfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.mixpict.html">honeybee_plus.radiance.mixture.mixpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.mixtext.html">honeybee_plus.radiance.mixture.mixtext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.mixturebase.html">honeybee_plus.radiance.mixture.mixturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.mixture.html#module-honeybee_plus.radiance.mixture">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.html">honeybee_plus.radiance.parameters package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.dctimestep.html">honeybee_plus.radiance.parameters.dctimestep module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.falsecolor.html">honeybee_plus.radiance.parameters.falsecolor module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.genBsdf.html">honeybee_plus.radiance.parameters.genBsdf module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.gendaylit.html">honeybee_plus.radiance.parameters.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.gendaymtx.html">honeybee_plus.radiance.parameters.gendaymtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.gensky.html">honeybee_plus.radiance.parameters.gensky module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.mkpmap.html">honeybee_plus.radiance.parameters.mkpmap module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.oconv.html">honeybee_plus.radiance.parameters.oconv module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.pcomb.html">honeybee_plus.radiance.parameters.pcomb module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.raBmp.html">honeybee_plus.radiance.parameters.raBmp module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.raTiff.html">honeybee_plus.radiance.parameters.raTiff module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.rcalc.html">honeybee_plus.radiance.parameters.rcalc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.rcollate.html">honeybee_plus.radiance.parameters.rcollate module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.rcontrib.html">honeybee_plus.radiance.parameters.rcontrib module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.rfluxmtx.html">honeybee_plus.radiance.parameters.rfluxmtx module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.rmtxop.html">honeybee_plus.radiance.parameters.rmtxop module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.rpict.html">honeybee_plus.radiance.parameters.rpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.rtrace.html">honeybee_plus.radiance.parameters.rtrace module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.vwrays.html">honeybee_plus.radiance.parameters.vwrays module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.xform.html">honeybee_plus.radiance.parameters.xform module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.parameters.html#module-honeybee_plus.radiance.parameters">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.html">honeybee_plus.radiance.pattern package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.brightdata.html">honeybee_plus.radiance.pattern.brightdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.brightfunc.html">honeybee_plus.radiance.pattern.brightfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.brighttext.html">honeybee_plus.radiance.pattern.brighttext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.colordata.html">honeybee_plus.radiance.pattern.colordata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.colorfunc.html">honeybee_plus.radiance.pattern.colorfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.colorpict.html">honeybee_plus.radiance.pattern.colorpict module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.colortext.html">honeybee_plus.radiance.pattern.colortext module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.patternbase.html">honeybee_plus.radiance.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.pattern.html#module-honeybee_plus.radiance.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.html">honeybee_plus.radiance.recipe package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.annual.html">honeybee_plus.radiance.recipe.annual package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.annual.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.annual.gridbased.html">honeybee_plus.radiance.recipe.annual.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.annual.html#module-honeybee_plus.radiance.recipe.annual">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightcoeff.html">honeybee_plus.radiance.recipe.daylightcoeff package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightcoeff.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightcoeff.gridbased.html">honeybee_plus.radiance.recipe.daylightcoeff.gridbased module</a></li>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightcoeff.imagebased.html">honeybee_plus.radiance.recipe.daylightcoeff.imagebased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightcoeff.html#module-honeybee_plus.radiance.recipe.daylightcoeff">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightfactor.html">honeybee_plus.radiance.recipe.daylightfactor package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightfactor.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightfactor.gridbased.html">honeybee_plus.radiance.recipe.daylightfactor.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.daylightfactor.html#module-honeybee_plus.radiance.recipe.daylightfactor">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.directreflection.html">honeybee_plus.radiance.recipe.directreflection package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.directreflection.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.directreflection.gridbased.html">honeybee_plus.radiance.recipe.directreflection.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.directreflection.html#module-honeybee_plus.radiance.recipe.directreflection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.fivephase.html">honeybee_plus.radiance.recipe.fivephase package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.fivephase.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.fivephase.gridbased.html">honeybee_plus.radiance.recipe.fivephase.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.fivephase.html#module-honeybee_plus.radiance.recipe.fivephase">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.pointintime.html">honeybee_plus.radiance.recipe.pointintime package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.pointintime.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.pointintime.gridbased.html">honeybee_plus.radiance.recipe.pointintime.gridbased module</a></li>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.pointintime.imagebased.html">honeybee_plus.radiance.recipe.pointintime.imagebased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.pointintime.html#module-honeybee_plus.radiance.recipe.pointintime">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.radiation.html">honeybee_plus.radiance.recipe.radiation package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.radiation.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.radiation.gridbased.html">honeybee_plus.radiance.recipe.radiation.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.radiation.html#module-honeybee_plus.radiance.recipe.radiation">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.solaraccess.html">honeybee_plus.radiance.recipe.solaraccess package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.solaraccess.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.solaraccess.gridbased.html">honeybee_plus.radiance.recipe.solaraccess.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.solaraccess.html#module-honeybee_plus.radiance.recipe.solaraccess">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.threephase.html">honeybee_plus.radiance.recipe.threephase package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.threephase.html#submodules">Submodules</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.threephase.gridbased.html">honeybee_plus.radiance.recipe.threephase.gridbased module</a></li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.threephase.html#module-honeybee_plus.radiance.recipe.threephase">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.id.html">honeybee_plus.radiance.recipe.id module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.parameters.html">honeybee_plus.radiance.recipe.parameters module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.recipedcutil.html">honeybee_plus.radiance.recipe.recipedcutil module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.recipeutil.html">honeybee_plus.radiance.recipe.recipeutil module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.recipexphaseutil.html">honeybee_plus.radiance.recipe.recipexphaseutil module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.recipe.html#module-honeybee_plus.radiance.recipe">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.html">honeybee_plus.radiance.resultcollection package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.database.html">honeybee_plus.radiance.resultcollection.database module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.imagecollection.html">honeybee_plus.radiance.resultcollection.imagecollection module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.pointintime.html">honeybee_plus.radiance.resultcollection.pointintime module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.resultgrid.html">honeybee_plus.radiance.resultcollection.resultgrid module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.timeseries.html">honeybee_plus.radiance.resultcollection.timeseries module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.resultcollection.html#module-honeybee_plus.radiance.resultcollection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.html">honeybee_plus.radiance.sky package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.analemma.html">honeybee_plus.radiance.sky.analemma module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.certainIlluminance.html">honeybee_plus.radiance.sky.certainIlluminance module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.cie.html">honeybee_plus.radiance.sky.cie module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.climatebased.html">honeybee_plus.radiance.sky.climatebased module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.gendaylit.html">honeybee_plus.radiance.sky.gendaylit module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.skymatrix.html">honeybee_plus.radiance.sky.skymatrix module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.skyvector.html">honeybee_plus.radiance.sky.skyvector module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.sunmatrix.html">honeybee_plus.radiance.sky.sunmatrix module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.sky.html#module-honeybee_plus.radiance.sky">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.texture.html">honeybee_plus.radiance.texture package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.texture.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.texture.texdata.html">honeybee_plus.radiance.texture.texdata module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.texture.texfunc.html">honeybee_plus.radiance.texture.texfunc module</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../honeybee_plus.radiance.texture.texturebase.html">honeybee_plus.radiance.texture.texturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../honeybee_plus.radiance.texture.html#module-honeybee_plus.radiance.texture">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.radiance.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.analysisgrid.html">honeybee_plus.radiance.analysisgrid module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.analysisgridlite.html">honeybee_plus.radiance.analysisgridlite module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.analysispoint.html">honeybee_plus.radiance.analysispoint module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.analysispointlite.html">honeybee_plus.radiance.analysispointlite module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.datatype.html">honeybee_plus.radiance.datatype module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.factory.html">honeybee_plus.radiance.factory module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.primitive.html">honeybee_plus.radiance.primitive module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.properties.html">honeybee_plus.radiance.properties module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.radfile.html">honeybee_plus.radiance.radfile module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.radparser.html">honeybee_plus.radiance.radparser module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.scene.html">honeybee_plus.radiance.scene module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.staticscene.html">honeybee_plus.radiance.staticscene module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.radiance.view.html">honeybee_plus.radiance.view module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.radiance.html#module-honeybee_plus.radiance">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.server.html">honeybee_plus.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.server.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.server.client.html">honeybee_plus.server.client module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.server.mpupload.html">honeybee_plus.server.mpupload module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.server.html#module-honeybee_plus.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.vectormath.html">honeybee_plus.vectormath package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.vectormath.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../honeybee_plus.vectormath.euclid.html">honeybee_plus.vectormath.euclid module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../honeybee_plus.vectormath.html#module-honeybee_plus.vectormath">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../honeybee_plus.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.config.html">honeybee_plus.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.dataoperation.html">honeybee_plus.dataoperation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.exception.html">honeybee_plus.exception module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.futil.html">honeybee_plus.futil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.geometryoperation.html">honeybee_plus.geometryoperation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.hbdynamicsurface.html">honeybee_plus.hbdynamicsurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.hbfensurface.html">honeybee_plus.hbfensurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.hbobject.html">honeybee_plus.hbobject module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.hbshadesurface.html">honeybee_plus.hbshadesurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.hbsurface.html">honeybee_plus.hbsurface module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.hbzone.html">honeybee_plus.hbzone module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.room.html">honeybee_plus.room module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.schedule.html">honeybee_plus.schedule module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.surfaceproperties.html">honeybee_plus.surfaceproperties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.surfacetype.html">honeybee_plus.surfacetype module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.utilcol.html">honeybee_plus.utilcol module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../honeybee_plus.windowgroup.html">honeybee_plus.windowgroup module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../honeybee_plus.html#module-honeybee_plus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../honeybee_plus.html">honeybee_plus package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../honeybee_plus.html">honeybee_plus package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <h1>Source code for honeybee_plus.radiance.analysisgrid</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Honeybee PointGroup and TestPointGroup.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">..utilcol</span> <span class="kn">import</span> <span class="n">random_name</span>
+<span class="kn">from</span> <span class="nn">..dataoperation</span> <span class="kn">import</span> <span class="n">match_data</span>
+<span class="kn">from</span> <span class="nn">..schedule</span> <span class="kn">import</span> <span class="n">Schedule</span>
+<span class="kn">from</span> <span class="nn">..futil</span> <span class="kn">import</span> <span class="n">write_to_file_by_name</span>
+<span class="kn">from</span> <span class="nn">.analysispoint</span> <span class="kn">import</span> <span class="n">AnalysisPoint</span>
+<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">EmptyFileError</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span> <span class="k">as</span> <span class="nb">zip</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span><span class="p">,</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+    <span class="n">xrange</span> <span class="o">=</span> <span class="nb">range</span>
+    <span class="n">readmode</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">readmode</span> <span class="o">=</span> <span class="s1">&#39;rb&#39;</span>
+
+<div class="viewcode-block" id="AnalysisGrid"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid">[docs]</a><span class="k">class</span> <span class="nc">AnalysisGrid</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A grid of analysis points.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        analysis_points: A collection of analysis points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_analysis_points&#39;</span><span class="p">,</span> <span class="s1">&#39;_name&#39;</span><span class="p">,</span> <span class="s1">&#39;_sources&#39;</span><span class="p">,</span> <span class="s1">&#39;_wgroups&#39;</span><span class="p">,</span> <span class="s1">&#39;_directFiles&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_totalFiles&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_points</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a AnalysisPointGroup.</span>
+
+<span class="sd">        analysis_points: A collection of AnalysisPoints.</span>
+<span class="sd">        name: A unique name for this AnalysisGrid.</span>
+<span class="sd">        window_groups: A collection of window_groups which contribute to this grid.</span>
+<span class="sd">            This input is only meaningful in studies such as daylight coefficient</span>
+<span class="sd">            and multi-phase studies that the contribution of each source will be</span>
+<span class="sd">            calculated separately (default: None).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="c1"># name of sources and their state. It&#39;s only meaningful in multi-phase daylight</span>
+        <span class="c1"># analysis. In analysis for a single time it will be {None: [None]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">window_groups</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wgroups</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">wg</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">wg</span> <span class="ow">in</span> <span class="n">window_groups</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wgroups</span> <span class="o">=</span> <span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">analysis_points</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="s1">&#39;_dir&#39;</span><span class="p">),</span> \
+                <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not an AnalysisPoint.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span> <span class="o">=</span> <span class="n">analysis_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_directFiles</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of results files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_totalFiles</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of results files</span>
+
+<div class="viewcode-block" id="AnalysisGrid.from_json"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.from_json">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ag_json</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create an analysis grid from json objects.&quot;&quot;&quot;</span>
+        <span class="n">analysis_points</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">AnalysisPoint</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">ag_json</span><span class="p">[</span><span class="s2">&quot;analysis_points&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">analysis_points</span><span class="o">=</span><span class="n">analysis_points</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">ag_json</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                   <span class="n">window_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.from_points_and_vectors"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.from_points_and_vectors">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_points_and_vectors</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">vectors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create an analysis grid from points and vectors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            points: A flatten list of (x, y ,z) points.</span>
+<span class="sd">            vectors: An optional list of (x, y, z) for direction of test points.</span>
+<span class="sd">                If not provided a (0, 0, 1) vector will be assigned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vectors</span> <span class="o">=</span> <span class="n">vectors</span> <span class="ow">or</span> <span class="p">()</span>
+        <span class="n">points</span><span class="p">,</span> <span class="n">vectors</span> <span class="o">=</span> <span class="n">match_data</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">aps</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">AnalysisPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">vectors</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">aps</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">window_groups</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.from_file"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">start_line</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create an analysis grid from a pts file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Full path to points file</span>
+<span class="sd">            start_line: Start line (default: 0)</span>
+<span class="sd">            end_line: End line as an integer (default: last line in file)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_line</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_line</span><span class="p">)</span> <span class="k">if</span> <span class="n">start_line</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">end_line</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end_line</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">end_line</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;+inf&#39;</span><span class="p">)</span>
+
+        <span class="n">line_count</span> <span class="o">=</span> <span class="n">end_line</span> <span class="o">-</span> <span class="n">start_line</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="s2">&quot;Can&#39;t find </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+        <span class="n">ap</span> <span class="o">=</span> <span class="n">AnalysisPoint</span>  <span class="c1"># load analysis point locally for better performance</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">readmode</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_line</span><span class="p">):</span>
+                <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inf</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">line_count</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">from_raw_values</span><span class="p">(</span><span class="o">*</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">points</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">isAnalysisGrid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True for AnalysisGrid.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;AnalysisGrid name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">n</span> <span class="ow">or</span> <span class="n">random_name</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">window_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A list of window group names that are related to this analysis grid.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wgroups</span>
+
+    <span class="nd">@window_groups</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">window_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wgs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wgroups</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">wg</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">wg</span> <span class="ow">in</span> <span class="n">wgs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A generator of points as x, y, z.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">location</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get generator of vectors as x, y , z.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">direction</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">analysis_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of analysis points.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get sorted list fo sources.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sources</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">srcs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">srcs</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">name</span>
+                <span class="k">return</span> <span class="n">srcs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if this analysis grid has result values.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">has_values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_direct_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if direct values are available for this point.</span>
+
+<span class="sd">        In point-in-time and 3phase recipes only total values are available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">has_direct_values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hoys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return hours of the year for results if any.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hoys</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_results_point_in_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if the grid has the results only for an hour.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">result_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return result files as a list [[total files], [direct files]].&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_totalFiles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directFiles</span>
+
+<div class="viewcode-block" id="AnalysisGrid.add_result_files"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.add_result_files">[docs]</a>    <span class="k">def</span> <span class="nf">add_result_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add new result files to grid.</span>
+
+<span class="sd">        Use this methods if you want to get annual metrics without loading the values</span>
+<span class="sd">        for each point. This method is only useful for cases with no window groups and</span>
+<span class="sd">        dynamic blind states. After adding the files you can call &#39;annualMetrics&#39; method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ResultFile</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+            <span class="s1">&#39;ResultFile&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;hoys&#39;</span><span class="p">,</span> <span class="s1">&#39;start_line&#39;</span><span class="p">,</span> <span class="s1">&#39;header&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">))</span>
+
+        <span class="n">inf</span> <span class="o">=</span> <span class="n">ResultFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_direct</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_directFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_totalFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.set_values"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.set_values">[docs]</a>    <span class="k">def</span> <span class="nf">set_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_direct</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># assign the values to points</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">hourlyValues</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">.</span><span class="n">set_values</span><span class="p">(</span>
+                <span class="n">hourlyValues</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">is_direct</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.parse_header"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.parse_header">[docs]</a>    <span class="k">def</span> <span class="nf">parse_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">check_point_count</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse radiance matrix header.&quot;&quot;&quot;</span>
+        <span class="c1"># read the header</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">40</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;FORMAT&#39;</span><span class="p">:</span>
+                <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>  <span class="c1"># pass empty line</span>
+                <span class="k">break</span>  <span class="c1"># done with the header!</span>
+            <span class="k">elif</span> <span class="n">start_line</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NROWS&#39;</span><span class="p">:</span>
+                <span class="n">points_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">check_point_count</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span> <span class="o">==</span> <span class="n">points_count</span><span class="p">,</span> \
+                        <span class="s2">&quot;Length of points [</span><span class="si">{}</span><span class="s2">] must match the number &quot;</span> \
+                        <span class="s2">&quot;of rows [</span><span class="si">{}</span><span class="s2">].&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">),</span> <span class="n">points_count</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">start_line</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NCOLS&#39;</span><span class="p">:</span>
+                <span class="n">hours_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">hoys</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">hours_count</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">),</span> \
+                        <span class="s2">&quot;Number of hours [</span><span class="si">{}</span><span class="s2">] must match the &quot;</span> \
+                        <span class="s2">&quot;number of columns [</span><span class="si">{}</span><span class="s2">].&quot;</span> \
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">),</span> <span class="n">hours_count</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">hoys</span> <span class="o">=</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hours_count</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">inf</span><span class="p">,</span> <span class="n">hoys</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.set_values_from_file"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.set_values_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">set_values_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">start_line</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">check_point_count</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load values for test points from a file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Full file path to the result file.</span>
+<span class="sd">            hoys: A collection of hours of the year for the results. If None the</span>
+<span class="sd">                default will be range(0, len(results)).</span>
+<span class="sd">            source: Name of the source.</span>
+<span class="sd">            state: Name of the state.</span>
+<span class="sd">            start_line: Number of start lines after the header from 0 (default: 0).</span>
+<span class="sd">            is_direct: A Boolean to declare if the results is direct illuminance</span>
+<span class="sd">                (default: False).</span>
+<span class="sd">            header: A Boolean to declare if the file has header (default: True).</span>
+<span class="sd">            mode:</span>
+<span class="sd">                0 &gt; load the values</span>
+<span class="sd">                1 &gt; load values as binary. Any non-zero value</span>
+<span class="sd">                    will be 1. This is useful for studies such as sunlight hours.</span>
+<span class="sd">                2 or Greater &gt; Load results divided by mode value, which can be 2 or</span>
+<span class="sd">                    any other value larger than 2. Use this mode for daylight factor or </span>
+<span class="sd">                    radiation analysis.</span>
+<span class="sd">                    e.g. For daylight factor that you run an illuminance study under an </span>
+<span class="sd">                    overcast sky with total horizontal illuminance of 10000 lux. Now to</span>
+<span class="sd">                    get daylight factor you should divide the values by 100 ( 10000 / 100).</span>
+<span class="sd">                    In that case you can use mode = 100 to get the correct values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">EmptyFileError</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+        <span class="n">st</span> <span class="o">=</span> <span class="n">start_line</span> <span class="ow">or</span> <span class="mi">0</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">readmode</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+                <span class="n">inf</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">check_point_count</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_result_files</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">is_direct</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">st</span><span class="p">):</span>
+                <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                          <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># binary 0-1 (useful for solaraccess studies)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                          <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># divide values by mode (useful for daylight factor calculation)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="n">mode</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                          <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">))</span>
+
+            <span class="c1"># assign the values to points</span>
+            <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">hourlyValues</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">.</span><span class="n">set_values</span><span class="p">(</span>
+                    <span class="n">hourlyValues</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">is_direct</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.set_coupled_values_from_file"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.set_coupled_values_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">set_coupled_values_from_file</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">total_file_path</span><span class="p">,</span> <span class="n">direct_file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">start_line</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_point_count</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load direct and total values for test points from two files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Full file path to the result file.</span>
+<span class="sd">            hoys: A collection of hours of the year for the results. If None the</span>
+<span class="sd">                default will be range(0, len(results)).</span>
+<span class="sd">            source: Name of the source.</span>
+<span class="sd">            state: Name of the state.</span>
+<span class="sd">            start_line: Number of start lines after the header from 0 (default: 0).</span>
+<span class="sd">            header: A Boolean to declare if the file has header (default: True).</span>
+<span class="sd">            mode: 0 &gt; load the values 1 &gt; load values as binary. Any non-zero value</span>
+<span class="sd">                will be 1. This is useful for studies such as sunlight hours. 2 &gt;</span>
+<span class="sd">                load the values divided by mode number. Use this mode for daylight</span>
+<span class="sd">                factor or radiation analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">total_file_path</span><span class="p">,</span> <span class="n">direct_file_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">EmptyFileError</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+        <span class="n">st</span> <span class="o">=</span> <span class="n">start_line</span> <span class="ow">or</span> <span class="mi">0</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">total_file_path</span><span class="p">,</span> <span class="n">readmode</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">direct_file_path</span><span class="p">,</span> <span class="n">readmode</span><span class="p">)</span> <span class="k">as</span> <span class="n">dinf</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+                <span class="n">inf</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">check_point_count</span><span class="p">)</span>
+                <span class="n">dinf</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">dinf</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">check_point_count</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_result_files</span><span class="p">(</span><span class="n">total_file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_result_files</span><span class="p">(</span><span class="n">direct_file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">st</span><span class="p">):</span>
+                <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+                <span class="nb">next</span><span class="p">(</span><span class="n">dinf</span><span class="p">)</span>
+
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">coupled_values</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">tuple</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">)))</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span>
+                          <span class="nb">zip</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="nb">next</span><span class="p">(</span><span class="n">dinf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># binary 0-1</span>
+                <span class="n">coupled_values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span>
+                    <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)),</span>
+                     <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)))</span>
+                    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="nb">next</span><span class="p">(</span><span class="n">dinf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># divide values by mode (useful for daylight factor calculation)</span>
+                <span class="n">coupled_values</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">tuple</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="n">mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="n">mode</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span>
+                          <span class="nb">zip</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="nb">next</span><span class="p">(</span><span class="n">dinf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">))</span>
+
+            <span class="c1"># assign the values to points</span>
+            <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">hourlyValues</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coupled_values</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">.</span><span class="n">set_coupled_values</span><span class="p">(</span>
+                    <span class="n">hourlyValues</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.combined_value_by_id"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.combined_value_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">combined_value_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get combined value from all sources based on state_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hoy: hour of the year.</span>
+<span class="sd">            blinds_state_ids: List of state ids for all the sources for an hour. If you</span>
+<span class="sd">                want a source to be removed set the state to -1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            total, direct values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digit_sign</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_values_from_files</span><span class="p">()</span>
+
+        <span class="n">hoy</span> <span class="o">=</span> <span class="n">hoy</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">combined_value_by_id</span><span class="p">(</span><span class="n">hoy</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.combined_values_by_id"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.combined_values_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">combined_values_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get combined value from all sources based on state_ids.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hoys: A collection of hours of the year.</span>
+<span class="sd">            blinds_state_ids: List of state ids for all the sources for input hoys. If</span>
+<span class="sd">                you want a source to be removed set the state to -1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Return a generator for (total, direct) values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digit_sign</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_values_from_files</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">combined_value_by_id</span><span class="p">(</span><span class="n">hoys</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.sum_values_by_id"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.sum_values_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">sum_values_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get sum of value for all the hours.</span>
+
+<span class="sd">        This method is mostly useful for radiation and solar access analysis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hoys: A collection of hours of the year.</span>
+<span class="sd">            blinds_state_ids: List of state ids for all the sources for input hoys. If</span>
+<span class="sd">                you want a source to be removed set the state to -1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Return a collection of sum values as (total, direct) values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digit_sign</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_values_from_files</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">sum_values_by_id</span><span class="p">(</span><span class="n">hoys</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.max_values_by_id"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.max_values_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">max_values_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get maximum value for all the hours.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hoys: A collection of hours of the year.</span>
+<span class="sd">            blinds_state_ids: List of state ids for all the sources for input hoys. If</span>
+<span class="sd">                you want a source to be removed set the state to -1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Return a tuple for sum of (total, direct) values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digit_sign</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_values_from_files</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">max_values_by_id</span><span class="p">(</span><span class="n">hoys</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.annual_metrics"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.annual_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">annual_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">da_threshhold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">udi_min_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">occ_schedule</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate annual metrics.</span>
+
+<span class="sd">        Daylight autonomy, continious daylight autonomy and useful daylight illuminance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            da_threshhold: Threshhold for daylight autonomy in lux (default: 300).</span>
+<span class="sd">            udi_min_max: A tuple of min, max value for useful daylight illuminance</span>
+<span class="sd">                (default: (100, 3000)).</span>
+<span class="sd">            blinds_state_ids: List of state ids for all the sources for input hoys. If</span>
+<span class="sd">                you want a source to be removed set the state to -1.</span>
+<span class="sd">            occ_schedule: An annual occupancy schedule.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Daylight autonomy, Continious daylight autonomy, Useful daylight illuminance,</span>
+<span class="sd">            Less than UDI, More than UDI</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_loaded</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_values</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No values are assigned to this analysis grid.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_values</span><span class="p">:</span>
+            <span class="c1"># results are not loaded but are available</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+                <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Annual recipe can currently only handle &#39;</span>
+                    <span class="s1">&#39;a single merged result file.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">results_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Loading the results from result files.&#39;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">([],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[])</span>
+
+        <span class="n">da_threshhold</span> <span class="o">=</span> <span class="n">da_threshhold</span> <span class="ow">or</span> <span class="mf">300.0</span>
+        <span class="n">udi_min_max</span> <span class="o">=</span> <span class="n">udi_min_max</span> <span class="ow">or</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">3000</span><span class="p">)</span>
+        <span class="n">hoys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span>
+        <span class="n">occ_schedule</span> <span class="o">=</span> <span class="n">occ_schedule</span> <span class="ow">or</span> <span class="n">Schedule</span><span class="o">.</span><span class="n">eight_am_to_six_pm</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">results_loaded</span><span class="p">:</span>
+            <span class="n">blinds_state_ids</span> <span class="o">=</span> <span class="n">blinds_state_ids</span> <span class="ow">or</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">annual_metrics</span><span class="p">(</span><span class="n">da_threshhold</span><span class="p">,</span>
+                                                            <span class="n">udi_min_max</span><span class="p">,</span>
+                                                            <span class="n">blinds_state_ids</span><span class="p">,</span>
+                                                            <span class="n">occ_schedule</span>
+                                                            <span class="p">)):</span>
+                    <span class="n">res</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This is a method for annual recipe to load the results line by line</span>
+            <span class="c1"># which unlike the other method doesn&#39;t load all the values to the memory</span>
+            <span class="c1"># at once.</span>
+            <span class="n">blinds_state_ids</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+            <span class="n">calculate_annual_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_calculate_annual_metrics</span>
+
+            <span class="k">for</span> <span class="n">file_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">file_data</span>
+
+                <span class="c1"># read the results line by line and caluclate the values</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">EmptyFileError</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+                <span class="k">assert</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> \
+                    <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="s1">&#39;Annual results can only be calculated from &#39;</span>
+                        <span class="s1">&#39;illuminance studies.&#39;</span><span class="p">)</span>
+
+                <span class="n">st</span> <span class="o">=</span> <span class="n">start_line</span> <span class="ow">or</span> <span class="mi">0</span>
+
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">readmode</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+                        <span class="n">inf</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">st</span><span class="p">):</span>
+                        <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+
+                    <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+                    <span class="c1"># load one line at a time</span>
+                    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">):</span>
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                            <span class="n">calculate_annual_metrics</span><span class="p">(</span>
+                                <span class="n">values</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">da_threshhold</span><span class="p">,</span> <span class="n">udi_min_max</span><span class="p">,</span>
+                                <span class="n">blinds_state_ids</span><span class="p">,</span> <span class="n">occ_schedule</span><span class="p">)):</span>
+
+                            <span class="n">res</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.spatial_daylight_autonomy"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.spatial_daylight_autonomy">[docs]</a>    <span class="k">def</span> <span class="nf">spatial_daylight_autonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">da_threshhold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_da</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">blinds_state_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">occ_schedule</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate Spatial Daylight Autonomy (sDA).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            da_threshhold: Minimum illuminance threshhold for daylight (default: 300).</span>
+<span class="sd">            target_da: Minimum threshhold for daylight autonomy in percentage</span>
+<span class="sd">                (default: 50%).</span>
+<span class="sd">            blinds_state_ids:  List of state ids for all the sources for input hoys. If</span>
+<span class="sd">                you want a source to be removed set the state to -1.</span>
+<span class="sd">            occ_schedule: An annual occupancy schedule.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sDA: Spatial daylight autonomy as percentage of analysis points.</span>
+<span class="sd">            DA: Daylight autonomy for each analysis point.</span>
+<span class="sd">            Problematic points: List of problematic points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_loaded</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_values</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No values are assigned to this analysis grid.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_values</span><span class="p">:</span>
+            <span class="c1"># results are not loaded but are available</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+                <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Annual recipe can currently only handle &#39;</span>
+                    <span class="s1">&#39;a single merged result file.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">results_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Loading the results from result files.&#39;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">([],</span> <span class="p">[])</span>
+
+        <span class="n">da_threshhold</span> <span class="o">=</span> <span class="n">da_threshhold</span> <span class="ow">or</span> <span class="mf">300.0</span>
+        <span class="n">target_da</span> <span class="o">=</span> <span class="n">target_da</span> <span class="ow">or</span> <span class="mf">50.0</span>
+        <span class="n">hoys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span>
+        <span class="n">occ_schedule</span> <span class="o">=</span> <span class="n">occ_schedule</span> <span class="ow">or</span> <span class="n">Schedule</span><span class="o">.</span><span class="n">eight_am_to_six_pm</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">results_loaded</span><span class="p">:</span>
+            <span class="n">blinds_state_ids</span> <span class="o">=</span> <span class="n">blinds_state_ids</span> <span class="ow">or</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">daylight_autonomy</span><span class="p">(</span><span class="n">da_threshhold</span><span class="p">,</span>
+                                                               <span class="n">blinds_state_ids</span><span class="p">,</span>
+                                                               <span class="n">occ_schedule</span>
+                                                               <span class="p">)):</span>
+                    <span class="n">res</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This is a method for annual recipe to load the results line by line</span>
+            <span class="c1"># which unlike the other method doesn&#39;t load all the values to the memory</span>
+            <span class="c1"># at once.</span>
+            <span class="n">blinds_state_ids</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+            <span class="n">calculate_daylight_autonomy</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_calculate_daylight_autonomy</span>
+
+            <span class="k">for</span> <span class="n">file_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">file_data</span>
+
+                <span class="c1"># read the results line by line and caluclate the values</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">EmptyFileError</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+                <span class="k">assert</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> \
+                    <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="s1">&#39;Annual results can only be calculated from &#39;</span>
+                        <span class="s1">&#39;illuminance studies.&#39;</span><span class="p">)</span>
+
+                <span class="n">st</span> <span class="o">=</span> <span class="n">start_line</span> <span class="ow">or</span> <span class="mi">0</span>
+
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">readmode</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+                        <span class="n">inf</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">st</span><span class="p">):</span>
+                        <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+
+                    <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+                    <span class="c1"># load one line at a time</span>
+                    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">):</span>
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                            <span class="n">calculate_daylight_autonomy</span><span class="p">(</span>
+                                <span class="n">values</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">da_threshhold</span><span class="p">,</span>
+                                <span class="n">blinds_state_ids</span><span class="p">,</span> <span class="n">occ_schedule</span><span class="p">)):</span>
+
+                            <span class="n">res</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="n">daylight_autonomy</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">problematic_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">da</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">,</span> <span class="n">daylight_autonomy</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">da</span> <span class="o">&lt;</span> <span class="n">target_da</span><span class="p">:</span>
+                <span class="n">problematic_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sda</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">problematic_points</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="n">sda</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="n">sda</span><span class="p">,</span> <span class="n">daylight_autonomy</span><span class="p">,</span> <span class="n">problematic_points</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.annual_sunlight_exposure"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.annual_sunlight_exposure">[docs]</a>    <span class="k">def</span> <span class="nf">annual_sunlight_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshhold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">occ_schedule</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_hours</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_area</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Annual Solar Exposure (ASE)</span>
+
+<span class="sd">        As per IES-LM-83-12 ase is the percent of sensors that are</span>
+<span class="sd">        found to be exposed to more than 1000lux of direct sunlight for</span>
+<span class="sd">        more than 250hrs per year. For LEED credits No more than 10% of</span>
+<span class="sd">        the points in the grid should fail this measure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            threshhold: Threshhold for for solar exposure in lux (default: 1000).</span>
+<span class="sd">            blinds_state_ids: List of state ids for all the sources for input hoys.</span>
+<span class="sd">                If you want a source to be removed set the state to -1. ase must</span>
+<span class="sd">                be calculated without dynamic blinds but you can use this option</span>
+<span class="sd">                to study the effect of different blind states.</span>
+<span class="sd">            occ_schedule: An annual occupancy schedule.</span>
+<span class="sd">            target_hours: Minimum targe hours for each point (default: 250).</span>
+<span class="sd">            target_area: Minimum target area percentage for this grid (default: 10).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Success as a Boolean, ase values for each point, Percentage area,</span>
+<span class="sd">            Problematic points, Problematic hours for each point</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_loaded</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_direct_values</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Direct values are not available to calculate ASE.</span><span class="se">\n</span><span class="s1">In most of the cases&#39;</span>
+                <span class="s1">&#39; this is because you are using a point in time recipe or the three-&#39;</span>
+                <span class="s1">&#39;phase recipe. You should use one of the daylight coefficient based &#39;</span>
+                <span class="s1">&#39;recipes or the 5 phase recipe instead.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_direct_values</span><span class="p">:</span>
+            <span class="c1"># results are not loaded but are available</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+                <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Annual recipe can currently only handle &#39;</span>
+                    <span class="s1">&#39;a single merged result file.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">results_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Loading the results from result files.&#39;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">([],</span> <span class="p">[],</span> <span class="p">[])</span>
+        <span class="n">threshhold</span> <span class="o">=</span> <span class="n">threshhold</span> <span class="ow">or</span> <span class="mi">1000</span>
+        <span class="n">target_hours</span> <span class="o">=</span> <span class="n">target_hours</span> <span class="ow">or</span> <span class="mi">250</span>
+        <span class="n">target_area</span> <span class="o">=</span> <span class="n">target_area</span> <span class="ow">or</span> <span class="mi">10</span>
+        <span class="n">hoys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span>
+        <span class="n">occ_schedule</span> <span class="o">=</span> <span class="n">occ_schedule</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">results_loaded</span><span class="p">:</span>
+            <span class="n">blinds_state_ids</span> <span class="o">=</span> <span class="n">blinds_state_ids</span> <span class="ow">or</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">annual_sunlight_exposure</span><span class="p">(</span><span class="n">threshhold</span><span class="p">,</span>
+                                                                      <span class="n">blinds_state_ids</span><span class="p">,</span>
+                                                                      <span class="n">occ_schedule</span><span class="p">,</span>
+                                                                      <span class="n">target_hours</span>
+                                                                      <span class="p">)):</span>
+                    <span class="n">res</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This is a method for annual recipe to load the results line by line</span>
+            <span class="c1"># which unlike the other method doesn&#39;t load all the values to the memory</span>
+            <span class="c1"># at once.</span>
+            <span class="n">blinds_state_ids</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hoys</span><span class="p">)</span>
+            <span class="n">calculate_annual_sunlight_exposure</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_calculate_annual_sunlight_exposure</span>
+
+            <span class="k">for</span> <span class="n">file_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">file_path</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">file_data</span>
+
+                <span class="c1"># read the results line by line and caluclate the values</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">EmptyFileError</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+                <span class="k">assert</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> \
+                    <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="s1">&#39;Annual results can only be calculated from &#39;</span>
+                        <span class="s1">&#39;illuminance studies.&#39;</span><span class="p">)</span>
+
+                <span class="n">st</span> <span class="o">=</span> <span class="n">start_line</span> <span class="ow">or</span> <span class="mi">0</span>
+
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">readmode</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+                        <span class="n">inf</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">st</span><span class="p">):</span>
+                        <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+
+                    <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+                    <span class="c1"># load one line at a time</span>
+                    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end</span><span class="p">):</span>
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                            <span class="n">calculate_annual_sunlight_exposure</span><span class="p">(</span>
+                                <span class="n">values</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">threshhold</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="p">,</span> <span class="n">occ_schedule</span><span class="p">,</span>
+                                <span class="n">target_hours</span><span class="p">)):</span>
+
+                            <span class="n">res</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># calculate ase for the grid</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span>  <span class="c1"># create a local copy of points for better performance</span>
+        <span class="n">problematic_point_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">problematic_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">problematic_hours</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ase_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">success</span><span class="p">,</span> <span class="n">ase</span><span class="p">,</span> <span class="n">pHours</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">)):</span>
+            <span class="n">ase_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ase</span><span class="p">)</span>  <span class="c1"># collect annual ase values for each point</span>
+            <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">problematic_point_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">problematic_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">problematic_hours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pHours</span><span class="p">)</span>
+
+        <span class="n">per_problematic</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">problematic_point_count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">per_problematic</span> <span class="o">&lt;</span> <span class="n">target_area</span><span class="p">,</span> <span class="n">ase_values</span><span class="p">,</span> <span class="n">per_problematic</span><span class="p">,</span> \
+            <span class="n">problematic_points</span><span class="p">,</span> <span class="n">problematic_hours</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.parse_blind_states"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.parse_blind_states">[docs]</a>    <span class="k">def</span> <span class="nf">parse_blind_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blinds_state_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse input blind states.</span>
+
+<span class="sd">        The method tries to convert each state to a tuple of a list. Use this method</span>
+<span class="sd">        to parse the input from plugins.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            blinds_state_ids: List of state ids for all the sources for an hour. If you</span>
+<span class="sd">                want a source to be removed set the state to -1. If not provided</span>
+<span class="sd">                a longest combination of states from sources (window groups) will</span>
+<span class="sd">                be used. Length of each item in states should be equal to number</span>
+<span class="sd">                of sources.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">parse_blind_states</span><span class="p">(</span><span class="n">blinds_state_ids</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.load_values_from_files"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.load_values_from_files">[docs]</a>    <span class="k">def</span> <span class="nf">load_values_from_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load grid values from self.result_files.&quot;&quot;&quot;</span>
+        <span class="c1"># remove old results</span>
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">_sources</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">r_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">][:]</span>
+        <span class="n">d_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">1</span><span class="p">][:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_totalFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_directFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># pass</span>
+        <span class="k">if</span> <span class="n">r_files</span> <span class="ow">and</span> <span class="n">d_files</span><span class="p">:</span>
+            <span class="c1"># both results are available</span>
+            <span class="k">for</span> <span class="n">rf</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">r_files</span><span class="p">,</span> <span class="n">d_files</span><span class="p">):</span>
+                <span class="n">rfPath</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">rf</span>
+                <span class="n">dfPath</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">df</span>
+                <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rfPath</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">)</span>
+                <span class="n">source</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">loading total and direct results for </span><span class="si">{}</span><span class="s1"> AnalysisGrid&#39;</span>
+                    <span class="s1">&#39; from </span><span class="si">{}</span><span class="s1">::</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">rfPath</span><span class="p">,</span> <span class="n">dfPath</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_coupled_values_from_file</span><span class="p">(</span>
+                    <span class="n">rfPath</span><span class="p">,</span> <span class="n">dfPath</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span>
+                    <span class="kc">False</span><span class="p">,</span> <span class="n">mode</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">r_files</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">r_files</span><span class="p">:</span>
+                <span class="n">rfPath</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">rf</span>
+                <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rfPath</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">)</span>
+                <span class="n">source</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">loading the results for </span><span class="si">{}</span><span class="s1"> AnalysisGrid form </span><span class="si">{}</span><span class="s1">::</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">rfPath</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_values_from_file</span><span class="p">(</span>
+                    <span class="n">rf</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">is_direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">check_point_count</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">d_files</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">d_files</span><span class="p">:</span>
+                <span class="n">rfPath</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">rf</span>
+                <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rfPath</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">)</span>
+                <span class="n">source</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">fn</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">loading the results for </span><span class="si">{}</span><span class="s1"> AnalysisGrid form </span><span class="si">{}</span><span class="s1">::</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">rfPath</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_values_from_file</span><span class="p">(</span>
+                    <span class="n">rf</span><span class="p">,</span> <span class="n">hoys</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_line</span><span class="p">,</span> <span class="n">is_direct</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">check_point_count</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.unload"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.unload">[docs]</a>    <span class="k">def</span> <span class="nf">unload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all the sources and values from analysis_points.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_totalFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_directFiles</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">:</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">_sources</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">ap</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.duplicate"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Duplicate AnalysisGrid.&quot;&quot;&quot;</span>
+        <span class="n">aps</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+        <span class="n">dup</span> <span class="o">=</span> <span class="n">AnalysisGrid</span><span class="p">(</span><span class="n">aps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
+        <span class="n">dup</span><span class="o">.</span><span class="n">_sources</span> <span class="o">=</span> <span class="n">aps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_sources</span>
+        <span class="n">dup</span><span class="o">.</span><span class="n">_wgroups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wgroups</span>
+        <span class="k">return</span> <span class="n">dup</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.to_rad_string"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.to_rad_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_rad_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return analysis points group as a Radiance string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">ap</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.write"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;write analysis grid to file.&quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.pts&#39;</span>
+        <span class="k">return</span> <span class="n">write_to_file_by_name</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mkdir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.ToString"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.ToString">[docs]</a>    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrite ToString .NET method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AnalysisGrid.to_json"><a class="viewcode-back" href="../../../honeybee_plus.radiance.analysisgrid.html#honeybee_plus.radiance.analysisgrid.AnalysisGrid.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create json object from analysisGrid.&quot;&quot;&quot;</span>
+        <span class="n">analysis_points</span> <span class="o">=</span> <span class="p">[</span><span class="n">ap</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="s2">&quot;analysis_points&quot;</span><span class="p">:</span> <span class="n">analysis_points</span>
+        <span class="p">}</span></div>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add two analysis grids and create a new one.</span>
+
+<span class="sd">        This method won&#39;t duplicate the analysis points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">AnalysisGrid</span><span class="p">),</span> \
+            <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expected an AnalysisGrid not </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoys</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">hoys</span><span class="p">,</span> \
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Two analysis grid must have the same hoys.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_values</span><span class="p">:</span>
+            <span class="n">sources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">_sources</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_sources</span><span class="p">,</span> \
+                <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Two analysis grid with values must have the same window_groups.&#39;</span>
+                <span class="p">)</span>
+            <span class="n">sources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span>
+
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_points</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">analysis_points</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">+</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">addition</span> <span class="o">=</span> <span class="n">AnalysisGrid</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">addition</span><span class="o">.</span><span class="n">_sources</span> <span class="o">=</span> <span class="n">sources</span>
+
+        <span class="k">return</span> <span class="n">addition</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of points in this group.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get value for an index.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate points.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;String repr.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_rad_string</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">digit_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># only x, y, z datat is available</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># results are available but are not loaded yet</span>
+                <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_results_point_in_time</span><span class="p">:</span>
+            <span class="c1"># results is loaded for a single hour</span>
+            <span class="k">return</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># results is loaded for multiple hours</span>
+            <span class="k">return</span> <span class="mi">3</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># only x, y, z datat is available</span>
+                <span class="k">return</span> <span class="s1">&#39;[.]&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># results are available but are not loaded yet</span>
+                <span class="k">return</span> <span class="s1">&#39;[/]&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_results_point_in_time</span><span class="p">:</span>
+            <span class="c1"># results is loaded for a single hour</span>
+            <span class="k">return</span> <span class="s1">&#39;[+]&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># results is loaded for multiple hours</span>
+            <span class="k">return</span> <span class="s1">&#39;[*]&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return analysis points and directions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;AnalysisGrid::</span><span class="si">{}</span><span class="s1">::#</span><span class="si">{}</span><span class="s1">::</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_points</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sign</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+honeybee\_plus.radiance.staticscene module
+==========================================
+
+.. automodule:: honeybee_plus.radiance.staticscene
+   :members:
+   :undoc-members:
+   :show-inheritance:
