@@ -1,1 +1,1 @@
-lbt-ladybug==0.25.45
+lbt-ladybug==0.25.46
